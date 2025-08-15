@@ -1,13 +1,150 @@
 /*
-Theme Name: The Walking Company Git Theme
+Theme Name: E-Shop Theme
 Author: Konstantinos Skepasianos
-Description: A custom theme for The Walking Company, managed via Git.
+Description: A modern e-commerce WordPress theme with Tailwind CSS, Roboto font, and comprehensive icon support.
 Version: 1.0
 */
 
-/* Your actual CSS rules will go below this line */
+/* Import Google Fonts - Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* Import Tailwind CSS */
+@import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+
+/* Custom CSS Variables for Theme Colors */
+:root {
+  --primary-pink: #EE81B3;
+  --primary-pink-light: #F2A1C7;
+  --primary-pink-dark: #E55A9F;
+  --dark-gray: #2D3748;
+  --darker-gray: #1A202C;
+  --light-gray: #F7FAFC;
+  --white: #FFFFFF;
+  --accent-blue: #4299E1;
+  --accent-green: #48BB78;
+  --accent-orange: #ED8936;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
 
 body {
-    background-color: #f0f0f0; /* A light grey background to prove the stylesheet is loading */
-    font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--white);
+  color: var(--dark-gray);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom Tailwind-like utilities for our theme colors */
+.bg-primary { background-color: var(--primary-pink); }
+.bg-primary-light { background-color: var(--primary-pink-light); }
+.bg-primary-dark { background-color: var(--primary-pink-dark); }
+.bg-dark { background-color: var(--dark-gray); }
+.bg-darker { background-color: var(--darker-gray); }
+
+.text-primary { color: var(--primary-pink); }
+.text-primary-dark { color: var(--primary-pink-dark); }
+.text-dark { color: var(--dark-gray); }
+.text-darker { color: var(--darker-gray); }
+.text-white { color: var(--white); }
+
+.border-primary { border-color: var(--primary-pink); }
+.border-dark { border-color: var(--dark-gray); }
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--primary-pink);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-pink-dark);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary-pink);
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--primary-pink);
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary-pink);
+  color: var(--white);
+}
+
+/* Icon Styles */
+.icon {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  vertical-align: middle;
+}
+
+.icon-sm { width: 1rem; height: 1rem; }
+.icon-lg { width: 1.5rem; height: 1.5rem; }
+.icon-xl { width: 2rem; height: 2rem; }
+
+/* E-commerce specific styles */
+.product-card {
+  background: var(--white);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.price {
+  color: var(--primary-pink);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.price-old {
+  color: var(--dark-gray);
+  text-decoration: line-through;
+  font-size: 1rem;
+}
+
+/* Header Styles */
+.site-header {
+  background-color: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Footer Styles */
+.site-footer {
+  background-color: var(--darker-gray);
+  color: var(--white);
+  padding: 2rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
