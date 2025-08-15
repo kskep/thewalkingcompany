@@ -23,6 +23,9 @@ Version: 1.0
   --accent-blue: #4299E1;
   --accent-green: #48BB78;
   --accent-orange: #ED8936;
+  --border-radius: 0.25rem; /* Squared styling - minimal radius */
+  --border-radius-sm: 0.125rem; /* Very minimal radius for small elements */
+  --border-radius-none: 0; /* No radius for completely square elements */
 }
 
 /* Base Styles */
@@ -55,13 +58,13 @@ body {
 .border-primary { border-color: var(--primary-pink); }
 .border-dark { border-color: var(--dark-gray); }
 
-/* Button Styles */
+/* Button Styles - Squared Design */
 .btn-primary {
   background-color: var(--primary-pink);
   color: var(--white);
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--border-radius-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -77,7 +80,7 @@ body {
   color: var(--primary-pink);
   padding: 0.75rem 1.5rem;
   border: 2px solid var(--primary-pink);
-  border-radius: 0.375rem;
+  border-radius: var(--border-radius-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -86,6 +89,16 @@ body {
 .btn-secondary:hover {
   background-color: var(--primary-pink);
   color: var(--white);
+}
+
+/* Square button variant */
+.btn-square {
+  border-radius: var(--border-radius-none);
+}
+
+/* Minimal rounded button variant */
+.btn-minimal {
+  border-radius: var(--border-radius);
 }
 
 /* Icon Styles */
@@ -100,15 +113,27 @@ body {
 .icon-lg { width: 1.5rem; height: 1.5rem; }
 .icon-xl { width: 2rem; height: 2rem; }
 
-/* E-commerce specific styles */
+/* E-commerce specific styles - Squared Design */
 .product-card {
   background: var(--white);
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
 
 .product-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.post-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.post-card:hover {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
