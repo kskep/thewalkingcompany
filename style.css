@@ -1,0 +1,13 @@
+/*
+Theme Name: The Walking Company Git Theme
+Author: Konstantinos Skepasianos
+Description: A custom theme for The Walking Company, managed via Git.
+Version: 1.0
+*/
+
+/* Your actual CSS rules will go below this line */
+
+body {
+    background-color: #f0f0f0; /* A light grey background to prove the stylesheet is loading */
+    font-family: sans-serif;
+}
