@@ -182,3 +182,228 @@ function eshop_theme_body_classes($classes) {
     return $classes;
 }
 add_filter('body_class', 'eshop_theme_body_classes');
+
+/**
+ * Wishlist Functionality
+ */
+
+// Initialize wishlist session
+function eshop_init_wishlist() {
+    if (!session_id()) {
+        session_start();
+    }
+    if (!isset($_SESSION['eshop_wishlist'])) {
+        $_SESSION['eshop_wishlist'] = array();
+    }
+}
+add_action('init', 'eshop_init_wishlist');
+
+// Add to wishlist AJAX handler
+function eshop_add_to_wishlist() {
+    check_ajax_referer('eshop_nonce', 'nonce');
+    
+    $product_id = intval($_POST['product_id']);
+    if (!$product_id) {
+        wp_die();
+    }
+    
+    if (!isset($_SESSION['eshop_wishlist'])) {
+        $_SESSION['eshop_wishlist'] = array();
+    }
+    
+    if (!in_array($product_id, $_SESSION['eshop_wishlist'])) {
+        $_SESSION['eshop_wishlist'][] = $product_id;
+        $action = 'added';
+    } else {
+        $_SESSION['eshop_wishlist'] = array_diff($_SESSION['eshop_wishlist'], array($product_id));
+        $action = 'removed';
+    }
+    
+    wp_send_json_success(array(
+        'action' => $action,
+        'count' => count($_SESSION['eshop_wishlist'])
+    ));
+}
+add_action('wp_ajax_add_to_wishlist', 'eshop_add_to_wishlist');
+add_action('wp_ajax_nopriv_add_to_wishlist', 'eshop_add_to_wishlist');
+
+// Get wishlist count
+function eshop_get_wishlist_count() {
+    if (!isset($_SESSION['eshop_wishlist'])) {
+        return 0;
+    }
+    return count($_SESSION['eshop_wishlist']);
+}
+
+// Check if product is in wishlist
+function eshop_is_in_wishlist($product_id) {
+    if (!isset($_SESSION['eshop_wishlist'])) {
+        return false;
+    }
+    return in_array($product_id, $_SESSION['eshop_wishlist']);
+}
+
+// Get wishlist products
+function eshop_get_wishlist_products() {
+    if (!isset($_SESSION['eshop_wishlist']) || empty($_SESSION['eshop_wishlist'])) {
+        return array();
+    }
+    return $_SESSION['eshop_wishlist'];
+}
+
+/**
+ * Enhanced Cart Functions
+ */
+
+// Get cart fragment for AJAX updates
+function eshop_cart_fragment($fragments) {
+    ob_start();
+    ?>
+    <span class="cart-count <?php echo WC()->cart->get_cart_contents_count() > 0 ? '' : 'hidden'; ?>">
+        <?php echo WC()->cart->get_cart_contents_count(); ?>
+    </span>
+    <?php
+    $fragments['.cart-count'] = ob_get_clean();
+    
+    ob_start();
+    ?>
+    <span class="cart-total">
+        <?php echo WC()->cart->get_cart_total(); ?>
+    </span>
+    <?php
+    $fragments['.cart-total'] = ob_get_clean();
+    
+    // Update entire minicart content
+    ob_start();
+    ?>
+    <div class="minicart-items max-h-64 overflow-y-auto">
+        <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
+            <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) :
+                $product = $cart_item['data'];
+                $product_id = $cart_item['product_id'];
+                $quantity = $cart_item['quantity'];
+            ?>
+                <div class="minicart-item flex items-center space-x-3 py-3 border-b border-gray-100 last:border-b-0">
+                    <div class="w-12 h-12 flex-shrink-0">
+                        <?php echo $product->get_image(array(48, 48)); ?>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-medium text-dark truncate"><?php echo $product->get_name(); ?></h4>
+                        <p class="text-xs text-gray-500"><?php echo sprintf('%s × %s', $quantity, wc_price($product->get_price())); ?></p>
+                        <p class="text-sm text-primary font-semibold"><?php echo wc_price($product->get_price() * $quantity); ?></p>
+                    </div>
+                    <a href="<?php echo wc_get_cart_remove_url($cart_item_key); ?>" class="remove-from-cart text-gray-400 hover:text-red-500 transition-colors" data-cart-item-key="<?php echo $cart_item_key; ?>">
+                        <i class="fas fa-times text-xs"></i>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <p class="text-gray-500 text-center py-8"><?php _e('Your cart is empty', 'eshop-theme'); ?></p>
+        <?php endif; ?>
+    </div>
+    
+    <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
+        <div class="mt-4 pt-3 border-t border-gray-200 space-y-2">
+            <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-center bg-gray-100 text-dark py-2 rounded-md hover:bg-gray-200 transition-colors duration-200">
+                <?php _e('View Cart', 'eshop-theme'); ?>
+            </a>
+            <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-center bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors duration-200">
+                <?php _e('Checkout', 'eshop-theme'); ?>
+            </a>
+        </div>
+    <?php endif; ?>
+    <?php
+    $fragments['.minicart-dropdown .p-4'] = ob_get_clean();
+    
+    return $fragments;
+}
+add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
+
+/**
+ * Account Menu Functions
+ */
+
+// Get account menu items
+function eshop_get_account_menu_items() {
+    $items = array();
+    
+    if (is_user_logged_in()) {
+        $items['dashboard'] = array(
+            'title' => __('Dashboard', 'eshop-theme'),
+            'url' => wc_get_account_endpoint_url('dashboard')
+        );
+        $items['orders'] = array(
+            'title' => __('Orders', 'eshop-theme'),
+            'url' => wc_get_account_endpoint_url('orders')
+        );
+        $items['downloads'] = array(
+            'title' => __('Downloads', 'eshop-theme'),
+            'url' => wc_get_account_endpoint_url('downloads')
+        );
+        $items['edit-address'] = array(
+            'title' => __('Addresses', 'eshop-theme'),
+            'url' => wc_get_account_endpoint_url('edit-address')
+        );
+        $items['edit-account'] = array(
+            'title' => __('Account Details', 'eshop-theme'),
+            'url' => wc_get_account_endpoint_url('edit-account')
+        );
+        $items['customer-logout'] = array(
+            'title' => __('Logout', 'eshop-theme'),
+            'url' => wc_logout_url()
+        );
+    } else {
+        $items['login'] = array(
+            'title' => __('Login', 'eshop-theme'),
+            'url' => wc_get_page_permalink('myaccount')
+        );
+        $items['register'] = array(
+            'title' => __('Register', 'eshop-theme'),
+            'url' => wc_get_page_permalink('myaccount')
+        );
+    }
+    
+    return $items;
+}
+
+/**
+ * Display wishlist button
+ */
+function eshop_wishlist_button($product_id = null) {
+    if (!$product_id) {
+        global $product;
+        $product_id = $product->get_id();
+    }
+    
+    $is_in_wishlist = eshop_is_in_wishlist($product_id);
+    $icon_class = $is_in_wishlist ? 'fas fa-heart' : 'far fa-heart';
+    $button_class = $is_in_wishlist ? 'add-to-wishlist in-wishlist' : 'add-to-wishlist';
+    
+    ?>
+    <button class="<?php echo $button_class; ?> p-2 text-gray-400 hover:text-primary transition-colors duration-200" data-product-id="<?php echo $product_id; ?>" title="<?php _e('Add to Wishlist', 'eshop-theme'); ?>">
+        <i class="<?php echo $icon_class; ?>"></i>
+    </button>
+    <?php
+}
+
+// Add wishlist button to product loops
+add_action('woocommerce_after_shop_loop_item', 'eshop_add_wishlist_to_loop', 15);
+function eshop_add_wishlist_to_loop() {
+    global $product;
+    echo '<div class="product-actions flex items-center justify-between mt-2">';
+    echo '<div class="flex-1"></div>';
+    eshop_wishlist_button($product->get_id());
+    echo '</div>';
+}
+
+// Add wishlist button to single product page
+add_action('woocommerce_single_product_summary', 'eshop_add_wishlist_to_single', 35);
+function eshop_add_wishlist_to_single() {
+    global $product;
+    echo '<div class="single-product-wishlist mt-4">';
+    echo '<button class="add-to-wishlist inline-flex items-center text-gray-600 hover:text-primary transition-colors duration-200" data-product-id="' . $product->get_id() . '">';
+    echo '<i class="' . (eshop_is_in_wishlist($product->get_id()) ? 'fas' : 'far') . ' fa-heart mr-2"></i>';
+    echo __('Add to Wishlist', 'eshop-theme');
+    echo '</button>';
+    echo '</div>';
+}

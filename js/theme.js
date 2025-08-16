@@ -157,6 +157,125 @@
                 $('#search-form').addClass('hidden');
             }
         });
+
+        // Header Dropdowns
+        $('.wishlist-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('.wishlist-dropdown').toggleClass('hidden');
+            $('.account-dropdown, .minicart-dropdown').addClass('hidden');
+        });
+
+        $('.account-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('.account-dropdown').toggleClass('hidden');
+            $('.wishlist-dropdown, .minicart-dropdown').addClass('hidden');
+        });
+
+        $('.minicart-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('.minicart-dropdown').toggleClass('hidden');
+            $('.wishlist-dropdown, .account-dropdown').addClass('hidden');
+        });
+
+        // Close dropdowns when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.wishlist-wrapper, .account-wrapper, .minicart-wrapper').length) {
+                $('.wishlist-dropdown, .account-dropdown, .minicart-dropdown').addClass('hidden');
+            }
+        });
+
+        // Wishlist functionality
+        $(document).on('click', '.add-to-wishlist', function(e) {
+            e.preventDefault();
+            var $button = $(this);
+            var productId = $button.data('product-id');
+            
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'add_to_wishlist',
+                    product_id: productId,
+                    nonce: eshop_ajax.nonce
+                },
+                beforeSend: function() {
+                    $button.addClass('loading');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        if (response.data.action === 'added') {
+                            $button.addClass('in-wishlist').find('i').removeClass('far').addClass('fas');
+                            EShopTheme.showNotification('Product added to wishlist!', 'success');
+                        } else {
+                            $button.removeClass('in-wishlist').find('i').removeClass('fas').addClass('far');
+                            EShopTheme.showNotification('Product removed from wishlist!', 'success');
+                        }
+                        
+                        // Update wishlist count
+                        var $count = $('.wishlist-count');
+                        if (response.data.count > 0) {
+                            $count.text(response.data.count).removeClass('hidden');
+                        } else {
+                            $count.addClass('hidden');
+                        }
+                    }
+                },
+                complete: function() {
+                    $button.removeClass('loading');
+                }
+            });
+        });
+
+        // Remove from wishlist in dropdown
+        $(document).on('click', '.remove-from-wishlist', function(e) {
+            e.preventDefault();
+            var $button = $(this);
+            var productId = $button.data('product-id');
+            
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'add_to_wishlist',
+                    product_id: productId,
+                    nonce: eshop_ajax.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $button.closest('.wishlist-item').fadeOut(300, function() {
+                            $(this).remove();
+                            
+                            // Update wishlist count
+                            var $count = $('.wishlist-count');
+                            if (response.data.count > 0) {
+                                $count.text(response.data.count);
+                            } else {
+                                $count.addClass('hidden');
+                                $('.wishlist-items').html('<p class="text-gray-500 text-center py-4">Your wishlist is empty</p>');
+                            }
+                        });
+                        
+                        EShopTheme.showNotification('Product removed from wishlist!', 'success');
+                    }
+                }
+            });
+        });
+
+        // Remove from cart in minicart dropdown
+        $(document).on('click', '.remove-from-cart', function(e) {
+            e.preventDefault();
+            var $button = $(this);
+            var removeUrl = $button.attr('href');
+            
+            $.get(removeUrl, function() {
+                // Trigger cart update
+                $(document.body).trigger('wc_fragment_refresh');
+                EShopTheme.showNotification('Product removed from cart!', 'success');
+            });
+        });
     });
 
     // Window Load
