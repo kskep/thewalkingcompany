@@ -71,7 +71,7 @@
                             </button>
                             
                             <!-- Wishlist Dropdown -->
-                            <div class="wishlist-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden">
+                            <div class="wishlist-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 hidden">
                                 <div class="p-4">
                                     <h3 class="text-lg font-semibold mb-3 text-dark"><?php _e('Wishlist', 'eshop-theme'); ?></h3>
                                     <div class="wishlist-items">
@@ -104,7 +104,7 @@
                                     </div>
                                     <?php if (!empty($wishlist_products)) : ?>
                                         <div class="mt-4 pt-3 border-t border-gray-200">
-                                            <a href="<?php echo home_url('/wishlist'); ?>" class="block w-full text-center bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors duration-200">
+                                            <a href="<?php echo home_url('/wishlist'); ?>" class="block w-full text-center bg-primary text-white py-2 hover:bg-primary-dark transition-colors duration-200">
                                                 <?php _e('View All', 'eshop-theme'); ?>
                                             </a>
                                         </div>
@@ -122,7 +122,7 @@
                             </button>
                             
                             <!-- Account Dropdown -->
-                            <div class="account-dropdown absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden">
+                            <div class="account-dropdown absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 shadow-lg z-50 hidden">
                                 <div class="py-2">
                                     <?php
                                     $account_items = eshop_get_account_menu_items();
@@ -148,7 +148,7 @@
                             </button>
                             
                             <!-- Minicart Dropdown -->
-                            <div class="minicart-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden">
+                            <div class="minicart-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 hidden">
                                 <div class="p-4">
                                     <div class="flex items-center justify-between mb-3">
                                         <h3 class="text-lg font-semibold text-dark"><?php _e('Shopping Cart', 'eshop-theme'); ?></h3>
@@ -183,10 +183,10 @@
                                     
                                     <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
                                         <div class="mt-4 pt-3 border-t border-gray-200 space-y-2">
-                                            <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-center bg-gray-100 text-dark py-2 rounded-md hover:bg-gray-200 transition-colors duration-200">
+                                            <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-center bg-gray-100 text-dark py-2 hover:bg-gray-200 transition-colors duration-200">
                                                 <?php _e('View Cart', 'eshop-theme'); ?>
                                             </a>
-                                            <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-center bg-primary text-white py-2 rounded-md hover:bg-primary-dark transition-colors duration-200">
+                                            <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-center bg-primary text-white py-2 hover:bg-primary-dark transition-colors duration-200">
                                                 <?php _e('Checkout', 'eshop-theme'); ?>
                                             </a>
                                         </div>
@@ -224,12 +224,12 @@
                     <form role="search" method="get" class="search-form flex" action="<?php echo home_url('/'); ?>">
                         <div class="flex-1 relative">
                             <input type="search" 
-                                   class="search-field w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:border-primary" 
+                                   class="search-field w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-primary" 
                                    placeholder="<?php echo esc_attr_x('Search products, posts...', 'placeholder', 'eshop-theme'); ?>" 
                                    value="<?php echo get_search_query(); ?>" 
                                    name="s" />
                         </div>
-                        <button type="submit" class="search-submit bg-primary text-white px-6 py-2 rounded-r-md hover:bg-primary-dark transition-colors duration-200">
+                        <button type="submit" class="search-submit bg-primary text-white px-6 py-2 hover:bg-primary-dark transition-colors duration-200">
                             <i class="fas fa-search icon-sm"></i>
                         </button>
                     </form>

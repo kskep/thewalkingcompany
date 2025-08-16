@@ -184,6 +184,17 @@ function eshop_theme_body_classes($classes) {
 add_filter('body_class', 'eshop_theme_body_classes');
 
 /**
+ * Remove page titles
+ */
+function eshop_remove_page_titles($title) {
+    if (is_page() && !is_front_page()) {
+        return '';
+    }
+    return $title;
+}
+add_filter('the_title', 'eshop_remove_page_titles');
+
+/**
  * Wishlist Functionality
  */
 
