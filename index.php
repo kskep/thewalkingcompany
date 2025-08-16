@@ -1,12 +1,10 @@
 <?php get_header(); ?>
 
 <main class="main-content">
+    <?php if (is_front_page()) : ?>
+        <?php get_template_part('template-parts/front/hero'); ?>
+    <?php endif; ?>
     <div class="container mx-auto px-4 py-8">
-        <?php if (is_front_page()) : ?>
-            <div class="mb-8">
-                <?php get_template_part('template-parts/hero', 'slider'); ?>
-            </div>
-        <?php endif; ?>
         
         <?php if (is_home() && !is_front_page()) : ?>
             <header class="page-header mb-8">

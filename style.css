@@ -427,6 +427,12 @@ textarea:focus {
 .hero-slider-wrapper {
   position: relative;
 }
+.full-bleed {
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
+  max-width: 100vw;
+}
 .hero-slider-desktop img,
 .hero-slider-mobile img {
   width: 100%;

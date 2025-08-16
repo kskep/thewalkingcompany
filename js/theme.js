@@ -179,61 +179,63 @@
     function initializeHeroSliders() {
         if (typeof Swiper === 'undefined') return;
 
-        // Desktop slider
-        var desktopEl = document.querySelector('.hero-slider-desktop');
-        if (desktopEl) {
-            var desktopSwiper = new Swiper(desktopEl, {
-                loop: true,
-                speed: 700,
-                effect: 'fade',
-                fadeEffect: { crossFade: true },
-                autoplay: {
-                    delay: 4500,
-                    disableOnInteraction: false
-                },
-                pagination: {
-                    el: desktopEl.querySelector('.swiper-pagination'),
-                    clickable: true
-                },
-                navigation: {
-                    nextEl: desktopEl.querySelector('.swiper-button-next'),
-                    prevEl: desktopEl.querySelector('.swiper-button-prev')
-                }
-            });
-
-            if (window.gsap) {
-                desktopSwiper.on('slideChangeTransitionStart', function() {
-                    var active = desktopEl.querySelector('.swiper-slide-active .slide-caption');
-                    if (!active) return;
-                    gsap.fromTo(active, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+        document.querySelectorAll('.js-hero-slider').forEach(function(wrapper) {
+            // Desktop instance per wrapper
+            var desktopEl = wrapper.querySelector('.hero-slider-desktop');
+            if (desktopEl) {
+                var desktopSwiper = new Swiper(desktopEl, {
+                    loop: true,
+                    speed: 700,
+                    effect: 'fade',
+                    fadeEffect: { crossFade: true },
+                    autoplay: {
+                        delay: 4500,
+                        disableOnInteraction: false
+                    },
+                    pagination: {
+                        el: desktopEl.querySelector('.swiper-pagination'),
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: desktopEl.querySelector('.swiper-button-next'),
+                        prevEl: desktopEl.querySelector('.swiper-button-prev')
+                    }
                 });
-            }
-        }
 
-        // Mobile slider
-        var mobileEl = document.querySelector('.hero-slider-mobile');
-        if (mobileEl) {
-            var mobileSwiper = new Swiper(mobileEl, {
-                loop: true,
-                speed: 600,
-                autoplay: {
-                    delay: 4000,
-                    disableOnInteraction: false
-                },
-                pagination: {
-                    el: mobileEl.querySelector('.swiper-pagination'),
-                    clickable: true
+                if (window.gsap) {
+                    desktopSwiper.on('slideChangeTransitionStart', function() {
+                        var active = desktopEl.querySelector('.swiper-slide-active .slide-caption');
+                        if (!active) return;
+                        gsap.fromTo(active, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+                    });
                 }
-            });
-
-            if (window.gsap) {
-                mobileSwiper.on('slideChangeTransitionStart', function() {
-                    var active = mobileEl.querySelector('.swiper-slide-active .slide-caption');
-                    if (!active) return;
-                    gsap.fromTo(active, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.1 });
-                });
             }
-        }
+
+            // Mobile instance per wrapper
+            var mobileEl = wrapper.querySelector('.hero-slider-mobile');
+            if (mobileEl) {
+                var mobileSwiper = new Swiper(mobileEl, {
+                    loop: true,
+                    speed: 600,
+                    autoplay: {
+                        delay: 4000,
+                        disableOnInteraction: false
+                    },
+                    pagination: {
+                        el: mobileEl.querySelector('.swiper-pagination'),
+                        clickable: true
+                    }
+                });
+
+                if (window.gsap) {
+                    mobileSwiper.on('slideChangeTransitionStart', function() {
+                        var active = mobileEl.querySelector('.swiper-slide-active .slide-caption');
+                        if (!active) return;
+                        gsap.fromTo(active, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.1 });
+                    });
+                }
+            }
+        });
     }
 
     // Utility Functions
