@@ -282,46 +282,24 @@
             initProductFilters();
         }
 
-        // Mobile Filter Modal
+        // Filter Panel Toggle
         $('.filter-toggle-btn').on('click', function() {
-            $('.mobile-filter-modal').removeClass('hidden');
-            // Clone filters to mobile modal
-            var filtersClone = $('.filters-wrapper').clone();
-            $('.mobile-filter-modal .modal-body').html(filtersClone);
+            $('#filter-panel').addClass('open');
+            $('#filter-panel-overlay').removeClass('hidden').addClass('show');
+            $('body').addClass('overflow-hidden');
         });
 
-        $('.close-modal').on('click', function() {
-            $('.mobile-filter-modal').addClass('hidden');
+        $('.close-filter-panel, #filter-panel-overlay').on('click', function() {
+            $('#filter-panel').removeClass('open');
+            $('#filter-panel-overlay').removeClass('show').addClass('hidden');
+            $('body').removeClass('overflow-hidden');
         });
 
-        $('.mobile-filter-modal').on('click', function(e) {
-            if ($(e.target).is('.mobile-filter-modal')) {
-                $('.mobile-filter-modal').addClass('hidden');
-            }
-        });
-
-        // Apply filters from mobile modal
-        $(document).on('click', '.mobile-filter-modal .apply-filters', function() {
-            // Copy filter states back to main filters
-            var mobileFilters = $('.mobile-filter-modal .filters-wrapper');
-            var mainFilters = $('.shop-sidebar .filters-wrapper');
-            
-            mobileFilters.find('input[type="checkbox"], input[type="number"]').each(function() {
-                var name = $(this).attr('name') || $(this).attr('id');
-                var value = $(this).val();
-                var isChecked = $(this).is(':checked');
-                
-                var mainInput = mainFilters.find('[name="' + name + '"], #' + $(this).attr('id'));
-                if (mainInput.length) {
-                    if ($(this).is('[type="checkbox"]')) {
-                        mainInput.prop('checked', isChecked);
-                    } else {
-                        mainInput.val(value);
-                    }
-                }
-            });
-            
-            $('.mobile-filter-modal').addClass('hidden');
+        // Apply filters from panel
+        $(document).on('click', '.filter-panel .apply-filters', function() {
+            $('#filter-panel').removeClass('open');
+            $('#filter-panel-overlay').removeClass('show').addClass('hidden');
+            $('body').removeClass('overflow-hidden');
             applyFilters();
         });
 
@@ -441,8 +419,9 @@
     // Product Filter Functions
     function initProductFilters() {
         // Filter change handlers
-        $(document).on('change', '.filters-wrapper input[type="checkbox"]', function() {
-            applyFilters();
+        $(document).on('change', '.filter-panel input[type="checkbox"]', function() {
+            // Auto-apply filters on change (optional - you can remove this for manual apply only)
+            // applyFilters();
         });
 
         $(document).on('click', '.apply-price-filter', function() {
@@ -610,7 +589,7 @@
     }
 
     function clearAllFilters() {
-        $('.filters-wrapper input[type="checkbox"]').prop('checked', false);
+        $('.filter-panel input[type="checkbox"]').prop('checked', false);
         $('#min-price, #max-price').val('');
         $('.active-filters').hide();
         $('.clear-filters').hide();
