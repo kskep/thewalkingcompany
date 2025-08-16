@@ -165,13 +165,75 @@
         $('body').removeClass('loading');
         
         // Initialize any plugins that need to wait for full page load
-        initializePlugins();
+    initializePlugins();
+    initializeHeroSliders();
     });
 
     // Initialize Plugins
     function initializePlugins() {
         // Initialize any third-party plugins here
         console.log('E-Shop Theme loaded successfully!');
+    }
+
+    // Initialize Swiper sliders and GSAP animations for hero
+    function initializeHeroSliders() {
+        if (typeof Swiper === 'undefined') return;
+
+        // Desktop slider
+        var desktopEl = document.querySelector('.hero-slider-desktop');
+        if (desktopEl) {
+            var desktopSwiper = new Swiper(desktopEl, {
+                loop: true,
+                speed: 700,
+                effect: 'fade',
+                fadeEffect: { crossFade: true },
+                autoplay: {
+                    delay: 4500,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: desktopEl.querySelector('.swiper-pagination'),
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: desktopEl.querySelector('.swiper-button-next'),
+                    prevEl: desktopEl.querySelector('.swiper-button-prev')
+                }
+            });
+
+            if (window.gsap) {
+                desktopSwiper.on('slideChangeTransitionStart', function() {
+                    var active = desktopEl.querySelector('.swiper-slide-active .slide-caption');
+                    if (!active) return;
+                    gsap.fromTo(active, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+                });
+            }
+        }
+
+        // Mobile slider
+        var mobileEl = document.querySelector('.hero-slider-mobile');
+        if (mobileEl) {
+            var mobileSwiper = new Swiper(mobileEl, {
+                loop: true,
+                speed: 600,
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: mobileEl.querySelector('.swiper-pagination'),
+                    clickable: true
+                }
+            });
+
+            if (window.gsap) {
+                mobileSwiper.on('slideChangeTransitionStart', function() {
+                    var active = mobileEl.querySelector('.swiper-slide-active .slide-caption');
+                    if (!active) return;
+                    gsap.fromTo(active, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.1 });
+                });
+            }
+        }
     }
 
     // Utility Functions

@@ -52,12 +52,21 @@ function eshop_theme_scripts() {
     
     // Enqueue Feather Icons
     wp_enqueue_style('feather-icons', 'https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.css', array(), '4.29.0');
+
+    // Swiper slider CSS (modern slider)
+    wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css', array(), '10.3.1');
     
     // Enqueue Heroicons (via CDN)
     wp_enqueue_script('heroicons', 'https://cdn.jsdelivr.net/npm/heroicons@2.0.18/24/outline/index.js', array(), '2.0.18', true);
+
+    // GSAP for animations
+    wp_enqueue_script('gsap', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', array(), '3.12.5', true);
+    
+    // Swiper slider JS
+    wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js', array(), '10.3.1', true);
     
     // Enqueue custom JavaScript
-    wp_enqueue_script('eshop-theme-script', get_template_directory_uri() . '/js/theme.js', array('jquery'), '1.0.0', true);
+    wp_enqueue_script('eshop-theme-script', get_template_directory_uri() . '/js/theme.js', array('jquery', 'gsap', 'swiper'), '1.0.0', true);
     
     // Localize script for AJAX
     wp_localize_script('eshop-theme-script', 'eshop_ajax', array(

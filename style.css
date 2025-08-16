@@ -422,3 +422,30 @@ textarea:focus {
 .hover-fade:hover {
   opacity: 0.8;
 }
+
+/* Hero Slider */
+.hero-slider-wrapper {
+  position: relative;
+}
+.hero-slider-desktop img,
+.hero-slider-mobile img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.hero-slider-desktop .swiper-button-prev,
+.hero-slider-desktop .swiper-button-next {
+  color: #fff;
+}
+.hero-slider-desktop .swiper-pagination-bullet,
+.hero-slider-mobile .swiper-pagination-bullet {
+  background: rgba(255,255,255,0.7);
+  opacity: 1;
+}
+.hero-slider-desktop .swiper-pagination-bullet-active,
+.hero-slider-mobile .swiper-pagination-bullet-active {
+  background: var(--primary-pink);
+}
+.slide-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 100%);
+}

@@ -2,6 +2,11 @@
 
 <main class="main-content">
     <div class="container mx-auto px-4 py-8">
+        <?php if (is_front_page()) : ?>
+            <div class="mb-8">
+                <?php get_template_part('template-parts/hero', 'slider'); ?>
+            </div>
+        <?php endif; ?>
         
         <?php while (have_posts()) : the_post(); ?>
             
