@@ -176,7 +176,7 @@ get_header('shop'); ?>
                     
                     <?php woocommerce_product_loop_start(); ?>
                     
-                    <div class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="products-grid">
+                    <div class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="products-grid">
                         <?php
                         if (wc_get_loop_prop('is_shortcode')) {
                             $columns = absint(wc_get_loop_prop('columns'));

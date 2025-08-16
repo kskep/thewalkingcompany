@@ -1,0 +1,89 @@
+/* Header Components CSS */
+
+/* Header Dropdowns */
+.wishlist-dropdown,
+.account-dropdown,
+.minicart-dropdown {
+  animation: fadeInDown 0.2s ease-out;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.wishlist-dropdown.hidden,
+.account-dropdown.hidden,
+.minicart-dropdown.hidden {
+  animation: fadeOutUp 0.2s ease-in;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Header Action Buttons */
+.header-actions button,
+.header-actions .wishlist-toggle,
+.header-actions .account-toggle,
+.header-actions .minicart-toggle {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.header-actions button:hover,
+.header-actions .wishlist-toggle:hover,
+.header-actions .account-toggle:hover,
+.header-actions .minicart-toggle:hover {
+  background-color: rgba(238, 129, 179, 0.1);
+}
+
+/* Counter badges */
+.cart-count,
+.wishlist-count {
+  font-size: 10px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  line-height: 1;
+}
+
+/* Wishlist button states */
+.add-to-wishlist.in-wishlist i {
+  color: var(--color-primary);
+}
+
+.add-to-wishlist.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Dropdown item hover effects */
+.wishlist-item:hover,
+.minicart-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Mobile responsiveness for dropdowns */
+@media (max-width: 640px) {
+  .wishlist-dropdown,
+  .account-dropdown,
+  .minicart-dropdown {
+    width: 280px;
+    right: -20px;
+  }
+}
