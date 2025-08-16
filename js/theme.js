@@ -276,6 +276,87 @@
                 EShopTheme.showNotification('Product removed from cart!', 'success');
             });
         });
+
+        // Product Archive Filters
+        if ($('.shop-layout').length) {
+            initProductFilters();
+        }
+
+        // Mobile Filter Modal
+        $('.filter-toggle-btn').on('click', function() {
+            $('.mobile-filter-modal').removeClass('hidden');
+            // Clone filters to mobile modal
+            var filtersClone = $('.filters-wrapper').clone();
+            $('.mobile-filter-modal .modal-body').html(filtersClone);
+        });
+
+        $('.close-modal').on('click', function() {
+            $('.mobile-filter-modal').addClass('hidden');
+        });
+
+        $('.mobile-filter-modal').on('click', function(e) {
+            if ($(e.target).is('.mobile-filter-modal')) {
+                $('.mobile-filter-modal').addClass('hidden');
+            }
+        });
+
+        // Apply filters from mobile modal
+        $(document).on('click', '.mobile-filter-modal .apply-filters', function() {
+            // Copy filter states back to main filters
+            var mobileFilters = $('.mobile-filter-modal .filters-wrapper');
+            var mainFilters = $('.shop-sidebar .filters-wrapper');
+            
+            mobileFilters.find('input[type="checkbox"], input[type="number"]').each(function() {
+                var name = $(this).attr('name') || $(this).attr('id');
+                var value = $(this).val();
+                var isChecked = $(this).is(':checked');
+                
+                var mainInput = mainFilters.find('[name="' + name + '"], #' + $(this).attr('id'));
+                if (mainInput.length) {
+                    if ($(this).is('[type="checkbox"]')) {
+                        mainInput.prop('checked', isChecked);
+                    } else {
+                        mainInput.val(value);
+                    }
+                }
+            });
+            
+            $('.mobile-filter-modal').addClass('hidden');
+            applyFilters();
+        });
+
+        // Quick add to cart
+        $(document).on('click', '.add-to-cart-simple', function(e) {
+            e.preventDefault();
+            var $button = $(this);
+            var productId = $button.data('product-id');
+            
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'quick_add_to_cart',
+                    product_id: productId,
+                    quantity: 1,
+                    nonce: eshop_ajax.nonce
+                },
+                beforeSend: function() {
+                    $button.addClass('loading').text('Adding...');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        EShopTheme.showNotification(response.data.message, 'success');
+                        // Update cart fragments
+                        $(document.body).trigger('wc_fragment_refresh');
+                    } else {
+                        EShopTheme.showNotification(response.data.message, 'error');
+                    }
+                },
+                complete: function() {
+                    $button.removeClass('loading').text('Add to Cart');
+                }
+            });
+        });
     });
 
     // Window Load
@@ -355,6 +436,210 @@
                 }
             }
         });
+    }
+
+    // Product Filter Functions
+    function initProductFilters() {
+        // Filter change handlers
+        $(document).on('change', '.filters-wrapper input[type="checkbox"]', function() {
+            applyFilters();
+        });
+
+        $(document).on('click', '.apply-price-filter', function() {
+            applyFilters();
+        });
+
+        $(document).on('change', '.woocommerce-ordering select', function() {
+            applyFilters();
+        });
+
+        // Clear filters
+        $(document).on('click', '.clear-filters', function() {
+            clearAllFilters();
+        });
+
+        // Pagination
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var page = getParameterByName('paged', url) || 1;
+            applyFilters(page);
+        });
+    }
+
+    function applyFilters(page = 1) {
+        var filters = collectFilters();
+        var orderby = $('.woocommerce-ordering select').val() || 'menu_order';
+        
+        // Show loading
+        $('.products-wrapper').addClass('relative');
+        $('.products-loading').removeClass('hidden');
+        
+        $.ajax({
+            url: eshop_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'filter_products',
+                filters: filters,
+                paged: page,
+                orderby: orderby,
+                nonce: eshop_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('.products-wrapper').html(response.data.products);
+                    $('.woocommerce-result-count').html(response.data.result_count);
+                    
+                    // Update active filters display
+                    updateActiveFilters(filters);
+                    
+                    // Scroll to products
+                    $('html, body').animate({
+                        scrollTop: $('.shop-toolbar').offset().top - 100
+                    }, 300);
+                }
+            },
+            complete: function() {
+                $('.products-loading').addClass('hidden');
+                $('.products-wrapper').removeClass('relative');
+            }
+        });
+    }
+
+    function collectFilters() {
+        var filters = {};
+        
+        // Price filters
+        var minPrice = $('#min-price').val();
+        var maxPrice = $('#max-price').val();
+        if (minPrice) filters.min_price = minPrice;
+        if (maxPrice) filters.max_price = maxPrice;
+        
+        // Category filters
+        var categories = [];
+        $('input[name="product_cat[]"]:checked').each(function() {
+            categories.push($(this).val());
+        });
+        if (categories.length) filters.product_cat = categories;
+        
+        // Attribute filters
+        $('.attribute-filter').each(function() {
+            var attribute = $(this).data('attribute');
+            var taxonomy = 'pa_' + attribute;
+            var values = [];
+            
+            $(this).find('input:checked').each(function() {
+                values.push($(this).val());
+            });
+            
+            if (values.length) {
+                filters[taxonomy] = values;
+            }
+        });
+        
+        // Stock status
+        var stockStatus = [];
+        $('input[name="stock_status[]"]:checked').each(function() {
+            stockStatus.push($(this).val());
+        });
+        if (stockStatus.length) filters.stock_status = stockStatus;
+        
+        // On sale
+        if ($('input[name="on_sale"]:checked').length) {
+            filters.on_sale = 1;
+        }
+        
+        return filters;
+    }
+
+    function updateActiveFilters(filters) {
+        var $activeFilters = $('.active-filters');
+        var $activeFiltersList = $('.active-filters-list');
+        var $clearButton = $('.clear-filters');
+        
+        $activeFiltersList.empty();
+        
+        var hasFilters = false;
+        
+        // Price filter
+        if (filters.min_price || filters.max_price) {
+            hasFilters = true;
+            var priceText = 'Price: ';
+            if (filters.min_price && filters.max_price) {
+                priceText += '$' + filters.min_price + ' - $' + filters.max_price;
+            } else if (filters.min_price) {
+                priceText += 'From $' + filters.min_price;
+            } else {
+                priceText += 'Up to $' + filters.max_price;
+            }
+            
+            $activeFiltersList.append(
+                '<div class="active-filter flex items-center justify-between bg-gray-100 px-3 py-1 text-sm">' +
+                '<span>' + priceText + '</span>' +
+                '<button class="remove-filter ml-2 text-gray-400 hover:text-red-500" data-filter="price">' +
+                '<i class="fas fa-times text-xs"></i>' +
+                '</button>' +
+                '</div>'
+            );
+        }
+        
+        // Category filters
+        if (filters.product_cat) {
+            hasFilters = true;
+            filters.product_cat.forEach(function(cat) {
+                var catName = $('input[value="' + cat + '"]').siblings('span').first().text();
+                $activeFiltersList.append(
+                    '<div class="active-filter flex items-center justify-between bg-gray-100 px-3 py-1 text-sm">' +
+                    '<span>' + catName + '</span>' +
+                    '<button class="remove-filter ml-2 text-gray-400 hover:text-red-500" data-filter="product_cat" data-value="' + cat + '">' +
+                    '<i class="fas fa-times text-xs"></i>' +
+                    '</button>' +
+                    '</div>'
+                );
+            });
+        }
+        
+        // Show/hide active filters section
+        if (hasFilters) {
+            $activeFilters.show();
+            $clearButton.show();
+        } else {
+            $activeFilters.hide();
+            $clearButton.hide();
+        }
+    }
+
+    function clearAllFilters() {
+        $('.filters-wrapper input[type="checkbox"]').prop('checked', false);
+        $('#min-price, #max-price').val('');
+        $('.active-filters').hide();
+        $('.clear-filters').hide();
+        applyFilters();
+    }
+
+    // Remove individual filter
+    $(document).on('click', '.remove-filter', function() {
+        var filterType = $(this).data('filter');
+        var filterValue = $(this).data('value');
+        
+        if (filterType === 'price') {
+            $('#min-price, #max-price').val('');
+        } else if (filterType === 'product_cat') {
+            $('input[name="product_cat[]"][value="' + filterValue + '"]').prop('checked', false);
+        }
+        
+        applyFilters();
+    });
+
+    // Helper function to get URL parameter
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+        var results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
     // Utility Functions

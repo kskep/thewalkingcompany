@@ -418,3 +418,216 @@ function eshop_add_wishlist_to_single() {
     echo '</button>';
     echo '</div>';
 }
+
+/**
+ * Product Archive & Filter Functions
+ */
+
+// AJAX Product Filter Handler
+function eshop_filter_products() {
+    check_ajax_referer('eshop_nonce', 'nonce');
+    
+    $filters = $_POST['filters'];
+    $paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
+    $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'menu_order';
+    
+    // Build query args
+    $args = array(
+        'post_type' => 'product',
+        'post_status' => 'publish',
+        'posts_per_page' => wc_get_default_products_per_row() * wc_get_default_product_rows_per_page(),
+        'paged' => $paged,
+        'orderby' => $orderby,
+        'meta_query' => array(),
+        'tax_query' => array('relation' => 'AND')
+    );
+    
+    // Price filter
+    if (!empty($filters['min_price']) || !empty($filters['max_price'])) {
+        $price_meta_query = array(
+            'key' => '_price',
+            'type' => 'NUMERIC',
+            'compare' => 'BETWEEN'
+        );
+        
+        $min_price = !empty($filters['min_price']) ? floatval($filters['min_price']) : 0;
+        $max_price = !empty($filters['max_price']) ? floatval($filters['max_price']) : PHP_INT_MAX;
+        
+        $price_meta_query['value'] = array($min_price, $max_price);
+        $args['meta_query'][] = $price_meta_query;
+    }
+    
+    // Category filter
+    if (!empty($filters['product_cat'])) {
+        $args['tax_query'][] = array(
+            'taxonomy' => 'product_cat',
+            'field' => 'slug',
+            'terms' => $filters['product_cat'],
+            'operator' => 'IN'
+        );
+    }
+    
+    // Attribute filters
+    $attribute_taxonomies = wc_get_attribute_taxonomies();
+    foreach ($attribute_taxonomies as $attribute) {
+        $taxonomy = wc_attribute_taxonomy_name($attribute->attribute_name);
+        if (!empty($filters[$taxonomy])) {
+            $args['tax_query'][] = array(
+                'taxonomy' => $taxonomy,
+                'field' => 'slug',
+                'terms' => $filters[$taxonomy],
+                'operator' => 'IN'
+            );
+        }
+    }
+    
+    // Stock status filter
+    if (!empty($filters['stock_status'])) {
+        $args['meta_query'][] = array(
+            'key' => '_stock_status',
+            'value' => $filters['stock_status'],
+            'compare' => 'IN'
+        );
+    }
+    
+    // On sale filter
+    if (!empty($filters['on_sale'])) {
+        $args['meta_query'][] = array(
+            'key' => '_sale_price',
+            'value' => '',
+            'compare' => '!='
+        );
+    }
+    
+    // Execute query
+    $query = new WP_Query($args);
+    
+    ob_start();
+    
+    if ($query->have_posts()) {
+        echo '<div class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">';
+        
+        while ($query->have_posts()) {
+            $query->the_post();
+            wc_get_template_part('content', 'product');
+        }
+        
+        echo '</div>';
+        
+        // Pagination
+        if ($query->max_num_pages > 1) {
+            echo '<div class="pagination-wrapper mt-8">';
+            echo paginate_links(array(
+                'total' => $query->max_num_pages,
+                'current' => $paged,
+                'format' => '?paged=%#%',
+                'show_all' => false,
+                'end_size' => 1,
+                'mid_size' => 2,
+                'prev_next' => true,
+                'prev_text' => '<i class="fas fa-chevron-left"></i>',
+                'next_text' => '<i class="fas fa-chevron-right"></i>',
+                'type' => 'list',
+                'class' => 'pagination'
+            ));
+            echo '</div>';
+        }
+    } else {
+        echo '<div class="no-products-found text-center py-12">';
+        echo '<div class="mb-6"><i class="fas fa-search text-6xl text-gray-300"></i></div>';
+        echo '<h3 class="text-2xl font-semibold text-dark mb-4">' . __('No products found', 'eshop-theme') . '</h3>';
+        echo '<p class="text-gray-600 mb-6">' . __('Try adjusting your filters or search terms', 'eshop-theme') . '</p>';
+        echo '</div>';
+    }
+    
+    $products_html = ob_get_clean();
+    
+    // Get result count
+    $result_count = sprintf(
+        _n('Showing %d result', 'Showing %d results', $query->found_posts, 'eshop-theme'),
+        $query->found_posts
+    );
+    
+    wp_reset_postdata();
+    
+    wp_send_json_success(array(
+        'products' => $products_html,
+        'result_count' => $result_count,
+        'found_posts' => $query->found_posts,
+        'max_pages' => $query->max_num_pages
+    ));
+}
+add_action('wp_ajax_filter_products', 'eshop_filter_products');
+add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
+
+// Quick Add to Cart AJAX
+function eshop_quick_add_to_cart() {
+    check_ajax_referer('eshop_nonce', 'nonce');
+    
+    $product_id = intval($_POST['product_id']);
+    $quantity = intval($_POST['quantity']) ?: 1;
+    
+    $result = WC()->cart->add_to_cart($product_id, $quantity);
+    
+    if ($result) {
+        wp_send_json_success(array(
+            'message' => __('Product added to cart!', 'eshop-theme'),
+            'cart_count' => WC()->cart->get_cart_contents_count(),
+            'cart_total' => WC()->cart->get_cart_total()
+        ));
+    } else {
+        wp_send_json_error(array(
+            'message' => __('Failed to add product to cart.', 'eshop-theme')
+        ));
+    }
+}
+add_action('wp_ajax_quick_add_to_cart', 'eshop_quick_add_to_cart');
+add_action('wp_ajax_nopriv_quick_add_to_cart', 'eshop_quick_add_to_cart');
+
+// Customize WooCommerce ordering options
+function eshop_custom_woocommerce_catalog_orderby($orderby_options) {
+    $orderby_options = array(
+        'menu_order' => __('Default sorting', 'eshop-theme'),
+        'popularity' => __('Sort by popularity', 'eshop-theme'),
+        'rating' => __('Sort by average rating', 'eshop-theme'),
+        'date' => __('Sort by latest', 'eshop-theme'),
+        'price' => __('Sort by price: low to high', 'eshop-theme'),
+        'price-desc' => __('Sort by price: high to low', 'eshop-theme')
+    );
+    return $orderby_options;
+}
+add_filter('woocommerce_default_catalog_orderby_options', 'eshop_custom_woocommerce_catalog_orderby');
+add_filter('woocommerce_catalog_orderby', 'eshop_custom_woocommerce_catalog_orderby');
+
+// Remove default WooCommerce styles for custom styling
+function eshop_dequeue_woocommerce_styles($enqueue_styles) {
+    unset($enqueue_styles['woocommerce-general']);
+    unset($enqueue_styles['woocommerce-layout']);
+    unset($enqueue_styles['woocommerce-smallscreen']);
+    return $enqueue_styles;
+}
+add_filter('woocommerce_enqueue_styles', 'eshop_dequeue_woocommerce_styles');
+
+// Custom product loop add to cart button
+function eshop_custom_loop_add_to_cart() {
+    global $product;
+    
+    if (!$product->is_purchasable() || !$product->is_in_stock()) {
+        return;
+    }
+    
+    $button_text = $product->is_type('simple') ? __('Add to Cart', 'eshop-theme') : __('Select Options', 'eshop-theme');
+    $button_class = $product->is_type('simple') ? 'add-to-cart-simple' : 'select-options';
+    
+    echo sprintf(
+        '<a href="%s" class="button %s w-full bg-primary text-white py-2 px-4 text-sm font-medium hover:bg-primary-dark transition-colors text-center" data-product-id="%s">%s</a>',
+        $product->is_type('simple') ? '#' : get_permalink(),
+        $button_class,
+        $product->get_id(),
+        $button_text
+    );
+}
+
+// Replace default add to cart button
+remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
+add_action('woocommerce_after_shop_loop_item', 'eshop_custom_loop_add_to_cart', 10);
