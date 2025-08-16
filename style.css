@@ -1,7 +1,7 @@
 /*
-Theme Name: E-Shop Theme
+Theme Name: Fashion Magazine Theme
 Author: Konstantinos Skepasianos
-Description: A modern e-commerce WordPress theme with Tailwind CSS, Roboto font, and comprehensive icon support.
+Description: A minimal, magazine-style e-commerce WordPress theme for women's fashion with clean aesthetics and editorial design.
 Version: 1.0
 */
 
@@ -11,21 +11,31 @@ Version: 1.0
 /* Import Tailwind CSS */
 @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 
-/* Custom CSS Variables for Theme Colors */
+/* Custom CSS Variables for Magazine-Style Fashion Theme */
 :root {
   --primary-pink: #EE81B3;
   --primary-pink-light: #F2A1C7;
   --primary-pink-dark: #E55A9F;
   --dark-gray: #2D3748;
   --darker-gray: #1A202C;
-  --light-gray: #F7FAFC;
+  --light-gray: #F9FAFB;
+  --lighter-gray: #F3F4F6;
   --white: #FFFFFF;
-  --accent-blue: #4299E1;
-  --accent-green: #48BB78;
-  --accent-orange: #ED8936;
-  --border-radius: 0.25rem; /* Squared styling - minimal radius */
-  --border-radius-sm: 0.125rem; /* Very minimal radius for small elements */
-  --border-radius-none: 0; /* No radius for completely square elements */
+  --off-white: #FEFEFE;
+  --text-light: #6B7280;
+  --text-lighter: #9CA3AF;
+  --border-light: #E5E7EB;
+  --border-lighter: #F3F4F6;
+  
+  /* Magazine-style spacing and typography */
+  --letter-spacing-wide: 0.05em;
+  --letter-spacing-wider: 0.1em;
+  --line-height-relaxed: 1.7;
+  --line-height-loose: 1.8;
+  
+  /* Minimal border radius for squared look */
+  --border-radius: 0.125rem;
+  --border-radius-none: 0;
 }
 
 /* Base Styles */
@@ -35,11 +45,13 @@ Version: 1.0
 
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: var(--white);
+  background-color: var(--off-white);
   color: var(--dark-gray);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
   margin: 0;
   padding: 0;
+  font-weight: 300;
+  letter-spacing: 0.01em;
 }
 
 /* Custom Tailwind-like utilities for our theme colors */
@@ -58,47 +70,64 @@ body {
 .border-primary { border-color: var(--primary-pink); }
 .border-dark { border-color: var(--dark-gray); }
 
-/* Button Styles - Squared Design */
+/* Magazine-Style Button Design */
 .btn-primary {
   background-color: var(--primary-pink);
   color: var(--white);
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 2rem;
   border: none;
-  border-radius: var(--border-radius-sm);
-  font-weight: 500;
+  border-radius: var(--border-radius-none);
+  font-weight: 400;
+  font-size: 0.875rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
   background-color: var(--primary-pink-dark);
-  transform: translateY(-1px);
+  letter-spacing: var(--letter-spacing-wider);
 }
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--primary-pink);
-  padding: 0.75rem 1.5rem;
-  border: 2px solid var(--primary-pink);
-  border-radius: var(--border-radius-sm);
-  font-weight: 500;
+  color: var(--dark-gray);
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-none);
+  font-weight: 400;
+  font-size: 0.875rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
-  background-color: var(--primary-pink);
-  color: var(--white);
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+  letter-spacing: var(--letter-spacing-wider);
 }
 
-/* Square button variant */
-.btn-square {
-  border-radius: var(--border-radius-none);
+/* Minimal text button for editorial style */
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--primary-pink);
+  font-weight: 400;
+  font-size: 0.875rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Minimal rounded button variant */
-.btn-minimal {
-  border-radius: var(--border-radius);
+.btn-text:hover {
+  color: var(--primary-pink-dark);
+  text-decoration-thickness: 2px;
 }
 
 /* Icon Styles */
@@ -113,50 +142,129 @@ body {
 .icon-lg { width: 1.5rem; height: 1.5rem; }
 .icon-xl { width: 2rem; height: 2rem; }
 
-/* E-commerce specific styles - Squared Design */
+/* Magazine-Style Product & Content Cards */
 .product-card {
   background: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  border-radius: var(--border-radius-none);
+  border: 1px solid var(--border-lighter);
+  transition: all 0.4s ease;
+  overflow: hidden;
 }
 
 .product-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  border-color: var(--border-light);
 }
 
 .post-card {
   background: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  border-radius: var(--border-radius-none);
+  border: 1px solid var(--border-lighter);
+  transition: all 0.4s ease;
+  overflow: hidden;
 }
 
 .post-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  border-color: var(--border-light);
 }
 
+/* Editorial-style image containers */
+.product-image,
+.post-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-image img,
+.post-image img {
+  transition: transform 0.6s ease;
+}
+
+.product-card:hover .product-image img,
+.post-card:hover .post-image img {
+  transform: scale(1.02);
+}
+
+/* Magazine-style content spacing */
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-content-minimal {
+  padding: 1rem 0;
+}
+
+/* Magazine-Style Pricing */
 .price {
-  color: var(--primary-pink);
-  font-weight: 700;
-  font-size: 1.25rem;
+  color: var(--dark-gray);
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .price-old {
-  color: var(--dark-gray);
+  color: var(--text-light);
   text-decoration: line-through;
-  font-size: 1rem;
+  font-size: 0.875rem;
+  font-weight: 300;
 }
 
-/* Header Styles */
+.price-sale {
+  color: var(--primary-pink);
+  font-weight: 500;
+}
+
+/* Editorial typography styles */
+.heading-editorial {
+  font-weight: 300;
+  letter-spacing: var(--letter-spacing-wide);
+  line-height: 1.2;
+}
+
+.text-editorial {
+  font-weight: 300;
+  line-height: var(--line-height-loose);
+  color: var(--text-light);
+}
+
+.text-caption {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--text-lighter);
+}
+
+/* Magazine-Style Header */
 .site-header {
   background-color: var(--white);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border-lighter);
   position: sticky;
   top: 0;
   z-index: 50;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Clean navigation styling */
+.main-navigation a {
+  font-weight: 400;
+  font-size: 0.875rem;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--dark-gray);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.main-navigation a:hover {
+  color: var(--primary-pink);
+}
+
+/* Minimal logo styling */
+.site-title {
+  font-weight: 300;
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
 }
 
 /* Footer Styles */
@@ -172,4 +280,145 @@ body {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}
+/*
+ Magazine-Style Widget Areas */
+.widget {
+  background: var(--white);
+  border: 1px solid var(--border-lighter);
+  border-radius: var(--border-radius-none);
+  margin-bottom: 2rem;
+}
+
+.widget-title {
+  font-weight: 400;
+  font-size: 0.875rem;
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--dark-gray);
+  border-bottom: 1px solid var(--border-lighter);
+  padding: 1rem 1.5rem;
+  margin: 0;
+}
+
+.widget-content {
+  padding: 1.5rem;
+}
+
+/* Editorial-style forms */
+.search-field,
+input[type="text"],
+input[type="email"],
+input[type="search"],
+textarea {
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-none);
+  padding: 0.75rem 1rem;
+  font-weight: 300;
+  font-size: 0.875rem;
+  background-color: var(--white);
+  transition: border-color 0.3s ease;
+}
+
+.search-field:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-pink);
+}
+
+/* Magazine-style pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 3rem 0;
+}
+
+.pagination a,
+.pagination span {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-light);
+  color: var(--dark-gray);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+}
+
+.pagination .current {
+  background-color: var(--primary-pink);
+  color: var(--white);
+  border-color: var(--primary-pink);
+}
+
+/* Clean, minimal spacing utilities */
+.section-spacing {
+  padding: 4rem 0;
+}
+
+.section-spacing-sm {
+  padding: 2rem 0;
+}
+
+.content-spacing {
+  margin-bottom: 2rem;
+}
+
+.content-spacing-sm {
+  margin-bottom: 1rem;
+}
+
+/* Magazine-style dividers */
+.divider {
+  height: 1px;
+  background-color: var(--border-lighter);
+  margin: 2rem 0;
+}
+
+.divider-thick {
+  height: 2px;
+  background-color: var(--border-light);
+  margin: 3rem 0;
+}
+
+/* Editorial image styles */
+.image-editorial {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.image-caption {
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: var(--text-lighter);
+  font-style: italic;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Minimal hover effects for fashion focus */
+.hover-lift {
+  transition: transform 0.4s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.hover-fade {
+  transition: opacity 0.4s ease;
+}
+
+.hover-fade:hover {
+  opacity: 0.8;
 }
