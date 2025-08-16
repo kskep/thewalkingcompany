@@ -1,0 +1,70 @@
+/* Theme Admin: ACF usability improvements (scoped to wp-admin) */
+/* Safe, non-destructive tweaks to make fields easier to manage. */
+
+/* Scope everything to wp-admin to avoid front-end impact */
+body.wp-admin .acf-postbox .acf-fields { --acf-gap: 14px; }
+
+/* Labels: clearer hierarchy */
+body.wp-admin .acf-field .acf-label label { font-weight: 600; letter-spacing: .2px; }
+body.wp-admin .acf-field.-required .acf-label label::after { content: ' *'; color: #d63638; font-weight: 700; }
+body.wp-admin .acf-field .description { color: #666; font-size: 12px; margin-top: 4px; }
+
+/* Spacing and card-like feel */
+body.wp-admin .acf-fields > .acf-field { padding: 12px 14px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: var(--acf-gap); }
+body.wp-admin .acf-fields > .acf-field:hover { border-color: #d1d5db; }
+
+/* Optional two-column layout: add class "acf-2col" to Field Group (Wrapper Class) */
+body.wp-admin .acf-postbox .acf-fields.acf-2col { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--acf-gap); }
+body.wp-admin .acf-postbox .acf-fields.acf-2col > .acf-field { grid-column: span 6; margin: 0; }
+/* To make full-width fields, add Wrapper Class "span-12" on that field */
+body.wp-admin .acf-postbox .acf-fields.acf-2col > .acf-field.span-12 { grid-column: span 12; }
+
+/* Repeater: clearer rows, sticky header, better handles */
+body.wp-admin .acf-repeater { --repeater-radius: 8px; --repeater-border: #e5e7eb; }
+body.wp-admin .acf-repeater table.acf-table { border: 1px solid var(--repeater-border); border-radius: var(--repeater-radius); overflow: hidden; }
+body.wp-admin .acf-repeater .acf-row { background: #fff; }
+body.wp-admin .acf-repeater .acf-row:nth-child(odd) { background: #fafafa; }
+body.wp-admin .acf-repeater .acf-th { position: sticky; top: 0; background: #f8fafc; z-index: 2; box-shadow: inset 0 -1px 0 #e5e7eb; }
+body.wp-admin .acf-repeater .acf-actions { position: sticky; bottom: 0; background: #f8fafc; z-index: 2; box-shadow: 0 -1px 0 #e5e7eb; }
+
+/* Repeater row controls */
+body.wp-admin .acf-repeater .acf-row-handle.order { color: #6b7280; }
+body.wp-admin .acf-repeater .acf-row:hover .acf-row-handle.order { color: #111827; }
+body.wp-admin .acf-repeater .acf-row .acf-row-handle .acf-icon { width: 22px; height: 22px; }
+
+/* Image field: larger preview, nicer grid background */
+body.wp-admin .acf-field-image .image-wrap { background: repeating-conic-gradient(#f3f4f6 0% 25%, transparent 0% 50%) 0 / 16px 16px; border: 1px dashed #d1d5db; border-radius: 6px; }
+body.wp-admin .acf-field-image .image-wrap img { max-height: 140px; object-fit: contain; }
+body.wp-admin .acf-field-image .acf-actions .button { border-radius: 4px; }
+
+/* Gallery field: slightly larger thumbs */
+body.wp-admin .acf-field-gallery .acf-gallery-attachments { grid-gap: 8px; }
+body.wp-admin .acf-field-gallery .acf-gallery-attachment { width: 120px; height: 120px; }
+
+/* Tabs: compact, pill-like */
+body.wp-admin .acf-tab-group { gap: 4px; }
+body.wp-admin .acf-tab-group li a { border-radius: 999px; padding: 4px 10px; }
+
+/* Better focus states */
+body.wp-admin .acf-input input[type="text"],
+body.wp-admin .acf-input input[type="number"],
+body.wp-admin .acf-input input[type="url"],
+body.wp-admin .acf-input input[type="email"],
+body.wp-admin .acf-input textarea,
+body.wp-admin .acf-input select {
+  border-color: #d1d5db;
+  box-shadow: none;
+}
+body.wp-admin .acf-input input:focus,
+body.wp-admin .acf-input textarea:focus,
+body.wp-admin .acf-input select:focus {
+  outline: none !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 1px #2563eb !important;
+}
+
+/* Condensed instructions inline */
+body.wp-admin .acf-field .acf-label .description { display: block; font-style: normal; }
+
+/* Make ACF notice messages subtle */
+body.wp-admin .acf-notice.-message { border-left: 4px solid #2563eb; }

@@ -46,6 +46,12 @@ add_action('after_setup_theme', 'eshop_theme_setup');
 function eshop_theme_scripts() {
     // Enqueue main stylesheet
     wp_enqueue_style('eshop-theme-style', get_stylesheet_uri(), array(), '1.0.0');
+    // Modular CSS
+    wp_enqueue_style('eshop-base', get_template_directory_uri() . '/css/base.css', array('eshop-theme-style'), '1.0.0');
+    wp_enqueue_style('eshop-component-hero', get_template_directory_uri() . '/css/components.hero-slider.css', array('eshop-theme-style'), '1.0.0');
+    if (is_front_page()) {
+        wp_enqueue_style('eshop-page-front', get_template_directory_uri() . '/css/pages.front.css', array('eshop-theme-style'), '1.0.0');
+    }
     
     // Enqueue Font Awesome for icons
     wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
@@ -75,6 +81,15 @@ function eshop_theme_scripts() {
     ));
 }
 add_action('wp_enqueue_scripts', 'eshop_theme_scripts');
+
+/**
+ * Admin (wp-admin) styles for ACF usability
+ */
+function eshop_admin_styles($hook_suffix) {
+    // Load on all admin screens; adjust if needed to specific post types
+    wp_enqueue_style('eshop-admin-acf', get_template_directory_uri() . '/css/admin.acf.css', array(), '1.0.0');
+}
+add_action('admin_enqueue_scripts', 'eshop_admin_styles');
 
 /**
  * Add custom colors to Gutenberg

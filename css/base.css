@@ -1,0 +1,13 @@
+/* Base utilities & variables specific to theme overrides beyond global style.css */
+
+/* Full-bleed utility */
+.full-bleed {
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
+  max-width: 100vw;
+}
+
+/* Visibility helpers in case Tailwind isn't available */
+.hidden { display: none !important; }
+.visible { display: block !important; }
