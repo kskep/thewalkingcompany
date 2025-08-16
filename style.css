@@ -439,6 +439,11 @@ textarea:focus {
   height: auto;
   display: block;
 }
+.js-hero-slider .hero-slider-desktop { display: none; }
+@media (min-width: 768px) {
+  .js-hero-slider .hero-slider-desktop { display: block; }
+  .js-hero-slider .hero-slider-mobile { display: none; }
+}
 .hero-slider-desktop .swiper-button-prev,
 .hero-slider-desktop .swiper-button-next {
   color: #fff;
