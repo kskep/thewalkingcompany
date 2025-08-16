@@ -26,6 +26,7 @@ if (!function_exists('have_rows') || !function_exists('get_sub_field')) {
 
 // Extract args with defaults
 $args = isset($args) && is_array($args) ? $args : array();
+$post_id          = $args['post_id'] ?? get_the_ID();
 $desktop_repeater = $args['desktop_repeater'] ?? 'desktop_slider';
 $desktop_field    = $args['desktop_field'] ?? 'desktop_image';
 $mobile_repeater  = $args['mobile_repeater'] ?? 'mobile_slider';
@@ -34,10 +35,10 @@ $show_nav         = isset($args['show_nav']) ? (bool) $args['show_nav'] : true;
 $wrapper_classes  = isset($args['wrapper_classes']) ? trim($args['wrapper_classes']) : '';
 
 if (!function_exists('eshop_component_get_slider_images')) {
-    function eshop_component_get_slider_images($repeater_name, $image_field) {
+    function eshop_component_get_slider_images($repeater_name, $image_field, $post_id = null) {
         $slides = array();
-        if (have_rows($repeater_name)) {
-            while (have_rows($repeater_name)) { the_row();
+        if (have_rows($repeater_name, $post_id)) {
+            while (have_rows($repeater_name, $post_id)) { the_row();
                 $img = get_sub_field($image_field);
                 if ($img && !empty($img['url'])) {
                     $slides[] = array(
@@ -54,13 +55,13 @@ if (!function_exists('eshop_component_get_slider_images')) {
     }
 }
 
-$desktop_slides = eshop_component_get_slider_images($desktop_repeater, $desktop_field);
-$mobile_slides  = eshop_component_get_slider_images($mobile_repeater, $mobile_field);
+$desktop_slides = eshop_component_get_slider_images($desktop_repeater, $desktop_field, $post_id);
+$mobile_slides  = eshop_component_get_slider_images($mobile_repeater, $mobile_field, $post_id);
 
 // If no separate mobile repeater, try mobile_image subfield within desktop_repeater
-if (empty($mobile_slides) && have_rows($desktop_repeater)) {
+if (empty($mobile_slides) && have_rows($desktop_repeater, $post_id)) {
     $tmp = array();
-    while (have_rows($desktop_repeater)) { the_row();
+    while (have_rows($desktop_repeater, $post_id)) { the_row();
         $mimg = get_sub_field($mobile_field);
         if ($mimg && !empty($mimg['url'])) {
             $tmp[] = array(
@@ -87,7 +88,7 @@ if (empty($desktop_slides) && empty($mobile_slides)) {
 
 <section class="hero-slider-wrapper js-hero-slider <?php echo esc_attr($wrapper_classes); ?>">
     <?php if (!empty($desktop_slides)) : ?>
-        <div class="hero-slider-desktop swiper hidden md:block">
+        <div class="hero-slider-desktop swiper">
             <div class="swiper-wrapper">
                 <?php foreach ($desktop_slides as $slide) : ?>
                     <div class="swiper-slide">
@@ -109,7 +110,7 @@ if (empty($desktop_slides) && empty($mobile_slides)) {
     <?php endif; ?>
 
     <?php if (!empty($mobile_slides)) : ?>
-        <div class="hero-slider-mobile swiper md:hidden">
+        <div class="hero-slider-mobile swiper">
             <div class="swiper-wrapper">
                 <?php foreach ($mobile_slides as $slide) : ?>
                     <div class="swiper-slide">

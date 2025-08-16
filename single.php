@@ -5,7 +5,7 @@
         
         <?php while (have_posts()) : the_post(); ?>
             
-            <article id="post-<?php the_ID(); ?>" <?php post_class('single-post max-w-4xl mx-auto'); ?>>
+            
                 
                 <!-- Post Header -->
                 <header class="post-header mb-8 text-center">
@@ -140,7 +140,7 @@
                     </div>
                     
                 </footer>
-            </article>
+            
             
             <!-- Comments -->
             <?php if (comments_open() || get_comments_number()) : ?>
