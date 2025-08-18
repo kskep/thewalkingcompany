@@ -31,6 +31,11 @@ function eshop_theme_setup() {
     add_theme_support('wc-product-gallery-zoom');
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
+
+    // Add custom image sizes for better quality
+    add_image_size('product-thumbnail-hq', 400, 400, true); // High quality product thumbnails
+    add_image_size('product-medium-hq', 600, 600, true);    // Medium high quality
+    add_image_size('product-large-hq', 800, 800, true);     // Large high quality
     
     // Register navigation menus
     register_nav_menus(array(

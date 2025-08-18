@@ -8,7 +8,7 @@
 get_header(); ?>
 
 <main class="main-content woocommerce-page">
-    <div class="container mx-auto px-4 py-8">
+    <div class="mx-auto px-16 py-8">
         
         <!-- Breadcrumbs -->
         <?php if (function_exists('woocommerce_breadcrumb')) : ?>

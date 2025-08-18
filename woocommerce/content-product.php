@@ -30,9 +30,10 @@ if (empty($product) || !$product->is_visible()) {
                     <?php if ($main_image_id) : ?>
                         <div class="swiper-slide">
                             <a href="<?php the_permalink(); ?>" class="block aspect-square">
-                                <?php echo wp_get_attachment_image($main_image_id, 'woocommerce_thumbnail', false, array(
+                                <?php echo wp_get_attachment_image($main_image_id, 'product-thumbnail-hq', false, array(
                                     'class' => 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105',
-                                    'alt' => $product->get_name()
+                                    'alt' => $product->get_name(),
+                                    'loading' => 'lazy'
                                 )); ?>
                             </a>
                         </div>
@@ -40,9 +41,10 @@ if (empty($product) || !$product->is_visible()) {
                     <?php if (!empty($gallery_ids)) : foreach ($gallery_ids as $gid) : ?>
                         <div class="swiper-slide">
                             <a href="<?php the_permalink(); ?>" class="block aspect-square">
-                                <?php echo wp_get_attachment_image($gid, 'woocommerce_thumbnail', false, array(
+                                <?php echo wp_get_attachment_image($gid, 'product-thumbnail-hq', false, array(
                                     'class' => 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105',
-                                    'alt' => $product->get_name()
+                                    'alt' => $product->get_name(),
+                                    'loading' => 'lazy'
                                 )); ?>
                             </a>
                         </div>

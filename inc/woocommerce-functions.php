@@ -79,6 +79,258 @@ function eshop_cart_fragment($fragments) {
 add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
 
 /**
+ * Override WooCommerce product loop structure
+ */
+
+// Remove default WooCommerce product loop start/end
+remove_action('woocommerce_output_content_wrapper', 'woocommerce_output_content_wrapper', 10);
+remove_action('woocommerce_output_content_wrapper_end', 'woocommerce_output_content_wrapper_end', 10);
+
+// Override product loop start to remove default ul.products structure
+function eshop_woocommerce_product_loop_start($html) {
+    return '';
+}
+add_filter('woocommerce_product_loop_start', 'eshop_woocommerce_product_loop_start');
+
+// Override product loop end to remove default closing ul
+function eshop_woocommerce_product_loop_end($html) {
+    return '';
+}
+add_filter('woocommerce_product_loop_end', 'eshop_woocommerce_product_loop_end');
+
+// Set default shop columns to 4
+function eshop_woocommerce_loop_columns() {
+    return 4;
+}
+add_filter('loop_shop_columns', 'eshop_woocommerce_loop_columns');
+
+// Remove default WooCommerce styles that conflict with our grid
+function eshop_dequeue_woocommerce_styles() {
+    wp_dequeue_style('woocommerce-layout');
+    wp_dequeue_style('woocommerce-smallscreen');
+    wp_dequeue_style('woocommerce-general');
+}
+add_action('wp_enqueue_scripts', 'eshop_dequeue_woocommerce_styles', 100);
+
+/**
+ * Override WooCommerce image sizes for better quality
+ */
+function eshop_woocommerce_image_dimensions() {
+    global $pagenow;
+
+    if (!isset($_GET['activated']) || $pagenow != 'themes.php') {
+        return;
+    }
+
+    // Set WooCommerce image sizes to higher resolution
+    update_option('woocommerce_thumbnail_image_width', 400);
+    update_option('woocommerce_thumbnail_image_height', 400);
+    update_option('woocommerce_thumbnail_cropping', '1:1');
+
+    update_option('woocommerce_single_image_width', 800);
+    update_option('woocommerce_single_image_height', 800);
+
+    update_option('woocommerce_gallery_thumbnail_image_width', 150);
+    update_option('woocommerce_gallery_thumbnail_image_height', 150);
+}
+add_action('after_switch_theme', 'eshop_woocommerce_image_dimensions', 1);
+
+/**
+ * Use higher quality images in product loops
+ */
+function eshop_woocommerce_single_product_image_thumbnail_html($html, $post_thumbnail_id) {
+    global $product;
+
+    if (!$product) {
+        return $html;
+    }
+
+    // Use our custom high-quality image size
+    $image = wp_get_attachment_image($post_thumbnail_id, 'product-thumbnail-hq', false, array(
+        'class' => 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105',
+        'alt' => $product->get_name()
+    ));
+
+    return $image;
+}
+add_filter('woocommerce_single_product_image_thumbnail_html', 'eshop_woocommerce_single_product_image_thumbnail_html', 10, 2);
+
+/**
+ * AJAX handler for product filtering
+ */
+function eshop_filter_products() {
+    check_ajax_referer('eshop_nonce', 'nonce');
+
+    $filters = isset($_POST['filters']) ? $_POST['filters'] : array();
+    $paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
+    $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'menu_order';
+
+    // Build WP_Query args
+    $args = array(
+        'post_type' => 'product',
+        'post_status' => 'publish',
+        'posts_per_page' => wc_get_default_products_per_row() * wc_get_default_product_rows_per_page(),
+        'paged' => $paged,
+        'orderby' => $orderby,
+        'meta_query' => array(),
+        'tax_query' => array(),
+    );
+
+    // Handle ordering
+    switch ($orderby) {
+        case 'price':
+            $args['meta_key'] = '_price';
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'ASC';
+            break;
+        case 'price-desc':
+            $args['meta_key'] = '_price';
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'DESC';
+            break;
+        case 'popularity':
+            $args['meta_key'] = 'total_sales';
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = 'DESC';
+            break;
+        case 'date':
+            $args['orderby'] = 'date';
+            $args['order'] = 'DESC';
+            break;
+        default:
+            $args['orderby'] = 'menu_order';
+            $args['order'] = 'ASC';
+    }
+
+    // Price filter
+    if (!empty($filters['min_price']) || !empty($filters['max_price'])) {
+        $price_query = array('key' => '_price', 'type' => 'NUMERIC');
+
+        if (!empty($filters['min_price']) && !empty($filters['max_price'])) {
+            $price_query['value'] = array(floatval($filters['min_price']), floatval($filters['max_price']));
+            $price_query['compare'] = 'BETWEEN';
+        } elseif (!empty($filters['min_price'])) {
+            $price_query['value'] = floatval($filters['min_price']);
+            $price_query['compare'] = '>=';
+        } elseif (!empty($filters['max_price'])) {
+            $price_query['value'] = floatval($filters['max_price']);
+            $price_query['compare'] = '<=';
+        }
+
+        $args['meta_query'][] = $price_query;
+    }
+
+    // Category filter
+    if (!empty($filters['product_cat'])) {
+        $args['tax_query'][] = array(
+            'taxonomy' => 'product_cat',
+            'field' => 'term_id',
+            'terms' => array_map('intval', $filters['product_cat']),
+            'operator' => 'IN',
+        );
+    }
+
+    // Attribute filters
+    foreach ($filters as $key => $values) {
+        if (strpos($key, 'pa_') === 0 && !empty($values)) {
+            $args['tax_query'][] = array(
+                'taxonomy' => $key,
+                'field' => 'slug',
+                'terms' => $values,
+                'operator' => 'IN',
+            );
+        }
+    }
+
+    // Stock status filter
+    if (!empty($filters['stock_status'])) {
+        $args['meta_query'][] = array(
+            'key' => '_stock_status',
+            'value' => $filters['stock_status'],
+            'compare' => 'IN',
+        );
+    }
+
+    // On sale filter
+    if (!empty($filters['on_sale'])) {
+        $args['meta_query'][] = array(
+            'key' => '_sale_price',
+            'value' => '',
+            'compare' => '!=',
+        );
+    }
+
+    // Ensure products are visible
+    $args['meta_query'][] = array(
+        'key' => '_visibility',
+        'value' => array('catalog', 'visible'),
+        'compare' => 'IN',
+    );
+
+    $query = new WP_Query($args);
+
+    ob_start();
+
+    if ($query->have_posts()) {
+        echo '<div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">';
+
+        while ($query->have_posts()) {
+            $query->the_post();
+            wc_get_template_part('content', 'product');
+        }
+
+        echo '</div>';
+
+        // Pagination
+        if ($query->max_num_pages > 1) {
+            echo '<div class="pagination-wrapper mt-8">';
+            echo paginate_links(array(
+                'total' => $query->max_num_pages,
+                'current' => $paged,
+                'format' => '?paged=%#%',
+                'prev_text' => '<i class="fas fa-chevron-left"></i>',
+                'next_text' => '<i class="fas fa-chevron-right"></i>',
+            ));
+            echo '</div>';
+        }
+    } else {
+        echo '<div class="no-products-found text-center py-12">';
+        echo '<div class="mb-6"><i class="fas fa-search text-6xl text-gray-300"></i></div>';
+        echo '<h3 class="text-2xl font-semibold text-gray-900 mb-4">' . __('No products found', 'eshop-theme') . '</h3>';
+        echo '<p class="text-gray-600 mb-6">' . __('Try adjusting your filters or search terms', 'eshop-theme') . '</p>';
+        echo '</div>';
+    }
+
+    $products_html = ob_get_clean();
+
+    // Generate result count
+    $total_products = $query->found_posts;
+    $products_per_page = $args['posts_per_page'];
+    $current_page = $paged;
+
+    $first = ($current_page - 1) * $products_per_page + 1;
+    $last = min($current_page * $products_per_page, $total_products);
+
+    if ($total_products == 1) {
+        $result_count = __('Showing the single result', 'eshop-theme');
+    } elseif ($total_products <= $products_per_page || -1 === $products_per_page) {
+        $result_count = sprintf(__('Showing all %d results', 'eshop-theme'), $total_products);
+    } else {
+        $result_count = sprintf(__('Showing %1$d–%2$d of %3$d results', 'eshop-theme'), $first, $last, $total_products);
+    }
+
+    wp_reset_postdata();
+
+    wp_send_json_success(array(
+        'products' => $products_html,
+        'result_count' => $result_count,
+        'found_posts' => $total_products,
+    ));
+}
+add_action('wp_ajax_filter_products', 'eshop_filter_products');
+add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
+
+/**
  * Product Color Variants Helper
  */
 function eshop_get_product_color_variants($product, $limit = 4) {

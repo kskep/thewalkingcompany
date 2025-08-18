@@ -9,7 +9,7 @@ defined('ABSPATH') || exit;
 
 get_header('shop'); ?>
 
-<div class="container mx-auto px-4 py-8 shop-layout">
+<div class="mx-auto px-4 py-8 shop-layout">
     
     <!-- Page Header -->
     <div class="woocommerce-products-header mb-8">
@@ -17,15 +17,7 @@ get_header('shop'); ?>
             <h1 class="woocommerce-products-header__title page-title text-3xl font-bold text-gray-900 mb-4"><?php woocommerce_page_title(); ?></h1>
         <?php endif; ?>
 
-        <?php
-        /**
-         * Hook: woocommerce_archive_description.
-         *
-         * @hooked woocommerce_taxonomy_archive_description - 10
-         * @hooked woocommerce_product_archive_description - 10
-         */
-        do_action('woocommerce_archive_description');
-        ?>
+        
     </div>
 
     <!-- Shop Toolbar -->
@@ -129,7 +121,9 @@ get_template_part('template-parts/components/modal', null, array(
         if (is_active_sidebar('shop-filters')) {
             dynamic_sidebar('shop-filters');
         } else {
-            // Fallback basic filters if no widgets are present
+            // Fallback comprehensive filters if no widgets are present
+
+            // Price Range Filter
             echo '<div class="filter-section mb-6">';
             echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Price Range', 'eshop-theme') . '</h4>';
             echo '<div class="price-filter">';
@@ -138,9 +132,93 @@ get_template_part('template-parts/components/modal', null, array(
             echo '<span class="flex items-center text-gray-400">-</span>';
             echo '<input type="number" id="max-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary rounded" placeholder="' . esc_attr__('Max', 'eshop-theme') . '">';
             echo '</div>';
-            echo '<button class="apply-price-filter w-full bg-primary text-white py-2 text-sm hover:bg-primary-dark transition-colors rounded">' . esc_html__('Apply', 'eshop-theme') . '</button>';
             echo '</div>';
             echo '</div>';
+
+            // Categories Filter
+            $categories = get_terms(array(
+                'taxonomy' => 'product_cat',
+                'hide_empty' => true,
+                'parent' => 0, // Only top-level categories
+            ));
+
+            if (!empty($categories) && !is_wp_error($categories)) {
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Categories', 'eshop-theme') . '</h4>';
+                echo '<div class="category-filter space-y-2">';
+
+                foreach ($categories as $category) {
+                    echo '<label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">';
+                    echo '<input type="checkbox" name="product_cat[]" value="' . esc_attr($category->term_id) . '" class="text-primary focus:ring-primary border-gray-300 rounded">';
+                    echo '<span class="text-sm text-gray-700">' . esc_html($category->name) . '</span>';
+                    echo '<span class="text-xs text-gray-400">(' . $category->count . ')</span>';
+                    echo '</label>';
+                }
+
+                echo '</div>';
+                echo '</div>';
+            }
+
+            // Stock Status Filter
+            echo '<div class="filter-section mb-6">';
+            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Availability', 'eshop-theme') . '</h4>';
+            echo '<div class="stock-filter space-y-2">';
+
+            echo '<label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">';
+            echo '<input type="checkbox" name="stock_status[]" value="instock" class="text-primary focus:ring-primary border-gray-300 rounded">';
+            echo '<span class="text-sm text-gray-700">' . esc_html__('In Stock', 'eshop-theme') . '</span>';
+            echo '</label>';
+
+            echo '<label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">';
+            echo '<input type="checkbox" name="stock_status[]" value="outofstock" class="text-primary focus:ring-primary border-gray-300 rounded">';
+            echo '<span class="text-sm text-gray-700">' . esc_html__('Out of Stock', 'eshop-theme') . '</span>';
+            echo '</label>';
+
+            echo '</div>';
+            echo '</div>';
+
+            // On Sale Filter
+            echo '<div class="filter-section mb-6">';
+            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Special Offers', 'eshop-theme') . '</h4>';
+            echo '<div class="sale-filter space-y-2">';
+
+            echo '<label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">';
+            echo '<input type="checkbox" name="on_sale" value="1" class="text-primary focus:ring-primary border-gray-300 rounded">';
+            echo '<span class="text-sm text-gray-700">' . esc_html__('On Sale', 'eshop-theme') . '</span>';
+            echo '</label>';
+
+            echo '</div>';
+            echo '</div>';
+
+            // Product Attributes (Color, Size, etc.)
+            $attributes = wc_get_attribute_taxonomies();
+
+            if (!empty($attributes)) {
+                foreach ($attributes as $attribute) {
+                    $taxonomy = 'pa_' . $attribute->attribute_name;
+                    $terms = get_terms(array(
+                        'taxonomy' => $taxonomy,
+                        'hide_empty' => true,
+                    ));
+
+                    if (!empty($terms) && !is_wp_error($terms)) {
+                        echo '<div class="filter-section mb-6">';
+                        echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html(wc_attribute_label($attribute->attribute_name)) . '</h4>';
+                        echo '<div class="attribute-filter space-y-2" data-attribute="' . esc_attr($attribute->attribute_name) . '">';
+
+                        foreach ($terms as $term) {
+                            echo '<label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">';
+                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded">';
+                            echo '<span class="text-sm text-gray-700">' . esc_html($term->name) . '</span>';
+                            echo '<span class="text-xs text-gray-400">(' . $term->count . ')</span>';
+                            echo '</label>';
+                        }
+
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                }
+            }
         }
 
         // Footer actions inside modal content so buttons are visible

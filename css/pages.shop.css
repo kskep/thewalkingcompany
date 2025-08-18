@@ -5,6 +5,14 @@
   font-family: "Roboto", sans-serif;
 }
 
+/* Ensure CSS variables are available */
+:root {
+  --color-primary: #EE81B3;
+  --primary-pink: #EE81B3;
+  --primary-pink-light: #F2A1C7;
+  --primary-pink-dark: #E55A9F;
+}
+
 /* Shop Toolbar */
 .shop-toolbar {
   background: #fff;
@@ -40,10 +48,94 @@
   border-color: var(--color-primary);
 }
 
-/* Filter Panel */
+/* Filter Panel & Modal */
 .filter-panel {
   backdrop-filter: blur(4px);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Filter Modal Enhancements */
+.eshop-modal {
+  backdrop-filter: blur(4px);
+}
+
+.eshop-modal__panel {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.eshop-modal__panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.eshop-modal__panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.eshop-modal__panel::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.eshop-modal__panel::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Filter Sections */
+.filter-section {
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.filter-section:hover {
+  background: #f5f5f5;
+  border-color: #e0e0e0;
+}
+
+.filter-title {
+  color: #1f2937;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Filter Checkboxes */
+.filter-section input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid #d1d5db;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.filter-section input[type="checkbox"]:checked {
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+
+.filter-section input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(238, 129, 179, 0.1);
+}
+
+.filter-section label {
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin: 0;
+}
+
+.filter-section label:hover {
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .filter-panel.open {
@@ -96,6 +188,26 @@
   font-size: 13px;
 }
 
+/* Price Filter Inputs */
+.price-filter input[type="number"] {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.price-filter input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px rgba(238, 129, 179, 0.1);
+}
+
+.price-filter input[type="number"]:hover {
+  border-color: #d1d5db;
+}
+
 .filter-panel input[type="number"]:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(238, 129, 179, 0.1);
@@ -110,9 +222,38 @@
   border-color: #d1d5db;
 }
 
+/* Override WooCommerce default styles */
+.woocommerce ul.products {
+  display: none !important;
+}
+
+.woocommerce .products {
+  display: none !important;
+}
+
 /* Product Grid */
 .products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(1, 1fr);
   gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .product-card {
@@ -309,6 +450,62 @@
   background: var(--color-primary);
   color: #fff;
   border-color: var(--color-primary);
+}
+
+/* Filter Modal Buttons */
+.eshop-modal .clear-filters {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.eshop-modal .clear-filters:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.eshop-modal .apply-filters {
+  background: var(--primary-pink);
+  color: #fff;
+  border: 2px solid var(--primary-pink);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.eshop-modal .apply-filters:hover {
+  background: var(--primary-pink-dark);
+  border-color: var(--primary-pink-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(238, 129, 179, 0.3);
+}
+
+/* Filter Toggle Button Enhancement */
+.eshop-modal-open {
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.eshop-modal-open:hover {
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.eshop-modal-open i {
+  color: var(--primary-pink);
 }
 
 /* Mobile Filter Modal */
