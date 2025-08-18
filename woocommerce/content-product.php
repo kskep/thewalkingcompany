@@ -59,7 +59,21 @@ if (empty($product) || !$product->is_visible()) {
                     </div>
                 <?php endif; ?>
             </div>
-            <div class="swiper-pagination"></div>
+
+            <!-- Navigation arrows (only show if multiple images) -->
+            <?php if (($main_image_id ? 1 : 0) + count($gallery_ids) > 1) : ?>
+                <div class="swiper-button-prev product-slider-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="swiper-button-next product-slider-next">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            <?php endif; ?>
+
+            <!-- Pagination dots (only show if multiple images) -->
+            <?php if (($main_image_id ? 1 : 0) + count($gallery_ids) > 1) : ?>
+                <div class="swiper-pagination product-slider-pagination"></div>
+            <?php endif; ?>
         </div>
         
         <!-- Wishlist Button -->

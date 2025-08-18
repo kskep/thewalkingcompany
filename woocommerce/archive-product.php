@@ -41,6 +41,56 @@ get_header('shop'); ?>
         </div>
     </div>
 
+    <!-- Active Filters Bar -->
+    <div class="active-filters-bar bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6" style="display: none;">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-sm font-medium text-gray-700"><?php _e('Active Filters:', 'eshop-theme'); ?></span>
+                <div class="active-filters-list flex flex-wrap gap-2"></div>
+            </div>
+            <button class="clear-all-filters text-sm text-red-600 hover:text-red-800 font-medium transition-colors">
+                <i class="fas fa-times mr-1"></i>
+                <?php _e('Clear All', 'eshop-theme'); ?>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Filters -->
+    <div class="quick-filters mb-6">
+        <div class="flex flex-wrap items-center gap-3">
+            <span class="text-sm font-medium text-gray-700"><?php _e('Quick Filters:', 'eshop-theme'); ?></span>
+
+            <!-- Price Range Quick Filters -->
+            <button class="quick-filter-btn" data-filter="price" data-min="0" data-max="50">
+                <span><?php _e('Under $50', 'eshop-theme'); ?></span>
+            </button>
+            <button class="quick-filter-btn" data-filter="price" data-min="50" data-max="100">
+                <span><?php _e('$50 - $100', 'eshop-theme'); ?></span>
+            </button>
+            <button class="quick-filter-btn" data-filter="price" data-min="100" data-max="">
+                <span><?php _e('Over $100', 'eshop-theme'); ?></span>
+            </button>
+
+            <!-- On Sale Filter -->
+            <button class="quick-filter-btn" data-filter="on_sale" data-value="1">
+                <i class="fas fa-tag mr-1"></i>
+                <span><?php _e('On Sale', 'eshop-theme'); ?></span>
+            </button>
+
+            <!-- Stock Status Filter -->
+            <button class="quick-filter-btn" data-filter="stock_status" data-value="instock">
+                <i class="fas fa-check-circle mr-1"></i>
+                <span><?php _e('In Stock', 'eshop-theme'); ?></span>
+            </button>
+
+            <!-- More Filters Button -->
+            <button class="eshop-modal-open more-filters-btn" data-target="#filters-modal">
+                <i class="fas fa-sliders-h mr-1"></i>
+                <span><?php _e('More Filters', 'eshop-theme'); ?></span>
+            </button>
+        </div>
+    </div>
+
     <!-- Products Grid -->
     <div class="products-wrapper">
         <?php if (woocommerce_product_loop()) : ?>

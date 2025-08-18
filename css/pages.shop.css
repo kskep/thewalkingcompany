@@ -331,6 +331,83 @@
   object-fit: cover;
 }
 
+/* Product Slider Styling */
+.product-slider {
+  width: 100%;
+  height: 100%;
+}
+
+.product-slider .swiper-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.product-slider .swiper-button-prev,
+.product-slider .swiper-button-next {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: all 0.3s ease;
+  margin-top: -16px;
+}
+
+.product-card:hover .swiper-button-prev,
+.product-card:hover .swiper-button-next {
+  opacity: 1;
+}
+
+.product-slider .swiper-button-prev:after,
+.product-slider .swiper-button-next:after {
+  display: none;
+}
+
+.product-slider .swiper-button-prev i,
+.product-slider .swiper-button-next i {
+  color: #374151;
+  font-size: 12px;
+}
+
+.product-slider .swiper-button-prev {
+  left: 8px;
+}
+
+.product-slider .swiper-button-next {
+  right: 8px;
+}
+
+.product-slider .swiper-button-prev:hover,
+.product-slider .swiper-button-next:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+.product-slider .swiper-pagination {
+  bottom: 8px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .swiper-pagination {
+  opacity: 1;
+}
+
+.product-slider .swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  margin: 0 2px;
+}
+
+.product-slider .swiper-pagination-bullet-active {
+  background: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+
 /* Color Variants */
 .color-variants {
   border-top: 1px solid #f1f1f1;
@@ -557,6 +634,110 @@
 
 .eshop-modal-open i {
   color: var(--primary-pink);
+}
+
+/* Active Filters Bar */
+.active-filters-bar {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.active-filters-list .active-filter {
+  background: var(--primary-pink);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.active-filters-list .active-filter:hover {
+  background: var(--primary-pink-dark);
+  transform: translateY(-1px);
+}
+
+.active-filters-list .active-filter .remove-filter {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.2s ease;
+}
+
+.active-filters-list .active-filter .remove-filter:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.clear-all-filters {
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.clear-all-filters:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Quick Filters */
+.quick-filters {
+  background: white;
+  border: 1px solid #f1f1f1;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.quick-filter-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quick-filter-btn:hover {
+  background: var(--primary-pink-light);
+  border-color: var(--primary-pink);
+  color: var(--primary-pink-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(238, 129, 179, 0.2);
+}
+
+.quick-filter-btn.active {
+  background: var(--primary-pink);
+  border-color: var(--primary-pink);
+  color: white;
+  box-shadow: 0 2px 8px rgba(238, 129, 179, 0.3);
+}
+
+.more-filters-btn {
+  background: var(--primary-pink) !important;
+  border-color: var(--primary-pink) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.more-filters-btn:hover {
+  background: var(--primary-pink-dark) !important;
+  border-color: var(--primary-pink-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(238, 129, 179, 0.3);
 }
 
 /* Mobile Filter Modal */

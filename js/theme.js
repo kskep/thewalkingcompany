@@ -428,10 +428,41 @@
             if (el.__eshop_inited) return;
             el.__eshop_inited = true;
             try {
-                new Swiper(el, {
-                    pagination: { el: el.querySelector('.swiper-pagination'), clickable: true },
+                var swiperConfig = {
+                    pagination: {
+                        el: el.querySelector('.swiper-pagination'),
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: el.querySelector('.swiper-button-next'),
+                        prevEl: el.querySelector('.swiper-button-prev'),
+                    },
                     loop: true,
-                });
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: true,
+                        pauseOnMouseEnter: true,
+                    },
+                    effect: 'fade',
+                    fadeEffect: {
+                        crossFade: true
+                    },
+                    speed: 300,
+                    on: {
+                        init: function() {
+                            // Hide navigation if only one slide
+                            var slideCount = this.slides.length;
+                            if (slideCount <= 1) {
+                                var nav = el.querySelectorAll('.swiper-button-prev, .swiper-button-next, .swiper-pagination');
+                                nav.forEach(function(navEl) {
+                                    navEl.style.display = 'none';
+                                });
+                            }
+                        }
+                    }
+                };
+
+                new Swiper(el, swiperConfig);
             } catch (e) {
                 console.warn('Swiper init failed for product slider', e);
             }
@@ -455,8 +486,44 @@
         });
 
         // Clear filters
-        $(document).on('click', '.clear-filters', function() {
+        $(document).on('click', '.clear-filters, .clear-all-filters', function() {
             clearAllFilters();
+        });
+
+        // Quick filter buttons
+        $(document).on('click', '.quick-filter-btn:not(.more-filters-btn)', function() {
+            var $btn = $(this);
+            var filterType = $btn.data('filter');
+
+            // Toggle active state
+            $btn.toggleClass('active');
+
+            if (filterType === 'price') {
+                var minPrice = $btn.data('min');
+                var maxPrice = $btn.data('max');
+
+                if ($btn.hasClass('active')) {
+                    // Remove other active price filters
+                    $('.quick-filter-btn[data-filter="price"]').not($btn).removeClass('active');
+
+                    // Set price inputs in modal
+                    $('#min-price').val(minPrice || '');
+                    $('#max-price').val(maxPrice || '');
+                } else {
+                    // Clear price inputs
+                    $('#min-price, #max-price').val('');
+                }
+            } else if (filterType === 'on_sale') {
+                var checkbox = $('input[name="on_sale"]');
+                checkbox.prop('checked', $btn.hasClass('active'));
+            } else if (filterType === 'stock_status') {
+                var value = $btn.data('value');
+                var checkbox = $('input[name="stock_status[]"][value="' + value + '"]');
+                checkbox.prop('checked', $btn.hasClass('active'));
+            }
+
+            // Apply filters immediately
+            applyFilters();
         });
 
         // Pagination
@@ -558,10 +625,11 @@
     function updateActiveFilters(filters) {
         var $activeFilters = $('.active-filters');
         var $activeFiltersList = $('.active-filters-list');
+        var $activeFiltersBar = $('.active-filters-bar');
         var $clearButton = $('.clear-filters');
-        
+
         $activeFiltersList.empty();
-        
+
         var hasFilters = false;
         
         // Price filter
@@ -605,18 +673,55 @@
         // Show/hide active filters section
         if (hasFilters) {
             $activeFilters.show();
+            $activeFiltersBar.show();
             $clearButton.show();
         } else {
             $activeFilters.hide();
+            $activeFiltersBar.hide();
             $clearButton.hide();
+        }
+
+        // Update quick filter button states
+        updateQuickFilterStates(filters);
+    }
+
+    function updateQuickFilterStates(filters) {
+        // Reset all quick filter buttons
+        $('.quick-filter-btn').removeClass('active');
+
+        // Update price filter buttons
+        if (filters.min_price || filters.max_price) {
+            var minPrice = parseInt(filters.min_price) || 0;
+            var maxPrice = parseInt(filters.max_price) || 999999;
+
+            $('.quick-filter-btn[data-filter="price"]').each(function() {
+                var btnMin = parseInt($(this).data('min')) || 0;
+                var btnMax = parseInt($(this).data('max')) || 999999;
+
+                if (btnMin === minPrice && btnMax === maxPrice) {
+                    $(this).addClass('active');
+                }
+            });
+        }
+
+        // Update on sale filter
+        if (filters.on_sale) {
+            $('.quick-filter-btn[data-filter="on_sale"]').addClass('active');
+        }
+
+        // Update stock status filter
+        if (filters.stock_status && filters.stock_status.includes('instock')) {
+            $('.quick-filter-btn[data-filter="stock_status"][data-value="instock"]').addClass('active');
         }
     }
 
     function clearAllFilters() {
-    $('#filters-modal input[type="checkbox"]').prop('checked', false);
+        $('#filters-modal input[type="checkbox"]').prop('checked', false);
         $('#min-price, #max-price').val('');
         $('.active-filters').hide();
+        $('.active-filters-bar').hide();
         $('.clear-filters').hide();
+        $('.quick-filter-btn').removeClass('active');
         applyFilters();
     }
 
