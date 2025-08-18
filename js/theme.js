@@ -440,11 +440,8 @@
                         prevEl: el.querySelector('.swiper-button-prev'),
                     },
                     loop: true,
-                    autoplay: {
-                        delay: 3000,
-                        disableOnInteraction: true,
-                        pauseOnMouseEnter: true,
-                    },
+                    // Disable autoplay on archive product sliders
+                    autoplay: false,
                     effect: 'fade',
                     fadeEffect: {
                         crossFade: true
