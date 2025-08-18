@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Row Header Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #EE81B3;
+            --text-dark: #2F2A26;
+        }
+        
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+        
+        .site-header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .language-switcher a {
+            font-family: 'Roboto Condensed', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        
+        .language-switcher a:hover {
+            color: var(--primary-pink);
+        }
+        
+        .site-branding img {
+            max-height: 48px;
+            width: auto;
+            transition: transform 0.2s ease;
+        }
+        
+        .site-branding img:hover {
+            transform: scale(1.02);
+        }
+        
+        .main-navigation a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: color 0.2s ease;
+            padding: 8px 0;
+            position: relative;
+        }
+        
+        .main-navigation a:hover {
+            color: var(--primary-pink);
+        }
+        
+        .main-navigation a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-pink);
+            transition: width 0.3s ease;
+        }
+        
+        .main-navigation a:hover::after {
+            width: 100%;
+        }
+        
+        .header-actions button {
+            transition: all 0.2s ease;
+        }
+        
+        .header-actions button:hover {
+            background-color: rgba(238, 129, 179, 0.1);
+            color: var(--primary-pink);
+        }
+        
+        .cart-count {
+            background-color: var(--primary-pink);
+        }
+        
+        .mobile-menu-toggle {
+            font-family: 'Roboto Condensed', sans-serif;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Header -->
+    <header class="site-header">
+        
+        <!-- Top Row: Language | Logo | Account/Cart -->
+        <div class="header-top border-b border-gray-100">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between py-3">
+                    
+                    <!-- Language Switcher -->
+                    <div class="language-switcher flex items-center space-x-2 text-sm">
+                        <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EN</a>
+                        <span class="text-gray-300">|</span>
+                        <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EL</a>
+                    </div>
+                    
+                    <!-- Logo -->
+                    <div class="site-branding">
+                        <a href="#" class="block">
+                            <img src="https://walk.thewebplace.gr/wp-content/uploads/2023/01/twc-logo-pink.png" 
+                                 alt="The Walking Company" 
+                                 class="h-12 w-auto">
+                        </a>
+                    </div>
+                    
+                    <!-- Header Actions -->
+                    <div class="header-actions flex items-center space-x-2">
+                        
+                        <!-- Search -->
+                        <button class="search-toggle p-2 text-gray-600 hover:text-primary transition-colors duration-200" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        
+                        <!-- Wishlist -->
+                        <button class="wishlist-toggle p-2 text-gray-600 hover:text-primary transition-colors duration-200 relative" aria-label="Wishlist">
+                            <i class="far fa-heart"></i>
+                            <span class="wishlist-count absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">3</span>
+                        </button>
+                        
+                        <!-- Account -->
+                        <button class="account-toggle p-2 text-gray-600 hover:text-primary transition-colors duration-200" aria-label="Account">
+                            <i class="far fa-user"></i>
+                        </button>
+                        
+                        <!-- Cart -->
+                        <button class="minicart-toggle p-2 text-gray-600 hover:text-primary transition-colors duration-200 relative" aria-label="Shopping Cart">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-count absolute -top-1 -right-1 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">2</span>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Row: Navigation Menu -->
+        <div class="header-bottom">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center py-4">
+                    <!-- Main Navigation -->
+                    <nav class="main-navigation hidden lg:block">
+                        <ul class="flex space-x-8 text-sm font-medium uppercase tracking-wide">
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Shop</a></li>
+                            <li><a href="#">New Arrivals</a></li>
+                            <li><a href="#">Sale</a></li>
+                            <li><a href="#">Brands</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </nav>
+                    
+                    <!-- Mobile Menu Toggle (visible on mobile) -->
+                    <button class="mobile-menu-toggle lg:hidden p-2 text-gray-600 hover:text-primary transition-colors duration-200 flex items-center" aria-label="Menu">
+                        <i class="fas fa-bars"></i>
+                        <span class="ml-2 text-sm font-medium">MENU</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </header>
+    
+    <!-- Demo Content -->
+    <main class="py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Two-Row Header Design</h1>
+            <p class="text-gray-600 mb-8">This demonstrates the new header layout with language switcher, logo, and navigation menu.</p>
+            
+            <div class="bg-white p-8 rounded-lg shadow-sm max-w-2xl mx-auto">
+                <h2 class="text-2xl font-semibold mb-4">Header Features:</h2>
+                <ul class="text-left space-y-2 text-gray-700">
+                    <li>✅ <strong>Top Row:</strong> Language switcher (EN | EL) on left, logo centered, account/cart icons on right</li>
+                    <li>✅ <strong>Bottom Row:</strong> Navigation menu centered</li>
+                    <li>✅ <strong>Logo:</strong> Your pink TWC logo from the provided URL</li>
+                    <li>✅ <strong>Responsive:</strong> Mobile menu toggle appears on smaller screens</li>
+                    <li>✅ <strong>Hover Effects:</strong> Underline animations on menu items</li>
+                    <li>✅ <strong>Clean Design:</strong> Minimal, magazine-style aesthetic</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>
