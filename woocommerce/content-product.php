@@ -17,24 +17,48 @@ if (empty($product) || !$product->is_visible()) {
 
 <div <?php wc_product_class('product-card bg-white overflow-hidden hover:shadow-lg transition-all duration-300 group relative', $product); ?>>
     
-    <!-- Product Image -->
+    <!-- Product Image / Slider -->
     <div class="product-image relative overflow-hidden bg-gray-50">
-        <a href="<?php the_permalink(); ?>" class="block aspect-square">
-            <?php
-            // Get product image
-            $image_id = $product->get_image_id();
-            if ($image_id) {
-                echo wp_get_attachment_image($image_id, 'woocommerce_thumbnail', false, array(
-                    'class' => 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105',
-                    'alt' => $product->get_name()
-                ));
-            } else {
-                echo '<div class="w-full h-full flex items-center justify-center bg-gray-100">';
-                echo '<i class="fas fa-image text-gray-300 text-4xl"></i>';
-                echo '</div>';
-            }
-            ?>
-        </a>
+        <?php
+        $main_image_id   = $product->get_image_id();
+        $gallery_ids     = $product->get_gallery_image_ids();
+        $has_any_image   = $main_image_id || !empty($gallery_ids);
+        ?>
+        <div class="product-slider swiper relative">
+            <div class="swiper-wrapper">
+                <?php if ($has_any_image) : ?>
+                    <?php if ($main_image_id) : ?>
+                        <div class="swiper-slide">
+                            <a href="<?php the_permalink(); ?>" class="block aspect-square">
+                                <?php echo wp_get_attachment_image($main_image_id, 'woocommerce_thumbnail', false, array(
+                                    'class' => 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105',
+                                    'alt' => $product->get_name()
+                                )); ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($gallery_ids)) : foreach ($gallery_ids as $gid) : ?>
+                        <div class="swiper-slide">
+                            <a href="<?php the_permalink(); ?>" class="block aspect-square">
+                                <?php echo wp_get_attachment_image($gid, 'woocommerce_thumbnail', false, array(
+                                    'class' => 'w-full h-full object-cover transition-transform duration-300 group-hover:scale-105',
+                                    'alt' => $product->get_name()
+                                )); ?>
+                            </a>
+                        </div>
+                    <?php endforeach; endif; ?>
+                <?php else : ?>
+                    <div class="swiper-slide">
+                        <a href="<?php the_permalink(); ?>" class="block aspect-square">
+                            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                                <i class="fas fa-image text-gray-300 text-4xl"></i>
+                            </div>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
         
         <!-- Wishlist Button -->
         <?php if (function_exists('eshop_wishlist_button')) : ?>

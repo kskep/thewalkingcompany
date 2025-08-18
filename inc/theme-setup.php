@@ -102,6 +102,17 @@ function eshop_theme_widgets_init() {
         'before_title' => '<h3 class="footer-widget-title">',
         'after_title' => '</h3>',
     ));
+
+    // Shop Filters widget area for reusable filters modal/component
+    register_sidebar(array(
+        'name' => __('Shop Filters', 'eshop-theme'),
+        'id' => 'shop-filters',
+        'description' => __('Widgets shown inside the shop filters modal.', 'eshop-theme'),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget' => '</section>',
+        'before_title' => '<h3 class="widget-title text-sm font-semibold mb-3">',
+        'after_title' => '</h3>',
+    ));
 }
 add_action('widgets_init', 'eshop_theme_widgets_init');
 

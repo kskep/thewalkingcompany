@@ -278,27 +278,29 @@
         });
 
         // Product Archive Filters
-        if ($('.shop-layout').length) {
+    if ($('.shop-layout').length) {
             initProductFilters();
         }
 
-        // Filter Panel Toggle
-        $('.filter-toggle-btn').on('click', function() {
-            $('#filter-panel').addClass('open');
-            $('#filter-panel-overlay').removeClass('hidden').addClass('show');
-            $('body').addClass('overflow-hidden');
+        // Generic modal open/close (reusable component)
+        $(document).on('click', '.eshop-modal-open', function() {
+            var target = $(this).data('target');
+            if (!target) return;
+            var $modal = $(target);
+            if ($modal.length) {
+                $modal.removeClass('hidden');
+                $('body').addClass('overflow-hidden');
+            }
         });
-
-        $('.close-filter-panel, #filter-panel-overlay').on('click', function() {
-            $('#filter-panel').removeClass('open');
-            $('#filter-panel-overlay').removeClass('show').addClass('hidden');
+        $(document).on('click', '.eshop-modal__close, .eshop-modal__overlay', function() {
+            var $modal = $(this).closest('.eshop-modal');
+            $modal.addClass('hidden');
             $('body').removeClass('overflow-hidden');
         });
-
-        // Apply filters from panel
-        $(document).on('click', '.filter-panel .apply-filters', function() {
-            $('#filter-panel').removeClass('open');
-            $('#filter-panel-overlay').removeClass('show').addClass('hidden');
+        // Apply filters from filters modal
+        $(document).on('click', '#filters-modal .apply-filters, #filters-modal .apply-price-filter', function() {
+            var $modal = $('#filters-modal');
+            $modal.addClass('hidden');
             $('body').removeClass('overflow-hidden');
             applyFilters();
         });
@@ -345,6 +347,7 @@
         // Initialize any plugins that need to wait for full page load
     initializePlugins();
     initializeHeroSliders();
+    initializeProductCardSliders();
     });
 
     // Initialize Plugins
@@ -416,10 +419,29 @@
         });
     }
 
+    // Initialize product sliders used on archive cards
+    function initializeProductCardSliders() {
+        if (typeof Swiper === 'undefined') return;
+
+        document.querySelectorAll('.product-slider').forEach(function(el) {
+            // Avoid double init
+            if (el.__eshop_inited) return;
+            el.__eshop_inited = true;
+            try {
+                new Swiper(el, {
+                    pagination: { el: el.querySelector('.swiper-pagination'), clickable: true },
+                    loop: true,
+                });
+            } catch (e) {
+                console.warn('Swiper init failed for product slider', e);
+            }
+        });
+    }
+
     // Product Filter Functions
     function initProductFilters() {
         // Filter change handlers
-        $(document).on('change', '.filter-panel input[type="checkbox"]', function() {
+    $(document).on('change', '#filters-modal input[type="checkbox"]', function() {
             // Auto-apply filters on change (optional - you can remove this for manual apply only)
             // applyFilters();
         });
@@ -468,6 +490,8 @@
                 if (response.success) {
                     $('.products-wrapper').html(response.data.products);
                     $('.woocommerce-result-count').html(response.data.result_count);
+                    // Re-init product sliders on new DOM
+                    initializeProductCardSliders();
                     
                     // Update active filters display
                     updateActiveFilters(filters);
@@ -589,7 +613,7 @@
     }
 
     function clearAllFilters() {
-        $('.filter-panel input[type="checkbox"]').prop('checked', false);
+    $('#filters-modal input[type="checkbox"]').prop('checked', false);
         $('#min-price, #max-price').val('');
         $('.active-filters').hide();
         $('.clear-filters').hide();
