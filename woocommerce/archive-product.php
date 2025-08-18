@@ -45,23 +45,24 @@ get_header('shop'); ?>
     <div class="products-wrapper">
         <?php if (woocommerce_product_loop()) : ?>
 
-            <!-- Custom Products Grid Container -->
-            <div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">
-                <?php
-                // Start the product loop
-                while (have_posts()) {
-                    the_post();
+            <?php woocommerce_product_loop_start(); ?>
 
-                    /**
-                     * Hook: woocommerce_shop_loop.
-                     */
-                    do_action('woocommerce_shop_loop');
+            <?php
+            // Start the product loop
+            while (have_posts()) {
+                the_post();
 
-                    // Output the product content
-                    wc_get_template_part('content', 'product');
-                }
-                ?>
-            </div>
+                /**
+                 * Hook: woocommerce_shop_loop.
+                 */
+                do_action('woocommerce_shop_loop');
+
+                // Output the product content
+                wc_get_template_part('content', 'product');
+            }
+            ?>
+
+            <?php woocommerce_product_loop_end(); ?>
             
             <?php
             /**

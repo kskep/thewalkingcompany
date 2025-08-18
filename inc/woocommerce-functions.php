@@ -86,15 +86,15 @@ add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
 remove_action('woocommerce_output_content_wrapper', 'woocommerce_output_content_wrapper', 10);
 remove_action('woocommerce_output_content_wrapper_end', 'woocommerce_output_content_wrapper_end', 10);
 
-// Override product loop start to remove default ul.products structure
+// Override product loop start to output our custom grid container
 function eshop_woocommerce_product_loop_start($html) {
-    return '';
+    return '<div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">';
 }
 add_filter('woocommerce_product_loop_start', 'eshop_woocommerce_product_loop_start');
 
-// Override product loop end to remove default closing ul
+// Override product loop end to close our custom grid container
 function eshop_woocommerce_product_loop_end($html) {
-    return '';
+    return '</div>';
 }
 add_filter('woocommerce_product_loop_end', 'eshop_woocommerce_product_loop_end');
 
