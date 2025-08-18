@@ -4,35 +4,32 @@
 .wishlist-dropdown,
 .account-dropdown,
 .minicart-dropdown {
-  animation: fadeInDown 0.2s ease-out;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.15s ease-out;
+  box-shadow: none;
+  border: 1px solid #e5e7eb;
 }
 
 .wishlist-dropdown.hidden,
 .account-dropdown.hidden,
 .minicart-dropdown.hidden {
-  animation: fadeOutUp 0.2s ease-in;
+  animation: fadeOut 0.15s ease-in;
 }
 
-@keyframes fadeInDown {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-@keyframes fadeOutUp {
+@keyframes fadeOut {
   from {
     opacity: 1;
-    transform: translateY(0);
   }
   to {
     opacity: 0;
-    transform: translateY(-10px);
   }
 }
 

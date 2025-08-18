@@ -25,10 +25,16 @@
     e.preventDefault();
 
     var $option = $(this);
-    var isInStock = $option.data('in-stock') !== 'false';
+    var isSize = $option.hasClass('size-option-single');
+    var inStockData = $option.data('in-stock');
+    // For size options, only allow click when explicitly in stock; for other attributes default to true
+    var isInStock = isSize ? (inStockData === true || inStockData === 'true') : true;
     var value = $option.data('value');
 
-    if (!isInStock) return false;
+    if (!isInStock || $option.is('[aria-disabled="true"]') || $option.hasClass('cursor-not-allowed') || $option.hasClass('opacity-50')) {
+      e.stopPropagation();
+      return false;
+    }
 
     $option.siblings().removeClass('selected');
     $option.addClass('selected');

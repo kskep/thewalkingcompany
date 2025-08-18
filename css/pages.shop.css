@@ -22,7 +22,7 @@
 
 .filter-toggle-btn {
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: 0;
   transition: all 0.2s ease;
 }
 
@@ -40,7 +40,7 @@
   padding: 8px 12px;
   font-size: 14px;
   background: #fff;
-  border-radius: 6px;
+  border-radius: 0;
 }
 
 .woocommerce-ordering select:focus {
@@ -283,7 +283,7 @@
 .product-card {
   border-radius: 0;
   transition: all 0.3s ease;
-  border: none;
+  border: 1px solid #e5e7eb;
   background: #fff;
   width: 100%;
   height: auto;
@@ -291,8 +291,8 @@
 }
 
 .product-card:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
+  box-shadow: none;
+  transform: none;
 }
 
 /* Ensure products display correctly in grid */

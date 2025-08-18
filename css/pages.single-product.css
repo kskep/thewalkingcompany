@@ -36,21 +36,16 @@
 
 .woocommerce-product-gallery__image {
   margin-bottom: 16px;
-  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
 }
 
 .woocommerce-product-gallery__image:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 .woocommerce-product-gallery__image img {
   width: 100%;
   height: auto;
-  border-radius: 12px;
 }
 
 /* Product Gallery Thumbnails */
@@ -72,16 +67,13 @@
   width: 80px;
   height: 80px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid transparent;
+  border: 1px solid #e5e7eb;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .flex-control-thumbs img:hover,
 .flex-control-thumbs .flex-active img {
   border-color: var(--primary-pink);
-  transform: scale(1.05);
 }
 
 /* Product Info Section */
@@ -167,8 +159,7 @@
 .cart .quantity input {
   width: 80px;
   padding: 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border: 1px solid #e5e7eb;
   text-align: center;
   font-weight: 600;
 }
@@ -181,13 +172,11 @@
 .single_add_to_cart_button {
   background: var(--primary-pink);
   color: white;
-  border: none;
+  border: 1px solid #1f2937;
   padding: 14px 32px;
-  border-radius: 8px;
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -195,15 +184,11 @@
 
 .single_add_to_cart_button:hover {
   background: var(--primary-pink-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(238, 129, 179, 0.3);
 }
 
 .single_add_to_cart_button:disabled {
   background: #d1d5db;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 /* Product Meta */
@@ -240,18 +225,14 @@
 .social-share-btn {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   text-decoration: none;
-  transition: all 0.2s ease;
 }
 
 .social-share-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .social-share-btn.facebook {
@@ -350,17 +331,13 @@
 }
 
 .size-options-single .size-option-single:not(.opacity-50):hover {
-  transform: scale(1.05);
   border-color: #374151;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .size-options-single .size-option-single.selected {
   background-color: #1f2937;
   color: white;
   border-color: #1f2937;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .size-options-single .size-option-single.opacity-50 {
@@ -397,7 +374,6 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   min-width: 50px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .badge-sale {
