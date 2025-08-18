@@ -17,7 +17,9 @@
 .shop-toolbar {
   background: #fff;
   padding: 0;
+  margin-top: 16px;
   margin-bottom: 24px;
+  column-gap: 12px;
 }
 
 .filter-toggle-btn {
@@ -639,19 +641,58 @@
 .pagination-wrapper {
   display: flex;
   justify-content: center;
+  margin-top: 16px;
 }
 
+/* WooCommerce default pagination */
+.woocommerce-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.woocommerce-pagination .page-numbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.woocommerce-pagination .page-numbers li { margin: 0; }
+
+.woocommerce-pagination .page-numbers a,
+.woocommerce-pagination .page-numbers span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e5e5;
+  color: #6b7280;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.woocommerce-pagination .page-numbers a:hover,
+.woocommerce-pagination .page-numbers .current {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* Generic pagination fallback used elsewhere */
 .pagination {
   display: flex;
   list-style: none;
   padding: 0;
   margin: 0;
-  gap: 4px;
+  gap: 8px;
 }
 
-.pagination li {
-  margin: 0;
-}
+.pagination li { margin: 0; }
 
 .pagination a,
 .pagination span {

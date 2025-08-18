@@ -10,32 +10,16 @@ defined('ABSPATH') || exit;
 get_header('shop'); ?>
 
 <div class="mx-auto px-4 py-8 shop-layout">
-    
-    <!-- Page Header -->
-    <div class="woocommerce-products-header mb-8">
-        <?php if (apply_filters('woocommerce_show_page_title', true)) : ?>
-            <h1 class="woocommerce-products-header__title page-title text-3xl font-bold text-gray-900 mb-4"><?php woocommerce_page_title(); ?></h1>
-        <?php endif; ?>
 
-        
-    </div>
+    <!-- Shop Toolbar: Filter (left) + Sorting (right); page title removed in favor of breadcrumbs -->
+    <div class="shop-toolbar flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+        <!-- Left: Filter icon/button opens modal with categories, attributes, price -->
+        <button class="eshop-modal-open flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-gray-400 transition-colors" data-target="#filters-modal" aria-label="Open Filters">
+            <i class="fas fa-sliders-h text-sm" aria-hidden="true"></i>
+            <span class="hidden sm:inline"><?php _e('Filters', 'eshop-theme'); ?></span>
+        </button>
 
-    <!-- Shop Toolbar -->
-    <div class="shop-toolbar flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b border-gray-200">
-        <div class="flex items-center space-x-4 mb-4 sm:mb-0">
-            <!-- Filter Toggle Button -->
-            <button class="eshop-modal-open flex items-center space-x-2 px-4 py-2 border border-gray-300 hover:border-gray-400 transition-colors" data-target="#filters-modal">
-                <i class="fas fa-sliders-h text-sm"></i>
-                <span><?php _e('Filters', 'eshop-theme'); ?></span>
-            </button>
-            
-            <!-- Results Count -->
-            <div class="results-count text-gray-600">
-                <?php woocommerce_result_count(); ?>
-            </div>
-        </div>
-        
-        <!-- Sort Dropdown -->
+        <!-- Right: Sorting -->
         <div class="shop-ordering">
             <?php woocommerce_catalog_ordering(); ?>
         </div>
@@ -55,41 +39,6 @@ get_header('shop'); ?>
         </div>
     </div>
 
-    <!-- Quick Filters -->
-    <div class="quick-filters mb-6">
-        <div class="flex flex-wrap items-center gap-3">
-            <span class="text-sm font-medium text-gray-700"><?php _e('Quick Filters:', 'eshop-theme'); ?></span>
-
-            <!-- Price Range Quick Filters -->
-            <button class="quick-filter-btn" data-filter="price" data-min="0" data-max="50">
-                <span><?php _e('Under $50', 'eshop-theme'); ?></span>
-            </button>
-            <button class="quick-filter-btn" data-filter="price" data-min="50" data-max="100">
-                <span><?php _e('$50 - $100', 'eshop-theme'); ?></span>
-            </button>
-            <button class="quick-filter-btn" data-filter="price" data-min="100" data-max="">
-                <span><?php _e('Over $100', 'eshop-theme'); ?></span>
-            </button>
-
-            <!-- On Sale Filter -->
-            <button class="quick-filter-btn" data-filter="on_sale" data-value="1">
-                <i class="fas fa-tag mr-1"></i>
-                <span><?php _e('On Sale', 'eshop-theme'); ?></span>
-            </button>
-
-            <!-- Stock Status Filter -->
-            <button class="quick-filter-btn" data-filter="stock_status" data-value="instock">
-                <i class="fas fa-check-circle mr-1"></i>
-                <span><?php _e('In Stock', 'eshop-theme'); ?></span>
-            </button>
-
-            <!-- More Filters Button -->
-            <button class="eshop-modal-open more-filters-btn" data-target="#filters-modal">
-                <i class="fas fa-sliders-h mr-1"></i>
-                <span><?php _e('More Filters', 'eshop-theme'); ?></span>
-            </button>
-        </div>
-    </div>
 
     <!-- Products Grid -->
     <div class="products-wrapper">
