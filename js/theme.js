@@ -14,6 +14,14 @@
             $(this).find('i').toggleClass('fa-bars fa-times');
         });
 
+        // Mobile Dropdown Toggle
+        $('.mobile-menu .menu-item-has-children > a').on('click', function(e) {
+            e.preventDefault();
+            var $parent = $(this).parent();
+            $parent.toggleClass('open');
+            $parent.siblings('.menu-item-has-children').removeClass('open');
+        });
+
         // Search Toggle
         $('.search-toggle').on('click', function() {
             $('#search-form').toggleClass('hidden');

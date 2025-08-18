@@ -219,3 +219,39 @@ function eshop_admin_styles($hook_suffix) {
     wp_enqueue_style('eshop-admin-acf', get_template_directory_uri() . '/css/admin.acf.css', array(), '1.0.0');
 }
 add_action('admin_enqueue_scripts', 'eshop_admin_styles');
+
+/**
+ * Newsletter Signup Handler
+ */
+function handle_newsletter_signup() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['newsletter_nonce'], 'newsletter_signup')) {
+        wp_die('Security check failed');
+    }
+
+    $email = sanitize_email($_POST['newsletter_email']);
+
+    if (!is_email($email)) {
+        wp_redirect(add_query_arg('newsletter', 'invalid', wp_get_referer()));
+        exit;
+    }
+
+    // Store in options (you might want to use a proper database table)
+    $subscribers = get_option('newsletter_subscribers', array());
+    if (!in_array($email, $subscribers)) {
+        $subscribers[] = $email;
+        update_option('newsletter_subscribers', $subscribers);
+
+        // Send notification email to admin
+        wp_mail(
+            get_option('admin_email'),
+            'New Newsletter Subscription',
+            "New subscriber: {$email}"
+        );
+    }
+
+    wp_redirect(add_query_arg('newsletter', 'success', wp_get_referer()));
+    exit;
+}
+add_action('admin_post_newsletter_signup', 'handle_newsletter_signup');
+add_action('admin_post_nopriv_newsletter_signup', 'handle_newsletter_signup');
