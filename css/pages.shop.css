@@ -405,17 +405,18 @@ body.tax-product_tag {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* Product Badges - Magazine Style */
+/* Product Badges - Minimal Style */
 .badge {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  padding: 8px 16px;
+  padding: 4px 8px;
   color: white;
   white-space: nowrap;
   border-radius: 0;
   box-shadow: none;
+  opacity: 0.9;
 }
 
 .badge-sale {
@@ -648,7 +649,7 @@ body.tax-product_tag {
 
 .woocommerce .product-card .price ins {
   text-decoration: none;
-  color: var(--text-dark);
+  color: var(--sale-red);
   font-weight: 400;
 }
 
