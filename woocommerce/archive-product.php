@@ -12,11 +12,11 @@ get_header('shop'); ?>
 <div class="mx-auto px-4 py-8 shop-layout">
 
     <!-- Shop Toolbar: Filter (left) + Sorting (right); page title removed in favor of breadcrumbs -->
-    <div class="shop-toolbar flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+    <div class="shop-toolbar flex items-center justify-between mb-6 pb-4">
         <!-- Left: Filter icon/button opens modal with categories, attributes, price -->
         <button class="eshop-modal-open flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-gray-400 transition-colors" data-target="#filters-modal" aria-label="Open Filters">
             <i class="fas fa-sliders-h text-sm" aria-hidden="true"></i>
-            <span class="hidden sm:inline"><?php _e('Filters', 'eshop-theme'); ?></span>
+            <span class="hidden sm:inline"><?php _e('Filters', 'eshop-theme'); ?>FILTERS</span>
         </button>
 
         <!-- Right: Sorting -->

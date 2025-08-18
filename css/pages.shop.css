@@ -420,6 +420,7 @@ body.tax-product_tag {
 
 .badge-sale {
   background-color: var(--sale-red) !important;
+  width:fit-content!important;
 }
 
 .badge-out-of-stock {
@@ -531,8 +532,8 @@ body.tax-product_tag {
 }
 
 .product-slider .swiper-pagination-bullet {
-  width: 6px;
-  height: 6px;
+  width: 16px;
+  height: 16px;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(0, 0, 0, 0.1);
   opacity: 1;
@@ -609,7 +610,7 @@ body.tax-product_tag {
   font-size: 20px;
   font-weight: 400;
   line-height: 1.3;
-  color: var(--text-dark);
+  color: var(--color-primary);
   text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -675,8 +676,8 @@ body.tax-product_tag {
 
 /* Shop Toolbar */
 .shop-toolbar {
-  background: #fff;
-  border: 1px solid #f1f1f1;
+  background: #f8f7f5;
+  
   padding: 16px 20px;
   margin-bottom: 24px;
 }
@@ -709,7 +710,7 @@ body.tax-product_tag {
 .woocommerce-pagination {
   display: flex;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 32px;
 }
 
 .woocommerce-pagination .page-numbers {
