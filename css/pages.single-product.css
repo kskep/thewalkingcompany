@@ -323,28 +323,131 @@
   text-align: center;
 }
 
+/* Custom Variations Styling */
+.custom-variations .variation-wrapper {
+  margin-bottom: 24px;
+}
+
+.custom-variations .variation-label {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.custom-variations .selected-value {
+  font-weight: 400;
+  color: #6b7280;
+}
+
+/* Size Options for Single Product */
+.size-options-single .size-option-single {
+  min-width: 48px;
+  height: 48px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.size-options-single .size-option-single:not(.opacity-50):hover {
+  transform: scale(1.05);
+  border-color: #374151;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.size-options-single .size-option-single.selected {
+  background-color: #1f2937;
+  color: white;
+  border-color: #1f2937;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.size-options-single .size-option-single.opacity-50 {
+  position: relative;
+}
+
+.size-options-single .size-option-single.opacity-50::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background-color: #9ca3af;
+  transform: translateY(-50%);
+}
+
+/* Attribute Options for Single Product */
+.attribute-options-single .attribute-option-single:hover {
+  border-color: #374151;
+  background-color: #f9fafb;
+}
+
+.attribute-options-single .attribute-option-single.selected {
+  background-color: #1f2937;
+  color: white;
+  border-color: #1f2937;
+}
+
+/* Product Badges */
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  min-width: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.badge-sale {
+  background-color: #dc2626 !important;
+}
+
+.badge-out-of-stock {
+  background-color: #6b7280 !important;
+}
+
+.badge-new {
+  background-color: #16a34a !important;
+}
+
+.badge-hot {
+  background-color: #ea580c !important;
+}
+
+.badge-low-stock {
+  background-color: #f59e0b !important;
+}
+
 /* Responsive Design */
 @media (max-width: 1023px) {
   .product_title {
     font-size: 1.75rem;
   }
-  
+
   .price {
     font-size: 1.25rem;
   }
-  
+
   .single_add_to_cart_button {
     width: 100%;
     justify-content: center;
   }
-  
+
   .cart .quantity {
     margin-right: 0;
     margin-bottom: 16px;
     display: block;
   }
-  
+
   .cart .quantity input {
     width: 100%;
+  }
+
+  .size-options-single .size-option-single {
+    min-width: 40px;
+    height: 40px;
+    font-size: 12px;
   }
 }

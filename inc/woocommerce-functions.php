@@ -491,6 +491,182 @@ function eshop_get_product_size_variants($product, $limit = 8) {
 }
 
 /**
+ * Product Badges Helper
+ */
+function eshop_get_product_badges($product) {
+    $badges = array();
+
+    // Sale Badge
+    if ($product->is_on_sale()) {
+        $badges[] = array(
+            'text' => __('SALE', 'eshop-theme'),
+            'class' => 'badge-sale',
+            'style' => 'background-color: #dc2626; color: white;'
+        );
+    }
+
+    // Out of Stock Badge
+    if (!$product->is_in_stock()) {
+        $badges[] = array(
+            'text' => __('OUT OF STOCK', 'eshop-theme'),
+            'class' => 'badge-out-of-stock',
+            'style' => 'background-color: #6b7280; color: white;'
+        );
+    }
+
+    // New/Hot Badge (products created in last 30 days)
+    $created_date = get_the_date('U', $product->get_id());
+    $thirty_days_ago = strtotime('-30 days');
+    if ($created_date > $thirty_days_ago) {
+        $badges[] = array(
+            'text' => __('NEW', 'eshop-theme'),
+            'class' => 'badge-new',
+            'style' => 'background-color: #16a34a; color: white;'
+        );
+    }
+
+    // Featured Badge
+    if ($product->is_featured()) {
+        $badges[] = array(
+            'text' => __('HOT', 'eshop-theme'),
+            'class' => 'badge-hot',
+            'style' => 'background-color: #ea580c; color: white;'
+        );
+    }
+
+    // Low Stock Badge (if stock is less than 5)
+    if ($product->managing_stock() && $product->get_stock_quantity() <= 5 && $product->get_stock_quantity() > 0) {
+        $badges[] = array(
+            'text' => __('LOW STOCK', 'eshop-theme'),
+            'class' => 'badge-low-stock',
+            'style' => 'background-color: #f59e0b; color: white;'
+        );
+    }
+
+    return $badges;
+}
+
+/**
+ * Custom Single Product Variation Display
+ */
+function eshop_custom_variation_display() {
+    global $product;
+
+    if (!$product->is_type('variable')) {
+        return;
+    }
+
+    $attributes = $product->get_variation_attributes();
+    $available_variations = $product->get_available_variations();
+
+    if (empty($attributes)) {
+        return;
+    }
+
+    echo '<div class="custom-variations-wrapper">';
+
+    foreach ($attributes as $attribute_name => $options) {
+        $attribute_label = wc_attribute_label($attribute_name);
+        $attribute_slug = str_replace('pa_', '', $attribute_name);
+
+        echo '<div class="variation-attribute mb-4" data-attribute="' . esc_attr($attribute_slug) . '">';
+        echo '<h4 class="variation-label text-sm font-semibold text-gray-900 mb-3">' . esc_html($attribute_label) . '</h4>';
+
+        // Check if this is a size attribute
+        $is_size_attribute = (strpos(strtolower($attribute_name), 'size') !== false);
+
+        if ($is_size_attribute) {
+            // Display sizes as circular buttons
+            echo '<div class="size-options flex flex-wrap gap-2">';
+
+            // Get size data with stock status
+            $size_data = array();
+            foreach ($available_variations as $variation) {
+                $variation_obj = wc_get_product($variation['variation_id']);
+                $attr_key = 'attribute_' . strtolower($attribute_name);
+                $attr_value = $variation['attributes'][$attr_key];
+
+                if ($attr_value && !isset($size_data[$attr_value])) {
+                    $size_data[$attr_value] = array(
+                        'name' => $attr_value,
+                        'in_stock' => $variation_obj && $variation_obj->is_in_stock(),
+                        'variation_id' => $variation['variation_id']
+                    );
+                }
+            }
+
+            // Sort sizes
+            uksort($size_data, function($a, $b) {
+                if (is_numeric($a) && is_numeric($b)) {
+                    return (float)$a - (float)$b;
+                }
+                return strcmp($a, $b);
+            });
+
+            foreach ($size_data as $size_value => $size_info) {
+                $classes = 'size-option-single w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-semibold transition-all duration-200 cursor-pointer';
+                $classes .= !$size_info['in_stock'] ? ' opacity-50 cursor-not-allowed bg-gray-100 text-gray-400' : ' bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400';
+
+                echo '<span class="' . $classes . '" ';
+                echo 'data-value="' . esc_attr($size_value) . '" ';
+                echo 'data-attribute="' . esc_attr($attribute_slug) . '" ';
+                echo 'data-in-stock="' . ($size_info['in_stock'] ? 'true' : 'false') . '" ';
+                echo 'title="' . esc_attr($size_value . (!$size_info['in_stock'] ? ' - Out of Stock' : '')) . '">';
+                echo esc_html($size_value);
+                echo '</span>';
+            }
+
+            echo '</div>';
+        } else {
+            // Display other attributes as buttons or swatches
+            echo '<div class="attribute-options flex flex-wrap gap-2">';
+
+            foreach ($options as $option) {
+                if (empty($option)) continue;
+
+                $classes = 'attribute-option px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400';
+
+                echo '<span class="' . $classes . '" ';
+                echo 'data-value="' . esc_attr($option) . '" ';
+                echo 'data-attribute="' . esc_attr($attribute_slug) . '">';
+                echo esc_html($option);
+                echo '</span>';
+            }
+
+            echo '</div>';
+        }
+
+        echo '</div>';
+    }
+
+    echo '</div>';
+}
+
+/**
+ * Custom Single Product Badges Display
+ */
+function eshop_custom_single_product_badges() {
+    global $product;
+
+    $badges = eshop_get_product_badges($product);
+    if (empty($badges)) {
+        return;
+    }
+
+    echo '<div class="single-product-badges absolute top-4 left-4 flex flex-col gap-2 z-10">';
+    foreach ($badges as $badge) {
+        echo '<span class="badge ' . esc_attr($badge['class']) . ' text-xs px-3 py-1 font-semibold rounded text-center" style="' . esc_attr($badge['style']) . '">';
+        echo esc_html($badge['text']);
+        echo '</span>';
+    }
+    echo '</div>';
+}
+
+// Remove default sale flash and add our custom badges
+remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10);
+add_action('woocommerce_before_single_product_summary', 'eshop_custom_single_product_badges', 10);
+
+/**
  * Account Menu Functions
  */
 

@@ -133,13 +133,52 @@ get_header();
     <div class="mb-8">
         <h2 class="text-xl font-semibold mb-4">Expected Behavior</h2>
         <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-            <ul class="list-disc list-inside space-y-2 text-sm">
-                <li>Size variants should appear as circular buttons below the product image</li>
+            <h3 class="font-semibold mb-2">Product Archive (Shop Page):</h3>
+            <ul class="list-disc list-inside space-y-1 text-sm mb-4">
+                <li>Size variants should appear as small circular buttons below the product image</li>
                 <li>In-stock sizes should be clickable and show hover effects</li>
                 <li>Out-of-stock sizes should appear grayed out with a strikethrough line</li>
                 <li>Clicking a size should select it (add active state)</li>
+                <li>Product badges (SALE, NEW, HOT, etc.) should appear on top-left of product images</li>
+            </ul>
+
+            <h3 class="font-semibold mb-2">Single Product Page:</h3>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Size options should appear as larger circular buttons (not dropdown)</li>
+                <li>Other attributes should appear as rectangular buttons</li>
+                <li>Selected options should have dark background with white text</li>
+                <li>Product badges should appear on the product gallery</li>
                 <li>Sizes should be sorted numerically if they are numbers</li>
             </ul>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Product Badges</h2>
+        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+            <p class="text-sm mb-3">The following badges will automatically appear based on product conditions:</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-sale text-xs px-2 py-1 font-semibold rounded" style="background-color: #dc2626; color: white;">SALE</span>
+                    <span>When product is on sale</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-new text-xs px-2 py-1 font-semibold rounded" style="background-color: #16a34a; color: white;">NEW</span>
+                    <span>Products created in last 30 days</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-hot text-xs px-2 py-1 font-semibold rounded" style="background-color: #ea580c; color: white;">HOT</span>
+                    <span>Featured products</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-low-stock text-xs px-2 py-1 font-semibold rounded" style="background-color: #f59e0b; color: white;">LOW STOCK</span>
+                    <span>5 or fewer items in stock</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge badge-out-of-stock text-xs px-2 py-1 font-semibold rounded" style="background-color: #6b7280; color: white;">OUT OF STOCK</span>
+                    <span>No stock available</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

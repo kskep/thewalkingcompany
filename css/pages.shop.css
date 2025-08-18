@@ -371,6 +371,42 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* Product Badges - Archive */
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  min-width: 45px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.badge-sale {
+  background-color: #dc2626 !important;
+}
+
+.badge-out-of-stock {
+  background-color: #6b7280 !important;
+}
+
+.badge-new {
+  background-color: #16a34a !important;
+}
+
+.badge-hot {
+  background-color: #ea580c !important;
+}
+
+.badge-low-stock {
+  background-color: #f59e0b !important;
+}
+
+/* Ensure badges are visible above other elements */
+.product-card .badge {
+  z-index: 15;
+}
+
 .products-grid li .product-card {
   width: 100%;
   display: block;

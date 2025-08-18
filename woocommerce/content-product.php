@@ -91,16 +91,24 @@ if (empty($product) || !$product->is_visible()) {
             </div>
         <?php endif; ?>
 
-        <!-- Sale Badge -->
-        <?php if ($product->is_on_sale()) : ?>
-            <div class="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 font-semibold rounded">
-                <?php _e('SALE', 'eshop-theme'); ?>
+        <!-- Product Badges -->
+        <?php
+        $badges = function_exists('eshop_get_product_badges') ? eshop_get_product_badges($product) : array();
+        if (!empty($badges)) :
+        ?>
+            <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                <?php foreach ($badges as $badge) : ?>
+                    <span class="badge <?php echo esc_attr($badge['class']); ?> text-xs px-2 py-1 font-semibold rounded text-center"
+                          style="<?php echo esc_attr($badge['style']); ?>">
+                        <?php echo esc_html($badge['text']); ?>
+                    </span>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
 
-        <!-- Stock Status -->
+        <!-- Stock Status Overlay (for out of stock products) -->
         <?php if (!$product->is_in_stock()) : ?>
-            <div class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center">
+            <div class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-20">
                 <span class="bg-gray-800 text-white px-3 py-1 text-sm font-medium rounded">
                     <?php _e('Out of Stock', 'eshop-theme'); ?>
                 </span>

@@ -282,7 +282,7 @@
             initProductFilters();
         }
 
-        // Size Variant Selection
+        // Size Variant Selection (Product Archive)
         $(document).on('click', '.size-option', function(e) {
             e.preventDefault();
 
@@ -308,6 +308,38 @@
             // You can store this data for later use or trigger events
             $sizeOption.closest('.product-card').data('selected-size', selectedSize);
             $sizeOption.closest('.product-card').data('selected-variation-id', variationId);
+        });
+
+        // Custom Variation Selection (Single Product Page)
+        $(document).on('click', '.size-option-single, .attribute-option-single', function(e) {
+            e.preventDefault();
+
+            var $option = $(this);
+            var isInStock = $option.data('in-stock') !== 'false';
+            var value = $option.data('value');
+            var attribute = $option.data('attribute');
+
+            // Don't allow selection of out of stock options
+            if (!isInStock) {
+                return false;
+            }
+
+            // Remove selected state from siblings
+            $option.siblings().removeClass('selected');
+
+            // Add selected state to clicked option
+            $option.addClass('selected');
+
+            // Update the hidden select element
+            var $select = $option.closest('.variation-wrapper').find('select');
+            $select.val(value).trigger('change');
+
+            // Update the label to show selected value
+            var $label = $option.closest('.variation-wrapper').find('.selected-value');
+            $label.text(value);
+
+            // Trigger WooCommerce variation change
+            $('.variations_form').trigger('check_variations');
         });
 
         // Generic modal open/close (reusable component)

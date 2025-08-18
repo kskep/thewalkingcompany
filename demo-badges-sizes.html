@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Size Variants & Badges Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Size Variants Styling */
+        .size-variants {
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .size-option {
+            min-width: 32px;
+            height: 32px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .size-option:not(.opacity-50):hover {
+            transform: scale(1.05);
+            border-color: #6b7280;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .size-option.active {
+            background-color: #1f2937;
+            color: white;
+            border-color: #1f2937;
+            transform: scale(1.05);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .size-option.opacity-50 {
+            position: relative;
+        }
+
+        .size-option.opacity-50::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background-color: #9ca3af;
+            transform: translateY(-50%);
+        }
+
+        /* Single Product Size Options */
+        .size-option-single {
+            min-width: 48px;
+            height: 48px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .size-option-single:not(.opacity-50):hover {
+            transform: scale(1.05);
+            border-color: #374151;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .size-option-single.selected {
+            background-color: #1f2937;
+            color: white;
+            border-color: #1f2937;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Product Badges */
+        .badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            min-width: 50px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card {
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Size Variants & Badges Demo</h1>
+        
+        <!-- Product Archive Demo -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">Product Archive (Shop Page)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <!-- Product Card 1 - Sale + Sizes -->
+                <div class="product-card bg-white overflow-hidden hover:shadow-lg transition-all duration-300 group relative">
+                    <div class="product-image relative overflow-hidden bg-gray-50 aspect-square">
+                        <img src="https://via.placeholder.com/400x400/e5e7eb/6b7280?text=Product+1" alt="Product 1" class="w-full h-full object-cover">
+                        
+                        <!-- Badges -->
+                        <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                            <span class="badge text-xs px-2 py-1 font-semibold rounded text-center" style="background-color: #dc2626; color: white;">SALE</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Size Variants -->
+                    <div class="size-variants flex justify-center flex-wrap gap-2 px-3 py-3">
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="36">36</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50 active" data-size="37">37</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="38">38</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" data-size="39">39</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="40">40</span>
+                    </div>
+                    
+                    <div class="product-info p-4">
+                        <h3 class="product-title mb-2">
+                            <a href="#" class="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors">Flat Sandals Black</a>
+                        </h3>
+                        <div class="product-price">
+                            <div class="text-lg font-semibold text-gray-900">€29.99</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 - New + Hot -->
+                <div class="product-card bg-white overflow-hidden hover:shadow-lg transition-all duration-300 group relative">
+                    <div class="product-image relative overflow-hidden bg-gray-50 aspect-square">
+                        <img src="https://via.placeholder.com/400x400/e5e7eb/6b7280?text=Product+2" alt="Product 2" class="w-full h-full object-cover">
+                        
+                        <!-- Badges -->
+                        <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                            <span class="badge text-xs px-2 py-1 font-semibold rounded text-center" style="background-color: #16a34a; color: white;">NEW</span>
+                            <span class="badge text-xs px-2 py-1 font-semibold rounded text-center" style="background-color: #ea580c; color: white;">HOT</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Size Variants -->
+                    <div class="size-variants flex justify-center flex-wrap gap-2 px-3 py-3">
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="S">S</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="M">M</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="L">L</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" data-size="XL">XL</span>
+                    </div>
+                    
+                    <div class="product-info p-4">
+                        <h3 class="product-title mb-2">
+                            <a href="#" class="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors">Summer T-Shirt</a>
+                        </h3>
+                        <div class="product-price">
+                            <div class="text-lg font-semibold text-gray-900">€19.99</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 - Low Stock -->
+                <div class="product-card bg-white overflow-hidden hover:shadow-lg transition-all duration-300 group relative">
+                    <div class="product-image relative overflow-hidden bg-gray-50 aspect-square">
+                        <img src="https://via.placeholder.com/400x400/e5e7eb/6b7280?text=Product+3" alt="Product 3" class="w-full h-full object-cover">
+                        
+                        <!-- Badges -->
+                        <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                            <span class="badge text-xs px-2 py-1 font-semibold rounded text-center" style="background-color: #f59e0b; color: white;">LOW STOCK</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Size Variants -->
+                    <div class="size-variants flex justify-center flex-wrap gap-2 px-3 py-3">
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="41">41</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="42">42</span>
+                        <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50" data-size="43">43</span>
+                    </div>
+                    
+                    <div class="product-info p-4">
+                        <h3 class="product-title mb-2">
+                            <a href="#" class="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors">Running Shoes</a>
+                        </h3>
+                        <div class="product-price">
+                            <div class="text-lg font-semibold text-gray-900">€89.99</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Product Demo -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6">Single Product Page</h2>
+            <div class="bg-white rounded-lg p-8 shadow-lg">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Product Image -->
+                    <div class="relative">
+                        <img src="https://via.placeholder.com/600x600/e5e7eb/6b7280?text=Single+Product" alt="Single Product" class="w-full rounded-lg">
+                        <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                            <span class="badge text-xs px-3 py-1 font-semibold rounded text-center" style="background-color: #dc2626; color: white;">SALE</span>
+                            <span class="badge text-xs px-3 py-1 font-semibold rounded text-center" style="background-color: #ea580c; color: white;">HOT</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div>
+                        <h1 class="text-3xl font-bold mb-4">Flat Sandals Black</h1>
+                        <div class="text-2xl font-semibold text-gray-900 mb-6">€29.99</div>
+                        
+                        <!-- Size Selection -->
+                        <div class="variation-wrapper mb-6">
+                            <label class="variation-label block text-sm font-semibold text-gray-900 mb-3">
+                                Size: <span class="selected-value text-gray-600 font-normal">37</span>
+                            </label>
+                            <div class="size-options-single flex flex-wrap gap-3">
+                                <span class="size-option-single w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400" data-value="36">36</span>
+                                <span class="size-option-single w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400 selected" data-value="37">37</span>
+                                <span class="size-option-single w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400" data-value="38">38</span>
+                                <span class="size-option-single w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-semibold transition-all duration-200 opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" data-value="39">39</span>
+                                <span class="size-option-single w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400" data-value="40">40</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Add to Cart -->
+                        <button class="w-full bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo JavaScript for size selection
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('size-option') || e.target.classList.contains('size-option-single')) {
+                e.preventDefault();
+                
+                var option = e.target;
+                var isInStock = !option.classList.contains('opacity-50');
+                
+                if (!isInStock) {
+                    return false;
+                }
+                
+                // Remove active/selected state from siblings
+                var siblings = option.parentNode.querySelectorAll('.size-option, .size-option-single');
+                siblings.forEach(function(sibling) {
+                    sibling.classList.remove('active', 'selected');
+                });
+                
+                // Add active/selected state to clicked option
+                if (option.classList.contains('size-option')) {
+                    option.classList.add('active');
+                } else {
+                    option.classList.add('selected');
+                    
+                    // Update selected value display
+                    var selectedValue = option.closest('.variation-wrapper').querySelector('.selected-value');
+                    if (selectedValue) {
+                        selectedValue.textContent = option.dataset.value;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
