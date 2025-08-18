@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>E-Commerce Revolution</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&amp;family=Lato:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --main-color: #ee81b3;
+        }
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .main-color {
+            color: var(--main-color);
+        }
+        .bg-main {
+            background-color: var(--main-color);
+        }
+        .border-main {
+            border-color: var(--main-color);
+        }
+        .group:hover .group-hover\:block {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-stone-50">
+<header class="border-b border-stone-200 bg-white sticky top-0 z-50">
+<div class="container mx-auto px-4">
+<div class="flex justify-between items-center py-4">
+<div class="flex-1">
+<a class="font-serif text-3xl font-bold tracking-wider text-stone-900" href="#">ER</a>
+</div>
+<div class="flex-1 text-center">
+<a class="font-serif text-4xl font-bold tracking-wider text-stone-900" href="#">E-Commerce Revolution</a>
+</div>
+<div class="flex flex-1 items-center justify-end space-x-6 text-stone-600">
+<a class="hidden md:block hover:text-stone-900" href="#">
+<span class="material-icons">search</span>
+</a>
+<a class="hover:text-stone-900" href="#">
+<span class="material-icons">person_outline</span>
+</a>
+<a class="relative hover:text-stone-900" href="#">
+<span class="material-icons">favorite_border</span>
+<span class="absolute -top-1 -right-1 text-xs bg-main text-white rounded-full w-4 h-4 flex items-center justify-center">0</span>
+</a>
+<a class="relative hover:text-stone-900" href="#">
+<span class="material-icons">shopping_bag</span>
+<span class="absolute -top-1 -right-1 text-xs bg-main text-white rounded-full w-4 h-4 flex items-center justify-center">0</span>
+</a>
+</div>
+</div>
+<nav class="flex justify-center items-center py-3">
+<ul class="flex items-center space-x-10 text-sm uppercase tracking-wider text-stone-600">
+<li class="group relative">
+<a class="flex items-center hover:text-stone-900" href="#">
+<span>Categories</span>
+<span class="material-icons text-base">expand_more</span>
+</a>
+<div class="absolute hidden group-hover:block bg-white shadow-lg py-2 w-48 rounded-md mt-1 border border-stone-200">
+<a class="block px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 hover:text-stone-900" href="#">Clothing</a>
+<a class="block px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 hover:text-stone-900" href="#">Accessories</a>
+<a class="block px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 hover:text-stone-900" href="#">Shoes</a>
+</div>
+</li>
+<li><a class="hover:text-stone-900" href="#">New Arrivals</a></li>
+<li><a class="hover:text-stone-900 text-red-500 font-semibold" href="#">Sale</a></li>
+<li><a class="hover:text-stone-900" href="#">Brands</a></li>
+<li><a class="hover:text-stone-900" href="#">About Us</a></li>
+<li><a class="hover:text-stone-900" href="#">Contact</a></li>
+</ul>
+</nav>
+</div>
+</header>
+<main class="container mx-auto px-4 mt-8">
+<div class="text-sm text-stone-500 mb-8">
+<a class="hover:text-stone-900" href="#">Home</a>
+<span class="mx-2">/</span>
+<span class="text-stone-900">Shop</span>
+</div>
+<div class="flex items-center justify-between mb-8">
+<button class="flex items-center space-x-2 text-sm uppercase tracking-widest text-stone-600 hover:text-stone-900">
+<span class="material-icons">menu</span>
+<span>Filters</span>
+</button>
+<div class="text-sm">
+<select class="border border-stone-300 p-2 focus:outline-none focus:border-stone-500">
+<option>Default sorting</option>
+<option>Sort by popularity</option>
+<option>Sort by average rating</option>
+<option>Sort by latest</option>
+<option>Sort by price: low to high</option>
+<option>Sort by price: high to low</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="Woven straw bag with black handles" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc2cCBEoFTZGw9ugC2KlT4DNJRCGVCdwMvRXCDjQGtnGOXg0T2ttbl3fTJVs6-KtbOT-ULOUGRPLyCi-k9p7dOffuXXNcs8pWRCTod93ND7oqM6VHNGSQVTi45Qk-hIZKKLv0LsrFEeZg6flstDSE67EbyUQ98dri00PRVzdPlhMTpOAnQITUPhwtqRyIDyblMVn_1E-T4yTG4mNSdZEQ3t76RRq_1Wq66HM9Rk3tyt2AFXf9DFveymKxnI5SoyqTYxf7LaMNGXWf_"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+<span class="absolute top-3 left-3 bg-main text-white text-xs font-bold uppercase px-2 py-1 tracking-wider">New</span>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Alessa Beige Black</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">50,99 €</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="White woven tote bag" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsIwCiDEZVdwnDIokvMNoNPKicUFDZ3aIeDeOGBN9Mx5uNuJdhakyX6iugNqlXS1kLQ_RvM2ykoC6qdRsjl4rgB978AOMWhH4rDzZXLWA4ckeKFZO7EE1ZrJNSW6JU8SCwXg7yb7PH-J1nRNXFDDopTPt2tOiUn7SMWm1axvDEg_hj4R2HjOl5EdJmf2bih8HugtOR8OB9zk_nkh3IDxPKKwG3dzYaqw2j6bJk_gQZnmPuTGMcLN7-Bt1SbnB-zC_vh_32v3KHXH8B"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Alessa Beige Brown</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">50,99 €</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="Red sequined clutch bag" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrtOhRvbuFBtfUPVD9h-dta5LkLbY-38XJmrX2sikhER5TQQKWIBmbPtIEAO9By8AiAwQp97AkLDYCtSgkCRv82BhLWrY8L2cSKIuwlBhtjnHhTD-V_sD2r0Ku2GsgF4-HpKHbGFHsixjseZU5HVHP0qpYUTN6i-sldewnIYrbQwYNqMqKjr9z8i8WcwobBupmHrddiXQyHR3pVzqFNfde-T5sW_Mb55IWFOYTdvyImAkt2iP3TVT9z9rTdppHTFpITR4UmNzq2x5h"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite</span>
+</button>
+<span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold uppercase px-2 py-1 tracking-wider">Sale</span>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Anastasia Wine Red</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">
+<span class="text-stone-500 line-through mr-2">47,99 €</span>
+<span class="text-red-500">22,50 €</span>
+</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="Burgundy sheer long-sleeve dress" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT5u5Enq5JhmhFPs1p3WeWKFE5Y2e5DpMkuRSfuqUqI3LKAOpNhjV12yLfrYZlDralD1CcX2ml3YND5V3M2CAVLB8ZVfVQ5uPzfMYiW8aM7gUi9Ki220yxrmqKsSET1kNTsSzb3BxkEWB576EEt75FX70xb1rMP5TvQ_qgLncYK442cGmvRk_VSVPu5nHb6FDAewC7ybRSH82fJOCiUZht7TSljZYh-f1b9cV16PVOmq9swjs5WmWFjSvsIUnjHaDYMSTLcIko0kta"/>
+<div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+<span class="text-white text-sm font-bold uppercase tracking-wider border-2 border-white px-4 py-2">Out of Stock</span>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Angel Sheer Dress Wine</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">
+<span class="text-stone-500 line-through mr-2">44,99 €</span>
+<span class="text-red-500">29,99 €</span>
+</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="Black dress with thigh split" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4TSfgGAPnOlLrlvKm7wc9rqPULA5ug44Do1U7KJ2LrCEIMhQjggcvXiBbN_1h4iRdLIjahPUgGS1nOxpF0OVxwIIqpiOlaC7QOTV1o3UWWkHe67FyfwxObfAcA8yV4JKuy1s_1WRAcOzPCH7wcgpLjahZ62qa4JSX3E2_N_fuPDAB-jmb43uA2VAOPpxCVIAURR-CIishAcrhLwdqNKBkKdIJsRi4WhOM8KMW8PLzkAIrsAfgUBpT_J0KMfT1lRfqT_YDmJJw13aD"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+<span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold uppercase px-2 py-1 tracking-wider">Sale</span>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Classic Black Slit Dress</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">
+<span class="text-stone-500 line-through mr-2">75,00 €</span>
+<span class="text-red-500">55,00 €</span>
+</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="Tan leather handbag" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMGjWd_BnkaL9OCXs-3QtQ5X4l4p-x1DghAq-4pJHKQpP3H-EeCLKRo4w5a2578t2KdyTUneRDNwiRIoDnRTfxC1fLL6eEARZEjCuKkCwXJnvOIXWjCKFYLEZCntYVpffgIC0ESZZYZ7ziPae3AgfUjiQoNOpJeNJvzNKHcuw3jn1-F-BY4lmAoM2b1-_KUb2CCZdASsbuZ1bKB3QQz9v4U-j_aWiTtP0S-uoLNy6chZnfpdLncbY7QcVqhVi9vS2qo9_wB4IjPbcr"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Leather Saddle Bag</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">89,99 €</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="Black blazer with sheer patterned tights" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlklf1wJo1nAYV1MjTRP_KNlAcCSQVZd41jxP3_cSioN3b0Mp8ZO8F7uYQ1GbygEbZR854-yCCoj5eNQy58KSFP5mUg_tD07wDk41aeJvDsscVANMv5yCeC8pKs1RwNYHuga79TCCtEQovAN35JvwtQS9UMVAnUtnnYVjcxCGHgEKy42uM7a-FIHNeM3zQxlwJxKlghC-JT7qt0bS2WQPiGsly-5vA_iKqDHtuw5MJOqZl9WRthhGX2NFntErYr5FiffO6MgbzPUTh"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Oversized Boyfriend Blazer</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">79,99 €</p>
+</div>
+</div>
+<div class="group">
+<div class="relative overflow-hidden">
+<img alt="White dress with puff sleeves" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRFKkVluFkXfklhZBSmTPQdgbsBAF4ntQu-G6CfjvNSiCvTUpRe2--MO23bLiNAnF3mMpYxRme5NtCWi9XoUK3QNbqp0pyHULlryqIm2PmHYm5NOgvvwovFV5Nv1VKa-bRZmIz3134zuSiQ05OF2TwLlk10bpJeEb5Zq2Nud0SdgA-4bF9iE2WWJuIRGmjSSwkq2NDvnNrPaurthyFPOk87O3OIehVWIm6KEQA81gx5KsByG3hcfIpBQTm_StTZe8hstNKoqQ62PCv"/>
+<div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="bg-white text-stone-900 px-4 py-2 text-sm font-semibold uppercase tracking-wider hover:bg-main hover:text-white transition-colors duration-300">Add to Cart</button>
+</div>
+<button class="absolute top-3 right-3 text-white bg-black bg-opacity-20 p-2 rounded-full hover:bg-main transition-colors duration-300">
+<span class="material-icons text-lg">favorite_border</span>
+</button>
+<span class="absolute top-3 left-3 bg-main text-white text-xs font-bold uppercase px-2 py-1 tracking-wider">New</span>
+</div>
+<div class="mt-4 text-center">
+<h3 class="text-lg font-serif text-stone-800">Puff Sleeve Mini Dress</h3>
+<p class="mt-1 text-md font-semibold text-stone-900">65,00 €</p>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-white mt-24 py-12 border-t border-stone-200">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<h3 class="font-serif text-2xl font-semibold text-stone-900 mb-4">E-Commerce Revolution</h3>
+<p class="text-stone-500 text-sm">Your daily dose of fashion inspiration, bringing you curated collections and the latest trends.</p>
+</div>
+<div>
+<h3 class="uppercase tracking-wider text-sm font-semibold text-stone-900 mb-4">Shop</h3>
+<ul class="space-y-2 text-sm text-stone-600">
+<li><a class="hover:text-stone-900" href="#">New Arrivals</a></li>
+<li><a class="hover:text-stone-900" href="#">Dresses</a></li>
+<li><a class="hover:text-stone-900" href="#">Bags</a></li>
+<li><a class="hover:text-stone-900" href="#">Sale</a></li>
+</ul>
+</div>
+<div>
+<h3 class="uppercase tracking-wider text-sm font-semibold text-stone-900 mb-4">Information</h3>
+<ul class="space-y-2 text-sm text-stone-600">
+<li><a class="hover:text-stone-900" href="#">About Us</a></li>
+<li><a class="hover:text-stone-900" href="#">Contact</a></li>
+<li><a class="hover:text-stone-900" href="#">Shipping &amp; Returns</a></li>
+<li><a class="hover:text-stone-900" href="#">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h3 class="uppercase tracking-wider text-sm font-semibold text-stone-900 mb-4">Newsletter</h3>
+<p class="text-stone-500 text-sm mb-4">Subscribe for exclusive offers and style updates.</p>
+<form class="flex">
+<input class="w-full text-sm border border-stone-300 p-2 focus:outline-none focus:border-main" placeholder="Your email" type="email"/>
+<button class="bg-main text-white px-4 hover:opacity-90" type="submit">
+<span class="material-icons">arrow_forward</span>
+</button>
+</form>
+</div>
+</div>
+<div class="border-t border-stone-200 mt-8 pt-6 text-center text-sm text-stone-500">
+<p>© 2024 E-Commerce Revolution. All Rights Reserved.</p>
+</div>
+</div>
+</footer>
+</body></html>
