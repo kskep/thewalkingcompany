@@ -282,6 +282,34 @@
             initProductFilters();
         }
 
+        // Size Variant Selection
+        $(document).on('click', '.size-option', function(e) {
+            e.preventDefault();
+
+            var $sizeOption = $(this);
+            var isInStock = $sizeOption.data('in-stock') === true || $sizeOption.data('in-stock') === 'true';
+
+            // Don't allow selection of out of stock sizes
+            if (!isInStock) {
+                return false;
+            }
+
+            // Remove active state from siblings
+            $sizeOption.siblings('.size-option').removeClass('active');
+
+            // Add active state to clicked size
+            $sizeOption.addClass('active');
+
+            // Optional: Store selected size for potential quick add to cart functionality
+            var productId = $sizeOption.closest('.product-card').find('[data-product-id]').data('product-id');
+            var selectedSize = $sizeOption.data('size');
+            var variationId = $sizeOption.data('variation-id');
+
+            // You can store this data for later use or trigger events
+            $sizeOption.closest('.product-card').data('selected-size', selectedSize);
+            $sizeOption.closest('.product-card').data('selected-variation-id', variationId);
+        });
+
         // Generic modal open/close (reusable component)
         $(document).on('click', '.eshop-modal-open', function() {
             var target = $(this).data('target');

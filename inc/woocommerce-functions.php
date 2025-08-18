@@ -416,6 +416,81 @@ function eshop_get_product_color_variants($product, $limit = 4) {
 }
 
 /**
+ * Product Size Variants Helper
+ */
+function eshop_get_product_size_variants($product, $limit = 8) {
+    if (!$product->is_type('variable')) {
+        return array();
+    }
+
+    $available_variations = $product->get_available_variations();
+    $size_attribute = null;
+    $sizes = array();
+
+    // Find size attribute - look for 'size-selection' first, then fallback to 'size'
+    foreach ($product->get_variation_attributes() as $attribute_name => $options) {
+        $attr_lower = strtolower($attribute_name);
+        // Priority order: size-selection, size_selection, size
+        if (strpos($attr_lower, 'size-selection') !== false || strpos($attr_lower, 'size_selection') !== false) {
+            $size_attribute = $attribute_name;
+            break;
+        } elseif (strpos($attr_lower, 'size') !== false && !$size_attribute) {
+            $size_attribute = $attribute_name;
+        }
+    }
+
+    if (!$size_attribute || empty($available_variations)) {
+        return array();
+    }
+
+    $sizes_data = array();
+
+    // Collect all size variations with their stock status
+    foreach ($available_variations as $variation) {
+        $variation_obj = wc_get_product($variation['variation_id']);
+        if (!$variation_obj) continue;
+
+        $size_value = $variation['attributes']['attribute_' . strtolower(str_replace('pa_', '', $size_attribute))];
+
+        if ($size_value && !isset($sizes_data[$size_value])) {
+            $sizes_data[$size_value] = array(
+                'name' => $size_value,
+                'slug' => $size_value,
+                'in_stock' => $variation_obj->is_in_stock(),
+                'variation_id' => $variation['variation_id']
+            );
+        }
+    }
+
+    // Sort sizes with smart sorting (numeric first, then alphabetic)
+    uksort($sizes_data, function($a, $b) {
+        $a_is_numeric = is_numeric($a);
+        $b_is_numeric = is_numeric($b);
+
+        // Both numeric: sort numerically
+        if ($a_is_numeric && $b_is_numeric) {
+            return (float)$a - (float)$b;
+        }
+
+        // One numeric, one not: numeric comes first
+        if ($a_is_numeric && !$b_is_numeric) {
+            return -1;
+        }
+        if (!$a_is_numeric && $b_is_numeric) {
+            return 1;
+        }
+
+        // Both non-numeric: sort alphabetically
+        return strcmp($a, $b);
+    });
+
+    // Limit the results
+    $sizes = array_slice($sizes_data, 0, $limit, true);
+
+    return $sizes;
+}
+
+/**
  * Account Menu Functions
  */
 

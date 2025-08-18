@@ -115,9 +115,27 @@ if (empty($product) || !$product->is_visible()) {
     ?>
         <div class="color-variants flex justify-center space-x-1 py-3">
             <?php foreach ($color_variants as $color) : ?>
-                <span class="w-3 h-3 rounded-full border border-gray-200 hover:scale-110 transition-transform duration-200" 
+                <span class="w-3 h-3 rounded-full border border-gray-200 hover:scale-110 transition-transform duration-200"
                       style="background-color: <?php echo esc_attr($color['hex']); ?>"
                       title="<?php echo esc_attr($color['name']); ?>"></span>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- Size Variants (if available) -->
+    <?php
+    $size_variants = function_exists('eshop_get_product_size_variants') ? eshop_get_product_size_variants($product, 8) : array();
+    if (!empty($size_variants)) :
+    ?>
+        <div class="size-variants flex justify-center flex-wrap gap-2 px-3 py-3">
+            <?php foreach ($size_variants as $size) : ?>
+                <span class="size-option w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-xs font-medium transition-all duration-200 hover:border-gray-400 <?php echo !$size['in_stock'] ? 'opacity-50 cursor-not-allowed bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'; ?>"
+                      title="<?php echo esc_attr($size['name'] . (!$size['in_stock'] ? ' - Out of Stock' : '')); ?>"
+                      data-size="<?php echo esc_attr($size['slug']); ?>"
+                      data-variation-id="<?php echo esc_attr($size['variation_id']); ?>"
+                      data-in-stock="<?php echo $size['in_stock'] ? 'true' : 'false'; ?>">
+                    <?php echo esc_html($size['name']); ?>
+                </span>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
