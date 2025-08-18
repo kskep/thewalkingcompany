@@ -272,6 +272,7 @@ function eshop_filter_products() {
     ob_start();
 
     if ($query->have_posts()) {
+        // Start the products grid container
         echo '<div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">';
 
         while ($query->have_posts()) {
@@ -279,7 +280,7 @@ function eshop_filter_products() {
             wc_get_template_part('content', 'product');
         }
 
-        echo '</div>';
+        echo '</div>'; // Close products-grid
 
         // Pagination
         if ($query->max_num_pages > 1) {

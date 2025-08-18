@@ -44,29 +44,24 @@ get_header('shop'); ?>
     <!-- Products Grid -->
     <div class="products-wrapper">
         <?php if (woocommerce_product_loop()) : ?>
-            
-            <?php woocommerce_product_loop_start(); ?>
-            
+
+            <!-- Custom Products Grid Container -->
             <div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">
                 <?php
-                if (wc_get_loop_prop('is_shortcode')) {
-                    $columns = absint(wc_get_loop_prop('columns'));
-                }
-                
+                // Start the product loop
                 while (have_posts()) {
                     the_post();
-                    
+
                     /**
                      * Hook: woocommerce_shop_loop.
                      */
                     do_action('woocommerce_shop_loop');
-                    
+
+                    // Output the product content
                     wc_get_template_part('content', 'product');
                 }
                 ?>
             </div>
-            
-            <?php woocommerce_product_loop_end(); ?>
             
             <?php
             /**

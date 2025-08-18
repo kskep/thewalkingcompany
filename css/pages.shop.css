@@ -227,7 +227,24 @@
   display: none !important;
 }
 
-.woocommerce .products {
+.woocommerce .products:not(.products-grid) {
+  display: none !important;
+}
+
+/* Ensure our custom grid is always visible */
+.products-wrapper .products-grid {
+  display: grid !important;
+}
+
+/* Force hide any WooCommerce default product containers */
+.woocommerce .woocommerce-Result-Count + ul.products,
+.woocommerce .woocommerce-ordering + ul.products,
+.woocommerce ul.products.columns-1,
+.woocommerce ul.products.columns-2,
+.woocommerce ul.products.columns-3,
+.woocommerce ul.products.columns-4,
+.woocommerce ul.products.columns-5,
+.woocommerce ul.products.columns-6 {
   display: none !important;
 }
 
@@ -236,6 +253,20 @@
   display: grid !important;
   grid-template-columns: repeat(1, 1fr);
   gap: 24px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Ensure each product takes full grid cell */
+.products-grid .product-card,
+.products-grid .product,
+.products-grid li {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 @media (min-width: 640px) {
@@ -261,11 +292,38 @@
   transition: all 0.3s ease;
   border: none;
   background: #fff;
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .product-card:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   transform: translateY(-4px);
+}
+
+/* Ensure products display correctly in grid */
+.products-grid .product-card,
+.products-grid .product,
+.products-grid > div {
+  grid-column: span 1;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: block;
+}
+
+/* Handle any potential list items */
+.products-grid li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.products-grid li .product-card {
+  width: 100%;
+  display: block;
 }
 
 .product-card .product-image {
