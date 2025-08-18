@@ -361,82 +361,9 @@
 }
 
 /* Responsive Design */
-/* Utility Classes */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.overflow-hidden {
-  overflow: hidden;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  
-  .filter-panel {
-    width: 320px;
-  }
-}
-
-@media (max-width: 768px) {
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  .product-card .product-info {
-    padding: 12px;
-  }
-  
-  .filter-panel {
-    width: 280px;
-  }
-  
-  .shop-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 640px) {
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .product-card .product-info {
-    padding: 10px;
-  }
-
-  .product-title a {
-    font-size: 13px;
-  }
-
-  .woocommerce .product-card .price {
-    font-size: 14px;
-  }
-  
-  .filter-panel {
-    width: 100%;
-  }
-}
-
 @media (max-width: 480px) {
-  .container {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  
   .products-grid {
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 }
