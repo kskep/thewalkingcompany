@@ -32,7 +32,7 @@ switch ($size) {
 
 <div id="<?php echo esc_attr($modal_id); ?>" class="eshop-modal fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="<?php echo esc_attr($modal_id); ?>-title">
     <div class="eshop-modal__overlay absolute inset-0 bg-black bg-opacity-50"></div>
-    <div class="eshop-modal__panel relative mx-auto w-full <?php echo esc_attr($size_class); ?> bg-white mt-10 sm:mt-20 rounded shadow-lg max-h-[90vh] overflow-y-auto">
+    <div class="eshop-modal__panel relative mx-auto w-full <?php echo esc_attr($size_class); ?> bg-white mt-10 sm:mt-20 border border-gray-200 max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 id="<?php echo esc_attr($modal_id); ?>-title" class="text-lg font-semibold text-gray-900">
                 <?php echo wp_kses_post($title); ?>

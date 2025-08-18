@@ -260,12 +260,7 @@ function eshop_filter_products() {
         );
     }
 
-    // Ensure products are visible
-    $args['meta_query'][] = array(
-        'key' => '_visibility',
-        'value' => array('catalog', 'visible'),
-        'compare' => 'IN',
-    );
+    // Note: Do not use legacy _visibility meta; modern WooCommerce handles catalog visibility via taxonomy/queries.
 
     $query = new WP_Query($args);
 

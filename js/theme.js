@@ -7,7 +7,7 @@
 
     // DOM Ready
     $(document).ready(function() {
-        
+
         // Mobile Menu Toggle
         $('.mobile-menu-toggle').on('click', function() {
             $('#mobile-navigation').toggleClass('hidden');
@@ -24,7 +24,7 @@
 
         // Back to Top Button
         var $backToTop = $('#back-to-top');
-        
+
         $(window).scroll(function() {
             if ($(this).scrollTop() > 300) {
                 $backToTop.removeClass('opacity-0 invisible').addClass('opacity-100 visible');
@@ -84,7 +84,7 @@
             setTimeout(function() {
                 $button.html('<i class="fas fa-check icon-sm mr-2"></i>Subscribed!');
                 $input.val('');
-                
+
                 setTimeout(function() {
                     $button.prop('disabled', false).html('<i class="fas fa-paper-plane icon-sm mr-2"></i>Subscribe');
                 }, 2000);
@@ -96,7 +96,7 @@
             // Update cart count
             var cartCount = $(fragments['div.widget_shopping_cart_content']).find('.cart-contents-count').text();
             $('.cart-count').text(cartCount).removeClass('hidden');
-            
+
             // Add success animation
             $button.addClass('added-to-cart');
             setTimeout(function() {
@@ -192,7 +192,7 @@
             e.preventDefault();
             var $button = $(this);
             var productId = $button.data('product-id');
-            
+
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
@@ -213,7 +213,7 @@
                             $button.removeClass('in-wishlist').find('i').removeClass('fas').addClass('far');
                             EShopTheme.showNotification('Product removed from wishlist!', 'success');
                         }
-                        
+
                         // Update wishlist count
                         var $count = $('.wishlist-count');
                         if (response.data.count > 0) {
@@ -234,7 +234,7 @@
             e.preventDefault();
             var $button = $(this);
             var productId = $button.data('product-id');
-            
+
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
@@ -247,7 +247,7 @@
                     if (response.success) {
                         $button.closest('.wishlist-item').fadeOut(300, function() {
                             $(this).remove();
-                            
+
                             // Update wishlist count
                             var $count = $('.wishlist-count');
                             if (response.data.count > 0) {
@@ -257,7 +257,7 @@
                                 $('.wishlist-items').html('<p class="text-gray-500 text-center py-4">Your wishlist is empty</p>');
                             }
                         });
-                        
+
                         EShopTheme.showNotification('Product removed from wishlist!', 'success');
                     }
                 }
@@ -269,7 +269,7 @@
             e.preventDefault();
             var $button = $(this);
             var removeUrl = $button.attr('href');
-            
+
             $.get(removeUrl, function() {
                 // Trigger cart update
                 $(document.body).trigger('wc_fragment_refresh');
@@ -312,7 +312,7 @@
             e.preventDefault();
             var $button = $(this);
             var productId = $button.data('product-id');
-            
+
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
@@ -345,7 +345,7 @@
     $(window).on('load', function() {
         // Remove loading class from body if it exists
         $('body').removeClass('loading');
-        
+
         // Initialize any plugins that need to wait for full page load
     initializePlugins();
     initializeHeroSliders();
@@ -484,6 +484,37 @@
             applyFilters();
         });
 
+
+        // Initialize price range slider (noUiSlider)
+        function initPriceSlider() {
+            var sliderEl = document.getElementById('price-slider');
+            if (!sliderEl || sliderEl.__inited) return;
+            var minInput = document.getElementById('min-price');
+            var maxInput = document.getElementById('max-price');
+            if (!minInput || !maxInput) return;
+            var minStart = parseFloat(minInput.value) || 0;
+            var maxStart = parseFloat(maxInput.value) || 1000;
+            var start = [minStart, maxStart];
+            noUiSlider.create(sliderEl, {
+                start: start,
+                connect: true,
+                range: { min: 0, max: 1000 },
+                step: 1,
+            });
+            sliderEl.__inited = true;
+            sliderEl.noUiSlider.on('update', function(values) {
+                var v0 = Math.round(values[0]);
+                var v1 = Math.round(values[1]);
+                minInput.value = v0;
+                maxInput.value = v1;
+            });
+        }
+
+        // Ensure slider initializes when modal opens
+        $(document).on('click', '.eshop-modal-open[data-target="#filters-modal"]', function(){
+            setTimeout(initPriceSlider, 20);
+        });
+
         // Clear filters
         $(document).on('click', '.clear-filters, .clear-all-filters', function() {
             clearAllFilters();
@@ -537,11 +568,11 @@
     function applyFilters(page = 1) {
         var filters = collectFilters();
         var orderby = $('.woocommerce-ordering select').val() || 'menu_order';
-        
+
         // Show loading
         $('.products-wrapper').addClass('relative');
         $('.products-loading').removeClass('hidden');
-        
+
         $.ajax({
             url: eshop_ajax.ajax_url,
             type: 'POST',
@@ -558,10 +589,10 @@
                     $('.woocommerce-result-count').html(response.data.result_count);
                     // Re-init product sliders on new DOM
                     initializeProductCardSliders();
-                    
+
                     // Update active filters display
                     updateActiveFilters(filters);
-                    
+
                     // Scroll to products
                     $('html, body').animate({
                         scrollTop: $('.shop-toolbar').offset().top - 100
@@ -577,47 +608,47 @@
 
     function collectFilters() {
         var filters = {};
-        
+
         // Price filters
         var minPrice = $('#min-price').val();
         var maxPrice = $('#max-price').val();
         if (minPrice) filters.min_price = minPrice;
         if (maxPrice) filters.max_price = maxPrice;
-        
+
         // Category filters
         var categories = [];
         $('input[name="product_cat[]"]:checked').each(function() {
             categories.push($(this).val());
         });
         if (categories.length) filters.product_cat = categories;
-        
+
         // Attribute filters
         $('.attribute-filter').each(function() {
             var attribute = $(this).data('attribute');
             var taxonomy = 'pa_' + attribute;
             var values = [];
-            
+
             $(this).find('input:checked').each(function() {
                 values.push($(this).val());
             });
-            
+
             if (values.length) {
                 filters[taxonomy] = values;
             }
         });
-        
+
         // Stock status
         var stockStatus = [];
         $('input[name="stock_status[]"]:checked').each(function() {
             stockStatus.push($(this).val());
         });
         if (stockStatus.length) filters.stock_status = stockStatus;
-        
+
         // On sale
         if ($('input[name="on_sale"]:checked').length) {
             filters.on_sale = 1;
         }
-        
+
         return filters;
     }
 
@@ -630,7 +661,7 @@
         $activeFiltersList.empty();
 
         var hasFilters = false;
-        
+
         // Price filter
         if (filters.min_price || filters.max_price) {
             hasFilters = true;
@@ -642,7 +673,7 @@
             } else {
                 priceText += 'Up to $' + filters.max_price;
             }
-            
+
             $activeFiltersList.append(
                 '<div class="active-filter flex items-center justify-between bg-gray-100 px-3 py-1 text-sm">' +
                 '<span>' + priceText + '</span>' +
@@ -652,7 +683,7 @@
                 '</div>'
             );
         }
-        
+
         // Category filters
         if (filters.product_cat) {
             hasFilters = true;
@@ -668,7 +699,7 @@
                 );
             });
         }
-        
+
         // Show/hide active filters section
         if (hasFilters) {
             $activeFilters.show();
@@ -728,13 +759,13 @@
     $(document).on('click', '.remove-filter', function() {
         var filterType = $(this).data('filter');
         var filterValue = $(this).data('value');
-        
+
         if (filterType === 'price') {
             $('#min-price, #max-price').val('');
         } else if (filterType === 'product_cat') {
             $('input[name="product_cat[]"][value="' + filterValue + '"]').prop('checked', false);
         }
-        
+
         applyFilters();
     });
 
@@ -762,9 +793,9 @@
                 '</button>' +
                 '</div>' +
                 '</div>');
-            
+
             $('body').append(notification);
-            
+
             setTimeout(function() {
                 notification.fadeOut(function() {
                     $(this).remove();

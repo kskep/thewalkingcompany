@@ -13,12 +13,17 @@ global $product;
 if (empty($product) || !$product->is_visible()) {
     return;
 }
+
+// Hide out of stock products completely
+if (!$product->is_in_stock()) {
+    return;
+}
 ?>
 
-<div <?php wc_product_class('product-card bg-white overflow-hidden hover:shadow-lg transition-all duration-300 group relative', $product); ?>>
+<div <?php wc_product_class('product-card group relative', $product); ?>>
     
     <!-- Product Image / Slider -->
-    <div class="product-image relative overflow-hidden bg-gray-50">
+    <div class="product-image relative overflow-hidden aspect-square">
         <?php
         $main_image_id   = $product->get_image_id();
         $gallery_ids     = $product->get_gallery_image_ids();
@@ -52,7 +57,7 @@ if (empty($product) || !$product->is_visible()) {
                 <?php else : ?>
                     <div class="swiper-slide">
                         <a href="<?php the_permalink(); ?>" class="block aspect-square">
-                            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                            <div class="w-full h-full flex items-center justify-center" style="background-color: var(--bg-warm);">
                                 <i class="fas fa-image text-gray-300 text-4xl"></i>
                             </div>
                         </a>
@@ -78,33 +83,42 @@ if (empty($product) || !$product->is_visible()) {
         
         <!-- Wishlist Button -->
         <?php if (function_exists('eshop_wishlist_button')) : ?>
-            <div class="absolute top-3 right-3 z-10">
-                <?php 
+            <div class="absolute top-4 right-4 z-10">
+                <?php
                 $is_in_wishlist = function_exists('eshop_is_in_wishlist') ? eshop_is_in_wishlist($product->get_id()) : false;
-                $heart_class = $is_in_wishlist ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400';
+                $heart_class = $is_in_wishlist ? 'material-icons' : 'material-icons';
+                $heart_icon = $is_in_wishlist ? 'favorite' : 'favorite_border';
                 ?>
-                <button class="add-to-wishlist w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 hover:scale-110" 
-                        data-product-id="<?php echo $product->get_id(); ?>" 
+                <button class="add-to-wishlist text-gray-600 hover:text-red-500 transition-colors"
+                        data-product-id="<?php echo $product->get_id(); ?>"
                         title="<?php _e('Add to Wishlist', 'eshop-theme'); ?>">
-                    <i class="<?php echo $heart_class; ?> text-sm"></i>
+                    <span class="<?php echo $heart_class; ?> text-2xl"><?php echo $heart_icon; ?></span>
                 </button>
             </div>
         <?php endif; ?>
 
         <!-- Product Badges -->
-        <?php
-        $badges = function_exists('eshop_get_product_badges') ? eshop_get_product_badges($product) : array();
-        if (!empty($badges)) :
-        ?>
-            <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-                <?php foreach ($badges as $badge) : ?>
-                    <span class="badge <?php echo esc_attr($badge['class']); ?> text-xs px-2 py-1 font-semibold rounded text-center"
-                          style="<?php echo esc_attr($badge['style']); ?>">
-                        <?php echo esc_html($badge['text']); ?>
-                    </span>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+        <div class="absolute top-4 left-4 flex flex-col gap-y-2 z-10">
+            <?php
+            // Sale Badge
+            if ($product->is_on_sale()) {
+                echo '<span class="badge badge-sale">Sale</span>';
+            }
+
+            // Low Stock Badge (if stock is low but not out)
+            $stock_quantity = $product->get_stock_quantity();
+            if ($product->is_in_stock() && $stock_quantity !== null && $stock_quantity <= 5 && $stock_quantity > 0) {
+                echo '<span class="badge badge-low-stock">Low Stock</span>';
+            }
+
+            // New Badge (products created in last 30 days)
+            $created_date = get_the_date('U', $product->get_id());
+            $thirty_days_ago = strtotime('-30 days');
+            if ($created_date > $thirty_days_ago) {
+                echo '<span class="badge badge-new">New</span>';
+            }
+            ?>
+        </div>
 
         <!-- Stock Status Overlay (for out of stock products) -->
         <?php if (!$product->is_in_stock()) : ?>
@@ -149,11 +163,11 @@ if (empty($product) || !$product->is_visible()) {
     <?php endif; ?>
 
     <!-- Product Info -->
-    <div class="product-info p-4">
-        
+    <div class="product-info">
+
         <!-- Product Title -->
-        <h3 class="product-title mb-2">
-            <a href="<?php the_permalink(); ?>" class="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors line-clamp-2 leading-tight">
+        <h3 class="product-title">
+            <a href="<?php the_permalink(); ?>">
                 <?php the_title(); ?>
             </a>
         </h3>
@@ -163,7 +177,7 @@ if (empty($product) || !$product->is_visible()) {
             <?php
             $price_html = $product->get_price_html();
             if ($price_html) {
-                echo '<div class="text-lg font-semibold text-gray-900">' . $price_html . '</div>';
+                echo '<p class="price">' . $price_html . '</p>';
             }
             ?>
         </div>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magazine Style Product Cards</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background-color: #F8F7F5;
+            color: #2F2A26;
+        }
+        :root {
+            --accent-color: #D9C3B0;
+            --sale-color: #B94532;
+            --text-dark: #2F2A26;
+            --bg-warm: #F8F7F5;
+        }
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Product Card Styles */
+        .product-card {
+            background: white;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card .product-image {
+            aspect-ratio: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card.group:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .badge {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            color: white;
+            white-space: nowrap;
+            border-radius: 0;
+        }
+        
+        .badge-sale {
+            background-color: var(--sale-color);
+        }
+        
+        .badge-new {
+            background-color: var(--text-dark);
+        }
+        
+        .badge-low-stock {
+            background-color: var(--text-dark);
+        }
+        
+        .add-to-wishlist {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .add-to-wishlist:hover {
+            color: var(--sale-color);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .product-info {
+            padding: 24px;
+            text-align: center;
+            background: white;
+        }
+        
+        .product-title a {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 1.3;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+        
+        .product-title a:hover {
+            color: var(--sale-color);
+        }
+        
+        .price {
+            font-size: 18px;
+            font-weight: 300;
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+            font-family: 'Roboto Condensed', sans-serif;
+            margin-top: 16px;
+        }
+        
+        .price del {
+            color: #9ca3af;
+            font-weight: 300;
+            font-size: 16px;
+            margin-right: 12px;
+            text-decoration: line-through;
+        }
+        
+        .price ins {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body class="bg-[#F8F7F5] text-[#2F2A26]">
+    <div class="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <h1 class="text-3xl font-bold mb-8 text-center">Magazine Style Product Cards</h1>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+            
+            <!-- Product Card 1 - Sale -->
+            <div class="product-card group">
+                <div class="product-image relative overflow-hidden aspect-square">
+                    <img alt="A woman wearing a black skirt and brown ankle boots." class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWLxCdcW1etGzBYd4qHDtJqX6FzTjc83tDKdeOvtkFIOEcWr2Szr0PjJJ5zckfHAFJ0mqty0u7yOQBVH4rKizVoflP_7uqJlIN2odTCydD7C_qWlSL4iiYyvKiVtsW6DGsMfzy1Wb0hUdvDN5sr5d1HqeBSE8u3em63c4V0RfCg7-Ijp1M5TW4MjK4nPEmIORxaPhL74-PKf0uWxLlJRrlB_EBxbxNceRfS3Ui7aHRO7IROF31HvOggsXNh501P7xvkdmzQWSyrFP2"/>
+                    <div class="absolute top-4 left-4 flex flex-col gap-y-2">
+                        <span class="badge badge-sale">Sale</span>
+                    </div>
+                    <button class="add-to-wishlist absolute top-4 right-4 text-[#2F2A26] hover:text-[var(--sale-color)] transition-colors">
+                        <span class="material-icons text-2xl">favorite_border</span>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">
+                        <a href="#">Ankle boots με χοντρό τακούνι</a>
+                    </h3>
+                    <p class="price">
+                        <del>44,99 €</del> 31,99 €
+                    </p>
+                </div>
+            </div>
+
+            <!-- Product Card 2 - Low Stock -->
+            <div class="product-card group">
+                <div class="product-image relative overflow-hidden aspect-square">
+                    <img alt="A brown handbag with a monogram pattern and a shoulder strap." class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyixVZiFIyz6j67sFY_PS-C5RG9WWh8HJxg8qq5PO1EeMqkp0pD9GEugkEQISMh5LUchaPToUjOV5oFUiYwMvJuLgRrcger0PLaWYhenkvk-RKA8_qBXQ913mRKdEyPvsfdtlaqlvi0T78usL2cKqV8vZXUvMrN3xhZgj4ftt3Efrw9Eyr5Uj9Ahk8MYW6bkB8rsUMMPeW2S4AJI0sFm2P2L3wtEXRxpxStp5kkCnASSVl3nccEhQqmWtpNBaZnKP_OWfDHeHMpnCe"/>
+                    <div class="absolute top-4 left-4 flex flex-col gap-y-2">
+                        <span class="badge badge-low-stock">Low Stock</span>
+                    </div>
+                    <button class="add-to-wishlist absolute top-4 right-4 text-[#2F2A26] hover:text-[var(--sale-color)] transition-colors">
+                        <span class="material-icons text-2xl">favorite_border</span>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">
+                        <a href="#">Ashley Brown</a>
+                    </h3>
+                    <p class="price">52,99 €</p>
+                </div>
+            </div>
+
+            <!-- Product Card 3 - Sale -->
+            <div class="product-card group">
+                <div class="product-image relative overflow-hidden aspect-square">
+                    <img alt="A woman's legs wearing black tights with an astrology pattern." class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKzqP2wDMkOFIzOS49aqRNeXgf9BU1ngFpvNxQ3cvdWZe5eIrQsqgZ1SwhwQJJ3SyHGhtKAAtrJsrm2trY9k7uaC6yBCVJlWc6jlRuuF8DAxrzrXNPYHZq9vKVVDuscvNhfF6uGYBG0f8iu8FVDL1wBMQQMG36S04H52XI9WOgOAFFyF_fkMehH7uTbecO1CUdCOmU3nKif_7xK3AKfDeUtEGdWCBAQipUVXfKp2VNjxCYOESCgF0f1WF4i7OJC4s-esZmf9m-r-ZL"/>
+                    <div class="absolute top-4 left-4 flex flex-col gap-y-2">
+                        <span class="badge badge-sale">Sale</span>
+                    </div>
+                    <button class="add-to-wishlist absolute top-4 right-4 text-[#2F2A26] hover:text-[var(--sale-color)] transition-colors">
+                        <span class="material-icons text-2xl">favorite_border</span>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">
+                        <a href="#">Astrology Tights Black</a>
+                    </h3>
+                    <p class="price">
+                        <del>17,99 €</del> 12,59 €
+                    </p>
+                </div>
+            </div>
+
+            <!-- Product Card 4 - New + Low Stock -->
+            <div class="product-card group">
+                <div class="product-image relative overflow-hidden aspect-square">
+                    <img alt="A black and cream wallet with a woven texture." class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpK-PGG77qwv4V3Wm_rzQ5lwSoE-YuExDaQeht1tozr3v56X5RvxxEuJ0HTGOuf8u2qkzEjdw0yUOMS4pKa43nVVMg7U4IYMLB8DJvkpgt4dyUL6BQltrjd1HNVeTx9CBCJbBlMsJGdZ-gMv_4QPuW7FWIbWWFMY3wvxGFNAlVSpQ_721AxGdB3O49kqsT4U4Gn9W6s-qv5C1Ftc8CnU4rrDv-FRAQS87cmj_tJjXg4yVdoQrIvcS6hMDfj3agu8GqGuws7gzNVz8N"/>
+                    <div class="absolute top-4 left-4 flex flex-col gap-y-2">
+                        <span class="badge badge-new">New</span>
+                        <span class="badge badge-low-stock">Low Stock</span>
+                    </div>
+                    <button class="add-to-wishlist absolute top-4 right-4 text-[#2F2A26] hover:text-[var(--sale-color)] transition-colors">
+                        <span class="material-icons text-2xl">favorite_border</span>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">
+                        <a href="#">Avigone Cream Black</a>
+                    </h3>
+                    <p class="price">23,99 €</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -41,6 +41,9 @@ function eshop_theme_scripts() {
 
     if (is_shop() || is_product_category() || is_product_tag()) {
         wp_enqueue_style('eshop-shop', get_template_directory_uri() . '/css/pages.shop.css', array('eshop-theme-style'), '1.0.0');
+        // Price slider (noUiSlider) for filters
+        wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
+        wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
     }
 
     if (is_product()) {
@@ -121,10 +124,13 @@ function eshop_render_filters_modal_footer() {
             echo '<div class="filter-section mb-6">';
             echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Price Range', 'eshop-theme') . '</h4>';
             echo '<div class="price-filter">';
-            echo '<div class="price-inputs flex space-x-2 mb-3">';
+            echo '<div class="price-inputs mb-3">';
+            echo '<div id="price-slider" class="w-full"></div>';
+            echo '<div class="flex items-center gap-2 mt-3">';
             echo '<input type="number" id="min-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary" placeholder="' . esc_attr__('Min', 'eshop-theme') . '">';
             echo '<span class="flex items-center text-gray-400">-</span>';
             echo '<input type="number" id="max-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary" placeholder="' . esc_attr__('Max', 'eshop-theme') . '">';
+            echo '</div>';
             echo '</div>';
             echo '</div>';
             echo '</div>';
