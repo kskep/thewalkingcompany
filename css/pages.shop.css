@@ -13,6 +13,9 @@
   --primary-pink-dark: #E55A9F;
 }
 
+/* Hide WooCommerce page titles on catalog pages (breadcrumbs suffice) */
+.woocommerce-page .page-title { display: none !important; margin: 0 !important; }
+
 /* Shop Toolbar */
 .shop-toolbar {
   background: #fff;
