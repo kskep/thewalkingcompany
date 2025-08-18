@@ -74,62 +74,78 @@ body.tax-product_tag {
   border-color: var(--color-primary);
 }
 
-/* Filter Panel & Modal */
-.filter-panel {
-  backdrop-filter: blur(4px);
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+/* Off-Canvas Filter Drawer */
+#filter-drawer {
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Filter Modal Enhancements */
-.eshop-modal {
-  backdrop-filter: blur(4px);
+#filter-drawer.open {
+  transform: translateX(0);
 }
 
-.eshop-modal__panel {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border-radius: 12px;
-  max-height: 90vh;
-  overflow-y: auto;
+#filter-backdrop.show {
+  opacity: 1;
 }
 
-.eshop-modal__panel::-webkit-scrollbar {
+/* Filter Drawer Scrollbar */
+#filter-drawer::-webkit-scrollbar {
   width: 6px;
 }
 
-.eshop-modal__panel::-webkit-scrollbar-track {
+#filter-drawer::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 3px;
 }
 
-.eshop-modal__panel::-webkit-scrollbar-thumb {
+#filter-drawer::-webkit-scrollbar-thumb {
   background: #c1c1c1;
-  border-radius: 3px;
 }
 
-.eshop-modal__panel::-webkit-scrollbar-thumb:hover {
+#filter-drawer::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 
-/* Filter Sections */
-.filter-section {
-  border-radius: 8px;
-  padding: 16px;
-  background: #fafafa;
-  border: 1px solid #f0f0f0;
+/* Filter Toggle Button - Edgy Style */
+.filter-toggle-btn {
+  border-radius: 0;
+  box-shadow: none;
+  border: 2px solid #e5e7eb;
   transition: all 0.2s ease;
 }
 
+.filter-toggle-btn:hover {
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Filter Sections - Edgy Design */
+.filter-section {
+  border-radius: 0;
+  padding: 20px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+}
+
 .filter-section:hover {
-  background: #f5f5f5;
-  border-color: #e0e0e0;
+  background: transparent;
 }
 
 .filter-title {
   color: #1f2937;
   font-weight: 600;
-  margin-bottom: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--primary-pink);
 }
 
 /* Filter Checkboxes */
@@ -833,46 +849,52 @@ body.tax-product_tag {
   color: var(--primary-pink);
 }
 
-/* Active Filters Bar */
+/* Active Filters Bar - Edgy Design */
 .active-filters-bar {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e2e8f0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .active-filters-list .active-filter {
   background: var(--primary-pink);
   color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   transition: all 0.2s ease;
+  border: 2px solid var(--primary-pink);
 }
 
 .active-filters-list .active-filter:hover {
   background: var(--primary-pink-dark);
+  border-color: var(--primary-pink-dark);
   transform: translateY(-1px);
 }
 
 .active-filters-list .active-filter .remove-filter {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  border-radius: 0;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .active-filters-list .active-filter .remove-filter:hover {
   background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .clear-all-filters {

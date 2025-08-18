@@ -13,10 +13,10 @@ get_header('shop'); ?>
 
     <!-- Shop Toolbar: Filter (left) + Sorting (right); page title removed in favor of breadcrumbs -->
     <div class="shop-toolbar flex items-center justify-between mb-6 pb-4">
-        <!-- Left: Filter icon/button opens modal with categories, attributes, price -->
-        <button class="eshop-modal-open flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-gray-400 transition-colors" data-target="#filters-modal" aria-label="Open Filters">
+        <!-- Left: Filter button opens off-canvas drawer -->
+        <button id="open-filters" class="filter-toggle-btn flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-primary transition-all duration-200" aria-label="Open Filters">
             <i class="fas fa-sliders-h text-sm" aria-hidden="true"></i>
-            <span class="hidden sm:inline"><?php _e('Filters', 'eshop-theme'); ?>FILTERS</span>
+            <span class="hidden sm:inline text-sm font-medium uppercase tracking-wide"><?php _e('Filters', 'eshop-theme'); ?></span>
         </button>
 
         <!-- Right: Sorting -->
@@ -26,13 +26,13 @@ get_header('shop'); ?>
     </div>
 
     <!-- Active Filters Bar -->
-    <div class="active-filters-bar bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6" style="display: none;">
+    <div class="active-filters-bar bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-4 mb-6" style="display: none;">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center gap-2">
-                <span class="text-sm font-medium text-gray-700"><?php _e('Active Filters:', 'eshop-theme'); ?></span>
+                <span class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><?php _e('Active Filters:', 'eshop-theme'); ?></span>
                 <div class="active-filters-list flex flex-wrap gap-2"></div>
             </div>
-            <button class="clear-all-filters text-sm text-red-600 hover:text-red-800 font-medium transition-colors">
+            <button class="clear-all-filters text-sm text-red-600 hover:text-red-800 font-semibold uppercase tracking-wide transition-colors">
                 <i class="fas fa-times mr-1"></i>
                 <?php _e('Clear All', 'eshop-theme'); ?>
             </button>
@@ -100,18 +100,25 @@ get_header('shop'); ?>
 </div>
 
 <?php
-// Filters Modal: reusable component with widget area contents
-get_template_part('template-parts/components/modal', null, array(
-    'id' => 'filters-modal',
-    'title' => __('Filters', 'eshop-theme'),
-    'size' => 'lg',
-    'content_cb' => function () {
-        // Active Filters summary container
-        echo '<div class="active-filters mb-6" style="display:none;">';
-        echo '<h4 class="text-sm font-semibold text-gray-900 mb-3">' . esc_html__('Active Filters', 'eshop-theme') . '</h4>';
-        echo '<div class="active-filters-list space-y-2"></div>';
-        echo '</div>';
+// Off-Canvas Filter Drawer
+?>
+<!-- Filter Drawer Backdrop -->
+<div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
 
+<!-- Off-Canvas Filter Drawer -->
+<div id="filter-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="filter-drawer-title">
+
+    <!-- Drawer Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
+        <h2 id="filter-drawer-title" class="text-lg font-semibold text-gray-900 uppercase tracking-wide"><?php _e('Filters', 'eshop-theme'); ?></h2>
+        <button id="close-filters" class="p-2 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close Filters">
+            <i class="fas fa-times text-lg"></i>
+        </button>
+    </div>
+
+    <!-- Drawer Content -->
+    <div class="flex-1 overflow-y-auto px-6 py-4 h-[calc(100vh-140px)]">
+        <?php
         // Dynamic widgets for filters
         if (is_active_sidebar('shop-filters')) {
             dynamic_sidebar('shop-filters');
@@ -216,16 +223,22 @@ get_template_part('template-parts/components/modal', null, array(
             }
         }
 
-        // Footer actions inside modal content so buttons are visible
-        echo '<div class="pt-2 mt-4 border-t border-gray-200">';
-        echo '<div class="flex space-x-3">';
-        echo '<button class="clear-filters flex-1 bg-gray-100 text-gray-700 py-3 hover:bg-gray-200 transition-colors rounded">' . esc_html__('Clear All', 'eshop-theme') . '</button>';
-        echo '<button class="apply-filters flex-1 bg-primary text-white py-3 hover:bg-primary-dark transition-colors rounded">' . esc_html__('Apply Filters', 'eshop-theme') . '</button>';
-        echo '</div>';
-        echo '</div>';
-    },
-));
-?>
+        }
+        ?>
+    </div>
+
+    <!-- Sticky Action Bar -->
+    <div class="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4 flex gap-3">
+        <button id="clear-filters" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 font-semibold uppercase tracking-wide hover:bg-gray-200 transition-colors">
+            <?php _e('Clear All', 'eshop-theme'); ?>
+        </button>
+        <button id="apply-filters" class="flex-1 bg-primary text-white py-3 px-4 font-semibold uppercase tracking-wide hover:bg-primary-dark transition-colors">
+            <?php _e('Apply Filters', 'eshop-theme'); ?>
+        </button>
+    </div>
+</div>
+
+<?php
 
 <?php
 /**

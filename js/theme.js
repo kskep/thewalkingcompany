@@ -292,27 +292,39 @@
 
 
 
-        // Generic modal open/close (reusable component)
-        $(document).on('click', '.eshop-modal-open', function() {
-            var target = $(this).data('target');
-            if (!target) return;
-            var $modal = $(target);
-            if ($modal.length) {
-                $modal.removeClass('hidden');
-                $('body').addClass('overflow-hidden');
-            }
+        // Off-Canvas Filter Drawer
+        $('#open-filters').on('click', function() {
+            $('#filter-backdrop').removeClass('hidden').addClass('show');
+            $('#filter-drawer').addClass('open');
+            $('body').addClass('overflow-hidden');
         });
-        $(document).on('click', '.eshop-modal__close, .eshop-modal__overlay', function() {
-            var $modal = $(this).closest('.eshop-modal');
-            $modal.addClass('hidden');
+
+        $('#close-filters, #filter-backdrop').on('click', function() {
+            $('#filter-backdrop').removeClass('show').addClass('hidden');
+            $('#filter-drawer').removeClass('open');
             $('body').removeClass('overflow-hidden');
         });
-        // Apply filters from filters modal
-        $(document).on('click', '#filters-modal .apply-filters, #filters-modal .apply-price-filter', function() {
-            var $modal = $('#filters-modal');
-            $modal.addClass('hidden');
+
+        // Apply filters from drawer
+        $('#apply-filters').on('click', function() {
+            $('#filter-backdrop').removeClass('show').addClass('hidden');
+            $('#filter-drawer').removeClass('open');
             $('body').removeClass('overflow-hidden');
             applyFilters();
+        });
+
+        // Clear filters from drawer
+        $('#clear-filters').on('click', function() {
+            clearAllFilters();
+        });
+
+        // Keyboard accessibility - Escape to close drawer
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
+                $('#filter-backdrop').removeClass('show').addClass('hidden');
+                $('#filter-drawer').removeClass('open');
+                $('body').removeClass('overflow-hidden');
+            }
         });
 
         // Quick add to cart
@@ -479,7 +491,7 @@
     // Product Filter Functions
     function initProductFilters() {
         // Filter change handlers
-    $(document).on('change', '#filters-modal input[type="checkbox"]', function() {
+        $(document).on('change', '#filter-drawer input[type="checkbox"]', function() {
             // Auto-apply filters on change (optional - you can remove this for manual apply only)
             // applyFilters();
         });
@@ -518,8 +530,8 @@
             });
         }
 
-        // Ensure slider initializes when modal opens
-        $(document).on('click', '.eshop-modal-open[data-target="#filters-modal"]', function(){
+        // Ensure slider initializes when drawer opens
+        $(document).on('click', '#open-filters', function(){
             setTimeout(initPriceSlider, 20);
         });
 
@@ -754,7 +766,7 @@
     }
 
     function clearAllFilters() {
-        $('#filters-modal input[type="checkbox"]').prop('checked', false);
+        $('#filter-drawer input[type="checkbox"]').prop('checked', false);
         $('#min-price, #max-price').val('');
         $('.active-filters').hide();
         $('.active-filters-bar').hide();
