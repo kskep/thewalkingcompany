@@ -106,18 +106,61 @@ echo '<!-- Filter modal path: ' . $filter_modal_path . ' -->';
 echo '<!-- File exists: ' . (file_exists($filter_modal_path) ? 'YES' : 'NO') . ' -->';
 
 // Include the filter modal component
+echo '<!-- Attempting to load filter modal -->';
 get_template_part('template-parts/components/filter-modal');
 
-// Test: Load filter script directly
-echo '<script src="' . get_template_directory_uri() . '/js/components/filters-test.js?ver=' . time() . '"></script>';
+// Fallback: Simple filter modal HTML
+echo '
+<!-- Fallback Filter Modal -->
+<div id="filter-backdrop-fallback" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+<div id="filter-drawer-fallback" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 transform translate-x-full transition-transform duration-300" style="transform: translateX(100%);">
+    <div class="p-4">
+        <h2>Fallback Filter Modal</h2>
+        <button id="close-filters-fallback" class="bg-red-500 text-white px-4 py-2">Close</button>
+    </div>
+</div>
+';
+
+// Test: Simple inline script first
 echo '<script>
+console.log("Inline script test working");
 jQuery(document).ready(function($) {
-    console.log("Direct script test - EShopFilters available:", typeof EShopFilters !== "undefined");
-    if (typeof EShopFilters !== "undefined") {
-        EShopFilters.init();
-    }
+    console.log("jQuery is available:", typeof jQuery !== "undefined");
+    console.log("Filter button exists:", $("#open-filters").length);
+    console.log("Filter drawer exists:", $("#filter-drawer").length);
+
+    // Simple click handler for original elements
+    $("#open-filters").on("click", function(e) {
+        e.preventDefault();
+        console.log("Button clicked - inline handler");
+
+        // Try original elements first
+        if ($("#filter-drawer").length > 0) {
+            $("#filter-backdrop").removeClass("hidden").addClass("show");
+            $("#filter-drawer").addClass("open");
+        } else {
+            // Use fallback elements
+            $("#filter-backdrop-fallback").removeClass("hidden");
+            $("#filter-drawer-fallback").css("transform", "translateX(0)");
+        }
+        $("body").addClass("overflow-hidden");
+    });
+
+    // Close handler for fallback
+    $("#close-filters-fallback").on("click", function(e) {
+        e.preventDefault();
+        console.log("Closing fallback modal");
+        $("#filter-backdrop-fallback").addClass("hidden");
+        $("#filter-drawer-fallback").css("transform", "translateX(100%)");
+        $("body").removeClass("overflow-hidden");
+    });
 });
 </script>';
+
+// Test: Load filter script directly
+$script_url = get_template_directory_uri() . '/js/components/filters-test.js?ver=' . time();
+echo '<!-- Script URL: ' . $script_url . ' -->';
+echo '<script src="' . $script_url . '"></script>';
 
 /**
 /**
