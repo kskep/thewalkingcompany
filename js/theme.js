@@ -802,38 +802,7 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    // Mega Menu Initialization
-    function initMegaMenu() {
-        var megaMenuTimer;
 
-        // Handle mega menu hover with delay
-        $('.main-navigation .menu-item-has-children').hover(
-            function() {
-                clearTimeout(megaMenuTimer);
-                var $megaMenu = $(this).find('.mega-menu-container');
-                $megaMenu.stop(true, true).fadeIn(300);
-            },
-            function() {
-                var $megaMenu = $(this).find('.mega-menu-container');
-                megaMenuTimer = setTimeout(function() {
-                    $megaMenu.stop(true, true).fadeOut(200);
-                }, 150);
-            }
-        );
-
-        // Keep mega menu open when hovering over it
-        $('.mega-menu-container').hover(
-            function() {
-                clearTimeout(megaMenuTimer);
-            },
-            function() {
-                var $megaMenu = $(this);
-                megaMenuTimer = setTimeout(function() {
-                    $megaMenu.stop(true, true).fadeOut(200);
-                }, 150);
-            }
-        );
-    }
 
     // Utility Functions
     window.EShopTheme = {

@@ -4,28 +4,31 @@
   function initMegaMenu(){
     var megaMenuTimer;
 
-    // Hover open/close with slight delay
+    // Hover open/close with slight delay - use CSS transitions instead of fadeIn/fadeOut
     $('.main-navigation .menu-item-has-children').hover(
       function(){
         clearTimeout(megaMenuTimer);
         var $megaMenu = $(this).find('.mega-menu-container');
-        $megaMenu.stop(true, true).fadeIn(200);
+        $megaMenu.addClass('show');
       },
       function(){
         var $megaMenu = $(this).find('.mega-menu-container');
         megaMenuTimer = setTimeout(function(){
-          $megaMenu.stop(true, true).fadeOut(150);
+          $megaMenu.removeClass('show');
         }, 120);
       }
     );
 
     // Keep visible when hovering container
     $('.mega-menu-container').hover(
-      function(){ clearTimeout(megaMenuTimer); },
+      function(){
+        clearTimeout(megaMenuTimer);
+        $(this).addClass('show');
+      },
       function(){
         var $megaMenu = $(this);
         megaMenuTimer = setTimeout(function(){
-          $megaMenu.stop(true, true).fadeOut(150);
+          $megaMenu.removeClass('show');
         }, 120);
       }
     );

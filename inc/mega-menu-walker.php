@@ -19,7 +19,6 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
     function end_lvl(&$output, $depth = 0, $args = null) {
         if ($depth === 0) {
             $output .= '</div>'; // Close mega-menu-grid
-            $output .= '</div>'; // Close mega-menu-grid
             $output .= '</div>'; // Close mega-menu-inner
             $output .= '</div>'; // Close mega-menu-container
         }

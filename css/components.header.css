@@ -42,12 +42,14 @@
   list-style: none;
 }
 
-.main-navigation a {
+.main-navigation a,
+.main-navigation .nav-link {
   color: #2F2A26;
   text-decoration: none;
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 500;
   letter-spacing: 1px;
+  text-transform: uppercase;
   transition: color 0.2s ease;
   padding: 8px 0;
   position: relative;
@@ -56,11 +58,13 @@
   gap: 4px;
 }
 
-.main-navigation a:hover {
+.main-navigation a:hover,
+.main-navigation .nav-link:hover {
   color: var(--primary-pink);
 }
 
-.main-navigation a::after {
+.main-navigation a::after,
+.main-navigation .nav-link::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -71,7 +75,8 @@
   transition: width 0.3s ease;
 }
 
-.main-navigation a:hover::after {
+.main-navigation a:hover::after,
+.main-navigation .nav-link:hover::after {
   width: 100%;
 }
 

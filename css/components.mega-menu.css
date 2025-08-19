@@ -30,7 +30,7 @@
   position: absolute;
   top: 100%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(10px);
   width: 100vw;
   max-width: 1400px;
   background: white;
@@ -38,15 +38,15 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   opacity: 0;
   visibility: hidden;
-  transform: translateX(-50%) translateY(10px);
   transition: all 0.3s ease;
   z-index: 1000;
   margin-top: 8px;
-  display: none; /* Initially hidden for JS control */
+  display: block; /* Always display block, control visibility with opacity */
 }
 
 /* Show mega menu on hover */
-.main-navigation .menu-item-has-children:hover .mega-menu-container {
+.main-navigation .menu-item-has-children:hover .mega-menu-container,
+.mega-menu-container.show {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) translateY(0);
@@ -65,11 +65,17 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* Individual mega menu items */
 .mega-menu-item {
   position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .mega-menu-link {
@@ -176,30 +182,31 @@
 
 /* Override default sub-menu styles for mega menu */
 .main-navigation .menu-item-has-children .mega-menu-container {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: auto;
-  width: 100vw;
-  max-width: 1400px;
-  background: white;
-  border: none;
-  border-top: 3px solid var(--primary-pink);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  margin-top: 8px;
-  padding: 0;
+  position: absolute !important;
+  top: 100% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  min-width: auto !important;
+  width: 100vw !important;
+  max-width: 1400px !important;
+  background: white !important;
+  border: none !important;
+  border-top: 3px solid var(--primary-pink) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 8px !important;
+  padding: 0 !important;
 }
 
 /* Hide traditional sub-menu styles */
 .main-navigation .menu-item-has-children .mega-menu-container .sub-menu {
-  position: static;
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  background: none;
-  border: none;
-  box-shadow: none;
-  margin: 0;
-  padding: 0;
+  position: static !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
 }
