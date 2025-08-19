@@ -69,6 +69,11 @@ function eshop_theme_scripts() {
     // Product UI interactions (split from theme.js)
     wp_enqueue_script('eshop-product-ui', get_template_directory_uri() . '/js/product-ui.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
 
+    // Filter component JavaScript (only on shop pages)
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        wp_enqueue_script('eshop-filters', get_template_directory_uri() . '/js/components/filters.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+    }
+
     // Localize script for AJAX
     wp_localize_script('eshop-theme-script', 'eshop_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php'),
