@@ -94,33 +94,40 @@ if (empty($containers)) {
         $front_page_id = get_option('page_on_front');
         echo "Front page ID: " . ($front_page_id ?: 'Not set') . '<br>';
 
-        for ($debug_i = 1; $debug_i <= 4; $debug_i++) {
-            $debug_field = "FrontPage_Container_$debug_i";
-
-            // Check front page
-            $debug_data_front = null;
-            if ($front_page_id) {
-                $debug_data_front = get_field($debug_field, $front_page_id);
-            }
-
-            // Check options page
-            $debug_data_option = get_field($debug_field, 'option');
-
-            // Check current post
-            $debug_data_current = get_field($debug_field);
-
-            echo "• $debug_field:<br>";
-            echo "&nbsp;&nbsp;Front page: " . (empty($debug_data_front) ? 'Empty/Not found' : 'Found (' . count($debug_data_front) . ' subfields)') . '<br>';
-            echo "&nbsp;&nbsp;Options page: " . (empty($debug_data_option) ? 'Empty/Not found' : 'Found (' . count($debug_data_option) . ' subfields)') . '<br>';
-            echo "&nbsp;&nbsp;Current post: " . (empty($debug_data_current) ? 'Empty/Not found' : 'Found (' . count($debug_data_current) . ' subfields)') . '<br>';
-
-            if (!empty($debug_data_front) && is_array($debug_data_front)) {
-                echo '&nbsp;&nbsp;Front page subfields: ' . implode(', ', array_keys($debug_data_front)) . '<br>';
-            }
-            if (!empty($debug_data_current) && is_array($debug_data_current)) {
-                echo '&nbsp;&nbsp;Current post subfields: ' . implode(', ', array_keys($debug_data_current)) . '<br>';
+        // Let's check all fields on the front page to see what's actually there
+        if ($front_page_id) {
+            echo '<br><strong>All fields on front page:</strong><br>';
+            $all_fields = get_fields($front_page_id);
+            if ($all_fields) {
+                foreach ($all_fields as $field_name => $field_value) {
+                    echo "• $field_name: " . (is_array($field_value) ? 'Array (' . count($field_value) . ' items)' : gettype($field_value)) . '<br>';
+                    if (is_array($field_value)) {
+                        foreach ($field_value as $sub_key => $sub_value) {
+                            echo "&nbsp;&nbsp;- $sub_key: " . (is_array($sub_value) ? 'Array' : gettype($sub_value)) . '<br>';
+                        }
+                    }
+                }
+            } else {
+                echo "No fields found on front page.<br>";
             }
         }
+
+        // Also check current post
+        echo '<br><strong>All fields on current post:</strong><br>';
+        $current_fields = get_fields();
+        if ($current_fields) {
+            foreach ($current_fields as $field_name => $field_value) {
+                echo "• $field_name: " . (is_array($field_value) ? 'Array (' . count($field_value) . ' items)' : gettype($field_value)) . '<br>';
+                if (is_array($field_value)) {
+                    foreach ($field_value as $sub_key => $sub_value) {
+                        echo "&nbsp;&nbsp;- $sub_key: " . (is_array($sub_value) ? 'Array' : gettype($sub_value)) . '<br>';
+                    }
+                }
+            }
+        } else {
+            echo "No fields found on current post.<br>";
+        }
+
         echo '</div>';
 
         echo '</div>';
