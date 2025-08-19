@@ -25,23 +25,22 @@
   transform: rotate(180deg);
 }
 
-/* Mega Menu Container */
+/* Mega Menu Container - Full Width Magazine Style */
 .mega-menu-container {
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
+  left: 0;
+  right: 0;
   width: 100vw;
-  max-width: 1400px;
+  margin-left: calc(-50vw + 50%);
   background: white;
-  border-top: 3px solid var(--primary-pink);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid var(--primary-pink);
+  border-bottom: 2px solid #000;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   z-index: 1000;
-  margin-top: 8px;
-  display: block; /* Always display block, control visibility with opacity */
+  display: block;
 }
 
 /* Show mega menu on hover */
@@ -49,15 +48,15 @@
 .mega-menu-container.show {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
 }
 
-/* Mega Menu Inner Centered Wrapper */
+/* Mega Menu Inner Centered Wrapper - Magazine Style */
 .mega-menu-inner {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 3rem 2rem;
+  background: white;
 }
 
 /* Mega Menu Grid - two columns split */
@@ -80,63 +79,65 @@
 
 .mega-menu-link {
   display: block;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1.5rem;
   text-decoration: none;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  border: 2px solid transparent;
+  background: white;
 }
 
 .mega-menu-link:hover {
-  background-color: #f9fafb;
-  border-color: #e5e7eb;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #000;
+  color: white;
+  border-color: var(--primary-pink);
 }
 
-/* Mega menu image */
+/* Mega menu image - Sharp Magazine Style */
 .mega-menu-image-wrapper {
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
   background: #f3f4f6;
+  border: 2px solid #000;
 }
 
 .mega-menu-image-wrapper img {
   width: 100%;
-  height: 64px;
+  height: 80px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .mega-menu-link:hover .mega-menu-image-wrapper img {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
-/* Mega menu title */
+/* Mega menu title - Bold Magazine Style */
 .mega-menu-title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #1f2937;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
   text-align: center;
-  line-height: 1.4;
-  margin-top: 0.75rem;
-  transition: color 0.2s ease;
+  line-height: 1.2;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.15s ease;
 }
 
 .mega-menu-link:hover .mega-menu-title {
-  color: var(--primary-pink);
+  color: white;
 }
 
-/* Placeholder image styling */
+/* Placeholder image styling - Sharp Magazine Style */
 .mega-menu-image-wrapper .placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 64px;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  color: #9ca3af;
-  font-size: 1.5rem;
+  height: 80px;
+  background: #f0f0f0;
+  color: #000;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 /* Responsive adjustments */
@@ -153,20 +154,18 @@
   }
 }
 
-/* Animation for mega menu appearance */
+/* Simple fade animation - Magazine Style */
 @keyframes megaMenuFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
   }
 }
 
 .main-navigation .menu-item-has-children:hover .mega-menu-container {
-  animation: megaMenuFadeIn 0.3s ease forwards;
+  animation: megaMenuFadeIn 0.2s ease forwards;
 }
 
 /* Ensure mega menu stays open when hovering over it */
@@ -180,21 +179,20 @@
   transition: all 0.1s ease;
 }
 
-/* Override default sub-menu styles for mega menu */
+/* Override default sub-menu styles for mega menu - Full Width Magazine Style */
 .main-navigation .menu-item-has-children .mega-menu-container {
   position: absolute !important;
   top: 100% !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  min-width: auto !important;
+  left: 0 !important;
+  right: 0 !important;
   width: 100vw !important;
-  max-width: 1400px !important;
+  margin-left: calc(-50vw + 50%) !important;
   background: white !important;
   border: none !important;
-  border-top: 3px solid var(--primary-pink) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-  margin-top: 8px !important;
+  border-top: 4px solid var(--primary-pink) !important;
+  border-bottom: 2px solid #000 !important;
   padding: 0 !important;
+  transform: none !important;
 }
 
 /* Hide traditional sub-menu styles */
