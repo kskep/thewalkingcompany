@@ -61,13 +61,14 @@ if (empty($containers)) {
         echo '<div class="container mx-auto px-4 py-8">';
         echo '<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">';
         echo '<strong>Admin Notice:</strong> Front page category grid is not configured properly.<br>';
-        echo 'Please ensure each group field (FrontPage_Container_1, FrontPage_Container_2, etc.) contains the required subfields:<br>';
+        echo 'Please ensure the following individual fields are set up on this page:<br>';
         echo '<ul class="mt-2 ml-4">';
-        echo '<li>• FrontPage_Container_1: shoes_image, shoes_title, shoes_link</li>';
-        echo '<li>• FrontPage_Container_2: clothes_image, clothes_title, clothes_link</li>';
-        echo '<li>• FrontPage_Container_3: acc_image, acc_title, acc_link</li>';
-        echo '<li>• FrontPage_Container_4: bag_image, bag_title, bag_link</li>';
+        echo '<li>• shoes_image, shoes_title (optional), shoes_link</li>';
+        echo '<li>• clothes_image, clothes_title (optional), clothes_link</li>';
+        echo '<li>• acc_image, acc_title (optional), acc_link</li>';
+        echo '<li>• bag_image, bag_title (optional), bag_link</li>';
         echo '</ul>';
+        echo '<p class="mt-2"><em>Note: Title fields are optional and will default to category names if empty.</em></p>';
 
         // Debug information
         echo '<div class="mt-4 text-sm">';
