@@ -8,10 +8,10 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
     // Start Level - for sub-menu containers
     function start_lvl(&$output, $depth = 0, $args = null) {
         if ($depth === 0) {
-            // This is the mega menu container
-            $output .= '<div class="mega-menu-container absolute top-full left-0 w-screen bg-white border-t border-gray-200 shadow-lg opacity-0 invisible transform translate-y-2 transition-all duration-300 z-50">';
-            $output .= '<div class="container mx-auto px-4 py-8">';
-            $output .= '<div class="mega-menu-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">';
+            // This is the mega menu container (full viewport width, centered)
+            $output .= '<div class="mega-menu-container">';
+            $output .= '<div class="mega-menu-inner">';
+            $output .= '<div class="mega-menu-grid">';
         }
     }
     
@@ -19,7 +19,8 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
     function end_lvl(&$output, $depth = 0, $args = null) {
         if ($depth === 0) {
             $output .= '</div>'; // Close mega-menu-grid
-            $output .= '</div>'; // Close container
+            $output .= '</div>'; // Close mega-menu-grid
+            $output .= '</div>'; // Close mega-menu-inner
             $output .= '</div>'; // Close mega-menu-container
         }
     }
@@ -36,11 +37,8 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
             $class_names = $class_names ? ' class="' . esc_attr($class_names) . '"' : '';
             
             $output .= '<li' . $class_names . '>';
-            $output .= '<a href="' . esc_url($item->url) . '" class="nav-link flex items-center gap-1">';
+            $output .= '<a href="' . esc_url($item->url) . '" class="nav-link">';
             $output .= esc_html($item->title);
-            if ($has_children) {
-                $output .= '<i class="fas fa-chevron-down text-xs transition-transform duration-200"></i>';
-            }
             $output .= '</a>';
             
         } elseif ($depth === 1) {

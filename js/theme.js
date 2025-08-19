@@ -22,8 +22,7 @@
             $parent.siblings('.menu-item-has-children').removeClass('open');
         });
 
-        // Mega Menu Enhancements
-        initMegaMenu();
+
 
         // Search Toggle
         $('.search-toggle').on('click', function() {

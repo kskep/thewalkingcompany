@@ -80,17 +80,9 @@
   position: relative;
 }
 
+/* remove arrow icons on desktop */
 .main-navigation .menu-item-has-children > a::before {
-  content: '\f107';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
-  font-size: 12px;
-  margin-left: 4px;
-  transition: transform 0.2s ease;
-}
-
-.main-navigation .menu-item-has-children:hover > a::before {
-  transform: rotate(180deg);
+  content: none;
 }
 
 /* Dropdown Menu */
@@ -183,20 +175,9 @@
   padding-right: 30px;
 }
 
+/* remove arrow icons on mobile */
 .mobile-menu .menu-item-has-children > a::after {
-  content: '\f107';
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  transition: transform 0.2s ease;
-}
-
-.mobile-menu .menu-item-has-children.open > a::after {
-  transform: translateY(-50%) rotate(180deg);
+  content: none;
 }
 
 .mobile-menu .sub-menu {

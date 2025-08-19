@@ -62,6 +62,8 @@ function eshop_theme_scripts() {
     wp_enqueue_script('gsap', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', array(), '3.12.5', true);
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js', array(), '10.3.1', true);
     wp_enqueue_script('eshop-theme-script', get_template_directory_uri() . '/js/theme.js', array('jquery', 'gsap', 'swiper'), '1.0.0', true);
+    // Mega Menu JS (modular)
+    wp_enqueue_script('eshop-mega-menu', get_template_directory_uri() . '/js/mega-menu.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
     // Product UI interactions (split from theme.js)
     wp_enqueue_script('eshop-product-ui', get_template_directory_uri() . '/js/product-ui.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
 

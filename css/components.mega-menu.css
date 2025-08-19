@@ -52,12 +52,19 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* Mega Menu Grid */
+/* Mega Menu Inner Centered Wrapper */
+.mega-menu-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Mega Menu Grid - two columns split */
 .mega-menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  padding: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 2rem;
 }
 
 /* Individual mega menu items */
@@ -133,15 +140,10 @@
   }
 }
 
+/* Keep two columns across desktop too, per request */
 @media (min-width: 1024px) {
   .mega-menu-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .mega-menu-grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
