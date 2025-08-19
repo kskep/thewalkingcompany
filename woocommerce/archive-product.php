@@ -108,6 +108,17 @@ echo '<!-- File exists: ' . (file_exists($filter_modal_path) ? 'YES' : 'NO') . '
 // Include the filter modal component
 get_template_part('template-parts/components/filter-modal');
 
+// Test: Load filter script directly
+echo '<script src="' . get_template_directory_uri() . '/js/components/filters-test.js?ver=' . time() . '"></script>';
+echo '<script>
+jQuery(document).ready(function($) {
+    console.log("Direct script test - EShopFilters available:", typeof EShopFilters !== "undefined");
+    if (typeof EShopFilters !== "undefined") {
+        EShopFilters.init();
+    }
+});
+</script>';
+
 /**
 /**
  * Hook: woocommerce_after_main_content.
