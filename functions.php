@@ -28,8 +28,10 @@ function eshop_theme_scripts() {
 
     // Modular CSS - Load conditionally
     wp_enqueue_style('eshop-base', get_template_directory_uri() . '/css/base.css', array('eshop-theme-style'), '1.0.0');
-    wp_enqueue_style('eshop-header', get_template_directory_uri() . '/css/components.header.css', array('eshop-theme-style'), '1.0.0');
-    wp_enqueue_style('eshop-mega-menu', get_template_directory_uri() . '/css/components.mega-menu.css', array('eshop-theme-style'), '1.0.0');
+    $header_css_ver = file_exists(get_template_directory() . '/css/components.header.css') ? filemtime(get_template_directory() . '/css/components.header.css') : '1.0.0';
+    $mega_css_ver = file_exists(get_template_directory() . '/css/components.mega-menu.css') ? filemtime(get_template_directory() . '/css/components.mega-menu.css') : '1.0.0';
+    wp_enqueue_style('eshop-header', get_template_directory_uri() . '/css/components.header.css', array('eshop-theme-style'), $header_css_ver);
+    wp_enqueue_style('eshop-mega-menu', get_template_directory_uri() . '/css/components.mega-menu.css', array('eshop-theme-style'), $mega_css_ver);
     wp_enqueue_style('eshop-hero', get_template_directory_uri() . '/css/components.hero-slider.css', array('eshop-theme-style'), '1.0.0');
 
     // Page-specific CSS
