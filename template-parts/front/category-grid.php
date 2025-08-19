@@ -161,9 +161,52 @@ if (empty($containers)) {
                             <h3 class="sr-only">
                                 <?php echo esc_html($title); ?>
                             </h3>
+
+                            <!-- Data attribute for custom cursor -->
+                            <span class="cursor-title" data-title="<?php echo esc_attr($title); ?>"></span>
                         </div>
                     </a>
                 </div>
             <?php endforeach; ?>
         </div>
 </section>
+
+<!-- Custom cursor element -->
+<div class="custom-cursor" id="customCursor"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cursor = document.getElementById('customCursor');
+    const categoryItems = document.querySelectorAll('.category-item');
+
+    // Track mouse movement
+    document.addEventListener('mousemove', function(e) {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+
+    // Handle category item hover
+    categoryItems.forEach(item => {
+        const titleElement = item.querySelector('.cursor-title');
+        const title = titleElement ? titleElement.getAttribute('data-title') : '';
+
+        item.addEventListener('mouseenter', function() {
+            cursor.textContent = title;
+            cursor.classList.add('active');
+        });
+
+        item.addEventListener('mouseleave', function() {
+            cursor.classList.remove('active');
+            cursor.textContent = '';
+        });
+    });
+
+    // Hide cursor when leaving the grid section
+    const gridSection = document.querySelector('.category-grid-section');
+    if (gridSection) {
+        gridSection.addEventListener('mouseleave', function() {
+            cursor.classList.remove('active');
+        });
+    }
+});
+</script>

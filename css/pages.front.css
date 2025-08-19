@@ -44,17 +44,59 @@
     border: 0;
 }
 
-/* Remove any hover effects */
+/* Custom cursor hover effect */
+.category-item {
+    cursor: none; /* Hide default cursor */
+}
+
 .category-item a {
     text-decoration: none;
     color: inherit;
     display: block;
     height: 100%;
+    position: relative;
 }
 
 .category-item a:focus {
     outline: 2px solid #2563eb;
     outline-offset: -2px;
+}
+
+/* Custom cursor circle */
+.custom-cursor {
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.2s ease;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.custom-cursor.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Show default cursor outside category items */
+.category-grid-section {
+    width: 100%;
+   
+}
+
+.category-grid-section:not(:hover) {
+    cursor: default;
 }
 
 /* Responsive adjustments */
