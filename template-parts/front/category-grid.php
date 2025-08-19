@@ -21,7 +21,7 @@ if (!function_exists('get_field')) {
 // Get the custom fields for each container
 $containers = array();
 $category_names = array('Shoes', 'Clothes', 'Accessories', 'Bags');
-$subfield_patterns = array(
+$field_patterns = array(
     1 => array('shoes_image', 'shoes_title', 'shoes_link'),
     2 => array('clothes_image', 'clothes_title', 'clothes_link'),
     3 => array('acc_image', 'acc_title', 'acc_link'),
@@ -29,48 +29,29 @@ $subfield_patterns = array(
 );
 
 for ($i = 1; $i <= 4; $i++) {
-    $container_field = "FrontPage_Container_$i";
-    $pattern = $subfield_patterns[$i];
+    $pattern = $field_patterns[$i];
 
-    // Get the container group - try front page first, then options page
-    $container_group = null;
+    // Get individual fields directly (not from a group)
+    $image = get_field($pattern[0]);
+    $title = get_field($pattern[1]);
+    $link = get_field($pattern[2]);
 
-    // Try to get from the front page post
-    if (is_front_page()) {
-        $front_page_id = get_option('page_on_front');
-        if ($front_page_id) {
-            $container_group = get_field($container_field, $front_page_id);
-        }
+    // Use category name as fallback for title if title is empty
+    if (empty($title)) {
+        $title = $category_names[$i-1];
     }
 
-    // If not found on front page, try options page
-    if (!$container_group) {
-        $container_group = get_field($container_field, 'option');
-    }
-
-    // If still not found, try current post (fallback)
-    if (!$container_group && is_page()) {
-        $container_group = get_field($container_field);
-    }
-
-    if ($container_group && is_array($container_group)) {
-        // Extract subfields from the group
-        $image = $container_group[$pattern[0]] ?? null;
-        $title = $container_group[$pattern[1]] ?? null;
-        $link = $container_group[$pattern[2]] ?? null;
-
-        // Check if we have the essential data
-        if ($image && $title && $link) {
-            $containers[] = array(
-                'data' => array(
-                    'image' => $image,
-                    'title' => $title,
-                    'link' => $link
-                ),
-                'index' => $i,
-                'category' => $category_names[$i-1]
-            );
-        }
+    // Check if we have the essential data (image and link are required, title has fallback)
+    if ($image && $link) {
+        $containers[] = array(
+            'data' => array(
+                'image' => $image,
+                'title' => $title,
+                'link' => $link
+            ),
+            'index' => $i,
+            'category' => $category_names[$i-1]
+        );
     }
 }
 
