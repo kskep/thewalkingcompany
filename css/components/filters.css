@@ -1,0 +1,323 @@
+/**
+ * Filter Components CSS
+ * Styles for the modular filter system
+ */
+
+/* Filter Drawer */
+#filter-drawer {
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+#filter-drawer.open {
+    transform: translateX(0);
+}
+
+#filter-backdrop.show {
+    opacity: 1;
+}
+
+/* Filter Sections */
+.filter-section {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 1rem;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    position: relative;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.filter-title:hover {
+    color: var(--primary-pink, #ee81b3);
+}
+
+/* Price Filter */
+.price-filter .price-inputs input {
+    transition: border-color 0.2s ease;
+}
+
+.price-filter .price-inputs input:focus {
+    border-color: var(--primary-pink, #ee81b3);
+    box-shadow: 0 0 0 3px rgba(238, 129, 179, 0.1);
+}
+
+.price-slider {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    position: relative;
+    margin: 1rem 0;
+}
+
+.price-slider .noUi-connect {
+    background: var(--primary-pink, #ee81b3);
+}
+
+.price-slider .noUi-handle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-pink, #ee81b3);
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.price-slider .noUi-handle:before,
+.price-slider .noUi-handle:after {
+    display: none;
+}
+
+.price-range-display {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* Category Filter */
+.category-filter {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.category-filter::-webkit-scrollbar {
+    width: 4px;
+}
+
+.category-filter::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 2px;
+}
+
+.category-filter::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.category-filter::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.category-item .subcategories {
+    border-left: 2px solid #f3f4f6;
+    margin-left: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+/* Stock Filter */
+.stock-filter label {
+    transition: background-color 0.2s ease;
+}
+
+.stock-filter label:hover {
+    background-color: #f9fafb;
+}
+
+.stock-filter input[type="checkbox"]:checked {
+    background-color: var(--primary-pink, #ee81b3);
+    border-color: var(--primary-pink, #ee81b3);
+}
+
+/* Sale Filter */
+.sale-filter label {
+    transition: background-color 0.2s ease;
+}
+
+.sale-filter label:hover {
+    background-color: #fef2f2;
+}
+
+.sale-filter .bg-red-100 {
+    background-color: #fee2e2;
+}
+
+.sale-filter .text-red-600 {
+    color: #dc2626;
+}
+
+.sale-filter .bg-yellow-100 {
+    background-color: #fef3c7;
+}
+
+.sale-filter .text-yellow-600 {
+    color: #d97706;
+}
+
+/* Attribute Filter */
+.attribute-filter {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.attribute-filter::-webkit-scrollbar {
+    width: 4px;
+}
+
+.attribute-filter::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 2px;
+}
+
+.attribute-filter::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.attribute-filter::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Color swatches */
+.attribute-filter .color-swatch {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    display: inline-block;
+    position: relative;
+}
+
+.attribute-filter .color-swatch::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: border-color 0.2s ease;
+}
+
+.attribute-filter input:checked + .color-swatch::after {
+    border-color: var(--primary-pink, #ee81b3);
+}
+
+/* Active Filters Bar */
+.active-filters-bar {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.active-filter {
+    animation: fadeIn 0.2s ease-out;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.active-filter:hover {
+    background-color: #e5e7eb;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.active-filter .remove-filter {
+    transition: color 0.2s ease;
+}
+
+.active-filter .remove-filter:hover {
+    color: #ef4444;
+}
+
+/* Loading States */
+.products-loading {
+    backdrop-filter: blur(2px);
+}
+
+.products-loading .animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Filter Buttons */
+.apply-price-filter,
+#apply-filters,
+#clear-filters {
+    transition: all 0.2s ease;
+}
+
+.apply-price-filter:hover,
+#apply-filters:hover {
+    background-color: var(--primary-pink-dark, #d946a0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(238, 129, 179, 0.3);
+}
+
+#clear-filters:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #filter-drawer {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .filter-section {
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .category-filter,
+    .attribute-filter {
+        max-height: 150px;
+    }
+}
+
+/* Focus States for Accessibility */
+.filter-section input[type="checkbox"]:focus {
+    outline: 2px solid var(--primary-pink, #ee81b3);
+    outline-offset: 2px;
+}
+
+.filter-section button:focus {
+    outline: 2px solid var(--primary-pink, #ee81b3);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .filter-section {
+        border-bottom-color: #000;
+    }
+    
+    .price-slider .noUi-connect {
+        background: #000;
+    }
+    
+    .price-slider .noUi-handle {
+        background: #000;
+        border-color: #fff;
+    }
+}

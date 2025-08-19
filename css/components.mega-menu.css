@@ -30,7 +30,7 @@
   position: absolute;
   top: 100%;
  
-  width: 100%;
+  width: 99vw;
   background: white;
   border-top: 4px solid var(--primary-pink);
   border-bottom: 2px solid #000;
