@@ -36,6 +36,7 @@ function eshop_theme_setup() {
     add_image_size('product-thumbnail-hq', 400, 400, true); // High quality product thumbnails
     add_image_size('product-medium-hq', 600, 600, true);    // Medium high quality
     add_image_size('product-large-hq', 800, 800, true);     // Large high quality
+    add_image_size('category-thumb', 120, 80, true);        // Category thumbnails for mega menu
     
     // Register navigation menus
     register_nav_menus(array(

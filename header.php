@@ -191,27 +191,14 @@
                     <!-- Main Navigation -->
                     <nav id="site-navigation" class="main-navigation sm:hidden lg:block">
                         <?php
-                        // Debug: Check if menu location has a menu assigned
-                        $locations = get_nav_menu_locations();
-                        $menu_id = isset($locations['primary']) ? $locations['primary'] : 0;
-
-                        if ($menu_id && wp_get_nav_menu_object($menu_id)) {
-                            // Menu exists and is assigned
-                            wp_nav_menu(array(
-                                'theme_location' => 'primary',
-                                'menu_id' => 'primary-menu',
-                                'menu_class' => 'flex space-x-8 text-sm font-medium uppercase tracking-wide',
-                                'container' => false,
-                                'fallback_cb' => false,
-                            ));
-                        } else {
-                            // Debug fallback - show if no menu is assigned
-                            echo '<div class="debug-menu-info text-red-500 text-sm">';
-                            echo 'Debug: No menu assigned to primary location. ';
-                            echo 'Menu ID: ' . $menu_id . ' | ';
-                            echo 'Available locations: ' . implode(', ', array_keys($locations));
-                            echo '</div>';
-                        }
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'menu_id' => 'primary-menu',
+                            'menu_class' => 'flex space-x-8 text-sm font-medium uppercase tracking-wide',
+                            'container' => false,
+                            'fallback_cb' => false,
+                            'walker' => new Eshop_Mega_Menu_Walker(),
+                        ));
                         ?>
                     </nav>
 
@@ -229,21 +216,13 @@
             <div class="mobile-menu-wrapper bg-white border-t border-gray-200 py-4">
                 <div class="container mx-auto px-4">
                     <?php
-                    // Use same menu check as desktop
-                    $locations = get_nav_menu_locations();
-                    $menu_id = isset($locations['primary']) ? $locations['primary'] : 0;
-
-                    if ($menu_id && wp_get_nav_menu_object($menu_id)) {
-                        wp_nav_menu(array(
-                            'theme_location' => 'primary',
-                            'menu_id' => 'mobile-menu',
-                            'menu_class' => 'mobile-menu space-y-3',
-                            'container' => false,
-                            'fallback_cb' => false,
-                        ));
-                    } else {
-                        echo '<div class="debug-menu-info text-red-500 text-sm">Mobile: No menu assigned to primary location.</div>';
-                    }
+                    wp_nav_menu(array(
+                        'theme_location' => 'primary',
+                        'menu_id' => 'mobile-menu',
+                        'menu_class' => 'mobile-menu space-y-3',
+                        'container' => false,
+                        'fallback_cb' => false,
+                    ));
                     ?>
                 </div>
             </div>

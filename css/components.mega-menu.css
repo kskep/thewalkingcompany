@@ -1,0 +1,203 @@
+/* Mega Menu Styles */
+
+/* Main navigation with mega menu support */
+.main-navigation {
+  position: relative;
+}
+
+.main-navigation .menu-item-has-children {
+  position: relative;
+}
+
+/* Top level menu items with dropdowns */
+.main-navigation .menu-item-has-children > .nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.main-navigation .menu-item-has-children > .nav-link i {
+  transition: transform 0.2s ease;
+}
+
+.main-navigation .menu-item-has-children:hover > .nav-link i {
+  transform: rotate(180deg);
+}
+
+/* Mega Menu Container */
+.mega-menu-container {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 1400px;
+  background: white;
+  border-top: 3px solid var(--primary-pink);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  margin-top: 8px;
+  display: none; /* Initially hidden for JS control */
+}
+
+/* Show mega menu on hover */
+.main-navigation .menu-item-has-children:hover .mega-menu-container {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Mega Menu Grid */
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 2rem;
+}
+
+/* Individual mega menu items */
+.mega-menu-item {
+  position: relative;
+}
+
+.mega-menu-link {
+  display: block;
+  padding: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.mega-menu-link:hover {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Mega menu image */
+.mega-menu-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #f3f4f6;
+}
+
+.mega-menu-image-wrapper img {
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.mega-menu-link:hover .mega-menu-image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* Mega menu title */
+.mega-menu-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.mega-menu-link:hover .mega-menu-title {
+  color: var(--primary-pink);
+}
+
+/* Placeholder image styling */
+.mega-menu-image-wrapper .placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #9ca3af;
+  font-size: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1023px) {
+  .mega-menu-container {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mega-menu-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .mega-menu-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Animation for mega menu appearance */
+@keyframes megaMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.main-navigation .menu-item-has-children:hover .mega-menu-container {
+  animation: megaMenuFadeIn 0.3s ease forwards;
+}
+
+/* Ensure mega menu stays open when hovering over it */
+.mega-menu-container:hover {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Close mega menu with slight delay */
+.main-navigation .menu-item-has-children {
+  transition: all 0.1s ease;
+}
+
+/* Override default sub-menu styles for mega menu */
+.main-navigation .menu-item-has-children .mega-menu-container {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: auto;
+  width: 100vw;
+  max-width: 1400px;
+  background: white;
+  border: none;
+  border-top: 3px solid var(--primary-pink);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  padding: 0;
+}
+
+/* Hide traditional sub-menu styles */
+.main-navigation .menu-item-has-children .mega-menu-container .sub-menu {
+  position: static;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}

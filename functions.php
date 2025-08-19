@@ -17,6 +17,7 @@ require_once get_template_directory() . '/inc/theme-setup.php';
 require_once get_template_directory() . '/inc/wishlist-functions.php';
 require_once get_template_directory() . '/inc/woocommerce-functions.php';
 require_once get_template_directory() . '/inc/woocommerce/product-display.php';
+require_once get_template_directory() . '/inc/mega-menu-walker.php';
 
 /**
  * Enqueue Scripts and Styles
@@ -28,6 +29,7 @@ function eshop_theme_scripts() {
     // Modular CSS - Load conditionally
     wp_enqueue_style('eshop-base', get_template_directory_uri() . '/css/base.css', array('eshop-theme-style'), '1.0.0');
     wp_enqueue_style('eshop-header', get_template_directory_uri() . '/css/components.header.css', array('eshop-theme-style'), '1.0.0');
+    wp_enqueue_style('eshop-mega-menu', get_template_directory_uri() . '/css/components.mega-menu.css', array('eshop-theme-style'), '1.0.0');
     wp_enqueue_style('eshop-hero', get_template_directory_uri() . '/css/components.hero-slider.css', array('eshop-theme-style'), '1.0.0');
 
     // Page-specific CSS
