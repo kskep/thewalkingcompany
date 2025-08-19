@@ -4,65 +4,67 @@
  */
 
 class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
-    
+
+    private $mega_menu_items = array();
+
     // Start Level - for sub-menu containers
     function start_lvl(&$output, $depth = 0, $args = null) {
-        if ($depth === 0) {
-            // This is the mega menu container (full viewport width, centered)
-            $output .= '<div class="mega-menu-container">';
-            $output .= '<div class="mega-menu-inner">';
-            $output .= '<div class="mega-menu-grid">';
-        }
+        // Don't output anything here - we'll handle mega menu separately
     }
-    
+
     // End Level
     function end_lvl(&$output, $depth = 0, $args = null) {
-        if ($depth === 0) {
-            $output .= '</div>'; // Close mega-menu-grid
-            $output .= '</div>'; // Close mega-menu-inner
-            $output .= '</div>'; // Close mega-menu-container
-        }
+        // Don't output anything here - we'll handle mega menu separately
     }
     
     // Start Element
     function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
         $classes = empty($item->classes) ? array() : (array) $item->classes;
         $classes[] = 'menu-item-' . $item->ID;
-        
+
         if ($depth === 0) {
             // Top level menu item
             $has_children = in_array('menu-item-has-children', $classes);
             $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item, $args));
             $class_names = $class_names ? ' class="' . esc_attr($class_names) . '"' : '';
-            
-            $output .= '<li' . $class_names . '>';
+
+            $data_attr = $has_children ? ' data-mega-menu="' . sanitize_title($item->title) . '"' : '';
+
+            $output .= '<li' . $class_names . $data_attr . '>';
             $output .= '<a href="' . esc_url($item->url) . '" class="nav-link">';
             $output .= esc_html($item->title);
             $output .= '</a>';
-            
+
         } elseif ($depth === 1) {
-            // Mega menu items (subcategories)
-            $category_image = $this->get_category_image($item);
-            $has_real_image = $this->has_category_image($item);
+            // Store mega menu items for later output
+            $parent_id = $item->menu_item_parent;
+            $parent_item = null;
 
-            $output .= '<div class="mega-menu-item group">';
-            $output .= '<a href="' . esc_url($item->url) . '" class="mega-menu-link block p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">';
-            $output .= '<div class="mega-menu-image-wrapper mb-3">';
-
-            if ($has_real_image) {
-                $output .= '<img src="' . esc_url($category_image) . '" alt="' . esc_attr($item->title) . '" class="w-full h-16 object-cover rounded-md">';
-            } else {
-                $output .= '<div class="placeholder w-full h-16 rounded-md flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">';
-                $output .= '<i class="fas fa-image text-gray-400 text-xl"></i>';
-                $output .= '</div>';
+            // Find parent item to get its title
+            foreach ($args->menu->posts as $menu_item) {
+                if ($menu_item->ID == $parent_id) {
+                    $parent_item = $menu_item;
+                    break;
+                }
             }
 
-            $output .= '</div>';
-            $output .= '<div class="mega-menu-title text-sm font-medium text-gray-900 group-hover:text-primary transition-colors duration-200">';
-            $output .= esc_html($item->title);
-            $output .= '</div>';
-            $output .= '</a>';
-            $output .= '</div>';
+            if ($parent_item) {
+                $parent_slug = sanitize_title($parent_item->post_title);
+
+                if (!isset($this->mega_menu_items[$parent_slug])) {
+                    $this->mega_menu_items[$parent_slug] = array();
+                }
+
+                $category_image = $this->get_category_image($item);
+                $has_real_image = $this->has_category_image($item);
+
+                $this->mega_menu_items[$parent_slug][] = array(
+                    'title' => $item->title,
+                    'url' => $item->url,
+                    'image' => $category_image,
+                    'has_real_image' => $has_real_image
+                );
+            }
         }
     }
     
@@ -117,5 +119,43 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
                 <path d="M20 44L24.5 36L32 42L39.5 32L44 44H20Z" fill="#9CA3AF"/>
             </svg>
         ');
+    }
+
+    /**
+     * Output mega menu containers
+     */
+    public function get_mega_menu_containers() {
+        $output = '';
+
+        foreach ($this->mega_menu_items as $parent_slug => $items) {
+            $output .= '<div class="mega-menu-container" data-mega-menu="' . esc_attr($parent_slug) . '">';
+            $output .= '<div class="mega-menu-inner">';
+            $output .= '<div class="mega-menu-grid">';
+
+            foreach ($items as $item) {
+                $output .= '<div class="mega-menu-item">';
+                $output .= '<a href="' . esc_url($item['url']) . '" class="mega-menu-link">';
+                $output .= '<div class="mega-menu-image-wrapper">';
+
+                if ($item['has_real_image']) {
+                    $output .= '<img src="' . esc_url($item['image']) . '" alt="' . esc_attr($item['title']) . '">';
+                } else {
+                    $output .= '<div class="placeholder">';
+                    $output .= '<i class="fas fa-image"></i>';
+                    $output .= '</div>';
+                }
+
+                $output .= '</div>';
+                $output .= '<div class="mega-menu-title">' . esc_html($item['title']) . '</div>';
+                $output .= '</a>';
+                $output .= '</div>';
+            }
+
+            $output .= '</div>'; // Close mega-menu-grid
+            $output .= '</div>'; // Close mega-menu-inner
+            $output .= '</div>'; // Close mega-menu-container
+        }
+
+        return $output;
     }
 }

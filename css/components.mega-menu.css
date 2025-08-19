@@ -6,7 +6,7 @@
 }
 
 .main-navigation .menu-item-has-children {
-  position: relative;
+  position: static;
 }
 
 /* Top level menu items with dropdowns */
@@ -25,14 +25,13 @@
   transform: rotate(180deg);
 }
 
-/* Mega Menu Container - Full Width Magazine Style */
+/* Mega Menu Container - Full Width Magazine Style, Centered to Screen */
 .mega-menu-container {
   position: absolute;
   top: 100%;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100vw;
-  margin-left: calc(-50vw + 50%);
   background: white;
   border-top: 4px solid var(--primary-pink);
   border-bottom: 2px solid #000;
@@ -40,14 +39,14 @@
   visibility: hidden;
   transition: all 0.2s ease;
   z-index: 1000;
-  display: block;
+  display: none;
 }
 
 /* Show mega menu on hover */
-.main-navigation .menu-item-has-children:hover .mega-menu-container,
 .mega-menu-container.show {
   opacity: 1;
   visibility: visible;
+  display: block;
 }
 
 /* Mega Menu Inner Centered Wrapper - Magazine Style */
@@ -164,47 +163,6 @@
   }
 }
 
-.main-navigation .menu-item-has-children:hover .mega-menu-container {
+.mega-menu-container.show {
   animation: megaMenuFadeIn 0.2s ease forwards;
-}
-
-/* Ensure mega menu stays open when hovering over it */
-.mega-menu-container:hover {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Close mega menu with slight delay */
-.main-navigation .menu-item-has-children {
-  transition: all 0.1s ease;
-}
-
-/* Override default sub-menu styles for mega menu - Full Width Magazine Style */
-.main-navigation .menu-item-has-children .mega-menu-container {
-  position: absolute !important;
-  top: 100% !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100vw !important;
-  margin-left: calc(-50vw + 50%) !important;
-  background: white !important;
-  border: none !important;
-  border-top: 4px solid var(--primary-pink) !important;
-  border-bottom: 2px solid #000 !important;
-  padding: 0 !important;
-  transform: none !important;
-}
-
-/* Hide traditional sub-menu styles */
-.main-navigation .menu-item-has-children .mega-menu-container .sub-menu {
-  position: static !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: block !important;
 }
