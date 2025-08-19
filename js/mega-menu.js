@@ -4,26 +4,47 @@
   function initMegaMenu(){
     var megaMenuTimer;
 
-    // Hover open/close with slight delay - show correct mega menu based on data attribute
+    // Position mega menus correctly on page load
+    function positionMegaMenus() {
+      $('.mega-menu-container').each(function() {
+        var $container = $(this);
+        var $nav = $('.main-navigation');
+        var navOffset = $nav.offset();
+        var navWidth = $nav.outerWidth();
+
+        // Calculate position to center relative to viewport
+        var leftOffset = ($(window).width() - $container.outerWidth()) / 2;
+
+        $container.css({
+          'left': '50%',
+          'transform': 'translateX(-50%)',
+          'margin-left': '0'
+        });
+      });
+    }
+
+    // Hover open/close with slight delay
     $('.main-navigation .menu-item-has-children').hover(
       function(){
         clearTimeout(megaMenuTimer);
-        var menuSlug = $(this).data('mega-menu');
-        if (menuSlug) {
-          // Hide all mega menus first
-          $('.mega-menu-container').removeClass('show');
-          // Show the correct one
-          $('.mega-menu-container[data-mega-menu="' + menuSlug + '"]').addClass('show');
-        }
+        var $megaMenu = $(this).find('.mega-menu-container');
+
+        // Position the mega menu
+        positionMegaMenus();
+
+        $megaMenu.stop(true, true).css({
+          'opacity': '1',
+          'visibility': 'visible'
+        });
       },
       function(){
-        var menuSlug = $(this).data('mega-menu');
-        if (menuSlug) {
-          var $megaMenu = $('.mega-menu-container[data-mega-menu="' + menuSlug + '"]');
-          megaMenuTimer = setTimeout(function(){
-            $megaMenu.removeClass('show');
-          }, 120);
-        }
+        var $megaMenu = $(this).find('.mega-menu-container');
+        megaMenuTimer = setTimeout(function(){
+          $megaMenu.stop(true, true).css({
+            'opacity': '0',
+            'visibility': 'hidden'
+          });
+        }, 120);
       }
     );
 
@@ -31,15 +52,27 @@
     $('.mega-menu-container').hover(
       function(){
         clearTimeout(megaMenuTimer);
-        $(this).addClass('show');
+        $(this).css({
+          'opacity': '1',
+          'visibility': 'visible'
+        });
       },
       function(){
         var $megaMenu = $(this);
         megaMenuTimer = setTimeout(function(){
-          $megaMenu.removeClass('show');
+          $megaMenu.css({
+            'opacity': '0',
+            'visibility': 'hidden'
+          });
         }, 120);
       }
     );
+
+    // Position on window resize
+    $(window).on('resize', positionMegaMenus);
+
+    // Initial positioning
+    positionMegaMenus();
   }
 
   $(document).ready(function(){

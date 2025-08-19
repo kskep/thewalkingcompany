@@ -191,18 +191,14 @@
                     <!-- Main Navigation -->
                     <nav id="site-navigation" class="main-navigation sm:hidden lg:block">
                         <?php
-                        $walker = new Eshop_Mega_Menu_Walker();
                         wp_nav_menu(array(
                             'theme_location' => 'primary',
                             'menu_id' => 'primary-menu',
                             'menu_class' => 'flex space-x-8 text-sm font-medium uppercase tracking-wide',
                             'container' => false,
                             'fallback_cb' => false,
-                            'walker' => $walker,
+                            'walker' => new Eshop_Mega_Menu_Walker(),
                         ));
-
-                        // Output mega menu containers
-                        echo $walker->get_mega_menu_containers();
                         ?>
                     </nav>
 

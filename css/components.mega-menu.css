@@ -6,7 +6,7 @@
 }
 
 .main-navigation .menu-item-has-children {
-  position: static;
+  position: relative;
 }
 
 /* Top level menu items with dropdowns */
@@ -39,14 +39,13 @@
   visibility: hidden;
   transition: all 0.2s ease;
   z-index: 1000;
-  display: none;
+  display: block;
 }
 
 /* Show mega menu on hover */
-.mega-menu-container.show {
+.main-navigation .menu-item-has-children:hover .mega-menu-container {
   opacity: 1;
   visibility: visible;
-  display: block;
 }
 
 /* Mega Menu Inner Centered Wrapper - Magazine Style */
@@ -153,16 +152,8 @@
   }
 }
 
-/* Simple fade animation - Magazine Style */
-@keyframes megaMenuFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.mega-menu-container.show {
-  animation: megaMenuFadeIn 0.2s ease forwards;
+/* Ensure mega menu stays open when hovering over it */
+.mega-menu-container:hover {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
