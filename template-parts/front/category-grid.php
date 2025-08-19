@@ -119,9 +119,8 @@ if (empty($containers)) {
 }
 ?>
 
-<section class="category-grid-section py-8">
-    <div class="container mx-auto px-4">
-        <div class="category-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+<section class="category-grid-section">
+        <div class="category-grid grid grid-cols-1 md:grid-cols-2 gap-1">
             <?php foreach ($containers as $container_info) :
                 $container = $container_info['data'];
                 $index = $container_info['index'] - 1; // Convert to 0-based index
@@ -148,33 +147,23 @@ if (empty($containers)) {
                 $category_classes = array('shoes', 'clothes', 'accessories', 'bags');
                 $category_class = $category_classes[$index] ?? 'default';
             ?>
-                <div class="category-item group relative overflow-hidden">
+                <div class="category-item relative overflow-hidden">
                     <a href="<?php echo esc_url($link); ?>" class="block w-full h-full">
                         <div class="category-image-wrapper relative aspect-square">
-                            <img 
-                                src="<?php echo esc_url($image['url']); ?>" 
+                            <img
+                                src="<?php echo esc_url($image['url']); ?>"
                                 alt="<?php echo esc_attr($image['alt'] ?: $title); ?>"
-                                class="category-image w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                class="category-image w-full h-full object-cover"
                                 loading="lazy"
                             />
-                            
-                            <!-- Overlay with title -->
-                            <div class="category-overlay absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                <h3 class="category-title text-white text-xl md:text-2xl font-bold text-center px-4">
-                                    <?php echo esc_html($title); ?>
-                                </h3>
-                            </div>
-                            
-                            <!-- Bottom title bar (always visible) -->
-                            <div class="category-title-bar absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 p-3">
-                                <h3 class="category-title-text text-dark text-lg font-semibold text-center">
-                                    <?php echo esc_html($title); ?>
-                                </h3>
-                            </div>
+
+                            <!-- Hidden title for SEO -->
+                            <h3 class="sr-only">
+                                <?php echo esc_html($title); ?>
+                            </h3>
                         </div>
                     </a>
                 </div>
             <?php endforeach; ?>
         </div>
-    </div>
 </section>
