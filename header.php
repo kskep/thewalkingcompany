@@ -189,7 +189,7 @@
             <div class="container mx-auto px-4">
                 <div class="flex justify-center py-4">
                     <!-- Main Navigation -->
-                    <nav id="site-navigation" class="main-navigation hidden lg:block">
+                    <nav id="site-navigation" class="main-navigation sm:hidden lg:block">
                         <?php
                         // Debug: Check if menu location has a menu assigned
                         $locations = get_nav_menu_locations();

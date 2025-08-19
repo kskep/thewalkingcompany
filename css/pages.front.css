@@ -2,11 +2,7 @@
 /* Place homepage-specific tweaks here */
 .front-hero-spacing { margin-bottom: 2rem; }
 
-/* Category Grid Section */
-.category-grid-section {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-}
+
 
 .category-grid {
     width: 100%;
