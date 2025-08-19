@@ -9,11 +9,20 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-// Only show on WooCommerce archive pages
-if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
-    return;
-}
+// Debug: Add a comment to see if this file is being loaded
+echo '<!-- Filter Modal Component Loaded -->';
+
+// Only show on WooCommerce archive pages - but let's temporarily disable this check
+// if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
+//     return;
+// }
 ?>
+?>
+
+<!-- Test Element (visible) -->
+<div style="position: fixed; top: 10px; right: 10px; background: red; color: white; padding: 10px; z-index: 9999;">
+    Filter Modal Loaded
+</div>
 
 <!-- Filter Backdrop -->
 <div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
@@ -39,19 +48,17 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
             dynamic_sidebar('shop-filters');
         } else {
             // Fallback to default filter components
-            get_template_part('template-parts/components/filters/price-filter');
-            get_template_part('template-parts/components/filters/category-filter');
-            get_template_part('template-parts/components/filters/stock-filter');
-            get_template_part('template-parts/components/filters/sale-filter');
-            
-            // Add attribute filters if any exist
-            $attributes = wc_get_attribute_taxonomies();
-            if (!empty($attributes)) {
-                foreach ($attributes as $attribute) {
-                    get_template_part('template-parts/components/filters/attribute-filter', null, array(
-                        'attribute' => $attribute
-                    ));
-                }
+            echo '<div class="filter-section mb-6">';
+            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">Test Filter</h4>';
+            echo '<p>Filter components will appear here.</p>';
+            echo '</div>';
+
+            // Try to load components
+            if (file_exists(get_template_directory() . '/template-parts/components/filters/price-filter.php')) {
+                get_template_part('template-parts/components/filters/price-filter');
+            }
+            if (file_exists(get_template_directory() . '/template-parts/components/filters/category-filter.php')) {
+                get_template_part('template-parts/components/filters/category-filter');
             }
         }
         ?>

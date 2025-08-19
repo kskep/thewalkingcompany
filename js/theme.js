@@ -7,6 +7,7 @@
 
     // DOM Ready
     $(document).ready(function() {
+        console.log('Theme.js loaded and ready');
 
         // Mobile Menu Toggle
         $('.mobile-menu-toggle').on('click', function() {
@@ -289,12 +290,22 @@
 
         // Product Archive Filters
         if ($('.shop-layout').length) {
-            // Load filter component
+            // Try to initialize filters component
+            function initFilters() {
+                if (typeof EShopFilters !== 'undefined') {
+                    EShopFilters.init();
+                } else {
+                    // Fallback to basic functionality
+                    initProductFilters();
+                }
+            }
+
+            // Initialize immediately if available, or wait for component to load
             if (typeof EShopFilters !== 'undefined') {
-                EShopFilters.init();
+                initFilters();
             } else {
-                // Fallback to old method if component not loaded
-                initProductFilters();
+                // Wait a bit for the component to load
+                setTimeout(initFilters, 100);
             }
         }
 
@@ -462,7 +473,28 @@
     // Product Filter Functions (fallback if component not loaded)
     function initProductFilters() {
         console.log('Using fallback filter initialization');
-        // Basic filter functionality as fallback
+
+        // Basic filter drawer functionality
+        $('#open-filters').on('click', function() {
+            $('#filter-backdrop').removeClass('hidden').addClass('show');
+            $('#filter-drawer').addClass('open');
+            $('body').addClass('overflow-hidden');
+        });
+
+        $('#close-filters, #filter-backdrop').on('click', function() {
+            $('#filter-backdrop').removeClass('show').addClass('hidden');
+            $('#filter-drawer').removeClass('open');
+            $('body').removeClass('overflow-hidden');
+        });
+
+        // Keyboard accessibility - Escape to close drawer
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
+                $('#filter-backdrop').removeClass('show').addClass('hidden');
+                $('#filter-drawer').removeClass('open');
+                $('body').removeClass('overflow-hidden');
+            }
+        });
     }
 
     // Filter functions moved to components/filters.js

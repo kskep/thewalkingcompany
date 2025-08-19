@@ -14,7 +14,7 @@ get_header('shop'); ?>
     <!-- Shop Toolbar: Filter (left) + Sorting (right); page title removed in favor of breadcrumbs -->
     <div class="shop-toolbar flex items-center justify-between mb-6 pb-4">
         <!-- Left: Filter button opens off-canvas drawer -->
-        <button id="open-filters" class="filter-toggle-btn flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-primary transition-all duration-200" aria-label="Open Filters">
+        <button id="open-filters" class="filter-toggle-btn flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-primary transition-all duration-200" aria-label="Open Filters" onclick="console.log('Filter button clicked'); document.getElementById('filter-backdrop').classList.remove('hidden'); document.getElementById('filter-drawer').classList.add('open');">
             <i class="fas fa-sliders-h text-sm" aria-hidden="true"></i>
             <span class="hidden sm:inline text-sm font-medium uppercase tracking-wide"><?php _e('Filters', 'eshop-theme'); ?></span>
         </button>
@@ -100,13 +100,15 @@ get_header('shop'); ?>
 </div>
 
 <?php
+// Debug: Check if file exists
+$filter_modal_path = get_template_directory() . '/template-parts/components/filter-modal.php';
+echo '<!-- Filter modal path: ' . $filter_modal_path . ' -->';
+echo '<!-- File exists: ' . (file_exists($filter_modal_path) ? 'YES' : 'NO') . ' -->';
+
 // Include the filter modal component
 get_template_part('template-parts/components/filter-modal');
-?>
 
-<?php
-
-<?php
+/**
 /**
  * Hook: woocommerce_after_main_content.
  *

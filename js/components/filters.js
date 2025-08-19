@@ -7,15 +7,20 @@
     'use strict';
 
     window.EShopFilters = {
-        
+
         // Initialize the filter system
         init: function() {
+            console.log('EShopFilters initialized');
             this.bindEvents();
             this.initPriceSlider();
         },
 
         // Bind all filter-related events
         bindEvents: function() {
+            console.log('Binding filter events');
+            console.log('Filter button exists:', $('#open-filters').length > 0);
+            console.log('Filter drawer exists:', $('#filter-drawer').length > 0);
+
             // Off-Canvas Filter Drawer
             $('#open-filters').on('click', this.openDrawer);
             $('#close-filters, #filter-backdrop').on('click', this.closeDrawer);
@@ -51,6 +56,7 @@
 
         // Open filter drawer
         openDrawer: function() {
+            console.log('Opening filter drawer');
             $('#filter-backdrop').removeClass('hidden').addClass('show');
             $('#filter-drawer').addClass('open');
             $('body').addClass('overflow-hidden');

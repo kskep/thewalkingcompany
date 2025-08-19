@@ -43,9 +43,11 @@ function eshop_theme_scripts() {
         wp_enqueue_style('eshop-cart-checkout', get_template_directory_uri() . '/css/pages.cart-checkout.css', array('eshop-theme-style'), '1.0.0');
     }
 
+    // Load filter CSS on all pages for testing
+    wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), '1.0.0');
+
     if (is_shop() || is_product_category() || is_product_tag()) {
         wp_enqueue_style('eshop-shop', get_template_directory_uri() . '/css/pages.shop.css', array('eshop-theme-style'), '1.0.0');
-        wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), '1.0.0');
         // Price slider (noUiSlider) for filters
         wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
         wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
@@ -70,9 +72,12 @@ function eshop_theme_scripts() {
     // Product UI interactions (split from theme.js)
     wp_enqueue_script('eshop-product-ui', get_template_directory_uri() . '/js/product-ui.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
 
-    // Filter component JavaScript (only on shop pages)
+    // Filter component JavaScript (load on all pages for testing)
+    wp_enqueue_script('eshop-filters', get_template_directory_uri() . '/js/components/filters.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+
+    // Also load on shop pages specifically
     if (is_shop() || is_product_category() || is_product_tag()) {
-        wp_enqueue_script('eshop-filters', get_template_directory_uri() . '/js/components/filters.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        // Additional shop-specific initialization if needed
     }
 
     // Localize script for AJAX
