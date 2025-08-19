@@ -32,8 +32,26 @@ for ($i = 1; $i <= 4; $i++) {
     $container_field = "FrontPage_Container_$i";
     $pattern = $subfield_patterns[$i];
 
-    // Get the container group
-    $container_group = get_field($container_field, 'option');
+    // Get the container group - try front page first, then options page
+    $container_group = null;
+
+    // Try to get from the front page post
+    if (is_front_page()) {
+        $front_page_id = get_option('page_on_front');
+        if ($front_page_id) {
+            $container_group = get_field($container_field, $front_page_id);
+        }
+    }
+
+    // If not found on front page, try options page
+    if (!$container_group) {
+        $container_group = get_field($container_field, 'option');
+    }
+
+    // If still not found, try current post (fallback)
+    if (!$container_group && is_page()) {
+        $container_group = get_field($container_field);
+    }
 
     if ($container_group && is_array($container_group)) {
         // Extract subfields from the group
@@ -73,12 +91,34 @@ if (empty($containers)) {
         // Debug information
         echo '<div class="mt-4 text-sm">';
         echo '<strong>Debug Info:</strong><br>';
+        $front_page_id = get_option('page_on_front');
+        echo "Front page ID: " . ($front_page_id ?: 'Not set') . '<br>';
+
         for ($debug_i = 1; $debug_i <= 4; $debug_i++) {
             $debug_field = "FrontPage_Container_$debug_i";
-            $debug_data = get_field($debug_field, 'option');
-            echo "• $debug_field: " . (empty($debug_data) ? 'Empty/Not found' : 'Found (' . count($debug_data) . ' subfields)') . '<br>';
-            if (!empty($debug_data) && is_array($debug_data)) {
-                echo '&nbsp;&nbsp;Subfields: ' . implode(', ', array_keys($debug_data)) . '<br>';
+
+            // Check front page
+            $debug_data_front = null;
+            if ($front_page_id) {
+                $debug_data_front = get_field($debug_field, $front_page_id);
+            }
+
+            // Check options page
+            $debug_data_option = get_field($debug_field, 'option');
+
+            // Check current post
+            $debug_data_current = get_field($debug_field);
+
+            echo "• $debug_field:<br>";
+            echo "&nbsp;&nbsp;Front page: " . (empty($debug_data_front) ? 'Empty/Not found' : 'Found (' . count($debug_data_front) . ' subfields)') . '<br>';
+            echo "&nbsp;&nbsp;Options page: " . (empty($debug_data_option) ? 'Empty/Not found' : 'Found (' . count($debug_data_option) . ' subfields)') . '<br>';
+            echo "&nbsp;&nbsp;Current post: " . (empty($debug_data_current) ? 'Empty/Not found' : 'Found (' . count($debug_data_current) . ' subfields)') . '<br>';
+
+            if (!empty($debug_data_front) && is_array($debug_data_front)) {
+                echo '&nbsp;&nbsp;Front page subfields: ' . implode(', ', array_keys($debug_data_front)) . '<br>';
+            }
+            if (!empty($debug_data_current) && is_array($debug_data_current)) {
+                echo '&nbsp;&nbsp;Current post subfields: ' . implode(', ', array_keys($debug_data_current)) . '<br>';
             }
         }
         echo '</div>';
