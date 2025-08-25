@@ -201,7 +201,7 @@ body.tax-product_tag {
 
 .filter-section label:hover {
   background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
 }
 
 .filter-panel.open {
@@ -404,8 +404,8 @@ body.tax-product_tag {
 
 .size-option:not(.opacity-50):hover {
   transform: scale(1.05);
-  border-color: #6b7280;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ 
+  
 }
 
 .size-option.active {
