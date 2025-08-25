@@ -47,19 +47,107 @@ echo '<!-- Filter Modal: Conditions met, rendering modal -->';
         if (is_active_sidebar('shop-filters')) {
             dynamic_sidebar('shop-filters');
         } else {
-            // Fallback to default filter components
-            echo '<div class="filter-section mb-6">';
-            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">Test Filter</h4>';
-            echo '<p>Filter components will appear here.</p>';
-            echo '</div>';
+            // Load real filter components
 
-            // Try to load components
+            // Price Filter
             if (file_exists(get_template_directory() . '/template-parts/components/filters/price-filter.php')) {
                 get_template_part('template-parts/components/filters/price-filter');
+            } else {
+                // Inline price filter
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Price Range', 'eshop-theme') . '</h4>';
+                echo '<div class="price-filter">';
+                echo '<div class="price-inputs flex space-x-2 mb-3">';
+                echo '<input type="number" id="min-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary rounded" placeholder="' . esc_attr__('Min', 'eshop-theme') . '">';
+                echo '<span class="flex items-center text-gray-400">-</span>';
+                echo '<input type="number" id="max-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary rounded" placeholder="' . esc_attr__('Max', 'eshop-theme') . '">';
+                echo '</div>';
+                echo '<button class="apply-price-filter w-full mt-3 px-4 py-2 bg-primary text-white text-sm font-medium uppercase tracking-wide hover:bg-primary-dark transition-colors">' . esc_html__('Apply Price Filter', 'eshop-theme') . '</button>';
+                echo '</div>';
+                echo '</div>';
             }
-            if (file_exists(get_template_directory() . '/template-parts/components/filters/category-filter.php')) {
-                get_template_part('template-parts/components/filters/category-filter');
+
+            // Product Categories Filter
+            $product_categories = get_terms(array(
+                'taxonomy' => 'product_cat',
+                'hide_empty' => true,
+                'parent' => 0, // Only top-level categories
+                'number' => 10
+            ));
+
+            if (!empty($product_categories) && !is_wp_error($product_categories)) {
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Categories', 'eshop-theme') . '</h4>';
+                echo '<div class="category-filter space-y-2 max-h-48 overflow-y-auto">';
+
+                foreach ($product_categories as $category) {
+                    $is_selected = isset($_GET['product_cat']) && in_array($category->slug, (array)$_GET['product_cat']);
+                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                    echo '<div class="flex items-center space-x-2">';
+                    echo '<input type="checkbox" name="product_cat[]" value="' . esc_attr($category->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($category->name) . '</span>';
+                    echo '</div>';
+                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($category->count) . '</span>';
+                    echo '</label>';
+                }
+
+                echo '</div>';
+                echo '</div>';
             }
+
+            // On Sale Filter
+            $on_sale_selected = isset($_GET['on_sale']) && $_GET['on_sale'] === '1';
+            $sale_count = count(wc_get_product_ids_on_sale());
+
+            if ($sale_count > 0) {
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Special Offers', 'eshop-theme') . '</h4>';
+                echo '<div class="sale-filter space-y-2">';
+                echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                echo '<div class="flex items-center space-x-2">';
+                echo '<input type="checkbox" name="on_sale" value="1" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($on_sale_selected, true, false) . '>';
+                echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html__('On Sale', 'eshop-theme') . '</span>';
+                echo '<i class="fas fa-tag text-red-500 text-xs" title="' . esc_attr__('Sale Items', 'eshop-theme') . '"></i>';
+                echo '</div>';
+                echo '<span class="text-xs text-gray-400 bg-red-100 text-red-600 px-2 py-1 rounded-full font-medium">' . esc_html($sale_count) . '</span>';
+                echo '</label>';
+                echo '</div>';
+                echo '</div>';
+            }
+
+            // Stock Status Filter
+            $stock_options = array(
+                'instock' => __('In Stock', 'eshop-theme'),
+                'outofstock' => __('Out of Stock', 'eshop-theme'),
+                'onbackorder' => __('On Backorder', 'eshop-theme')
+            );
+            $selected_stock = isset($_GET['stock_status']) ? (array)$_GET['stock_status'] : array();
+
+            echo '<div class="filter-section mb-6">';
+            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Availability', 'eshop-theme') . '</h4>';
+            echo '<div class="stock-filter space-y-2">';
+
+            foreach ($stock_options as $value => $label) {
+                $is_checked = in_array($value, $selected_stock);
+                echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                echo '<div class="flex items-center space-x-2">';
+                echo '<input type="checkbox" name="stock_status[]" value="' . esc_attr($value) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_checked, true, false) . '>';
+                echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($label) . '</span>';
+
+                if ($value === 'instock') {
+                    echo '<i class="fas fa-check-circle text-green-500 text-xs" title="' . esc_attr__('Available', 'eshop-theme') . '"></i>';
+                } elseif ($value === 'outofstock') {
+                    echo '<i class="fas fa-times-circle text-red-500 text-xs" title="' . esc_attr__('Not Available', 'eshop-theme') . '"></i>';
+                } elseif ($value === 'onbackorder') {
+                    echo '<i class="fas fa-clock text-yellow-500 text-xs" title="' . esc_attr__('Available Soon', 'eshop-theme') . '"></i>';
+                }
+
+                echo '</div>';
+                echo '</label>';
+            }
+
+            echo '</div>';
+            echo '</div>';
         }
         ?>
     </div>

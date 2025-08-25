@@ -111,24 +111,100 @@ if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_pro
     </div>
 
     <!-- Drawer Content -->
-    <div style="padding: 24px;">
-        <div style="margin-bottom: 24px;">
-            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px;">
-                Test Filters
-            </h4>
-            <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Filter functionality is working!</p>
+    <div style="padding: 24px; height: calc(100vh - 140px); overflow-y: auto;">
 
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox">
-                    <span style="font-size: 14px; color: #374151;">Test Option 1</span>
+        <!-- Price Filter -->
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
+                Price Range
+            </h4>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <input type="number" id="min-price" placeholder="Min" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+                <span style="display: flex; align-items: center; color: #9ca3af;">-</span>
+                <input type="number" id="max-price" placeholder="Max" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+            </div>
+            <button class="apply-price-filter" style="width: 100%; padding: 8px 16px; background: #ee81b3; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer;">
+                Apply Price Filter
+            </button>
+        </div>
+
+        <!-- Categories Filter -->
+        <?php
+        $product_categories = get_terms(array(
+            'taxonomy' => 'product_cat',
+            'hide_empty' => true,
+            'parent' => 0,
+            'number' => 8
+        ));
+
+        if (!empty($product_categories) && !is_wp_error($product_categories)) : ?>
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
+                Categories
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+                <?php foreach ($product_categories as $category) :
+                    $is_selected = isset($_GET['product_cat']) && in_array($category->slug, (array)$_GET['product_cat']);
+                ?>
+                <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px; cursor: pointer; border-radius: 4px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='transparent'">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="product_cat[]" value="<?php echo esc_attr($category->slug); ?>" style="color: #ee81b3;" <?php checked($is_selected); ?>>
+                        <span style="font-size: 14px; color: #374151;"><?php echo esc_html($category->name); ?></span>
+                    </div>
+                    <span style="font-size: 12px; color: #9ca3af; background: #f3f4f6; padding: 2px 8px; border-radius: 12px;"><?php echo esc_html($category->count); ?></span>
                 </label>
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    <input type="checkbox">
-                    <span style="font-size: 14px; color: #374151;">Test Option 2</span>
-                </label>
+                <?php endforeach; ?>
             </div>
         </div>
+        <?php endif; ?>
+
+        <!-- On Sale Filter -->
+        <?php
+        $sale_count = count(wc_get_product_ids_on_sale());
+        if ($sale_count > 0) :
+            $on_sale_selected = isset($_GET['on_sale']) && $_GET['on_sale'] === '1';
+        ?>
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
+                Special Offers
+            </h4>
+            <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px; cursor: pointer; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='transparent'">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" name="on_sale" value="1" style="color: #ee81b3;" <?php checked($on_sale_selected); ?>>
+                    <span style="font-size: 14px; color: #374151;">On Sale</span>
+                    <i class="fas fa-tag" style="color: #ef4444; font-size: 12px;"></i>
+                </div>
+                <span style="font-size: 12px; color: #dc2626; background: #fef2f2; padding: 2px 8px; border-radius: 12px; font-weight: 500;"><?php echo esc_html($sale_count); ?></span>
+            </label>
+        </div>
+        <?php endif; ?>
+
+        <!-- Stock Status Filter -->
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f3f4f6;">
+                Availability
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <?php
+                $stock_options = array(
+                    'instock' => array('label' => 'In Stock', 'icon' => 'fas fa-check-circle', 'color' => '#10b981'),
+                    'outofstock' => array('label' => 'Out of Stock', 'icon' => 'fas fa-times-circle', 'color' => '#ef4444'),
+                    'onbackorder' => array('label' => 'On Backorder', 'icon' => 'fas fa-clock', 'color' => '#f59e0b')
+                );
+                $selected_stock = isset($_GET['stock_status']) ? (array)$_GET['stock_status'] : array();
+
+                foreach ($stock_options as $value => $data) :
+                    $is_checked = in_array($value, $selected_stock);
+                ?>
+                <label style="display: flex; align-items: center; gap: 8px; padding: 8px; cursor: pointer; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='transparent'">
+                    <input type="checkbox" name="stock_status[]" value="<?php echo esc_attr($value); ?>" style="color: #ee81b3;" <?php checked($is_checked); ?>>
+                    <span style="font-size: 14px; color: #374151;"><?php echo esc_html($data['label']); ?></span>
+                    <i class="<?php echo esc_attr($data['icon']); ?>" style="color: <?php echo esc_attr($data['color']); ?>; font-size: 12px;"></i>
+                </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
     </div>
 
     <!-- Drawer Footer -->

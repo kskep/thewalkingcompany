@@ -95,6 +95,80 @@ add_action('wp_enqueue_scripts', 'eshop_theme_scripts');
 // Hide WooCommerce archive page titles; we use breadcrumbs instead
 add_filter('woocommerce_show_page_title', '__return_false');
 
+/**
+ * Handle custom filter parameters for WooCommerce
+ */
+function eshop_handle_custom_filters($query) {
+    if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
+
+        // Price filter
+        if (isset($_GET['min_price']) && !empty($_GET['min_price'])) {
+            $query->set('meta_query', array_merge(
+                $query->get('meta_query', array()),
+                array(
+                    array(
+                        'key' => '_price',
+                        'value' => floatval($_GET['min_price']),
+                        'compare' => '>=',
+                        'type' => 'NUMERIC'
+                    )
+                )
+            ));
+        }
+
+        if (isset($_GET['max_price']) && !empty($_GET['max_price'])) {
+            $query->set('meta_query', array_merge(
+                $query->get('meta_query', array()),
+                array(
+                    array(
+                        'key' => '_price',
+                        'value' => floatval($_GET['max_price']),
+                        'compare' => '<=',
+                        'type' => 'NUMERIC'
+                    )
+                )
+            ));
+        }
+
+        // Category filter
+        if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
+            $categories = explode(',', sanitize_text_field($_GET['product_cat']));
+            $query->set('tax_query', array_merge(
+                $query->get('tax_query', array()),
+                array(
+                    array(
+                        'taxonomy' => 'product_cat',
+                        'field' => 'slug',
+                        'terms' => $categories,
+                        'operator' => 'IN'
+                    )
+                )
+            ));
+        }
+
+        // On sale filter
+        if (isset($_GET['on_sale']) && $_GET['on_sale'] === '1') {
+            $query->set('post__in', wc_get_product_ids_on_sale());
+        }
+
+        // Stock status filter
+        if (isset($_GET['stock_status']) && !empty($_GET['stock_status'])) {
+            $stock_statuses = explode(',', sanitize_text_field($_GET['stock_status']));
+            $query->set('meta_query', array_merge(
+                $query->get('meta_query', array()),
+                array(
+                    array(
+                        'key' => '_stock_status',
+                        'value' => $stock_statuses,
+                        'compare' => 'IN'
+                    )
+                )
+            ));
+        }
+    }
+}
+add_action('pre_get_posts', 'eshop_handle_custom_filters');
+
 
 /**
  * Shop toolbar and Filters modal via hooks to ensure availability on all archive pages
