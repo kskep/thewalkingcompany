@@ -155,11 +155,11 @@ function eshop_handle_custom_filters($query) {
             $query->set('post__in', wc_get_product_ids_on_sale());
         }
 
-        // Product attribute filters
-        $attributes = array('pa_size', 'pa_color', 'pa_material', 'pa_brand');
+        // Your custom product attribute filters
+        $your_attributes = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
         $tax_query = $query->get('tax_query', array());
 
-        foreach ($attributes as $attribute) {
+        foreach ($your_attributes as $attribute) {
             if (isset($_GET[$attribute]) && !empty($_GET[$attribute])) {
                 $terms = explode(',', sanitize_text_field($_GET[$attribute]));
                 $tax_query[] = array(
@@ -188,6 +188,8 @@ function eshop_include_filter_modal() {
     }
 }
 add_action('wp_footer', 'eshop_include_filter_modal');
+
+
 
 
 /**

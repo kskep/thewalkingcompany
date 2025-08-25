@@ -135,137 +135,115 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                 echo '</div>';
             }
 
-            // Size Filter
-            $size_terms = get_terms(array(
-                'taxonomy' => 'pa_size',
-                'hide_empty' => true,
-                'orderby' => 'menu_order',
-                'order' => 'ASC'
-            ));
-
-            if (!empty($size_terms) && !is_wp_error($size_terms)) {
-                $selected_sizes = isset($_GET['pa_size']) ? (array)$_GET['pa_size'] : array();
-
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Size', 'eshop-theme') . '</h4>';
-                echo '<div class="size-filter">';
-                echo '<div class="size-grid grid grid-cols-4 gap-2">';
-
-                foreach ($size_terms as $size) {
-                    $is_selected = in_array($size->slug, $selected_sizes);
-                    $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300 hover:border-primary';
-
-                    echo '<label class="size-option cursor-pointer">';
-                    echo '<input type="checkbox" name="pa_size[]" value="' . esc_attr($size->slug) . '" class="hidden"' . checked($is_selected, true, false) . '>';
-                    echo '<span class="size-label block text-center py-2 px-3 border text-sm font-medium transition-all duration-200 ' . $selected_class . '">';
-                    echo esc_html($size->name);
-                    echo '</span>';
-                    echo '</label>';
+            // Debug: Show available product attributes
+            echo '<!-- DEBUG: Available Product Attributes -->';
+            $all_attributes = wc_get_attribute_taxonomies();
+            if (!empty($all_attributes)) {
+                echo '<!-- Available attributes: ';
+                foreach ($all_attributes as $attr) {
+                    echo $attr->attribute_name . ' (pa_' . $attr->attribute_name . '), ';
                 }
-
-                echo '</div>';
-                echo '</div>';
-                echo '</div>';
+                echo '-->';
+            } else {
+                echo '<!-- No product attributes found in WooCommerce -->';
             }
 
-            // Color Filter
-            $color_terms = get_terms(array(
-                'taxonomy' => 'pa_color',
-                'hide_empty' => true,
-                'orderby' => 'name',
-                'order' => 'ASC'
-            ));
+            // Your Custom Attributes
+            $your_attributes = array(
+                'pa_box' => array(
+                    'label' => 'Box',
+                    'type' => 'checkbox'
+                ),
+                'pa_color' => array(
+                    'label' => 'Color',
+                    'type' => 'checkbox'
+                ),
+                'pa_pick-pattern' => array(
+                    'label' => 'Pick Pattern',
+                    'type' => 'checkbox'
+                ),
+                'pa_select-size' => array(
+                    'label' => 'Select Size',
+                    'type' => 'size_grid'
+                ),
+                'pa_size-selection' => array(
+                    'label' => 'Size Selection',
+                    'type' => 'size_grid'
+                )
+            );
 
-            if (!empty($color_terms) && !is_wp_error($color_terms)) {
-                $selected_colors = isset($_GET['pa_color']) ? (array)$_GET['pa_color'] : array();
+            foreach ($your_attributes as $taxonomy => $attr_config) {
+                $terms = get_terms(array(
+                    'taxonomy' => $taxonomy,
+                    'hide_empty' => true,
+                    'orderby' => 'menu_order',
+                    'order' => 'ASC'
+                ));
 
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Color', 'eshop-theme') . '</h4>';
-                echo '<div class="color-filter space-y-2 max-h-48 overflow-y-auto">';
+                echo '<!-- DEBUG: ' . $taxonomy . ' terms found: ' . count($terms) . ' -->';
+                if (is_wp_error($terms)) {
+                    echo '<!-- DEBUG: ' . $taxonomy . ' error: ' . $terms->get_error_message() . ' -->';
+                    continue;
+                }
 
-                foreach ($color_terms as $color) {
-                    $is_selected = in_array($color->slug, $selected_colors);
-                    $color_value = get_term_meta($color->term_id, 'color', true);
+                if (!empty($terms)) {
+                    $selected_values = isset($_GET[$taxonomy]) ? (array)$_GET[$taxonomy] : array();
 
-                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
-                    echo '<div class="flex items-center space-x-2">';
-                    echo '<input type="checkbox" name="pa_color[]" value="' . esc_attr($color->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+                    echo '<div class="filter-section mb-6">';
+                    echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html($attr_config['label']) . '</h4>';
 
-                    if ($color_value) {
-                        echo '<span class="w-4 h-4 rounded-full border border-gray-300 inline-block" style="background-color: ' . esc_attr($color_value) . ';" title="' . esc_attr($color->name) . '"></span>';
+                    if ($attr_config['type'] === 'size_grid') {
+                        // Size grid layout for size attributes
+                        echo '<div class="size-filter">';
+                        echo '<div class="size-grid grid grid-cols-4 gap-2">';
+
+                        foreach ($terms as $term) {
+                            $is_selected = in_array($term->slug, $selected_values);
+                            $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300 hover:border-primary';
+
+                            echo '<label class="size-option cursor-pointer">';
+                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="hidden"' . checked($is_selected, true, false) . '>';
+                            echo '<span class="size-label block text-center py-2 px-3 border text-sm font-medium transition-all duration-200 ' . $selected_class . '">';
+                            echo esc_html($term->name);
+                            echo '</span>';
+                            echo '</label>';
+                        }
+
+                        echo '</div>';
+                        echo '</div>';
+                    } else {
+                        // Regular checkbox layout for other attributes
+                        echo '<div class="attribute-filter space-y-2 max-h-48 overflow-y-auto">';
+
+                        foreach ($terms as $term) {
+                            $is_selected = in_array($term->slug, $selected_values);
+
+                            echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                            echo '<div class="flex items-center space-x-2">';
+                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+
+                            // Special handling for color attribute
+                            if ($taxonomy === 'pa_color') {
+                                $color_value = get_term_meta($term->term_id, 'color', true);
+                                if ($color_value) {
+                                    echo '<span class="w-4 h-4 rounded-full border border-gray-300 inline-block" style="background-color: ' . esc_attr($color_value) . ';" title="' . esc_attr($term->name) . '"></span>';
+                                }
+                            }
+
+                            echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($term->name) . '</span>';
+                            echo '</div>';
+                            echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($term->count) . '</span>';
+                            echo '</label>';
+                        }
+
+                        echo '</div>';
                     }
 
-                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($color->name) . '</span>';
                     echo '</div>';
-                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($color->count) . '</span>';
-                    echo '</label>';
                 }
-
-                echo '</div>';
-                echo '</div>';
             }
 
-            // Material Filter
-            $material_terms = get_terms(array(
-                'taxonomy' => 'pa_material',
-                'hide_empty' => true,
-                'orderby' => 'name',
-                'order' => 'ASC'
-            ));
 
-            if (!empty($material_terms) && !is_wp_error($material_terms)) {
-                $selected_materials = isset($_GET['pa_material']) ? (array)$_GET['pa_material'] : array();
-
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Material', 'eshop-theme') . '</h4>';
-                echo '<div class="material-filter space-y-2 max-h-48 overflow-y-auto">';
-
-                foreach ($material_terms as $material) {
-                    $is_selected = in_array($material->slug, $selected_materials);
-
-                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
-                    echo '<div class="flex items-center space-x-2">';
-                    echo '<input type="checkbox" name="pa_material[]" value="' . esc_attr($material->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
-                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($material->name) . '</span>';
-                    echo '</div>';
-                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($material->count) . '</span>';
-                    echo '</label>';
-                }
-
-                echo '</div>';
-                echo '</div>';
-            }
-
-            // Brand Filter
-            $brand_terms = get_terms(array(
-                'taxonomy' => 'pa_brand',
-                'hide_empty' => true,
-                'orderby' => 'name',
-                'order' => 'ASC'
-            ));
-
-            if (!empty($brand_terms) && !is_wp_error($brand_terms)) {
-                $selected_brands = isset($_GET['pa_brand']) ? (array)$_GET['pa_brand'] : array();
-
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Brand', 'eshop-theme') . '</h4>';
-                echo '<div class="brand-filter space-y-2 max-h-48 overflow-y-auto">';
-
-                foreach ($brand_terms as $brand) {
-                    $is_selected = in_array($brand->slug, $selected_brands);
-
-                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
-                    echo '<div class="flex items-center space-x-2">';
-                    echo '<input type="checkbox" name="pa_brand[]" value="' . esc_attr($brand->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
-                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($brand->name) . '</span>';
-                    echo '</div>';
-                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($brand->count) . '</span>';
-                    echo '</label>';
-                }
-
-                echo '</div>';
-                echo '</div>';
-            }
         }
         ?>
     </div>

@@ -137,53 +137,22 @@
                 url.searchParams.delete('on_sale');
             }
 
-            // Size filters
-            var selectedSizes = [];
-            $('input[name="pa_size[]"]:checked').each(function() {
-                selectedSizes.push($(this).val());
-            });
-            if (selectedSizes.length > 0) {
-                url.searchParams.set('pa_size', selectedSizes.join(','));
-                filters.pa_size = selectedSizes;
-            } else {
-                url.searchParams.delete('pa_size');
-            }
+            // Your custom attribute filters
+            var yourAttributes = ['pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection'];
 
-            // Color filters
-            var selectedColors = [];
-            $('input[name="pa_color[]"]:checked').each(function() {
-                selectedColors.push($(this).val());
-            });
-            if (selectedColors.length > 0) {
-                url.searchParams.set('pa_color', selectedColors.join(','));
-                filters.pa_color = selectedColors;
-            } else {
-                url.searchParams.delete('pa_color');
-            }
+            yourAttributes.forEach(function(attribute) {
+                var selectedValues = [];
+                $('input[name="' + attribute + '[]"]:checked').each(function() {
+                    selectedValues.push($(this).val());
+                });
 
-            // Material filters
-            var selectedMaterials = [];
-            $('input[name="pa_material[]"]:checked').each(function() {
-                selectedMaterials.push($(this).val());
+                if (selectedValues.length > 0) {
+                    url.searchParams.set(attribute, selectedValues.join(','));
+                    filters[attribute] = selectedValues;
+                } else {
+                    url.searchParams.delete(attribute);
+                }
             });
-            if (selectedMaterials.length > 0) {
-                url.searchParams.set('pa_material', selectedMaterials.join(','));
-                filters.pa_material = selectedMaterials;
-            } else {
-                url.searchParams.delete('pa_material');
-            }
-
-            // Brand filters
-            var selectedBrands = [];
-            $('input[name="pa_brand[]"]:checked').each(function() {
-                selectedBrands.push($(this).val());
-            });
-            if (selectedBrands.length > 0) {
-                url.searchParams.set('pa_brand', selectedBrands.join(','));
-                filters.pa_brand = selectedBrands;
-            } else {
-                url.searchParams.delete('pa_brand');
-            }
 
             console.log('SimpleFilters: Collected filters:', filters);
 
@@ -201,7 +170,7 @@
 
             // Clear form inputs
             $('#min-price, #max-price').val('');
-            $('input[name="product_cat[]"], input[name="on_sale"], input[name="pa_size[]"], input[name="pa_color[]"], input[name="pa_material[]"], input[name="pa_brand[]"]').prop('checked', false);
+            $('input[name="product_cat[]"], input[name="on_sale"], input[name="pa_box[]"], input[name="pa_color[]"], input[name="pa_pick-pattern[]"], input[name="pa_select-size[]"], input[name="pa_size-selection[]"]').prop('checked', false);
 
             // Reset price slider
             var sliderEl = document.getElementById('price-slider');
@@ -217,10 +186,11 @@
             url.searchParams.delete('max_price');
             url.searchParams.delete('product_cat');
             url.searchParams.delete('on_sale');
-            url.searchParams.delete('pa_size');
+            url.searchParams.delete('pa_box');
             url.searchParams.delete('pa_color');
-            url.searchParams.delete('pa_material');
-            url.searchParams.delete('pa_brand');
+            url.searchParams.delete('pa_pick-pattern');
+            url.searchParams.delete('pa_select-size');
+            url.searchParams.delete('pa_size-selection');
 
             console.log('SimpleFilters: Redirecting to clean URL:', url.toString());
             window.location.href = url.toString();
@@ -325,41 +295,18 @@
                 $('input[name="on_sale"]').prop('checked', true);
             }
 
-            // Size filters
-            var sizeAttr = url.searchParams.get('pa_size');
-            if (sizeAttr) {
-                var sizes = sizeAttr.split(',');
-                sizes.forEach(function(size) {
-                    $('input[name="pa_size[]"][value="' + size + '"]').prop('checked', true);
-                });
-            }
+            // Your custom attribute filters
+            var yourAttributes = ['pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection'];
 
-            // Color filters
-            var colorAttr = url.searchParams.get('pa_color');
-            if (colorAttr) {
-                var colors = colorAttr.split(',');
-                colors.forEach(function(color) {
-                    $('input[name="pa_color[]"][value="' + color + '"]').prop('checked', true);
-                });
-            }
-
-            // Material filters
-            var materialAttr = url.searchParams.get('pa_material');
-            if (materialAttr) {
-                var materials = materialAttr.split(',');
-                materials.forEach(function(material) {
-                    $('input[name="pa_material[]"][value="' + material + '"]').prop('checked', true);
-                });
-            }
-
-            // Brand filters
-            var brandAttr = url.searchParams.get('pa_brand');
-            if (brandAttr) {
-                var brands = brandAttr.split(',');
-                brands.forEach(function(brand) {
-                    $('input[name="pa_brand[]"][value="' + brand + '"]').prop('checked', true);
-                });
-            }
+            yourAttributes.forEach(function(attribute) {
+                var attrValue = url.searchParams.get(attribute);
+                if (attrValue) {
+                    var values = attrValue.split(',');
+                    values.forEach(function(value) {
+                        $('input[name="' + attribute + '[]"][value="' + value + '"]').prop('checked', true);
+                    });
+                }
+            });
 
             console.log('SimpleFilters: Filters populated from URL');
         }
