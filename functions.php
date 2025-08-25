@@ -191,88 +191,35 @@ add_action('wp_footer', 'eshop_include_filter_modal');
 
 /**
  * Get available attribute terms from current query results
- * This is much more efficient than getting all terms
+ * This gets terms only from products that match the current context
  */
 function eshop_get_available_attribute_terms($taxonomy) {
+    // First, get the product IDs that match the current context
+    $product_ids = eshop_get_current_context_product_ids();
+
+    if (empty($product_ids)) {
+        return array();
+    }
+
     global $wpdb;
 
-    // Get current query parameters to build WHERE clause
-    $where_clauses = array("p.post_status = 'publish'", "p.post_type = 'product'");
-    $join_clauses = array();
+    // Create placeholders for the product IDs
+    $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
 
-    // Add price filter if set
-    if (isset($_GET['min_price']) && !empty($_GET['min_price'])) {
-        $join_clauses[] = "LEFT JOIN {$wpdb->postmeta} pm_price ON p.ID = pm_price.post_id AND pm_price.meta_key = '_price'";
-        $where_clauses[] = $wpdb->prepare("CAST(pm_price.meta_value AS DECIMAL(10,2)) >= %f", floatval($_GET['min_price']));
-    }
-
-    if (isset($_GET['max_price']) && !empty($_GET['max_price'])) {
-        if (!in_array("LEFT JOIN {$wpdb->postmeta} pm_price ON p.ID = pm_price.post_id AND pm_price.meta_key = '_price'", $join_clauses)) {
-            $join_clauses[] = "LEFT JOIN {$wpdb->postmeta} pm_price ON p.ID = pm_price.post_id AND pm_price.meta_key = '_price'";
-        }
-        $where_clauses[] = $wpdb->prepare("CAST(pm_price.meta_value AS DECIMAL(10,2)) <= %f", floatval($_GET['max_price']));
-    }
-
-    // Add category filter if set
-    if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
-        $categories = explode(',', sanitize_text_field($_GET['product_cat']));
-        $category_placeholders = implode(',', array_fill(0, count($categories), '%s'));
-        $join_clauses[] = "LEFT JOIN {$wpdb->term_relationships} tr_cat ON p.ID = tr_cat.object_id";
-        $join_clauses[] = "LEFT JOIN {$wpdb->term_taxonomy} tt_cat ON tr_cat.term_taxonomy_id = tt_cat.term_taxonomy_id AND tt_cat.taxonomy = 'product_cat'";
-        $join_clauses[] = "LEFT JOIN {$wpdb->terms} t_cat ON tt_cat.term_id = t_cat.term_id";
-        $where_clauses[] = $wpdb->prepare("t_cat.slug IN ($category_placeholders)", $categories);
-    }
-
-    // Add on sale filter if set
-    if (isset($_GET['on_sale']) && $_GET['on_sale'] === '1') {
-        $sale_ids = wc_get_product_ids_on_sale();
-        if (!empty($sale_ids)) {
-            $sale_placeholders = implode(',', array_fill(0, count($sale_ids), '%d'));
-            $where_clauses[] = $wpdb->prepare("p.ID IN ($sale_placeholders)", $sale_ids);
-        } else {
-            // No sale products, return empty
-            return array();
-        }
-    }
-
-    // Add other attribute filters (excluding the current one we're getting terms for)
-    $your_attributes = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
-    $attr_join_count = 0;
-
-    foreach ($your_attributes as $attr_taxonomy) {
-        if ($attr_taxonomy === $taxonomy) continue; // Skip current taxonomy
-
-        if (isset($_GET[$attr_taxonomy]) && !empty($_GET[$attr_taxonomy])) {
-            $attr_terms = explode(',', sanitize_text_field($_GET[$attr_taxonomy]));
-            $attr_placeholders = implode(',', array_fill(0, count($attr_terms), '%s'));
-            $attr_join_count++;
-
-            $join_clauses[] = "LEFT JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
-            $join_clauses[] = "LEFT JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
-            $join_clauses[] = "LEFT JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
-            $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
-        }
-    }
-
-    // Build the main query to get available terms for the requested taxonomy
-    $joins = !empty($join_clauses) ? implode(' ', array_unique($join_clauses)) : '';
-    $where = !empty($where_clauses) ? 'WHERE ' . implode(' AND ', $where_clauses) : '';
-
+    // Query to get attribute terms only from the current product set
     $sql = "
-        SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT p.ID) as count
-        FROM {$wpdb->posts} p
-        {$joins}
-        LEFT JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-        LEFT JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
-        LEFT JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-        {$where}
-        AND t.term_id IS NOT NULL
+        SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT tr.object_id) as count
+        FROM {$wpdb->term_relationships} tr
+        INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
+        INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+        WHERE tr.object_id IN ($placeholders)
         GROUP BY t.term_id, t.name, t.slug
         HAVING count > 0
         ORDER BY t.name ASC
     ";
 
-    $results = $wpdb->get_results($wpdb->prepare($sql, $taxonomy), ARRAY_A);
+    $query_params = array_merge(array($taxonomy), $product_ids);
+    $results = $wpdb->get_results($wpdb->prepare($sql, $query_params), ARRAY_A);
 
     // Add color values for color attributes
     if ($taxonomy === 'pa_color' && !empty($results)) {
@@ -285,14 +232,25 @@ function eshop_get_available_attribute_terms($taxonomy) {
 }
 
 /**
- * Get available categories from current query results
+ * Get product IDs that match the current context (category, filters, etc.)
  */
-function eshop_get_available_categories() {
+function eshop_get_current_context_product_ids() {
     global $wpdb;
 
-    // Get current query parameters to build WHERE clause
+    // Start with basic product query
     $where_clauses = array("p.post_status = 'publish'", "p.post_type = 'product'");
     $join_clauses = array();
+
+    // Add current category context
+    if (is_product_category()) {
+        $current_category = get_queried_object();
+        if ($current_category && isset($current_category->slug)) {
+            $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_cat ON p.ID = tr_cat.object_id";
+            $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_cat ON tr_cat.term_taxonomy_id = tt_cat.term_taxonomy_id AND tt_cat.taxonomy = 'product_cat'";
+            $join_clauses[] = "INNER JOIN {$wpdb->terms} t_cat ON tt_cat.term_id = t_cat.term_id";
+            $where_clauses[] = $wpdb->prepare("t_cat.slug = %s", $current_category->slug);
+        }
+    }
 
     // Add price filter if set
     if (isset($_GET['min_price']) && !empty($_GET['min_price'])) {
@@ -307,6 +265,16 @@ function eshop_get_available_categories() {
         $where_clauses[] = $wpdb->prepare("CAST(pm_price.meta_value AS DECIMAL(10,2)) <= %f", floatval($_GET['max_price']));
     }
 
+    // Add category filter from URL if set (but not if we're already on a category page)
+    if (!is_product_category() && isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
+        $categories = explode(',', sanitize_text_field($_GET['product_cat']));
+        $category_placeholders = implode(',', array_fill(0, count($categories), '%s'));
+        $join_clauses[] = "LEFT JOIN {$wpdb->term_relationships} tr_url_cat ON p.ID = tr_url_cat.object_id";
+        $join_clauses[] = "LEFT JOIN {$wpdb->term_taxonomy} tt_url_cat ON tr_url_cat.term_taxonomy_id = tt_url_cat.term_taxonomy_id AND tt_url_cat.taxonomy = 'product_cat'";
+        $join_clauses[] = "LEFT JOIN {$wpdb->terms} t_url_cat ON tt_url_cat.term_id = t_url_cat.term_id";
+        $where_clauses[] = $wpdb->prepare("t_url_cat.slug IN ($category_placeholders)", $categories);
+    }
+
     // Add on sale filter if set
     if (isset($_GET['on_sale']) && $_GET['on_sale'] === '1') {
         $sale_ids = wc_get_product_ids_on_sale();
@@ -314,7 +282,7 @@ function eshop_get_available_categories() {
             $sale_placeholders = implode(',', array_fill(0, count($sale_ids), '%d'));
             $where_clauses[] = $wpdb->prepare("p.ID IN ($sale_placeholders)", $sale_ids);
         } else {
-            return array();
+            return array(); // No sale products
         }
     }
 
@@ -328,35 +296,68 @@ function eshop_get_available_categories() {
             $attr_placeholders = implode(',', array_fill(0, count($attr_terms), '%s'));
             $attr_join_count++;
 
-            $join_clauses[] = "LEFT JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
-            $join_clauses[] = "LEFT JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
-            $join_clauses[] = "LEFT JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
+            $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
+            $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
+            $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
             $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
         }
     }
 
-    // Build the main query to get available categories
+    // Build and execute the query to get product IDs
     $joins = !empty($join_clauses) ? implode(' ', array_unique($join_clauses)) : '';
     $where = !empty($where_clauses) ? 'WHERE ' . implode(' AND ', $where_clauses) : '';
 
     $sql = "
-        SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT p.ID) as count
+        SELECT DISTINCT p.ID
         FROM {$wpdb->posts} p
         {$joins}
-        LEFT JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
-        LEFT JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'product_cat'
-        LEFT JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
         {$where}
-        AND t.term_id IS NOT NULL
+    ";
+
+    $product_ids = $wpdb->get_col($sql);
+
+    return $product_ids ? array_map('intval', $product_ids) : array();
+}
+
+/**
+ * Get available categories from current query results
+ */
+function eshop_get_available_categories() {
+    // If we're on a category page, don't show category filter (it's redundant)
+    if (is_product_category()) {
+        return array();
+    }
+
+    // Get product IDs that match current context
+    $product_ids = eshop_get_current_context_product_ids();
+
+    if (empty($product_ids)) {
+        return array();
+    }
+
+    global $wpdb;
+
+    // Create placeholders for the product IDs
+    $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
+
+    // Query to get categories only from the current product set
+    $sql = "
+        SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT tr.object_id) as count
+        FROM {$wpdb->term_relationships} tr
+        INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'product_cat'
+        INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+        WHERE tr.object_id IN ($placeholders)
         GROUP BY t.term_id, t.name, t.slug
         HAVING count > 0
         ORDER BY t.name ASC
     ";
 
-    $results = $wpdb->get_results($sql, ARRAY_A);
+    $results = $wpdb->get_results($wpdb->prepare($sql, $product_ids), ARRAY_A);
 
     return $results ? $results : array();
 }
+
+
 
 
 
