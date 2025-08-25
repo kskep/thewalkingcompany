@@ -113,10 +113,10 @@ add_action('wp', 'eshop_customize_shop_toolbar_hooks');
 
 function eshop_render_shop_toolbar() {
     echo '<div class="shop-toolbar flex items-center justify-between mb-6 pb-4 border-b border-gray-200">';
-    // Left: Filter button (opens off-canvas drawer)
-    echo '<button id="open-filters" class="filter-toggle-btn flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-primary transition-all duration-200" aria-label="Open Filters">';
+    // Left: Filter button (opens off-canvas drawer) - Updated to flat design
+    echo '<button id="open-filters" class="filter-toggle-btn-flat flex items-center gap-2 px-4 py-2 bg-transparent hover:bg-gray-100 transition-all duration-200" aria-label="Open Filters">';
     echo '<i class="fas fa-sliders-h text-sm" aria-hidden="true"></i>';
-    echo '<span class="hidden sm:inline text-sm font-medium uppercase tracking-wide">' . esc_html__('Filters', 'eshop-theme') . '</span>';
+    echo '<span class="text-sm font-medium uppercase tracking-wide">' . esc_html__('Filters', 'eshop-theme') . '</span>';
     echo '</button>';
     // Right: Sorting
     echo '<div class="shop-ordering">';

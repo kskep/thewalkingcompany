@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Basic styles for testing */
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        
+        /* Filter button styles */
+        .filter-toggle-btn-flat {
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
+            color: #374151;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-toggle-btn-flat:hover {
+            background-color: #f3f4f6;
+            color: #ee81b3;
+        }
+
+        .filter-toggle-btn-flat:focus {
+            outline: 2px solid #ee81b3;
+            outline-offset: 2px;
+            background-color: #f3f4f6;
+        }
+
+        /* Filter drawer styles */
+        #filter-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #filter-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #filter-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            z-index: 50;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #filter-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .drawer-content {
+            padding: 24px;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .drawer-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        #close-filters {
+            background: none;
+            border: none;
+            padding: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        #close-filters:hover {
+            color: #6b7280;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        body.overflow-hidden {
+            overflow: hidden;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-section">
+        <h1>Filter Button Test</h1>
+        <p>Click the filter button below to test the modal functionality:</p>
+        
+        <!-- Filter Button -->
+        <button id="open-filters" class="filter-toggle-btn-flat" aria-label="Open Filters">
+            <i class="fas fa-sliders-h"></i>
+            <span>FILTERS</span>
+        </button>
+    </div>
+
+    <!-- Filter Backdrop -->
+    <div id="filter-backdrop" class="hidden"></div>
+
+    <!-- Filter Drawer -->
+    <div id="filter-drawer">
+        <!-- Drawer Header -->
+        <div class="drawer-header">
+            <h2>FILTERS</h2>
+            <button id="close-filters" aria-label="Close Filters">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Content -->
+        <div class="drawer-content">
+            <div class="filter-section">
+                <h4>Test Filter Section</h4>
+                <p>This is a test filter modal. The functionality is working!</p>
+                
+                <div style="margin: 20px 0;">
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox"> Test Filter Option 1
+                    </label>
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox"> Test Filter Option 2
+                    </label>
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox"> Test Filter Option 3
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drawer Footer -->
+        <div class="drawer-footer">
+            <button id="clear-filters" style="padding: 8px 16px; background: #f3f4f6; border: none; cursor: pointer;">
+                <i class="fas fa-times"></i> Clear All
+            </button>
+            <button id="apply-filters" style="padding: 8px 24px; background: #ee81b3; color: white; border: none; cursor: pointer;">
+                Apply Filters
+            </button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            console.log('Filter test page loaded');
+            console.log('jQuery version:', $.fn.jquery);
+            
+            // Filter button click
+            $('#open-filters').on('click', function(e) {
+                e.preventDefault();
+                console.log('Filter button clicked');
+                $('#filter-backdrop').removeClass('hidden').addClass('show');
+                $('#filter-drawer').addClass('open');
+                $('body').addClass('overflow-hidden');
+            });
+
+            // Close filter drawer
+            $('#close-filters, #filter-backdrop').on('click', function(e) {
+                e.preventDefault();
+                console.log('Closing filter drawer');
+                $('#filter-backdrop').removeClass('show').addClass('hidden');
+                $('#filter-drawer').removeClass('open');
+                $('body').removeClass('overflow-hidden');
+            });
+
+            // Apply filters (just close for now)
+            $('#apply-filters').on('click', function(e) {
+                e.preventDefault();
+                console.log('Apply filters clicked');
+                $('#filter-backdrop').removeClass('show').addClass('hidden');
+                $('#filter-drawer').removeClass('open');
+                $('body').removeClass('overflow-hidden');
+            });
+
+            // Clear filters
+            $('#clear-filters').on('click', function(e) {
+                e.preventDefault();
+                console.log('Clear filters clicked');
+                $('input[type="checkbox"]').prop('checked', false);
+            });
+
+            // Escape key to close
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
+                    $('#filter-backdrop').removeClass('show').addClass('hidden');
+                    $('#filter-drawer').removeClass('open');
+                    $('body').removeClass('overflow-hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -104,7 +104,31 @@ body.tax-product_tag {
   background: #a8a8a8;
 }
 
-/* Filter Toggle Button - Edgy Style */
+/* Filter Toggle Button - Flat Style */
+.filter-toggle-btn-flat {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  color: #374151;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.filter-toggle-btn-flat:hover {
+  background-color: #f3f4f6;
+  color: var(--primary-pink);
+  transform: none;
+  box-shadow: none;
+}
+
+.filter-toggle-btn-flat:focus {
+  outline: 2px solid var(--primary-pink);
+  outline-offset: 2px;
+  background-color: #f3f4f6;
+}
+
+/* Legacy filter button styles (keep for compatibility) */
 .filter-toggle-btn {
   border-radius: 0;
   box-shadow: none;

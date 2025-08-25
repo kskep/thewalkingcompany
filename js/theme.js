@@ -290,11 +290,18 @@
 
         // Product Archive Filters
         if ($('.shop-layout').length) {
+            console.log('Shop layout detected, initializing filters...');
+
             // Try to initialize filters component
             function initFilters() {
+                console.log('Attempting to initialize filters...');
+                console.log('EShopFilters available:', typeof EShopFilters !== 'undefined');
+
                 if (typeof EShopFilters !== 'undefined') {
+                    console.log('Using EShopFilters component');
                     EShopFilters.init();
                 } else {
+                    console.log('EShopFilters not available, using fallback');
                     // Fallback to basic functionality
                     initProductFilters();
                 }
@@ -305,7 +312,18 @@
                 initFilters();
             } else {
                 // Wait a bit for the component to load
-                setTimeout(initFilters, 100);
+                setTimeout(function() {
+                    console.log('Delayed filter initialization...');
+                    initFilters();
+                }, 100);
+
+                // Also try after a longer delay
+                setTimeout(function() {
+                    if (typeof EShopFilters === 'undefined') {
+                        console.log('EShopFilters still not available, forcing fallback');
+                        initProductFilters();
+                    }
+                }, 500);
             }
         }
 
@@ -473,15 +491,26 @@
     // Product Filter Functions (fallback if component not loaded)
     function initProductFilters() {
         console.log('Using fallback filter initialization');
+        console.log('Filter button exists:', $('#open-filters').length);
+        console.log('Filter drawer exists:', $('#filter-drawer').length);
+        console.log('Filter backdrop exists:', $('#filter-backdrop').length);
+
+        // Remove any existing event handlers to prevent duplicates
+        $('#open-filters').off('click.fallback');
+        $('#close-filters, #filter-backdrop').off('click.fallback');
 
         // Basic filter drawer functionality
-        $('#open-filters').on('click', function() {
+        $('#open-filters').on('click.fallback', function(e) {
+            e.preventDefault();
+            console.log('Filter button clicked (fallback)');
             $('#filter-backdrop').removeClass('hidden').addClass('show');
             $('#filter-drawer').addClass('open');
             $('body').addClass('overflow-hidden');
         });
 
-        $('#close-filters, #filter-backdrop').on('click', function() {
+        $('#close-filters, #filter-backdrop').on('click.fallback', function(e) {
+            e.preventDefault();
+            console.log('Closing filter drawer (fallback)');
             $('#filter-backdrop').removeClass('show').addClass('hidden');
             $('#filter-drawer').removeClass('open');
             $('body').removeClass('overflow-hidden');

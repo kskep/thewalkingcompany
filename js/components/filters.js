@@ -11,6 +11,12 @@
         // Initialize the filter system
         init: function() {
             console.log('EShopFilters initialized');
+            console.log('Current page URL:', window.location.href);
+            console.log('Filter elements check:');
+            console.log('- Filter button (#open-filters):', $('#open-filters').length);
+            console.log('- Filter drawer (#filter-drawer):', $('#filter-drawer').length);
+            console.log('- Filter backdrop (#filter-backdrop):', $('#filter-backdrop').length);
+
             this.bindEvents();
             this.initPriceSlider();
         },
@@ -55,12 +61,16 @@
         },
 
         // Open filter drawer
-        openDrawer: function() {
+        openDrawer: function(e) {
+            if (e) e.preventDefault();
             console.log('Opening filter drawer');
+            console.log('Backdrop element:', $('#filter-backdrop').length);
+            console.log('Drawer element:', $('#filter-drawer').length);
+
             $('#filter-backdrop').removeClass('hidden').addClass('show');
             $('#filter-drawer').addClass('open');
             $('body').addClass('overflow-hidden');
-            
+
             // Initialize price slider when drawer opens
             setTimeout(function() {
                 EShopFilters.initPriceSlider();
@@ -68,7 +78,9 @@
         },
 
         // Close filter drawer
-        closeDrawer: function() {
+        closeDrawer: function(e) {
+            if (e) e.preventDefault();
+            console.log('Closing filter drawer');
             $('#filter-backdrop').removeClass('show').addClass('hidden');
             $('#filter-drawer').removeClass('open');
             $('body').removeClass('overflow-hidden');

@@ -9,20 +9,14 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-// Debug: Add a comment to see if this file is being loaded
-echo '<!-- Filter Modal Component Loaded -->';
+// Only show on WooCommerce archive pages
+if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
+    return;
+}
 
-// Only show on WooCommerce archive pages - but let's temporarily disable this check
-// if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
-//     return;
-// }
+// Add a debug comment to verify this file is loading
+echo '<!-- Filter Modal Component Loaded Successfully -->';
 ?>
-?>
-
-<!-- Test Element (visible) -->
-<div style="position: fixed; top: 10px; right: 10px; background: red; color: white; padding: 10px; z-index: 9999;">
-    Filter Modal Loaded
-</div>
 
 <!-- Filter Backdrop -->
 <div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
