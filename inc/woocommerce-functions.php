@@ -23,7 +23,7 @@ function eshop_cart_fragment($fragments) {
     </span>
     <?php
     $fragments['.cart-count'] = ob_get_clean();
-    
+
     ob_start();
     ?>
     <span class="cart-total">
@@ -31,6 +31,52 @@ function eshop_cart_fragment($fragments) {
     </span>
     <?php
     $fragments['.cart-total'] = ob_get_clean();
+
+    // Flying cart count badge
+    ob_start();
+    ?>
+    <span class="cart-count-badge <?php echo WC()->cart->get_cart_contents_count() > 0 ? 'visible' : 'hidden'; ?>" data-count="<?php echo WC()->cart->get_cart_contents_count(); ?>">
+        <?php echo WC()->cart->get_cart_contents_count(); ?>
+    </span>
+    <?php
+    $fragments['.cart-count-badge'] = ob_get_clean();
+
+    // Flying cart total amount
+    ob_start();
+    ?>
+    <span class="cart-total-amount"><?php echo WC()->cart->get_cart_total(); ?></span>
+    <?php
+    $fragments['.cart-total-amount'] = ob_get_clean();
+
+    // Flying cart shipping information
+    $cart_total = WC()->cart->get_cart_contents_total();
+    $free_shipping_threshold = eshop_get_free_shipping_threshold();
+    $remaining_for_free_shipping = max(0, $free_shipping_threshold - $cart_total);
+
+    ob_start();
+    if ($remaining_for_free_shipping > 0) : ?>
+        <div class="shipping-info">
+            <div class="shipping-message">
+                <i class="fas fa-truck shipping-icon"></i>
+                <span class="shipping-text">
+                    <?php echo sprintf(__('Add %s more for FREE shipping!', 'eshop-theme'), wc_price($remaining_for_free_shipping)); ?>
+                </span>
+            </div>
+            <div class="shipping-progress">
+                <div class="shipping-progress-bar">
+                    <div class="shipping-progress-fill" style="width: <?php echo min(100, ($cart_total / $free_shipping_threshold) * 100); ?>%"></div>
+                </div>
+            </div>
+        </div>
+    <?php else : ?>
+        <div class="shipping-info free-shipping-achieved">
+            <div class="shipping-message">
+                <i class="fas fa-check-circle shipping-icon"></i>
+                <span class="shipping-text"><?php _e('Congratulations! You qualify for FREE shipping!', 'eshop-theme'); ?></span>
+            </div>
+        </div>
+    <?php endif;
+    $fragments['.shipping-info'] = ob_get_clean();
     
     // Update entire minicart content
     ob_start();
@@ -77,6 +123,144 @@ function eshop_cart_fragment($fragments) {
     return $fragments;
 }
 add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
+
+
+
+/**
+ * Flying Cart AJAX Functions
+ */
+
+// Remove cart item via AJAX
+function eshop_remove_cart_item_ajax() {
+    // Verify nonce for security
+    if (!check_ajax_referer('eshop_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Security check failed', 'eshop-theme')
+        ));
+    }
+
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_error(array(
+            'message' => __('WooCommerce is not active', 'eshop-theme')
+        ));
+    }
+
+    $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
+
+    if (empty($cart_item_key)) {
+        wp_send_json_error(array(
+            'message' => __('Invalid cart item', 'eshop-theme')
+        ));
+    }
+
+    if (WC()->cart->remove_cart_item($cart_item_key)) {
+        WC()->cart->calculate_totals();
+
+        wp_send_json_success(array(
+            'message' => __('Item removed from cart', 'eshop-theme'),
+            'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array())
+        ));
+    } else {
+        wp_send_json_error(array(
+            'message' => __('Error removing item from cart', 'eshop-theme')
+        ));
+    }
+}
+add_action('wp_ajax_remove_cart_item', 'eshop_remove_cart_item_ajax');
+add_action('wp_ajax_nopriv_remove_cart_item', 'eshop_remove_cart_item_ajax');
+
+// Get flying cart content via AJAX
+function eshop_get_flying_cart_content_ajax() {
+    // Verify nonce for security
+    if (!check_ajax_referer('eshop_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Security check failed', 'eshop-theme')
+        ));
+    }
+
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_error(array(
+            'message' => __('WooCommerce is not active', 'eshop-theme')
+        ));
+    }
+
+    ob_start();
+    get_template_part('template-parts/components/flying-cart');
+    $html = ob_get_clean();
+
+    if (empty($html)) {
+        wp_send_json_error(array(
+            'message' => __('Failed to load cart content', 'eshop-theme')
+        ));
+    }
+
+    wp_send_json_success(array(
+        'html' => $html
+    ));
+}
+add_action('wp_ajax_get_flying_cart_content', 'eshop_get_flying_cart_content_ajax');
+add_action('wp_ajax_nopriv_get_flying_cart_content', 'eshop_get_flying_cart_content_ajax');
+
+/**
+ * Flying Cart Settings
+ */
+
+// Add flying cart settings to WooCommerce settings
+function eshop_flying_cart_settings($settings) {
+    $flying_cart_settings = array(
+        array(
+            'name' => __('Flying Cart Settings', 'eshop-theme'),
+            'type' => 'title',
+            'desc' => __('Configure the flying cart component settings.', 'eshop-theme'),
+            'id'   => 'flying_cart_settings'
+        ),
+        array(
+            'name'     => __('Free Shipping Threshold', 'eshop-theme'),
+            'desc'     => __('Minimum order amount for free shipping message in flying cart. Leave empty to use WooCommerce free shipping settings.', 'eshop-theme'),
+            'id'       => 'eshop_flying_cart_free_shipping_threshold',
+            'type'     => 'number',
+            'default'  => '50',
+            'custom_attributes' => array(
+                'min'  => '0',
+                'step' => '0.01'
+            )
+        ),
+        array(
+            'type' => 'sectionend',
+            'id'   => 'flying_cart_settings'
+        )
+    );
+
+    return array_merge($settings, $flying_cart_settings);
+}
+add_filter('woocommerce_get_settings_general', 'eshop_flying_cart_settings');
+
+// Update the helper function to use the setting
+function eshop_get_free_shipping_threshold() {
+    // Check for custom setting first
+    $custom_threshold = get_option('eshop_flying_cart_free_shipping_threshold');
+    if (!empty($custom_threshold) && is_numeric($custom_threshold)) {
+        return floatval($custom_threshold);
+    }
+
+    // Try to get from WooCommerce free shipping settings
+    $shipping_zones = WC_Shipping_Zones::get_zones();
+    foreach ($shipping_zones as $zone) {
+        foreach ($zone['shipping_methods'] as $method) {
+            if ($method->id === 'free_shipping' && $method->enabled === 'yes') {
+                $min_amount = $method->get_option('min_amount');
+                if (!empty($min_amount) && is_numeric($min_amount)) {
+                    return floatval($min_amount);
+                }
+            }
+        }
+    }
+
+    // Fallback to default
+    return apply_filters('eshop_free_shipping_threshold', 50);
+}
 
 /**
  * Override WooCommerce product loop structure

@@ -93,7 +93,10 @@
         <i class="fas fa-chevron-up icon"></i>
     </button>
 
-
+    <!-- Flying Cart Component -->
+    <?php if (class_exists('WooCommerce')) : ?>
+        <?php get_template_part('template-parts/components/flying-cart'); ?>
+    <?php endif; ?>
 
 </div><!-- #page -->
 
