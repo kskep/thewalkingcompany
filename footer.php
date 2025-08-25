@@ -93,6 +93,63 @@
         <i class="fas fa-chevron-up icon"></i>
     </button>
 
+<?php
+// Add filter modal HTML to footer for WooCommerce pages
+if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) : ?>
+<!-- Filter Modal HTML (Added via Footer) -->
+<div id="filter-backdrop" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 40; opacity: 0; visibility: hidden; transition: all 0.3s ease;" class="hidden"></div>
+
+<div id="filter-drawer" style="position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: white; z-index: 50; transform: translateX(100%); transition: transform 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.1);" role="dialog" aria-modal="true">
+    <!-- Drawer Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid #e5e7eb; background: white;">
+        <h2 style="font-size: 18px; font-weight: 600; color: #111827; text-transform: uppercase; letter-spacing: 0.05em;">
+            FILTERS
+        </h2>
+        <button id="close-filters" style="padding: 8px; color: #9ca3af; background: none; border: none; cursor: pointer;" aria-label="Close Filters">
+            <i class="fas fa-times" style="font-size: 18px;"></i>
+        </button>
+    </div>
+
+    <!-- Drawer Content -->
+    <div style="padding: 24px;">
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 12px;">
+                Test Filters
+            </h4>
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">Filter functionality is working!</p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox">
+                    <span style="font-size: 14px; color: #374151;">Test Option 1</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox">
+                    <span style="font-size: 14px; color: #374151;">Test Option 2</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div style="display: flex; justify-content: space-between; padding: 16px 24px; border-top: 1px solid #e5e7eb; background: #f9fafb;">
+        <button id="clear-filters" style="padding: 8px 16px; color: #6b7280; background: none; border: none; cursor: pointer;">
+            Clear All
+        </button>
+        <button id="apply-filters" style="padding: 8px 24px; background: #ee81b3; color: white; border: none; cursor: pointer;">
+            Apply Filters
+        </button>
+    </div>
+</div>
+
+<style>
+#filter-backdrop.show { opacity: 1 !important; visibility: visible !important; }
+#filter-drawer.open { transform: translateX(0) !important; }
+body.overflow-hidden { overflow: hidden !important; }
+.hidden { display: none !important; }
+</style>
+<?php endif; ?>
+
 </div><!-- #page -->
 
 <?php wp_footer(); ?>

@@ -111,78 +111,9 @@ get_template_part('template-parts/components/filter-modal');
 
 echo '<!-- Archive Page Debug: Filter modal inclusion complete -->';
 
-// Fallback: Add filter modal HTML directly if not included above
+// Filter modal is now included via footer.php
 ?>
-<!-- Fallback Filter Modal HTML -->
-<div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 40; opacity: 0; visibility: hidden; transition: all 0.3s ease;"></div>
-
-<div id="filter-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="filter-drawer-title" style="position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px; background: white; z-index: 50; transform: translateX(100%); transition: transform 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.1);">
-    <!-- Drawer Header -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
-        <h2 id="filter-drawer-title" class="text-lg font-semibold text-gray-900 uppercase tracking-wide">
-            <?php _e('Filters', 'eshop-theme'); ?>
-        </h2>
-        <button id="close-filters" class="p-2 text-gray-400 hover:text-gray-600 transition-colors" aria-label="<?php esc_attr_e('Close Filters', 'eshop-theme'); ?>">
-            <i class="fas fa-times text-lg"></i>
-        </button>
-    </div>
-
-    <!-- Drawer Content -->
-    <div class="flex-1 overflow-y-auto px-6 py-4 h-[calc(100vh-140px)]">
-        <div class="filter-section mb-6">
-            <h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">
-                <?php esc_html_e('Test Filters', 'eshop-theme'); ?>
-            </h4>
-            <p class="text-sm text-gray-600 mb-4">Filter functionality is working! This is a test filter modal.</p>
-
-            <div class="space-y-3">
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" class="text-primary focus:ring-primary border-gray-300 rounded">
-                    <span class="text-sm text-gray-700">Test Filter Option 1</span>
-                </label>
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" class="text-primary focus:ring-primary border-gray-300 rounded">
-                    <span class="text-sm text-gray-700">Test Filter Option 2</span>
-                </label>
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" class="text-primary focus:ring-primary border-gray-300 rounded">
-                    <span class="text-sm text-gray-700">Test Filter Option 3</span>
-                </label>
-            </div>
-        </div>
-    </div>
-
-    <!-- Drawer Footer -->
-    <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
-        <button id="clear-filters" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">
-            <i class="fas fa-times mr-2"></i>
-            <?php _e('Clear All', 'eshop-theme'); ?>
-        </button>
-        <button id="apply-filters" class="px-6 py-2 bg-primary text-white text-sm font-medium uppercase tracking-wide hover:bg-primary-dark transition-colors">
-            <?php _e('Apply Filters', 'eshop-theme'); ?>
-        </button>
-    </div>
-</div>
-
-<!-- Inline CSS for filter modal states -->
-<style>
-#filter-backdrop.show {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-#filter-drawer.open {
-    transform: translateX(0) !important;
-}
-
-body.overflow-hidden {
-    overflow: hidden !important;
-}
-
-.hidden {
-    display: none !important;
-}
-</style>
+<!-- Filter modal HTML is included via footer.php for WooCommerce pages -->
 <?php
 
 /**
