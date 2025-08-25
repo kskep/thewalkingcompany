@@ -91,6 +91,37 @@
                 window.SimpleFilters.applyFilters();
             });
 
+            // Size grid click handlers (for hidden checkboxes) - use event delegation
+            $(document).on('click.simple', '.size-option', function(e) {
+                e.preventDefault();
+                console.log('SimpleFilters: Size option clicked');
+
+                var $this = $(this);
+                var $checkbox = $this.find('input[type="checkbox"]');
+                var $label = $this.find('.size-label');
+
+                console.log('SimpleFilters: Found checkbox:', $checkbox.length);
+                console.log('SimpleFilters: Found label:', $label.length);
+                console.log('SimpleFilters: Current checked state:', $checkbox.prop('checked'));
+
+                // Toggle the checkbox
+                var newState = !$checkbox.prop('checked');
+                $checkbox.prop('checked', newState);
+
+                // Update visual state
+                if (newState) {
+                    $label.removeClass('bg-white text-gray-700 border-gray-300')
+                          .addClass('bg-primary text-white border-primary');
+                    console.log('SimpleFilters: Applied selected styles');
+                } else {
+                    $label.removeClass('bg-primary text-white border-primary')
+                          .addClass('bg-white text-gray-700 border-gray-300');
+                    console.log('SimpleFilters: Applied unselected styles');
+                }
+
+                console.log('SimpleFilters: Size checkbox toggled:', $checkbox.val(), 'to', newState);
+            });
+
             console.log('SimpleFilters: Events bound successfully');
         },
 
@@ -171,6 +202,10 @@
             // Clear form inputs
             $('#min-price, #max-price').val('');
             $('input[name="product_cat[]"], input[name="on_sale"], input[name="pa_box[]"], input[name="pa_color[]"], input[name="pa_pick-pattern[]"], input[name="pa_select-size[]"], input[name="pa_size-selection[]"]').prop('checked', false);
+
+            // Reset visual states for size grids
+            $('.size-label').removeClass('bg-primary text-white border-primary')
+                           .addClass('bg-white text-gray-700 border-gray-300');
 
             // Reset price slider
             var sliderEl = document.getElementById('price-slider');
@@ -303,7 +338,15 @@
                 if (attrValue) {
                     var values = attrValue.split(',');
                     values.forEach(function(value) {
-                        $('input[name="' + attribute + '[]"][value="' + value + '"]').prop('checked', true);
+                        var $checkbox = $('input[name="' + attribute + '[]"][value="' + value + '"]');
+                        $checkbox.prop('checked', true);
+
+                        // Update visual state for size grids
+                        var $label = $checkbox.siblings('.size-label');
+                        if ($label.length > 0) {
+                            $label.removeClass('bg-white text-gray-700 border-gray-300')
+                                  .addClass('bg-primary text-white border-primary');
+                        }
                     });
                 }
             });

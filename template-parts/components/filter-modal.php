@@ -386,10 +386,17 @@ body.overflow-hidden {
 }
 
 /* Size Filter Styles */
-.size-option input:checked + .size-label {
+.size-option input:checked + .size-label,
+.size-label.bg-primary {
     background-color: #ee81b3 !important;
     color: white !important;
     border-color: #ee81b3 !important;
+}
+
+.size-label.bg-white {
+    background-color: white !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
 }
 
 .size-label {
