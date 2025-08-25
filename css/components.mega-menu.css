@@ -84,9 +84,9 @@
 }
 
 .mega-menu-link:hover {
-  background-color: #000;
-  color: white;
-  border-color: var(--primary-pink);
+  
+  color: var(--primary-pink);
+  
 }
 
 /* Mega menu image - Sharp Magazine Style */
@@ -122,7 +122,7 @@
 }
 
 .mega-menu-link:hover .mega-menu-title {
-  color: white;
+  color: var(--primary-pink);
 }
 
 /* Placeholder image styling - Sharp Magazine Style */

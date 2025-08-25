@@ -9,10 +9,19 @@
 
 if (!defined('ABSPATH')) { exit; }
 
+// Debug: Check WooCommerce and page conditions
+echo '<!-- Filter Modal Debug: WooCommerce class exists: ' . (class_exists('WooCommerce') ? 'YES' : 'NO') . ' -->';
+echo '<!-- Filter Modal Debug: is_shop(): ' . (is_shop() ? 'YES' : 'NO') . ' -->';
+echo '<!-- Filter Modal Debug: is_product_category(): ' . (is_product_category() ? 'YES' : 'NO') . ' -->';
+echo '<!-- Filter Modal Debug: is_product_tag(): ' . (is_product_tag() ? 'YES' : 'NO') . ' -->';
+
 // Only show on WooCommerce archive pages
 if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
+    echo '<!-- Filter Modal: Conditions not met, not rendering modal -->';
     return;
 }
+
+echo '<!-- Filter Modal: Conditions met, rendering modal -->';
 ?>
 
 <!-- Filter Backdrop -->

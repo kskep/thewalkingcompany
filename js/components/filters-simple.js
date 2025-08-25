@@ -32,10 +32,21 @@
             $('#open-filters').on('click.simple', function(e) {
                 e.preventDefault();
                 console.log('SimpleFilters: Opening drawer');
-                
-                $('#filter-backdrop').removeClass('hidden').addClass('show');
-                $('#filter-drawer').addClass('open');
-                $('body').addClass('overflow-hidden');
+
+                var $backdrop = $('#filter-backdrop');
+                var $drawer = $('#filter-drawer');
+
+                console.log('SimpleFilters: Backdrop found:', $backdrop.length);
+                console.log('SimpleFilters: Drawer found:', $drawer.length);
+
+                if ($backdrop.length && $drawer.length) {
+                    $backdrop.removeClass('hidden').addClass('show');
+                    $drawer.addClass('open');
+                    $('body').addClass('overflow-hidden');
+                    console.log('SimpleFilters: Filter drawer opened successfully');
+                } else {
+                    console.error('SimpleFilters: Filter elements not found!');
+                }
             });
             
             // Close filter
