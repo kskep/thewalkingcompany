@@ -103,6 +103,8 @@ get_header('shop'); ?>
 // Include the filter modal component
 get_template_part('template-parts/components/filter-modal');
 
+?>
+
 /**
 /**
  * Hook: woocommerce_after_main_content.

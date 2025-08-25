@@ -13,9 +13,6 @@ if (!defined('ABSPATH')) { exit; }
 if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
     return;
 }
-
-// Add a debug comment to verify this file is loading
-echo '<!-- Filter Modal Component Loaded Successfully -->';
 ?>
 
 <!-- Filter Backdrop -->

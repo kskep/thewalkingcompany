@@ -6,6 +6,12 @@
 (function($) {
     'use strict';
 
+    // Ensure jQuery is available
+    if (typeof $ === 'undefined') {
+        console.error('jQuery is not available for EShopFilters');
+        return;
+    }
+
     window.EShopFilters = {
 
         // Initialize the filter system
@@ -396,5 +402,26 @@
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
     };
+
+    // WordPress-compatible initialization
+    $(document).ready(function() {
+        console.log('EShopFilters: Document ready, checking for shop layout...');
+
+        // Check if we're on a shop page
+        if ($('.shop-layout').length > 0 || $('body').hasClass('woocommerce-shop') || $('body').hasClass('woocommerce-archive')) {
+            console.log('EShopFilters: Shop page detected, initializing...');
+
+            // Small delay to ensure all elements are loaded
+            setTimeout(function() {
+                if (typeof window.EShopFilters !== 'undefined') {
+                    window.EShopFilters.init();
+                } else {
+                    console.error('EShopFilters: Object not available');
+                }
+            }, 100);
+        } else {
+            console.log('EShopFilters: Not a shop page, skipping initialization');
+        }
+    });
 
 })(jQuery);

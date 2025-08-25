@@ -288,44 +288,9 @@
             });
         });
 
-        // Product Archive Filters
-        if ($('.shop-layout').length) {
-            console.log('Shop layout detected, initializing filters...');
-
-            // Try to initialize filters component
-            function initFilters() {
-                console.log('Attempting to initialize filters...');
-                console.log('EShopFilters available:', typeof EShopFilters !== 'undefined');
-
-                if (typeof EShopFilters !== 'undefined') {
-                    console.log('Using EShopFilters component');
-                    EShopFilters.init();
-                } else {
-                    console.log('EShopFilters not available, using fallback');
-                    // Fallback to basic functionality
-                    initProductFilters();
-                }
-            }
-
-            // Initialize immediately if available, or wait for component to load
-            if (typeof EShopFilters !== 'undefined') {
-                initFilters();
-            } else {
-                // Wait a bit for the component to load
-                setTimeout(function() {
-                    console.log('Delayed filter initialization...');
-                    initFilters();
-                }, 100);
-
-                // Also try after a longer delay
-                setTimeout(function() {
-                    if (typeof EShopFilters === 'undefined') {
-                        console.log('EShopFilters still not available, forcing fallback');
-                        initProductFilters();
-                    }
-                }, 500);
-            }
-        }
+        // Product Archive Filters - Let the filter component handle initialization
+        // This is now handled by the filters.js component itself
+        console.log('Theme.js: Filter initialization delegated to filters.js component');
 
         // Quick add to cart
         $(document).on('click', '.add-to-cart-simple', function(e) {

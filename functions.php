@@ -72,10 +72,12 @@ function eshop_theme_scripts() {
     // Product UI interactions (split from theme.js)
     wp_enqueue_script('eshop-product-ui', get_template_directory_uri() . '/js/product-ui.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
 
-    // Filter component JavaScript (load on all pages for testing)
-    $filter_js_path = get_template_directory_uri() . '/js/components/filters.js';
-    error_log('Enqueuing filter script: ' . $filter_js_path);
-    wp_enqueue_script('eshop-filters', $filter_js_path, array('jquery', 'eshop-theme-script'), '1.0.0', true);
+    // Filter component JavaScript - Simple version for WordPress compatibility
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        $filter_js_path = get_template_directory_uri() . '/js/components/filters-simple.js';
+        $filter_js_version = filemtime(get_template_directory() . '/js/components/filters-simple.js');
+        wp_enqueue_script('eshop-filters-simple', $filter_js_path, array('jquery'), $filter_js_version, true);
+    }
 
     // Also load on shop pages specifically
     if (is_shop() || is_product_category() || is_product_tag()) {
