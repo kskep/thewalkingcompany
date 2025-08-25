@@ -87,27 +87,22 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
             echo '</div>';
             echo '</div>';
 
-            // Product Categories Filter
-            $product_categories = get_terms(array(
-                'taxonomy' => 'product_cat',
-                'hide_empty' => true,
-                'parent' => 0, // Only top-level categories
-                'number' => 10
-            ));
+            // Product Categories Filter - Get available categories from current query
+            $available_categories = eshop_get_available_categories();
 
-            if (!empty($product_categories) && !is_wp_error($product_categories)) {
+            if (!empty($available_categories)) {
                 echo '<div class="filter-section mb-6">';
                 echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Categories', 'eshop-theme') . '</h4>';
                 echo '<div class="category-filter space-y-2 max-h-48 overflow-y-auto">';
 
-                foreach ($product_categories as $category) {
-                    $is_selected = isset($_GET['product_cat']) && in_array($category->slug, (array)$_GET['product_cat']);
-                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                foreach ($available_categories as $category) {
+                    $is_selected = isset($_GET['product_cat']) && in_array($category['slug'], (array)$_GET['product_cat']);
+                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer p-2 rounded">';
                     echo '<div class="flex items-center space-x-2">';
-                    echo '<input type="checkbox" name="product_cat[]" value="' . esc_attr($category->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
-                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($category->name) . '</span>';
+                    echo '<input type="checkbox" name="product_cat[]" value="' . esc_attr($category['slug']) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+                    echo '<span class="text-sm text-gray-700">' . esc_html($category['name']) . '</span>';
                     echo '</div>';
-                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($category->count) . '</span>';
+                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($category['count']) . '</span>';
                     echo '</label>';
                 }
 
@@ -221,20 +216,12 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
             );
 
             foreach ($your_attributes as $taxonomy => $attr_config) {
-                $terms = get_terms(array(
-                    'taxonomy' => $taxonomy,
-                    'hide_empty' => true,
-                    'orderby' => 'menu_order',
-                    'order' => 'ASC'
-                ));
+                // Get available terms from current query results
+                $available_terms = eshop_get_available_attribute_terms($taxonomy);
 
-                echo '<!-- DEBUG: ' . $taxonomy . ' terms found: ' . count($terms) . ' -->';
-                if (is_wp_error($terms)) {
-                    echo '<!-- DEBUG: ' . $taxonomy . ' error: ' . $terms->get_error_message() . ' -->';
-                    continue;
-                }
+                echo '<!-- DEBUG: ' . $taxonomy . ' available terms from current query: ' . count($available_terms) . ' -->';
 
-                if (!empty($terms)) {
+                if (!empty($available_terms)) {
                     $selected_values = isset($_GET[$taxonomy]) ? (array)$_GET[$taxonomy] : array();
 
                     echo '<div class="filter-section mb-6">';
@@ -245,14 +232,14 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                         echo '<div class="size-filter">';
                         echo '<div class="size-grid">';
 
-                        foreach ($terms as $term) {
-                            $is_selected = in_array($term->slug, $selected_values);
+                        foreach ($available_terms as $term) {
+                            $is_selected = in_array($term['slug'], $selected_values);
                             $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300';
-                            $short_name = shorten_size_name($term->name);
+                            $short_name = shorten_size_name($term['name']);
 
                             echo '<label class="size-option cursor-pointer">';
-                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="hidden"' . checked($is_selected, true, false) . '>';
-                            echo '<span class="size-label border transition-all duration-200 ' . $selected_class . '" title="' . esc_attr($term->name) . '">';
+                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term['slug']) . '" class="hidden"' . checked($is_selected, true, false) . '>';
+                            echo '<span class="size-label border transition-all duration-200 ' . $selected_class . '" title="' . esc_attr($term['name']) . '">';
                             echo esc_html($short_name);
                             echo '</span>';
                             echo '</label>';
@@ -264,24 +251,24 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                         // Regular checkbox layout for other attributes
                         echo '<div class="attribute-filter space-y-2 max-h-48 overflow-y-auto">';
 
-                        foreach ($terms as $term) {
-                            $is_selected = in_array($term->slug, $selected_values);
+                        foreach ($available_terms as $term) {
+                            $is_selected = in_array($term['slug'], $selected_values);
 
                             echo '<label class="flex items-center justify-between space-x-2 cursor-pointer p-2 rounded">';
                             echo '<div class="flex items-center space-x-2">';
-                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term['slug']) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
 
                             // Special handling for color attribute
                             if ($taxonomy === 'pa_color') {
-                                $color_value = get_term_meta($term->term_id, 'color', true);
+                                $color_value = isset($term['color']) ? $term['color'] : '';
                                 if ($color_value) {
-                                    echo '<span class="w-4 h-4 rounded-full border border-gray-300 inline-block" style="background-color: ' . esc_attr($color_value) . ';" title="' . esc_attr($term->name) . '"></span>';
+                                    echo '<span class="w-4 h-4 rounded-full border border-gray-300 inline-block" style="background-color: ' . esc_attr($color_value) . ';" title="' . esc_attr($term['name']) . '"></span>';
                                 }
                             }
 
-                            echo '<span class="text-sm text-gray-700">' . esc_html($term->name) . '</span>';
+                            echo '<span class="text-sm text-gray-700">' . esc_html($term['name']) . '</span>';
                             echo '</div>';
-                            echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($term->count) . '</span>';
+                            echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($term['count']) . '</span>';
                             echo '</label>';
                         }
 
