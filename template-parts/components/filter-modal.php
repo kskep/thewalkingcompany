@@ -148,6 +148,54 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                 echo '<!-- No product attributes found in WooCommerce -->';
             }
 
+            // Function to shorten size names
+            function shorten_size_name($name) {
+                $size_map = array(
+                    'Extra Small' => 'XS',
+                    'Small' => 'S',
+                    'Medium' => 'M',
+                    'Large' => 'L',
+                    'Extra Large' => 'XL',
+                    'XXL' => 'XXL',
+                    'XXXL' => 'XXXL',
+                    'One Size' => 'OS',
+                    'XSmall' => 'XS',
+                    'XLarge' => 'XL',
+                    'XXLarge' => 'XXL',
+                    'XXXLarge' => 'XXXL',
+                    'Small/Medium' => 'S/M',
+                    'Medium/Large' => 'M/L',
+                    'Large/XLarge' => 'L/XL',
+                    'Small/Medi' => 'S/M',
+                    'Medium/Lar' => 'M/L'
+                );
+
+                // Check if we have a direct mapping
+                if (isset($size_map[$name])) {
+                    return $size_map[$name];
+                }
+
+                // Try to extract size from longer strings
+                foreach ($size_map as $long => $short) {
+                    if (stripos($name, $long) !== false) {
+                        return $short;
+                    }
+                }
+
+                // If no mapping found, try to abbreviate automatically
+                if (strlen($name) > 6) {
+                    // Take first letter of each word
+                    $words = explode(' ', $name);
+                    if (count($words) > 1) {
+                        return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+                    }
+                    // Or just take first 4 characters
+                    return strtoupper(substr($name, 0, 4));
+                }
+
+                return $name;
+            }
+
             // Your Custom Attributes
             $your_attributes = array(
                 'pa_box' => array(
@@ -195,16 +243,17 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                     if ($attr_config['type'] === 'size_grid') {
                         // Size grid layout for size attributes
                         echo '<div class="size-filter">';
-                        echo '<div class="size-grid grid grid-cols-4 gap-2">';
+                        echo '<div class="size-grid">';
 
                         foreach ($terms as $term) {
                             $is_selected = in_array($term->slug, $selected_values);
-                            $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300 hover:border-primary';
+                            $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300';
+                            $short_name = shorten_size_name($term->name);
 
                             echo '<label class="size-option cursor-pointer">';
                             echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="hidden"' . checked($is_selected, true, false) . '>';
-                            echo '<span class="size-label block text-center py-2 px-3 border text-sm font-medium transition-all duration-200 ' . $selected_class . '">';
-                            echo esc_html($term->name);
+                            echo '<span class="size-label border transition-all duration-200 ' . $selected_class . '" title="' . esc_attr($term->name) . '">';
+                            echo esc_html($short_name);
                             echo '</span>';
                             echo '</label>';
                         }
@@ -218,7 +267,7 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                         foreach ($terms as $term) {
                             $is_selected = in_array($term->slug, $selected_values);
 
-                            echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                            echo '<label class="flex items-center justify-between space-x-2 cursor-pointer p-2 rounded">';
                             echo '<div class="flex items-center space-x-2">';
                             echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
 
@@ -230,7 +279,7 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                                 }
                             }
 
-                            echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($term->name) . '</span>';
+                            echo '<span class="text-sm text-gray-700">' . esc_html($term->name) . '</span>';
                             echo '</div>';
                             echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($term->count) . '</span>';
                             echo '</label>';
@@ -306,10 +355,7 @@ body.overflow-hidden {
     display: none !important;
 }
 
-/* Filter section hover effects */
-.filter-section label:hover {
-    background-color: #f9fafb;
-}
+/* Remove hover backgrounds as requested */
 
 /* Price Slider Styles */
 .price-slider {
@@ -346,8 +392,23 @@ body.overflow-hidden {
     border-color: #ee81b3 !important;
 }
 
-.size-label:hover {
-    border-color: #ee81b3 !important;
+.size-label {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.size-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 8px;
 }
 
 /* Color Swatch Styles */
