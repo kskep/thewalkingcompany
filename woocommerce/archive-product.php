@@ -100,21 +100,8 @@ get_header('shop'); ?>
 </div>
 
 <?php
-// Debug: Check if we're including the filter modal
-echo '<!-- Archive Page Debug: About to include filter modal -->';
-echo '<!-- Archive Page Debug: Template directory: ' . get_template_directory() . ' -->';
-$filter_modal_path = get_template_directory() . '/template-parts/components/filter-modal.php';
-echo '<!-- Archive Page Debug: Filter modal file exists: ' . (file_exists($filter_modal_path) ? 'YES' : 'NO') . ' -->';
-
-// Include the filter modal component
-get_template_part('template-parts/components/filter-modal');
-
-echo '<!-- Archive Page Debug: Filter modal inclusion complete -->';
-
-// Filter modal is now included via footer.php
+// Filter modal is included via wp_footer hook in functions.php
 ?>
-<!-- Filter modal HTML is included via footer.php for WooCommerce pages -->
-<?php
 
 /**
 /**

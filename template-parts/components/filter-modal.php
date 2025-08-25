@@ -9,19 +9,10 @@
 
 if (!defined('ABSPATH')) { exit; }
 
-// Debug: Check WooCommerce and page conditions
-echo '<!-- Filter Modal Debug: WooCommerce class exists: ' . (class_exists('WooCommerce') ? 'YES' : 'NO') . ' -->';
-echo '<!-- Filter Modal Debug: is_shop(): ' . (is_shop() ? 'YES' : 'NO') . ' -->';
-echo '<!-- Filter Modal Debug: is_product_category(): ' . (is_product_category() ? 'YES' : 'NO') . ' -->';
-echo '<!-- Filter Modal Debug: is_product_tag(): ' . (is_product_tag() ? 'YES' : 'NO') . ' -->';
-
 // Only show on WooCommerce archive pages
 if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_product_tag())) {
-    echo '<!-- Filter Modal: Conditions not met, not rendering modal -->';
     return;
 }
-
-echo '<!-- Filter Modal: Conditions met, rendering modal -->';
 ?>
 
 <!-- Filter Backdrop -->
@@ -163,6 +154,72 @@ echo '<!-- Filter Modal: Conditions met, rendering modal -->';
         </button>
     </div>
 </div>
+
+<!-- Filter Modal CSS -->
+<style>
+#filter-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#filter-backdrop.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+#filter-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+#filter-drawer.open {
+    transform: translateX(0) !important;
+}
+
+body.overflow-hidden {
+    overflow: hidden !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Filter section hover effects */
+.filter-section label:hover {
+    background-color: #f9fafb;
+}
+
+/* Button hover effects */
+.apply-price-filter:hover,
+#apply-filters:hover {
+    background-color: #d946a0 !important;
+}
+
+#close-filters:hover {
+    color: #6b7280 !important;
+}
+
+#clear-filters:hover {
+    color: #374151 !important;
+}
+</style>
 
 <!-- Active Filters Bar -->
 <div class="active-filters-bar bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-4 mb-6" style="display: none;">

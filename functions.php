@@ -169,6 +169,16 @@ function eshop_handle_custom_filters($query) {
 }
 add_action('pre_get_posts', 'eshop_handle_custom_filters');
 
+/**
+ * Include filter modal on WooCommerce archive pages
+ */
+function eshop_include_filter_modal() {
+    if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
+        get_template_part('template-parts/components/filter-modal');
+    }
+}
+add_action('wp_footer', 'eshop_include_filter_modal');
+
 
 /**
  * Shop toolbar and Filters modal via hooks to ensure availability on all archive pages
