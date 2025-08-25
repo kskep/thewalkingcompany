@@ -21,9 +21,10 @@
   transition: transform 0.2s ease;
 }
 
-.main-navigation .menu-item-has-children:hover > .nav-link i {
+/* Remove CSS hover for arrow - JS will handle via .menu-active class */
+/* .main-navigation .menu-item-has-children:hover > .nav-link i {
   transform: rotate(180deg);
-}
+} */
 
 /* Mega Menu Container - Full Width Magazine Style, Centered to Screen */
 .mega-menu-container {
@@ -41,10 +42,19 @@
   display: block;
   
 }
-/* Show mega menu on hover */
-.main-navigation .menu-item-has-children:hover .mega-menu-container {
+/* Remove CSS hover - let JS handle all interactions */
+/* .main-navigation .menu-item-has-children:hover .mega-menu-container {
   opacity: 1;
   visibility: visible;
+} */
+
+/* Active state managed by JavaScript */
+.main-navigation .menu-item-has-children.menu-active > .nav-link {
+  color: var(--primary-pink);
+}
+
+.main-navigation .menu-item-has-children.menu-active > .nav-link i {
+  transform: rotate(180deg);
 }
 
 /* Mega Menu Inner Centered Wrapper - Magazine Style */

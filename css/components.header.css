@@ -107,11 +107,12 @@
   margin-top: 8px;
 }
 
-.main-navigation .menu-item-has-children:hover .sub-menu {
+/* Remove CSS hover for sub-menus - let JS handle mega menu interactions */
+/* .main-navigation .menu-item-has-children:hover .sub-menu {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
-}
+} */
 
 .main-navigation .sub-menu li {
   border-bottom: 1px solid #f3f4f6;
