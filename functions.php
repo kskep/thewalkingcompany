@@ -74,9 +74,13 @@ function eshop_theme_scripts() {
 
     // Filter component JavaScript - Simple version for WordPress compatibility
     if (is_shop() || is_product_category() || is_product_tag()) {
+        // Load noUiSlider for price range
+        wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
+        wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
+
         $filter_js_path = get_template_directory_uri() . '/js/components/filters-simple.js';
         $filter_js_version = filemtime(get_template_directory() . '/js/components/filters-simple.js');
-        wp_enqueue_script('eshop-filters-simple', $filter_js_path, array('jquery'), $filter_js_version, true);
+        wp_enqueue_script('eshop-filters-simple', $filter_js_path, array('jquery', 'nouislider'), $filter_js_version, true);
     }
 
     // Also load on shop pages specifically
@@ -151,19 +155,25 @@ function eshop_handle_custom_filters($query) {
             $query->set('post__in', wc_get_product_ids_on_sale());
         }
 
-        // Stock status filter
-        if (isset($_GET['stock_status']) && !empty($_GET['stock_status'])) {
-            $stock_statuses = explode(',', sanitize_text_field($_GET['stock_status']));
-            $query->set('meta_query', array_merge(
-                $query->get('meta_query', array()),
-                array(
-                    array(
-                        'key' => '_stock_status',
-                        'value' => $stock_statuses,
-                        'compare' => 'IN'
-                    )
-                )
-            ));
+        // Product attribute filters
+        $attributes = array('pa_size', 'pa_color', 'pa_material', 'pa_brand');
+        $tax_query = $query->get('tax_query', array());
+
+        foreach ($attributes as $attribute) {
+            if (isset($_GET[$attribute]) && !empty($_GET[$attribute])) {
+                $terms = explode(',', sanitize_text_field($_GET[$attribute]));
+                $tax_query[] = array(
+                    'taxonomy' => $attribute,
+                    'field' => 'slug',
+                    'terms' => $terms,
+                    'operator' => 'IN'
+                );
+            }
+        }
+
+        if (!empty($tax_query)) {
+            $tax_query['relation'] = 'AND';
+            $query->set('tax_query', $tax_query);
         }
     }
 }

@@ -19,6 +19,7 @@
         init: function() {
             console.log('SimpleFilters: Initializing...');
             this.bindEvents();
+            this.initPriceSlider();
             this.populateFiltersFromURL();
         },
         
@@ -136,16 +137,52 @@
                 url.searchParams.delete('on_sale');
             }
 
-            // Stock status filters
-            var selectedStock = [];
-            $('input[name="stock_status[]"]:checked').each(function() {
-                selectedStock.push($(this).val());
+            // Size filters
+            var selectedSizes = [];
+            $('input[name="pa_size[]"]:checked').each(function() {
+                selectedSizes.push($(this).val());
             });
-            if (selectedStock.length > 0) {
-                url.searchParams.set('stock_status', selectedStock.join(','));
-                filters.stock_status = selectedStock;
+            if (selectedSizes.length > 0) {
+                url.searchParams.set('pa_size', selectedSizes.join(','));
+                filters.pa_size = selectedSizes;
             } else {
-                url.searchParams.delete('stock_status');
+                url.searchParams.delete('pa_size');
+            }
+
+            // Color filters
+            var selectedColors = [];
+            $('input[name="pa_color[]"]:checked').each(function() {
+                selectedColors.push($(this).val());
+            });
+            if (selectedColors.length > 0) {
+                url.searchParams.set('pa_color', selectedColors.join(','));
+                filters.pa_color = selectedColors;
+            } else {
+                url.searchParams.delete('pa_color');
+            }
+
+            // Material filters
+            var selectedMaterials = [];
+            $('input[name="pa_material[]"]:checked').each(function() {
+                selectedMaterials.push($(this).val());
+            });
+            if (selectedMaterials.length > 0) {
+                url.searchParams.set('pa_material', selectedMaterials.join(','));
+                filters.pa_material = selectedMaterials;
+            } else {
+                url.searchParams.delete('pa_material');
+            }
+
+            // Brand filters
+            var selectedBrands = [];
+            $('input[name="pa_brand[]"]:checked').each(function() {
+                selectedBrands.push($(this).val());
+            });
+            if (selectedBrands.length > 0) {
+                url.searchParams.set('pa_brand', selectedBrands.join(','));
+                filters.pa_brand = selectedBrands;
+            } else {
+                url.searchParams.delete('pa_brand');
             }
 
             console.log('SimpleFilters: Collected filters:', filters);
@@ -164,7 +201,15 @@
 
             // Clear form inputs
             $('#min-price, #max-price').val('');
-            $('input[name="product_cat[]"], input[name="on_sale"], input[name="stock_status[]"]').prop('checked', false);
+            $('input[name="product_cat[]"], input[name="on_sale"], input[name="pa_size[]"], input[name="pa_color[]"], input[name="pa_material[]"], input[name="pa_brand[]"]').prop('checked', false);
+
+            // Reset price slider
+            var sliderEl = document.getElementById('price-slider');
+            if (sliderEl && sliderEl.noUiSlider) {
+                var minRange = parseInt(sliderEl.dataset.min) || 0;
+                var maxRange = parseInt(sliderEl.dataset.max) || 1000;
+                sliderEl.noUiSlider.set([minRange, maxRange]);
+            }
 
             // Redirect to clean URL
             var url = new URL(window.location.href);
@@ -172,7 +217,10 @@
             url.searchParams.delete('max_price');
             url.searchParams.delete('product_cat');
             url.searchParams.delete('on_sale');
-            url.searchParams.delete('stock_status');
+            url.searchParams.delete('pa_size');
+            url.searchParams.delete('pa_color');
+            url.searchParams.delete('pa_material');
+            url.searchParams.delete('pa_brand');
 
             console.log('SimpleFilters: Redirecting to clean URL:', url.toString());
             window.location.href = url.toString();
@@ -183,6 +231,67 @@
             $('#filter-backdrop').removeClass('show').addClass('hidden');
             $('#filter-drawer').removeClass('open');
             $('body').removeClass('overflow-hidden');
+        },
+
+        // Initialize price slider
+        initPriceSlider: function() {
+            var sliderEl = document.getElementById('price-slider');
+            if (!sliderEl || typeof noUiSlider === 'undefined') {
+                console.log('SimpleFilters: Price slider element or noUiSlider not found');
+                return;
+            }
+
+            // Prevent double initialization
+            if (sliderEl.noUiSlider) {
+                console.log('SimpleFilters: Price slider already initialized');
+                return;
+            }
+
+            var minRange = parseInt(sliderEl.dataset.min) || 0;
+            var maxRange = parseInt(sliderEl.dataset.max) || 1000;
+            var currentMin = parseInt(sliderEl.dataset.currentMin) || minRange;
+            var currentMax = parseInt(sliderEl.dataset.currentMax) || maxRange;
+
+            console.log('SimpleFilters: Initializing price slider', {
+                min: minRange,
+                max: maxRange,
+                currentMin: currentMin,
+                currentMax: currentMax
+            });
+
+            noUiSlider.create(sliderEl, {
+                start: [currentMin, currentMax],
+                connect: true,
+                range: {
+                    'min': minRange,
+                    'max': maxRange
+                },
+                step: 1,
+                format: {
+                    to: function(value) {
+                        return Math.round(value);
+                    },
+                    from: function(value) {
+                        return Number(value);
+                    }
+                }
+            });
+
+            // Update price display and hidden inputs when slider changes
+            sliderEl.noUiSlider.on('update', function(values) {
+                var minVal = Math.round(values[0]);
+                var maxVal = Math.round(values[1]);
+
+                // Update price display
+                $('.price-min').text('$' + minVal);
+                $('.price-max').text('$' + maxVal);
+
+                // Update hidden inputs
+                $('#min-price').val(minVal);
+                $('#max-price').val(maxVal);
+            });
+
+            console.log('SimpleFilters: Price slider initialized successfully');
         },
 
         // Populate filters from URL parameters
@@ -216,12 +325,39 @@
                 $('input[name="on_sale"]').prop('checked', true);
             }
 
-            // Stock status filters
-            var stockStatus = url.searchParams.get('stock_status');
-            if (stockStatus) {
-                var statuses = stockStatus.split(',');
-                statuses.forEach(function(status) {
-                    $('input[name="stock_status[]"][value="' + status + '"]').prop('checked', true);
+            // Size filters
+            var sizeAttr = url.searchParams.get('pa_size');
+            if (sizeAttr) {
+                var sizes = sizeAttr.split(',');
+                sizes.forEach(function(size) {
+                    $('input[name="pa_size[]"][value="' + size + '"]').prop('checked', true);
+                });
+            }
+
+            // Color filters
+            var colorAttr = url.searchParams.get('pa_color');
+            if (colorAttr) {
+                var colors = colorAttr.split(',');
+                colors.forEach(function(color) {
+                    $('input[name="pa_color[]"][value="' + color + '"]').prop('checked', true);
+                });
+            }
+
+            // Material filters
+            var materialAttr = url.searchParams.get('pa_material');
+            if (materialAttr) {
+                var materials = materialAttr.split(',');
+                materials.forEach(function(material) {
+                    $('input[name="pa_material[]"][value="' + material + '"]').prop('checked', true);
+                });
+            }
+
+            // Brand filters
+            var brandAttr = url.searchParams.get('pa_brand');
+            if (brandAttr) {
+                var brands = brandAttr.split(',');
+                brands.forEach(function(brand) {
+                    $('input[name="pa_brand[]"][value="' + brand + '"]').prop('checked', true);
                 });
             }
 

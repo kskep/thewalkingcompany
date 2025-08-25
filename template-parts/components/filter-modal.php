@@ -40,23 +40,52 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
         } else {
             // Load real filter components
 
-            // Price Filter
-            if (file_exists(get_template_directory() . '/template-parts/components/filters/price-filter.php')) {
-                get_template_part('template-parts/components/filters/price-filter');
-            } else {
-                // Inline price filter
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Price Range', 'eshop-theme') . '</h4>';
-                echo '<div class="price-filter">';
-                echo '<div class="price-inputs flex space-x-2 mb-3">';
-                echo '<input type="number" id="min-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary rounded" placeholder="' . esc_attr__('Min', 'eshop-theme') . '">';
-                echo '<span class="flex items-center text-gray-400">-</span>';
-                echo '<input type="number" id="max-price" class="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-primary rounded" placeholder="' . esc_attr__('Max', 'eshop-theme') . '">';
-                echo '</div>';
-                echo '<button class="apply-price-filter w-full mt-3 px-4 py-2 bg-primary text-white text-sm font-medium uppercase tracking-wide hover:bg-primary-dark transition-colors">' . esc_html__('Apply Price Filter', 'eshop-theme') . '</button>';
-                echo '</div>';
-                echo '</div>';
+            // Price Filter with Slider
+            global $wpdb;
+            $min_price_range = 0;
+            $max_price_range = 1000;
+
+            // Get actual price range from products
+            $prices = $wpdb->get_row("
+                SELECT MIN(CAST(meta_value AS DECIMAL(10,2))) as min_price,
+                       MAX(CAST(meta_value AS DECIMAL(10,2))) as max_price
+                FROM {$wpdb->postmeta} pm
+                INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+                WHERE pm.meta_key = '_price'
+                AND p.post_type = 'product'
+                AND p.post_status = 'publish'
+                AND pm.meta_value != ''
+            ");
+
+            if ($prices && $prices->max_price > 0) {
+                $min_price_range = floor($prices->min_price);
+                $max_price_range = ceil($prices->max_price);
             }
+
+            $current_min = isset($_GET['min_price']) ? floatval($_GET['min_price']) : $min_price_range;
+            $current_max = isset($_GET['max_price']) ? floatval($_GET['max_price']) : $max_price_range;
+
+            echo '<div class="filter-section mb-6">';
+            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Price Range', 'eshop-theme') . '</h4>';
+            echo '<div class="price-filter">';
+
+            // Price display
+            echo '<div class="price-display flex justify-between items-center mb-4">';
+            echo '<span class="price-min text-sm font-medium text-gray-700">' . wc_price($current_min) . '</span>';
+            echo '<span class="price-max text-sm font-medium text-gray-700">' . wc_price($current_max) . '</span>';
+            echo '</div>';
+
+            // Price slider
+            echo '<div class="price-slider-container mb-4">';
+            echo '<div id="price-slider" class="price-slider" data-min="' . esc_attr($min_price_range) . '" data-max="' . esc_attr($max_price_range) . '" data-current-min="' . esc_attr($current_min) . '" data-current-max="' . esc_attr($current_max) . '"></div>';
+            echo '</div>';
+
+            // Hidden inputs for form submission
+            echo '<input type="hidden" id="min-price" value="' . esc_attr($current_min) . '">';
+            echo '<input type="hidden" id="max-price" value="' . esc_attr($current_max) . '">';
+
+            echo '</div>';
+            echo '</div>';
 
             // Product Categories Filter
             $product_categories = get_terms(array(
@@ -106,39 +135,137 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
                 echo '</div>';
             }
 
-            // Stock Status Filter
-            $stock_options = array(
-                'instock' => __('In Stock', 'eshop-theme'),
-                'outofstock' => __('Out of Stock', 'eshop-theme'),
-                'onbackorder' => __('On Backorder', 'eshop-theme')
-            );
-            $selected_stock = isset($_GET['stock_status']) ? (array)$_GET['stock_status'] : array();
+            // Size Filter
+            $size_terms = get_terms(array(
+                'taxonomy' => 'pa_size',
+                'hide_empty' => true,
+                'orderby' => 'menu_order',
+                'order' => 'ASC'
+            ));
 
-            echo '<div class="filter-section mb-6">';
-            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Availability', 'eshop-theme') . '</h4>';
-            echo '<div class="stock-filter space-y-2">';
+            if (!empty($size_terms) && !is_wp_error($size_terms)) {
+                $selected_sizes = isset($_GET['pa_size']) ? (array)$_GET['pa_size'] : array();
 
-            foreach ($stock_options as $value => $label) {
-                $is_checked = in_array($value, $selected_stock);
-                echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
-                echo '<div class="flex items-center space-x-2">';
-                echo '<input type="checkbox" name="stock_status[]" value="' . esc_attr($value) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_checked, true, false) . '>';
-                echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($label) . '</span>';
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Size', 'eshop-theme') . '</h4>';
+                echo '<div class="size-filter">';
+                echo '<div class="size-grid grid grid-cols-4 gap-2">';
 
-                if ($value === 'instock') {
-                    echo '<i class="fas fa-check-circle text-green-500 text-xs" title="' . esc_attr__('Available', 'eshop-theme') . '"></i>';
-                } elseif ($value === 'outofstock') {
-                    echo '<i class="fas fa-times-circle text-red-500 text-xs" title="' . esc_attr__('Not Available', 'eshop-theme') . '"></i>';
-                } elseif ($value === 'onbackorder') {
-                    echo '<i class="fas fa-clock text-yellow-500 text-xs" title="' . esc_attr__('Available Soon', 'eshop-theme') . '"></i>';
+                foreach ($size_terms as $size) {
+                    $is_selected = in_array($size->slug, $selected_sizes);
+                    $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300 hover:border-primary';
+
+                    echo '<label class="size-option cursor-pointer">';
+                    echo '<input type="checkbox" name="pa_size[]" value="' . esc_attr($size->slug) . '" class="hidden"' . checked($is_selected, true, false) . '>';
+                    echo '<span class="size-label block text-center py-2 px-3 border text-sm font-medium transition-all duration-200 ' . $selected_class . '">';
+                    echo esc_html($size->name);
+                    echo '</span>';
+                    echo '</label>';
                 }
 
                 echo '</div>';
-                echo '</label>';
+                echo '</div>';
+                echo '</div>';
             }
 
-            echo '</div>';
-            echo '</div>';
+            // Color Filter
+            $color_terms = get_terms(array(
+                'taxonomy' => 'pa_color',
+                'hide_empty' => true,
+                'orderby' => 'name',
+                'order' => 'ASC'
+            ));
+
+            if (!empty($color_terms) && !is_wp_error($color_terms)) {
+                $selected_colors = isset($_GET['pa_color']) ? (array)$_GET['pa_color'] : array();
+
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Color', 'eshop-theme') . '</h4>';
+                echo '<div class="color-filter space-y-2 max-h-48 overflow-y-auto">';
+
+                foreach ($color_terms as $color) {
+                    $is_selected = in_array($color->slug, $selected_colors);
+                    $color_value = get_term_meta($color->term_id, 'color', true);
+
+                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                    echo '<div class="flex items-center space-x-2">';
+                    echo '<input type="checkbox" name="pa_color[]" value="' . esc_attr($color->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+
+                    if ($color_value) {
+                        echo '<span class="w-4 h-4 rounded-full border border-gray-300 inline-block" style="background-color: ' . esc_attr($color_value) . ';" title="' . esc_attr($color->name) . '"></span>';
+                    }
+
+                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($color->name) . '</span>';
+                    echo '</div>';
+                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($color->count) . '</span>';
+                    echo '</label>';
+                }
+
+                echo '</div>';
+                echo '</div>';
+            }
+
+            // Material Filter
+            $material_terms = get_terms(array(
+                'taxonomy' => 'pa_material',
+                'hide_empty' => true,
+                'orderby' => 'name',
+                'order' => 'ASC'
+            ));
+
+            if (!empty($material_terms) && !is_wp_error($material_terms)) {
+                $selected_materials = isset($_GET['pa_material']) ? (array)$_GET['pa_material'] : array();
+
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Material', 'eshop-theme') . '</h4>';
+                echo '<div class="material-filter space-y-2 max-h-48 overflow-y-auto">';
+
+                foreach ($material_terms as $material) {
+                    $is_selected = in_array($material->slug, $selected_materials);
+
+                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                    echo '<div class="flex items-center space-x-2">';
+                    echo '<input type="checkbox" name="pa_material[]" value="' . esc_attr($material->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($material->name) . '</span>';
+                    echo '</div>';
+                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($material->count) . '</span>';
+                    echo '</label>';
+                }
+
+                echo '</div>';
+                echo '</div>';
+            }
+
+            // Brand Filter
+            $brand_terms = get_terms(array(
+                'taxonomy' => 'pa_brand',
+                'hide_empty' => true,
+                'orderby' => 'name',
+                'order' => 'ASC'
+            ));
+
+            if (!empty($brand_terms) && !is_wp_error($brand_terms)) {
+                $selected_brands = isset($_GET['pa_brand']) ? (array)$_GET['pa_brand'] : array();
+
+                echo '<div class="filter-section mb-6">';
+                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Brand', 'eshop-theme') . '</h4>';
+                echo '<div class="brand-filter space-y-2 max-h-48 overflow-y-auto">';
+
+                foreach ($brand_terms as $brand) {
+                    $is_selected = in_array($brand->slug, $selected_brands);
+
+                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
+                    echo '<div class="flex items-center space-x-2">';
+                    echo '<input type="checkbox" name="pa_brand[]" value="' . esc_attr($brand->slug) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
+                    echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html($brand->name) . '</span>';
+                    echo '</div>';
+                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($brand->count) . '</span>';
+                    echo '</label>';
+                }
+
+                echo '</div>';
+                echo '</div>';
+            }
         }
         ?>
     </div>
@@ -204,6 +331,55 @@ body.overflow-hidden {
 /* Filter section hover effects */
 .filter-section label:hover {
     background-color: #f9fafb;
+}
+
+/* Price Slider Styles */
+.price-slider {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    position: relative;
+    margin: 10px 0;
+}
+
+.price-slider .noUi-connect {
+    background: #ee81b3;
+}
+
+.price-slider .noUi-handle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ee81b3;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.price-slider .noUi-handle:before,
+.price-slider .noUi-handle:after {
+    display: none;
+}
+
+/* Size Filter Styles */
+.size-option input:checked + .size-label {
+    background-color: #ee81b3 !important;
+    color: white !important;
+    border-color: #ee81b3 !important;
+}
+
+.size-label:hover {
+    border-color: #ee81b3 !important;
+}
+
+/* Color Swatch Styles */
+.color-filter .color-swatch {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    display: inline-block;
+    position: relative;
 }
 
 /* Button hover effects */
