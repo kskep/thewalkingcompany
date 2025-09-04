@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Variants Test - The Walking Theme</title>
+    
+    <!-- Tailwind CSS (as used in the theme) -->
+    <script src="https://cdn.tailwindcss.com/2.2.19"></script>
+    
+    <!-- Google Fonts (Roboto as per theme) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Theme Colors -->
+    <style>
+        :root {
+            --primary-pink: #EE81B3;
+            --primary-pink-light: #F5A8C7;
+            --primary-pink-dark: #E55A9F;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #fafafa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e5e5e5;
+        }
+        
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .product-mockup {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .product-image {
+            aspect-ratio: 1;
+            background: #f0f0f0;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.2rem;
+        }
+        
+        .product-info h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            color: var(--primary-pink);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .product-mockup {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+    
+    <!-- Color Variants CSS -->
+    <link rel="stylesheet" href="css/components/color-variants.css">
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Color Variants Test Page</h1>
+            <p class="text-gray-600">Testing the product color linking system for The Walking Theme</p>
+        </header>
+        
+        <!-- Test Case 1: Basic Color Variants with Images -->
+        <section class="test-section">
+            <h2 class="test-title">Test Case 1: Color Variants with Featured Images</h2>
+            <div class="product-mockup">
+                <div class="product-image">
+                    Product Image Placeholder
+                </div>
+                <div class="product-info">
+                    <h2>Walking Comfort Shoe</h2>
+                    <div class="product-price">$89.99</div>
+                    <p class="product-description">
+                        Experience ultimate comfort with our premium walking shoes. 
+                        Available in multiple colors to match your style.
+                    </p>
+                    
+                    <!-- Color Variants Component -->
+                    <div class="product-color-variants" data-product-id="123">
+                        <h4 class="color-variants-title">Available Colors</h4>
+                        <div class="color-variants-container">
+                            <div class="color-variant selected" 
+                                 data-product-id="123"
+                                 data-url="#black"
+                                 data-color-name="Classic Black"
+                                 data-price="$89.99"
+                                 data-in-stock="1"
+                                 title="Classic Black"
+                                 role="button"
+                                 tabindex="0">
+                                <img src="https://via.placeholder.com/48x48/000000/ffffff?text=B" alt="Classic Black" />
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="124"
+                                 data-url="#brown"
+                                 data-color-name="Rich Brown"
+                                 data-price="$89.99"
+                                 data-in-stock="1"
+                                 title="Rich Brown"
+                                 role="button"
+                                 tabindex="0">
+                                <img src="https://via.placeholder.com/48x48/8B4513/ffffff?text=B" alt="Rich Brown" />
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="125"
+                                 data-url="#navy"
+                                 data-color-name="Navy Blue"
+                                 data-price="$94.99"
+                                 data-in-stock="1"
+                                 title="Navy Blue"
+                                 role="button"
+                                 tabindex="0">
+                                <img src="https://via.placeholder.com/48x48/1e3a8a/ffffff?text=N" alt="Navy Blue" />
+                            </div>
+                            <div class="color-variant out-of-stock" 
+                                 data-product-id="126"
+                                 data-url="#red"
+                                 data-color-name="Crimson Red"
+                                 data-price="$89.99"
+                                 data-in-stock="0"
+                                 title="Crimson Red - Out of Stock"
+                                 role="button"
+                                 tabindex="0">
+                                <img src="https://via.placeholder.com/48x48/dc2626/ffffff?text=R" alt="Crimson Red" />
+                            </div>
+                        </div>
+                        
+                        <div class="selected-color-info">
+                            <div class="selected-color-name">Selected: Classic Black</div>
+                            <div class="selected-color-price">$89.99</div>
+                        </div>
+                        
+                        <div class="color-selection-feedback" style="display: none;">
+                            <span class="feedback-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Test Case 2: Color Variants with Color Swatches -->
+        <section class="test-section">
+            <h2 class="test-title">Test Case 2: Color Variants with Color Swatches (No Images)</h2>
+            <div class="product-mockup">
+                <div class="product-image">
+                    Product Image Placeholder
+                </div>
+                <div class="product-info">
+                    <h2>Athletic Running Shoe</h2>
+                    <div class="product-price">$129.99</div>
+                    <p class="product-description">
+                        High-performance running shoes with advanced cushioning technology. 
+                        Choose from our vibrant color collection.
+                    </p>
+                    
+                    <!-- Color Variants Component with Color Swatches -->
+                    <div class="product-color-variants" data-product-id="201">
+                        <h4 class="color-variants-title">Available Colors</h4>
+                        <div class="color-variants-container">
+                            <div class="color-variant selected" 
+                                 data-product-id="201"
+                                 data-url="#electric-blue"
+                                 data-color-name="Electric Blue"
+                                 data-price="$129.99"
+                                 data-in-stock="1"
+                                 title="Electric Blue"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background-color: #0080ff;"></div>
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="202"
+                                 data-url="#neon-green"
+                                 data-color-name="Neon Green"
+                                 data-price="$129.99"
+                                 data-in-stock="1"
+                                 title="Neon Green"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background-color: #39ff14;"></div>
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="203"
+                                 data-url="#hot-pink"
+                                 data-color-name="Hot Pink"
+                                 data-price="$134.99"
+                                 data-in-stock="1"
+                                 title="Hot Pink"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background-color: #ff1493;"></div>
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="204"
+                                 data-url="#sunset-orange"
+                                 data-color-name="Sunset Orange"
+                                 data-price="$129.99"
+                                 data-in-stock="1"
+                                 title="Sunset Orange"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background-color: #ff6600;"></div>
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="205"
+                                 data-url="#deep-purple"
+                                 data-color-name="Deep Purple"
+                                 data-price="$129.99"
+                                 data-in-stock="1"
+                                 title="Deep Purple"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background-color: #663399;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="selected-color-info">
+                            <div class="selected-color-name">Selected: Electric Blue</div>
+                            <div class="selected-color-price">$129.99</div>
+                        </div>
+                        
+                        <div class="color-selection-feedback" style="display: none;">
+                            <span class="feedback-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Test Case 3: Mixed Images and Color Swatches -->
+        <section class="test-section">
+            <h2 class="test-title">Test Case 3: Mixed Images and Color Swatches</h2>
+            <div class="product-mockup">
+                <div class="product-image">
+                    Product Image Placeholder
+                </div>
+                <div class="product-info">
+                    <h2>Designer Casual Shoe</h2>
+                    <div class="product-price">$199.99</div>
+                    <p class="product-description">
+                        Premium designer casual shoes crafted with finest materials. 
+                        Limited edition colors available.
+                    </p>
+                    
+                    <!-- Color Variants Component with Mixed Types -->
+                    <div class="product-color-variants" data-product-id="301">
+                        <h4 class="color-variants-title">Available Colors</h4>
+                        <div class="color-variants-container">
+                            <div class="color-variant selected" 
+                                 data-product-id="301"
+                                 data-url="#vintage-leather"
+                                 data-color-name="Vintage Leather"
+                                 data-price="$199.99"
+                                 data-in-stock="1"
+                                 title="Vintage Leather"
+                                 role="button"
+                                 tabindex="0">
+                                <img src="https://via.placeholder.com/48x48/8B4513/ffffff?text=VL" alt="Vintage Leather" />
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="302"
+                                 data-url="#matte-black"
+                                 data-color-name="Matte Black"
+                                 data-price="$199.99"
+                                 data-in-stock="1"
+                                 title="Matte Black"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background-color: #2c2c2c;"></div>
+                            </div>
+                            <div class="color-variant" 
+                                 data-product-id="303"
+                                 data-url="#metallic-silver"
+                                 data-color-name="Metallic Silver"
+                                 data-price="$219.99"
+                                 data-in-stock="1"
+                                 title="Metallic Silver"
+                                 role="button"
+                                 tabindex="0">
+                                <div class="color-swatch" style="background: linear-gradient(45deg, #c0c0c0, #e6e6e6, #b3b3b3);"></div>
+                            </div>
+                            <div class="color-variant out-of-stock" 
+                                 data-product-id="304"
+                                 data-url="#gold-edition"
+                                 data-color-name="Gold Edition"
+                                 data-price="$299.99"
+                                 data-in-stock="0"
+                                 title="Gold Edition - Out of Stock"
+                                 role="button"
+                                 tabindex="0">
+                                <img src="https://via.placeholder.com/48x48/FFD700/000000?text=G" alt="Gold Edition" />
+                            </div>
+                        </div>
+                        
+                        <div class="selected-color-info">
+                            <div class="selected-color-name">Selected: Vintage Leather</div>
+                            <div class="selected-color-price">$199.99</div>
+                        </div>
+                        
+                        <div class="color-selection-feedback" style="display: none;">
+                            <span class="feedback-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Test Case 4: Loading State -->
+        <section class="test-section">
+            <h2 class="test-title">Test Case 4: Loading State</h2>
+            <div class="product-color-variants" data-product-id="401">
+                <h4 class="color-variants-title">Available Colors</h4>
+                <div class="color-variants-loading" style="display: flex;">
+                    <div class="color-variant-skeleton"></div>
+                    <div class="color-variant-skeleton"></div>
+                    <div class="color-variant-skeleton"></div>
+                    <div class="color-variant-skeleton"></div>
+                    <div class="color-variant-skeleton"></div>
+                </div>
+                <div class="color-variants-container" style="display: none;"></div>
+            </div>
+        </section>
+        
+        <!-- Instructions -->
+        <section class="test-section">
+            <h2 class="test-title">Testing Instructions</h2>
+            <div class="space-y-4 text-gray-700">
+                <div class="bg-blue-50 p-4 border-l-4 border-blue-500">
+                    <h4 class="font-semibold text-blue-900 mb-2">Interactive Tests:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Click on different color variants to see selection changes</li>
+                        <li>Hover over variants to see preview information</li>
+                        <li>Test keyboard navigation with Tab, Enter, and Arrow keys</li>
+                        <li>Verify out-of-stock variants show disabled state</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-green-50 p-4 border-l-4 border-green-500">
+                    <h4 class="font-semibold text-green-900 mb-2">Visual Tests:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Verify circular shape of color variants</li>
+                        <li>Check selection state styling (pink border)</li>
+                        <li>Confirm hover effects and transitions</li>
+                        <li>Test responsive behavior on mobile devices</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-yellow-50 p-4 border-l-4 border-yellow-500">
+                    <h4 class="font-semibold text-yellow-900 mb-2">Design Requirements Met:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>✅ Magazine-style aesthetic without border radius/shadows</li>
+                        <li>✅ Circular thumbnails with featured image fallback</li>
+                        <li>✅ Color swatches when no image available</li>
+                        <li>✅ Pink accent color (#EE81B3) for selection</li>
+                        <li>✅ Clean, editorial look matching theme standards</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Mock AJAX object for testing -->
+    <script>
+        window.eshop_ajax = {
+            ajax_url: '/wp-admin/admin-ajax.php',
+            nonce: 'mock-nonce-for-testing'
+        };
+    </script>
+    
+    <!-- Color Variants JavaScript -->
+    <script src="js/components/color-variants.js"></script>
+    
+    <!-- Test Enhancement Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override fetch for testing
+            const originalFetch = window.fetch;
+            window.fetch = function(url, options) {
+                // Mock successful response for color variants
+                if (url.includes('admin-ajax.php') && options.body && options.body.has && options.body.has('action')) {
+                    return Promise.resolve({
+                        json: () => Promise.resolve({
+                            success: true,
+                            data: {
+                                variants: [],
+                                current_id: 123,
+                                count: 0
+                            }
+                        })
+                    });
+                }
+                return originalFetch.apply(this, arguments);
+            };
+            
+            // Add test functionality
+            console.log('Color Variants Test Page Loaded');
+            console.log('Available color variant containers:', document.querySelectorAll('.product-color-variants').length);
+            
+            // Add click logging for testing
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.color-variant')) {
+                    const variant = e.target.closest('.color-variant');
+                    console.log('Color variant clicked:', {
+                        productId: variant.dataset.productId,
+                        colorName: variant.dataset.colorName,
+                        price: variant.dataset.price,
+                        inStock: variant.dataset.inStock
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

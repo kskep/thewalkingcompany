@@ -18,6 +18,7 @@ require_once get_template_directory() . '/inc/wishlist-functions.php';
 require_once get_template_directory() . '/inc/woocommerce-functions.php';
 require_once get_template_directory() . '/inc/woocommerce/product-display.php';
 require_once get_template_directory() . '/inc/mega-menu-walker.php';
+require_once get_template_directory() . '/inc/color-grouping-functions.php';
 
 /**
  * Enqueue Scripts and Styles
@@ -55,6 +56,10 @@ function eshop_theme_scripts() {
 
     if (is_product()) {
         wp_enqueue_style('eshop-single-product', get_template_directory_uri() . '/css/pages.single-product.css', array('eshop-theme-style'), '1.0.0');
+        wp_enqueue_style('eshop-product-gallery', get_template_directory_uri() . '/css/components/product-gallery.css', array('eshop-theme-style'), '1.0.0');
+        wp_enqueue_style('eshop-color-variants', get_template_directory_uri() . '/css/components/color-variants.css', array('eshop-theme-style'), '1.0.0');
+        wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), '1.0.0', true);
+        wp_enqueue_script('eshop-color-variants', get_template_directory_uri() . '/js/components/color-variants.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
     }
 
     // External CSS
@@ -184,6 +189,26 @@ function eshop_handle_custom_filters($query) {
     }
 }
 add_action('pre_get_posts', 'eshop_handle_custom_filters');
+
+/**
+ * Custom Product Gallery Integration
+ * Replace default WooCommerce gallery with our custom component
+ */
+function eshop_custom_product_gallery() {
+    // Remove default WooCommerce product images
+    remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
+    
+    // Add our custom gallery component
+    add_action('woocommerce_before_single_product_summary', 'eshop_show_custom_product_gallery', 20);
+}
+add_action('init', 'eshop_custom_product_gallery');
+
+/**
+ * Display custom product gallery
+ */
+function eshop_show_custom_product_gallery() {
+    get_template_part('template-parts/components/product-gallery');
+}
 
 /**
  * Include filter modal on WooCommerce archive pages

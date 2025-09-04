@@ -1,0 +1,232 @@
+/**
+ * Color Variants Component Styles
+ * 
+ * Magazine-style color selection interface without borders/shadows
+ * 
+ * @package E-Shop Theme
+ */
+
+/* Color Variants Container */
+.product-color-variants {
+    margin: 1.5rem 0;
+}
+
+.color-variants-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary, #1a1a1a);
+    margin-bottom: 1rem;
+}
+
+.color-variants-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Individual Color Variant */
+.color-variant {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    background: #f8f8f8;
+    flex-shrink: 0;
+}
+
+.color-variant:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-pink, #EE81B3);
+}
+
+.color-variant.selected {
+    border-color: var(--primary-pink, #EE81B3);
+    background: white;
+    transform: scale(1.1);
+}
+
+/* Variant with featured image */
+.color-variant img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Color swatch fallback */
+.color-variant .color-swatch {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Variant information tooltip */
+.color-variant::after {
+    content: attr(data-color-name);
+    position: absolute;
+    bottom: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-primary, #1a1a1a);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.color-variant:hover::after {
+    opacity: 1;
+}
+
+/* Out of stock state */
+.color-variant.out-of-stock {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.color-variant.out-of-stock::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 2px;
+    height: 60%;
+    background: #dc2626;
+    z-index: 2;
+}
+
+.color-variant.out-of-stock:hover {
+    transform: none;
+    border-color: transparent;
+}
+
+/* Color variant details */
+.color-variant-details {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #e5e5e5;
+    z-index: 20;
+}
+
+.color-variant:hover .color-variant-details {
+    display: block;
+}
+
+.color-variant-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary, #1a1a1a);
+    margin-bottom: 0.25rem;
+}
+
+.color-variant-price {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #666);
+}
+
+/* Color variants loading state */
+.color-variants-loading {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.color-variant-skeleton {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Color selection feedback */
+.color-selection-feedback {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary, #666);
+}
+
+.color-selection-feedback.selection-changed {
+    color: var(--primary-pink, #EE81B3);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Selected color display */
+.selected-color-info {
+    margin-top: 1rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid #e5e5e5;
+}
+
+.selected-color-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary, #1a1a1a);
+    margin-bottom: 0.25rem;
+}
+
+.selected-color-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-pink, #EE81B3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .color-variant {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .color-variants-container {
+        gap: 0.5rem;
+    }
+    
+    .color-variant::after {
+        font-size: 0.7rem;
+        bottom: -2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .color-variant {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .color-variants-title {
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+}
