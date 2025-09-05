@@ -1,0 +1,193 @@
+/**
+ * Wishlist Component Styles
+ * 
+ * @package E-Shop Theme
+ */
+
+/* Wishlist Button Base Styles */
+.add-to-wishlist {
+  position: relative;
+  transition: all 0.2s ease;
+  z-index: 10;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.add-to-wishlist:hover {
+  transform: scale(1.1);
+}
+
+.add-to-wishlist.in-wishlist i {
+  color: #dc2626 !important;
+}
+
+.add-to-wishlist.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Wishlist Button in Product Cards */
+.product-card .add-to-wishlist {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover .add-to-wishlist {
+  opacity: 1;
+}
+
+/* Wishlist Button on Single Product */
+.single-product-wishlist .add-to-wishlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.single-product-wishlist .add-to-wishlist:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.single-product-wishlist .add-to-wishlist.in-wishlist {
+  background: #fef2f2;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+/* Modern Action Button Style */
+.modern-action-btn.add-to-wishlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #6b7280;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.modern-action-btn.add-to-wishlist:hover {
+  border-color: var(--primary-pink, #EE81B3);
+  color: var(--primary-pink, #EE81B3);
+  background: #fdf2f8;
+  transform: translateY(-1px);
+}
+
+.modern-action-btn.add-to-wishlist.in-wishlist {
+  border-color: var(--primary-pink, #EE81B3);
+  color: var(--primary-pink, #EE81B3);
+  background: #fdf2f8;
+}
+
+/* Wishlist Feedback Tooltip */
+.wishlist-feedback {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 20;
+}
+
+.add-to-wishlist:hover .wishlist-feedback {
+  opacity: 1;
+}
+
+/* Heart Icon Animations */
+.add-to-wishlist i.fa-heart {
+  transition: all 0.2s ease;
+}
+
+.add-to-wishlist.in-wishlist i.fa-heart {
+  animation: heartBeat 0.5s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Loading State */
+.add-to-wishlist.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top-color: #dc2626;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-card .add-to-wishlist {
+    opacity: 1;
+    width: 28px;
+    height: 28px;
+  }
+  
+  .modern-action-btn.add-to-wishlist {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .single-product-wishlist .add-to-wishlist {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .add-to-wishlist {
+    background: rgba(31, 41, 55, 0.9);
+    color: #f3f4f6;
+  }
+  
+  .modern-action-btn.add-to-wishlist {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f3f4f6;
+  }
+  
+  .wishlist-feedback {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+  }
+}

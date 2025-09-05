@@ -82,6 +82,9 @@ function eshop_theme_scripts() {
     if (class_exists('WooCommerce')) {
         wp_enqueue_style('eshop-flying-cart', get_template_directory_uri() . '/css/components/flying-cart.css', array(), '1.0.0');
         wp_enqueue_script('eshop-flying-cart', get_template_directory_uri() . '/js/components/flying-cart.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        
+        // Wishlist Component
+        wp_enqueue_style('eshop-wishlist', get_template_directory_uri() . '/css/components/wishlist.css', array('eshop-theme-style'), '1.0.0');
     }
 
     // Filter component JavaScript - Simple version for WordPress compatibility
@@ -105,11 +108,49 @@ function eshop_theme_scripts() {
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('eshop_nonce')
     ));
+    
+    // Add custom script for related products initialization
+    if (is_product()) {
+        wp_add_inline_script('eshop-theme-script', '
+            jQuery(document).ready(function($) {
+                // Initialize product sliders in related products when page loads
+                setTimeout(function() {
+                    if (typeof initializeProductCardSliders === "function") {
+                        initializeProductCardSliders();
+                    }
+                    
+                    // Initialize wishlist functionality
+                    if (typeof initWishlistButtons === "function") {
+                        initWishlistButtons();
+                    } else {
+                        // Fallback initialization for wishlist buttons
+                        $(".add-to-wishlist").each(function() {
+                            var $btn = $(this);
+                            var productId = $btn.data("product-id");
+                            if (productId && !$btn.hasClass("initialized")) {
+                                $btn.addClass("initialized");
+                            }
+                        });
+                    }
+                }, 500);
+            });
+        ');
+    }
 }
 add_action('wp_enqueue_scripts', 'eshop_theme_scripts');
 
 // Hide WooCommerce archive page titles; we use breadcrumbs instead
 add_filter('woocommerce_show_page_title', '__return_false');
+
+/**
+ * Change related products count to 4
+ */
+function eshop_related_products_args($args) {
+    $args['posts_per_page'] = 4;
+    $args['columns'] = 4;
+    return $args;
+}
+add_filter('woocommerce_output_related_products_args', 'eshop_related_products_args');
 
 /**
  * Handle custom filter parameters for WooCommerce
