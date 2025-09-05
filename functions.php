@@ -19,6 +19,7 @@ require_once get_template_directory() . '/inc/woocommerce-functions.php';
 require_once get_template_directory() . '/inc/woocommerce/product-display.php';
 require_once get_template_directory() . '/inc/mega-menu-walker.php';
 require_once get_template_directory() . '/inc/color-grouping-functions.php';
+require_once get_template_directory() . '/inc/auth-functions.php';
 
 /**
  * Enqueue Scripts and Styles

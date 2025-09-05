@@ -18,7 +18,7 @@ $current_id = $args['current_id'] ?? 0;
 
 // Fallback: if no variants passed, try to get them from global product
 if (empty($variants) && !empty($current_id)) {
-    $variants = eshop_get_product_color_variants($current_id);
+    $variants = eshop_get_product_color_group_variants($current_id);
 }
 
 // Don't display if only one or no variants

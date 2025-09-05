@@ -549,13 +549,16 @@ function eshop_get_account_menu_items() {
             'url' => wc_logout_url()
         );
     } else {
+        // Modal-based authentication options for logged-out users
         $items['login'] = array(
             'title' => __('Login', 'eshop-theme'),
-            'url' => wc_get_page_permalink('myaccount')
+            'url' => '#',
+            'action' => 'open-login-modal'
         );
         $items['register'] = array(
             'title' => __('Register', 'eshop-theme'),
-            'url' => wc_get_page_permalink('myaccount')
+            'url' => '#',
+            'action' => 'open-register-modal'
         );
     }
     

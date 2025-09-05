@@ -184,6 +184,15 @@
             $('.wishlist-dropdown, .minicart-dropdown').addClass('hidden');
         });
 
+        // Handle modal trigger clicks inside account dropdown
+        $(document).on('click', '.account-dropdown .modal-trigger', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Close the dropdown first
+            $('.account-dropdown').addClass('hidden');
+            // Let the auth modal component handle the modal opening
+        });
+
         $('.minicart-toggle').on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();

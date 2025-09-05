@@ -43,7 +43,7 @@ function eshop_get_color_group_products($grouped_sku) {
  * @param int $product_id Current product ID
  * @return array Array of color variant data
  */
-function eshop_get_product_color_variants($product_id) {
+function eshop_get_product_color_group_variants($product_id) {
     $grouped_sku = get_post_meta($product_id, 'grouped-sku', true);
     
     if (!$grouped_sku) {
@@ -86,7 +86,7 @@ function eshop_get_product_color_variants($product_id) {
  * @return bool True if product has color variants
  */
 function eshop_product_has_color_variants($product_id) {
-    $variants = eshop_get_product_color_variants($product_id);
+    $variants = eshop_get_product_color_group_variants($product_id);
     return count($variants) > 1;
 }
 
@@ -417,7 +417,7 @@ function eshop_ajax_get_color_variants() {
         ));
     }
     
-    $variants = eshop_get_product_color_variants($product_id);
+    $variants = eshop_get_product_color_group_variants($product_id);
     
     wp_send_json_success(array(
         'variants' => $variants,
@@ -444,7 +444,7 @@ function eshop_display_color_variants() {
     }
     
     $product_id = $product->get_id();
-    $variants = eshop_get_product_color_variants($product_id);
+    $variants = eshop_get_product_color_group_variants($product_id);
     
     // Only display if there are multiple variants
     if (count($variants) <= 1) {

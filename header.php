@@ -112,8 +112,15 @@
                                     <?php
                                     $account_items = eshop_get_account_menu_items();
                                     foreach ($account_items as $key => $item) :
+                                        $css_class = 'block px-4 py-2 text-sm text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200';
+                                        $data_action = '';
+                                        
+                                        if (isset($item['action'])) {
+                                            $css_class .= ' modal-trigger';
+                                            $data_action = ' data-action="' . esc_attr($item['action']) . '"';
+                                        }
                                     ?>
-                                        <a href="<?php echo esc_url($item['url']); ?>" class="block px-4 py-2 text-sm text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200">
+                                        <a href="<?php echo esc_url($item['url']); ?>" class="<?php echo $css_class; ?>"<?php echo $data_action; ?>>
                                             <?php echo esc_html($item['title']); ?>
                                         </a>
                                     <?php endforeach; ?>
@@ -247,5 +254,12 @@
             </div>
         </div>
     </header>
+
+    <?php
+    // Include authentication modal for logged-out users
+    if (!is_user_logged_in()) {
+        get_template_part('template-parts/components/auth-modal');
+    }
+    ?>
 
     <div id="content" class="site-content">
