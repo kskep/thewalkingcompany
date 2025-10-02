@@ -1,462 +1,520 @@
 /**
- * Product Gallery Component JavaScript
+ * Product Gallery Component - 2025 Standards
  * 
- * Handles product gallery interactions, Swiper integration, and lightbox functionality
- * Following 2025 UX/UI standards with accessibility features
+ * Handles Swiper gallery initialization, lightbox functionality,
+ * and accessibility features for the single product page
  *
  * @package thewalkingtheme
  */
 
-(function() {
-    'use strict';
-
-    class ProductGallery {
-        constructor(container) {
-            this.container = container;
-            this.mainSlider = null;
-            this.thumbsSlider = null;
-            this.currentIndex = 0;
-            this.images = [];
-            this.lightbox = null;
-            this.isLightboxOpen = false;
-
-            this.init();
-        }
-
-        init() {
-            this.cacheElements();
-            this.bindEvents();
-            this.initializeSliders();
-            this.setupKeyboardNavigation();
-            this.setupAccessibility();
-        }
-
-        cacheElements() {
-            this.mainSliderEl = this.container.querySelector('.product-main-slider');
-            this.thumbsSliderEl = this.container.querySelector('.product-thumbs-slider');
-            this.thumbnailButtons = this.container.querySelectorAll('.thumbnail-button');
-            this.zoomTriggers = this.container.querySelectorAll('.zoom-trigger');
-            this.lightbox = this.container.querySelector('.gallery-lightbox');
-            this.lightboxImage = this.lightbox?.querySelector('.lightbox-image');
-            this.progressCurrent = this.container.querySelector('.current-slide');
-            this.progressTotal = this.container.querySelector('.total-slides');
-
-            // Cache image data
-            this.images = Array.from(this.container.querySelectorAll('.gallery-main-image')).map(img => ({
-                src: img.src,
-                large: img.dataset.large || img.src,
-                alt: img.alt,
-                title: img.title
-            }));
-        }
-
-        bindEvents() {
-            // Thumbnail clicks
-            this.thumbnailButtons.forEach((button, index) => {
-                button.addEventListener('click', () => this.goToSlide(index));
-            });
-
-            // Zoom triggers
-            this.zoomTriggers.forEach((trigger, index) => {
-                trigger.addEventListener('click', () => this.openLightbox(index));
-            });
-
-            // Lightbox events
-            if (this.lightbox) {
-                const backdrop = this.lightbox.querySelector('.lightbox-backdrop');
-                const closeBtn = this.lightbox.querySelector('.lightbox-close');
-                const prevBtn = this.lightbox.querySelector('.lightbox-prev');
-                const nextBtn = this.lightbox.querySelector('.lightbox-next');
-
-                backdrop?.addEventListener('click', () => this.closeLightbox());
-                closeBtn?.addEventListener('click', () => this.closeLightbox());
-                prevBtn?.addEventListener('click', () => this.lightboxPrev());
-                nextBtn?.addEventListener('click', () => this.lightboxNext());
-            }
-
-            // Image double-click to zoom
-            this.container.addEventListener('dblclick', (e) => {
-                if (e.target.classList.contains('gallery-main-image')) {
-                    this.openLightbox(this.currentIndex);
-                }
-            });
-        }
-
-        initializeSliders() {
-            // Initialize thumbnails slider first
-            if (this.thumbsSliderEl && typeof Swiper !== 'undefined') {
-                this.thumbsSlider = new Swiper(this.thumbsSliderEl, {
-                    spaceBetween: 12,
-                    slidesPerView: 'auto',
-                    freeMode: true,
-                    watchSlidesProgress: true,
-                    breakpoints: {
-                        320: {
-                            spaceBetween: 8,
-                        },
-                        768: {
-                            spaceBetween: 12,
-                        },
-                        1024: {
-                            spaceBetween: 12,
-                            direction: window.innerWidth >= 1024 && this.container.classList.contains('gallery-desktop-layout') ? 'vertical' : 'horizontal',
-                        }
-                    }
-                });
-            }
-
-            // Initialize main slider
-            if (this.mainSliderEl && typeof Swiper !== 'undefined') {
-                this.mainSlider = new Swiper(this.mainSliderEl, {
-                    spaceBetween: 0,
-                    effect: 'fade',
-                    fadeEffect: {
-                        crossFade: true
-                    },
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    thumbs: this.thumbsSlider ? {
-                        swiper: this.thumbsSlider,
-                        slideThumbActiveClass: 'active',
-                        thumbsContainerClass: 'product-thumbs-slider'
-                    } : null,
-                    keyboard: {
-                        enabled: true,
-                        onlyInViewport: true,
-                    },
-                    a11y: {
-                        enabled: true,
-                        prevSlideMessage: 'Previous image',
-                        nextSlideMessage: 'Next image',
-                    },
-                    on: {
-                        slideChange: (swiper) => {
-                            this.currentIndex = swiper.activeIndex;
-                            this.updateProgress();
-                            this.updateThumbnailsActive();
-                            this.announceSlideChange();
-                        }
-                    }
-                });
-
-                // Initial setup
-                this.updateProgress();
-                this.updateThumbnailsActive();
-            } else {
-                // Fallback for when Swiper is not available
-                this.setupFallbackNavigation();
-            }
-        }
-
-        setupFallbackNavigation() {
-            const images = this.container.querySelectorAll('.gallery-main-image');
-            const navNext = this.container.querySelector('.swiper-button-next');
-            const navPrev = this.container.querySelector('.swiper-button-prev');
-
-            if (images.length <= 1) return;
-
-            // Hide all images except first
-            images.forEach((img, index) => {
-                img.style.display = index === 0 ? 'block' : 'none';
-            });
-
-            navNext?.addEventListener('click', () => {
-                if (this.currentIndex < images.length - 1) {
-                    this.goToSlide(this.currentIndex + 1);
-                }
-            });
-
-            navPrev?.addEventListener('click', () => {
-                if (this.currentIndex > 0) {
-                    this.goToSlide(this.currentIndex - 1);
-                }
-            });
-        }
-
-        goToSlide(index) {
-            if (index < 0 || index >= this.images.length) return;
-
-            this.currentIndex = index;
-
-            if (this.mainSlider) {
-                this.mainSlider.slideTo(index);
-            } else {
-                // Fallback
-                const images = this.container.querySelectorAll('.gallery-main-image');
-                images.forEach((img, i) => {
-                    img.style.display = i === index ? 'block' : 'none';
-                });
-                this.updateProgress();
-                this.updateThumbnailsActive();
-            }
-        }
-
-        updateProgress() {
-            if (this.progressCurrent) {
-                this.progressCurrent.textContent = this.currentIndex + 1;
-            }
-            if (this.progressTotal) {
-                this.progressTotal.textContent = this.images.length;
-            }
-        }
-
-        updateThumbnailsActive() {
-            this.thumbnailButtons.forEach((button, index) => {
-                button.classList.toggle('active', index === this.currentIndex);
-            });
-        }
-
-        openLightbox(index = this.currentIndex) {
-            if (!this.lightbox || !this.images[index]) return;
-
-            this.isLightboxOpen = true;
-            this.currentIndex = index;
-
-            // Set image
-            if (this.lightboxImage) {
-                this.lightboxImage.src = this.images[index].large;
-                this.lightboxImage.alt = this.images[index].alt;
-            }
-
-            // Show lightbox
-            this.lightbox.classList.add('active');
-            this.lightbox.setAttribute('aria-hidden', 'false');
-
-            // Trap focus
-            this.trapFocus(this.lightbox);
-
-            // Prevent body scroll
-            document.body.style.overflow = 'hidden';
-
-            // Announce to screen readers
-            this.announceLightboxOpen();
-        }
-
-        closeLightbox() {
-            if (!this.lightbox || !this.isLightboxOpen) return;
-
-            this.isLightboxOpen = false;
-            this.lightbox.classList.remove('active');
-            this.lightbox.setAttribute('aria-hidden', 'true');
-
-            // Restore body scroll
-            document.body.style.overflow = '';
-
-            // Return focus to trigger
-            const trigger = this.zoomTriggers[this.currentIndex];
-            if (trigger) {
-                trigger.focus();
-            }
-
-            // Announce to screen readers
-            this.announceLightboxClose();
-        }
-
-        lightboxPrev() {
-            if (this.currentIndex > 0) {
-                this.currentIndex--;
-                this.updateLightboxImage();
-            }
-        }
-
-        lightboxNext() {
-            if (this.currentIndex < this.images.length - 1) {
-                this.currentIndex++;
-                this.updateLightboxImage();
-            }
-        }
-
-        updateLightboxImage() {
-            if (!this.lightboxImage || !this.images[this.currentIndex]) return;
-
-            const image = this.images[this.currentIndex];
-            this.lightboxImage.src = image.large;
-            this.lightboxImage.alt = image.alt;
-
-            // Update main slider if needed
-            if (this.mainSlider) {
-                this.mainSlider.slideTo(this.currentIndex);
-            }
-
-            // Announce change
-            this.announceLightboxChange();
-        }
-
-        setupKeyboardNavigation() {
-            document.addEventListener('keydown', (e) => {
-                if (!this.isLightboxOpen) return;
-
-                switch (e.key) {
-                    case 'Escape':
-                        e.preventDefault();
-                        this.closeLightbox();
-                        break;
-                    case 'ArrowLeft':
-                        e.preventDefault();
-                        this.lightboxPrev();
-                        break;
-                    case 'ArrowRight':
-                        e.preventDefault();
-                        this.lightboxNext();
-                        break;
-                }
-            });
-        }
-
-        setupAccessibility() {
-            // Add ARIA labels to navigation buttons
-            const prevBtn = this.container.querySelector('.swiper-button-prev');
-            const nextBtn = this.container.querySelector('.swiper-button-next');
-
-            if (prevBtn) {
-                prevBtn.setAttribute('aria-label', 'Previous image');
-                prevBtn.setAttribute('role', 'button');
-            }
-
-            if (nextBtn) {
-                nextBtn.setAttribute('aria-label', 'Next image');
-                nextBtn.setAttribute('role', 'button');
-            }
-
-            // Add live region for announcements
-            if (!document.getElementById('gallery-announcer')) {
-                const announcer = document.createElement('div');
-                announcer.id = 'gallery-announcer';
-                announcer.setAttribute('aria-live', 'polite');
-                announcer.setAttribute('aria-atomic', 'true');
-                announcer.style.position = 'absolute';
-                announcer.style.left = '-10000px';
-                announcer.style.width = '1px';
-                announcer.style.height = '1px';
-                announcer.style.overflow = 'hidden';
-                document.body.appendChild(announcer);
-            }
-        }
-
-        announceSlideChange() {
-            const announcer = document.getElementById('gallery-announcer');
-            if (announcer) {
-                const current = this.currentIndex + 1;
-                const total = this.images.length;
-                const alt = this.images[this.currentIndex]?.alt || 'Product image';
-                announcer.textContent = `${alt}, image ${current} of ${total}`;
-            }
-        }
-
-        announceLightboxOpen() {
-            const announcer = document.getElementById('gallery-announcer');
-            if (announcer) {
-                announcer.textContent = 'Image lightbox opened. Use arrow keys to navigate, Escape to close.';
-            }
-        }
-
-        announceLightboxClose() {
-            const announcer = document.getElementById('gallery-announcer');
-            if (announcer) {
-                announcer.textContent = 'Image lightbox closed.';
-            }
-        }
-
-        announceLightboxChange() {
-            const announcer = document.getElementById('gallery-announcer');
-            if (announcer) {
-                const current = this.currentIndex + 1;
-                const total = this.images.length;
-                const alt = this.images[this.currentIndex]?.alt || 'Product image';
-                announcer.textContent = `${alt}, image ${current} of ${total}`;
-            }
-        }
-
-        trapFocus(element) {
-            const focusableElements = element.querySelectorAll(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            );
-
-            const firstElement = focusableElements[0];
-            const lastElement = focusableElements[focusableElements.length - 1];
-
-            element.addEventListener('keydown', (e) => {
-                if (e.key === 'Tab') {
-                    if (e.shiftKey && document.activeElement === firstElement) {
-                        e.preventDefault();
-                        lastElement.focus();
-                    } else if (!e.shiftKey && document.activeElement === lastElement) {
-                        e.preventDefault();
-                        firstElement.focus();
-                    }
-                }
-            });
-
-            // Focus first element
-            if (firstElement) {
-                firstElement.focus();
-            }
-        }
-
-        // Public method to update gallery (e.g., when variant changes)
-        updateGallery(newImages) {
-            if (!Array.isArray(newImages)) return;
-
-            this.images = newImages;
-            this.currentIndex = 0;
-
-            // Update sliders if they exist
-            if (this.mainSlider) {
-                this.mainSlider.destroy(true, true);
-            }
-            if (this.thumbsSlider) {
-                this.thumbsSlider.destroy(true, true);
-            }
-
-            // Re-initialize
-            setTimeout(() => {
-                this.cacheElements();
-                this.initializeSliders();
-            }, 100);
-        }
-
-        // Cleanup method
-        destroy() {
-            if (this.mainSlider) {
-                this.mainSlider.destroy(true, true);
-            }
-            if (this.thumbsSlider) {
-                this.thumbsSlider.destroy(true, true);
-            }
-
-            // Remove event listeners
-            this.thumbnailButtons.forEach(button => {
-                button.removeEventListener('click', this.goToSlide);
-            });
-
-            document.body.style.overflow = '';
-        }
+class EshopProductGallery {
+    constructor(container) {
+        this.container = container;
+        this.productId = container.dataset.productId;
+        this.mainSlider = null;
+        this.thumbsSlider = null;
+        this.lightbox = null;
+        this.currentSlideIndex = 0;
+        this.images = [];
+        
+        this.init();
     }
 
-    // Auto-initialize galleries when DOM is ready
-    function initProductGalleries() {
-        const galleries = document.querySelectorAll('.product-gallery-container');
-        
-        galleries.forEach(gallery => {
-            if (!gallery.productGalleryInstance) {
-                gallery.productGalleryInstance = new ProductGallery(gallery);
+    /**
+     * Initialize the gallery component
+     */
+    init() {
+        // Check if Swiper is available
+        if (typeof Swiper === 'undefined') {
+            console.error('Swiper library is required for product gallery');
+            return;
+        }
+
+        this.setupImages();
+        this.initMainSlider();
+        this.initThumbsSlider();
+        this.initLightbox();
+        this.bindEvents();
+        this.handleKeyboardNavigation();
+    }
+
+    /**
+     * Setup image data for gallery
+     */
+    setupImages() {
+        const slides = this.container.querySelectorAll('.swiper-slide img');
+        this.images = Array.from(slides).map((img, index) => ({
+            src: img.src,
+            largeSrc: img.dataset.large || img.src,
+            alt: img.alt,
+            title: img.title,
+            index: index
+        }));
+    }
+
+    /**
+     * Initialize main product slider
+     */
+    initMainSlider() {
+        const mainSliderEl = this.container.querySelector('#productMainSlider');
+        if (!mainSliderEl) return;
+
+        this.mainSlider = new Swiper(mainSliderEl, {
+            loop: this.images.length > 1,
+            spaceBetween: 0,
+            slidesPerView: 1,
+            grabCursor: true,
+            keyboard: {
+                enabled: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            on: {
+                slideChange: (swiper) => {
+                    this.currentSlideIndex = swiper.realIndex || swiper.activeIndex;
+                    this.updateProgress();
+                    this.updateThumbnailsActive();
+                },
+                init: () => {
+                    this.updateProgress();
+                }
             }
         });
     }
 
-    // Initialize on DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initProductGalleries);
-    } else {
-        initProductGalleries();
+    /**
+     * Initialize thumbnails slider
+     */
+    initThumbsSlider() {
+        const thumbsSliderEl = this.container.querySelector('#productThumbsSlider');
+        if (!thumbsSliderEl || this.images.length <= 1) return;
+
+        this.thumbsSlider = new Swiper(thumbsSliderEl, {
+            spaceBetween: 12,
+            slidesPerView: 'auto',
+            watchSlidesProgress: true,
+            grabCursor: true,
+            breakpoints: {
+                320: {
+                    spaceBetween: 8,
+                    slidesPerView: 4,
+                },
+                640: {
+                    spaceBetween: 12,
+                    slidesPerView: 5,
+                },
+                768: {
+                    spaceBetween: 12,
+                    slidesPerView: 6,
+                },
+                1024: {
+                    spaceBetween: 16,
+                    slidesPerView: 'auto',
+                }
+            }
+        });
+
+        // Connect thumbnails to main slider
+        if (this.mainSlider) {
+            this.mainSlider.controller.control = this.thumbsSlider;
+            this.thumbsSlider.controller.control = this.mainSlider;
+        }
     }
 
-    // Re-initialize on AJAX product updates (for variant switching)
-    document.addEventListener('wc_variation_form_changed', initProductGalleries);
-    
-    // Make class available globally for manual initialization
-    window.ProductGallery = ProductGallery;
+    /**
+     * Initialize lightbox functionality
+     */
+    initLightbox() {
+        this.lightbox = this.container.querySelector('#galleryLightbox');
+        if (!this.lightbox) return;
 
-})();
+        const lightboxImage = this.lightbox.querySelector('.lightbox-image');
+        const closeBtn = this.lightbox.querySelector('.lightbox-close');
+        const backdrop = this.lightbox.querySelector('.lightbox-backdrop');
+        const prevBtn = this.lightbox.querySelector('.lightbox-prev');
+        const nextBtn = this.lightbox.querySelector('.lightbox-next');
+
+        // Close lightbox events
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.closeLightbox());
+        }
+        if (backdrop) {
+            backdrop.addEventListener('click', () => this.closeLightbox());
+        }
+
+        // Navigation events
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.lightboxPrev());
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.lightboxNext());
+        }
+
+        // Keyboard events for lightbox
+        document.addEventListener('keydown', (e) => {
+            if (!this.lightbox.classList.contains('active')) return;
+
+            switch (e.key) {
+                case 'Escape':
+                    this.closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    this.lightboxPrev();
+                    break;
+                case 'ArrowRight':
+                    this.lightboxNext();
+                    break;
+            }
+        });
+    }
+
+    /**
+     * Bind event listeners
+     */
+    bindEvents() {
+        // Zoom trigger buttons
+        const zoomTriggers = this.container.querySelectorAll('.zoom-trigger');
+        zoomTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const imageSrc = trigger.dataset.imageSrc;
+                this.openLightbox(imageSrc);
+            });
+        });
+
+        // Gallery image wrappers (click to zoom)
+        const imageWrappers = this.container.querySelectorAll('.gallery-image-wrapper');
+        imageWrappers.forEach((wrapper, index) => {
+            wrapper.addEventListener('click', (e) => {
+                const img = wrapper.querySelector('.gallery-main-image');
+                if (img) {
+                    this.openLightbox(img.dataset.large || img.src, index);
+                }
+            });
+        });
+
+        // Thumbnail navigation
+        const thumbnailButtons = this.container.querySelectorAll('.thumbnail-button');
+        thumbnailButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                if (this.mainSlider) {
+                    this.mainSlider.slideTo(index);
+                }
+            });
+        });
+
+        // Touch events for mobile
+        this.setupTouchEvents();
+    }
+
+    /**
+     * Setup touch events for mobile interaction
+     */
+    setupTouchEvents() {
+        if (!this.isMobile()) return;
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        const mainSliderEl = this.container.querySelector('.product-main-slider');
+        if (!mainSliderEl) return;
+
+        mainSliderEl.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        mainSliderEl.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            // Vertical scroll should not trigger gallery navigation
+            if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+
+            // Minimum swipe distance
+            if (Math.abs(deltaX) < 50) return;
+
+            if (deltaX > 0) {
+                // Swipe right - previous slide
+                this.mainSlider && this.mainSlider.slidePrev();
+            } else {
+                // Swipe left - next slide
+                this.mainSlider && this.mainSlider.slideNext();
+            }
+        });
+    }
+
+    /**
+     * Handle keyboard navigation
+     */
+    handleKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            // Only handle when gallery is focused
+            if (!this.container.contains(document.activeElement)) return;
+            
+            // Only handle when lightbox is not active
+            if (this.lightbox && this.lightbox.classList.contains('active')) return;
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    this.mainSlider && this.mainSlider.slidePrev();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    this.mainSlider && this.mainSlider.slideNext();
+                    break;
+                case 'Enter':
+                case ' ':
+                    if (document.activeElement.classList.contains('zoom-trigger') || 
+                        document.activeElement.classList.contains('gallery-image-wrapper')) {
+                        e.preventDefault();
+                        const img = this.container.querySelector('.swiper-slide-active .gallery-main-image');
+                        if (img) {
+                            this.openLightbox(img.dataset.large || img.src);
+                        }
+                    }
+                    break;
+            }
+        });
+    }
+
+    /**
+     * Update progress indicator
+     */
+    updateProgress() {
+        const currentEl = this.container.querySelector('.current-slide');
+        const totalEl = this.container.querySelector('.total-slides');
+        
+        if (currentEl && totalEl) {
+            currentEl.textContent = (this.currentSlideIndex + 1);
+            totalEl.textContent = this.images.length;
+        }
+    }
+
+    /**
+     * Update active thumbnail
+     */
+    updateThumbnailsActive() {
+        const thumbnails = this.container.querySelectorAll('.thumbnail-button');
+        thumbnails.forEach((thumbnail, index) => {
+            thumbnail.classList.toggle('active', index === this.currentSlideIndex);
+        });
+    }
+
+    /**
+     * Open lightbox with image
+     */
+    openLightbox(imageSrc, slideIndex = null) {
+        if (!this.lightbox) return;
+
+        // Set slide index if provided
+        if (slideIndex !== null) {
+            this.currentSlideIndex = slideIndex;
+        }
+
+        const lightboxImage = this.lightbox.querySelector('.lightbox-image');
+        if (lightboxImage) {
+            lightboxImage.src = imageSrc;
+            lightboxImage.alt = this.images[this.currentSlideIndex]?.alt || '';
+        }
+
+        // Show lightbox
+        this.lightbox.classList.add('active');
+        this.lightbox.setAttribute('aria-hidden', 'false');
+        
+        // Focus close button for accessibility
+        const closeBtn = this.lightbox.querySelector('.lightbox-close');
+        if (closeBtn) {
+            closeBtn.focus();
+        }
+
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+
+        // Fire custom event
+        this.fireEvent('lightboxOpen', {
+            imageSrc: imageSrc,
+            slideIndex: this.currentSlideIndex
+        });
+    }
+
+    /**
+     * Close lightbox
+     */
+    closeLightbox() {
+        if (!this.lightbox) return;
+
+        this.lightbox.classList.remove('active');
+        this.lightbox.setAttribute('aria-hidden', 'true');
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+
+        // Return focus to gallery
+        const activeSlide = this.container.querySelector('.swiper-slide-active .zoom-trigger');
+        if (activeSlide) {
+            activeSlide.focus();
+        }
+
+        // Fire custom event
+        this.fireEvent('lightboxClose');
+    }
+
+    /**
+     * Navigate to previous image in lightbox
+     */
+    lightboxPrev() {
+        if (this.images.length <= 1) return;
+
+        this.currentSlideIndex = this.currentSlideIndex <= 0 
+            ? this.images.length - 1 
+            : this.currentSlideIndex - 1;
+
+        this.updateLightboxImage();
+    }
+
+    /**
+     * Navigate to next image in lightbox
+     */
+    lightboxNext() {
+        if (this.images.length <= 1) return;
+
+        this.currentSlideIndex = this.currentSlideIndex >= this.images.length - 1 
+            ? 0 
+            : this.currentSlideIndex + 1;
+
+        this.updateLightboxImage();
+    }
+
+    /**
+     * Update lightbox image
+     */
+    updateLightboxImage() {
+        const lightboxImage = this.lightbox.querySelector('.lightbox-image');
+        const currentImage = this.images[this.currentSlideIndex];
+
+        if (lightboxImage && currentImage) {
+            lightboxImage.src = currentImage.largeSrc;
+            lightboxImage.alt = currentImage.alt;
+        }
+
+        // Sync main slider
+        if (this.mainSlider) {
+            this.mainSlider.slideTo(this.currentSlideIndex);
+        }
+    }
+
+    /**
+     * Check if device is mobile
+     */
+    isMobile() {
+        return window.innerWidth <= 768;
+    }
+
+    /**
+     * Fire custom event
+     */
+    fireEvent(eventName, detail = {}) {
+        const event = new CustomEvent(`eshop:gallery:${eventName}`, {
+            detail: {
+                gallery: this,
+                productId: this.productId,
+                ...detail
+            },
+            bubbles: true
+        });
+        this.container.dispatchEvent(event);
+    }
+
+    /**
+     * Destroy gallery instance
+     */
+    destroy() {
+        if (this.mainSlider) {
+            this.mainSlider.destroy(true, true);
+        }
+        if (this.thumbsSlider) {
+            this.thumbsSlider.destroy(true, true);
+        }
+
+        // Remove event listeners
+        // Note: Modern browsers automatically clean up event listeners when elements are removed
+        
+        this.fireEvent('destroyed');
+    }
+
+    /**
+     * Refresh gallery (useful after dynamic content changes)
+     */
+    refresh() {
+        this.setupImages();
+        
+        if (this.mainSlider) {
+            this.mainSlider.update();
+        }
+        if (this.thumbsSlider) {
+            this.thumbsSlider.update();
+        }
+
+        this.updateProgress();
+        this.fireEvent('refreshed');
+    }
+
+    /**
+     * Go to specific slide
+     */
+    goToSlide(index) {
+        if (index < 0 || index >= this.images.length) return;
+
+        if (this.mainSlider) {
+            this.mainSlider.slideTo(index);
+        }
+    }
+
+    /**
+     * Get current slide index
+     */
+    getCurrentSlide() {
+        return this.currentSlideIndex;
+    }
+
+    /**
+     * Get total number of slides
+     */
+    getTotalSlides() {
+        return this.images.length;
+    }
+}
+
+/**
+ * Auto-initialize gallery when DOM is ready
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryContainers = document.querySelectorAll('.product-gallery-container');
+    
+    galleryContainers.forEach(container => {
+        // Store instance on element for external access
+        container.eshopGallery = new EshopProductGallery(container);
+    });
+});
+
+/**
+ * Export for module systems
+ */
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EshopProductGallery;
+}
+
+// Make available globally
+window.EshopProductGallery = EshopProductGallery;

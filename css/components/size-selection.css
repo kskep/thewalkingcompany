@@ -1,0 +1,394 @@
+/* Size Selection Component - 2025 Standards */
+
+/* Size Selection Container */
+.size-selection-container {
+  margin-bottom: 2rem;
+}
+
+.size-selection-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.size-selection-label .selected-size {
+  color: var(--primary-pink);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Size Options Grid */
+.size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* Size Option Button - Circular Design */
+.size-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border: 2px solid var(--border-medium);
+  background: var(--background-white);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--gallery-transition-fast);
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%; /* Circular design as per requirements */
+  outline: none;
+}
+
+/* Size Option States */
+.size-option:hover {
+  border-color: var(--text-secondary);
+  background: var(--background-light);
+  transform: scale(1.05);
+}
+
+.size-option:focus-visible {
+  outline: 2px solid var(--primary-pink);
+  outline-offset: 2px;
+}
+
+.size-option.selected {
+  border-color: var(--primary-pink);
+  background: var(--primary-pink);
+  color: white;
+  transform: scale(1.05);
+}
+
+.size-option.selected:hover {
+  background: var(--primary-pink-dark);
+  border-color: var(--primary-pink-dark);
+}
+
+/* Out of Stock Size Options */
+.size-option.out-of-stock {
+  border-color: var(--border-light);
+  background: var(--background-light);
+  color: var(--text-light);
+  cursor: not-allowed;
+  opacity: 0.6;
+  position: relative;
+}
+
+.size-option.out-of-stock:hover {
+  border-color: var(--border-light);
+  background: var(--background-light);
+  transform: none;
+}
+
+.size-option.out-of-stock::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background-color: var(--text-light);
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* Loading State for Size Options */
+.size-option.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.size-option.loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin: -0.5rem 0 0 -0.5rem;
+  border: 2px solid transparent;
+  border-top-color: var(--primary-pink);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Size Guide Link */
+.size-guide-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-pink);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: var(--gallery-transition-fast);
+}
+
+.size-guide-link:hover {
+  color: var(--primary-pink-dark);
+  text-decoration: underline;
+}
+
+.size-guide-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Size Information Display */
+.size-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--background-light);
+  border-left: 3px solid var(--primary-pink);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: none;
+}
+
+.size-info.show {
+  display: block;
+}
+
+.size-info h4 {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Size Chart Modal Trigger */
+.size-chart-trigger {
+  background: none;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--gallery-transition-fast);
+  margin-top: 0.75rem;
+}
+
+.size-chart-trigger:hover {
+  border-color: var(--primary-pink);
+  color: var(--primary-pink);
+}
+
+/* Size Abbreviation Mapping */
+.size-option[data-full-size=\"Extra Small\"]::after {
+  content: 'XS';
+}
+
+.size-option[data-full-size=\"Small\"]::after {
+  content: 'S';
+}
+
+.size-option[data-full-size=\"Medium\"]::after {
+  content: 'M';
+}
+
+.size-option[data-full-size=\"Large\"]::after {
+  content: 'L';
+}
+
+.size-option[data-full-size=\"Extra Large\"]::after {
+  content: 'XL';
+}
+
+.size-option[data-full-size=\"Double Extra Large\"]::after {
+  content: 'XXL';
+}
+
+/* Shoe Size Specific Styles */
+.size-option.shoe-size {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Clothing Size Specific Styles */
+.size-option.clothing-size {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Size Type Indicators */
+.size-type-info {
+  margin-bottom: 0.5rem;
+}
+
+.size-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: var(--background-light);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive Design */
+
+/* Mobile (320px - 767px) */
+@media (max-width: 767px) {
+  .size-options {
+    gap: 0.5rem;
+  }
+  
+  .size-option {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 0.75rem;
+  }
+  
+  .size-selection-label {
+    font-size: 0.8125rem;
+  }
+  
+  .size-guide-link {
+    font-size: 0.8125rem;
+  }
+  
+  .size-info {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+}
+
+/* Tablet (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .size-option {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .size-options {
+    gap: 1rem;
+  }
+  
+  .size-option {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Accessibility Features */
+@media (prefers-reduced-motion: reduce) {
+  .size-option {
+    transition: none !important;
+  }
+  
+  .size-option:hover,
+  .size-option.selected {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .size-option {
+    border-width: 3px;
+  }
+  
+  .size-option.out-of-stock::after {
+    height: 3px;
+  }
+}
+
+/* Focus Management */
+.size-option:focus-visible {
+  outline: 2px solid var(--primary-pink);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+/* Animation for size selection feedback */
+@keyframes sizeSelected {
+  0% { transform: scale(1.05); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1.05); }
+}
+
+.size-option.selected.animate {
+  animation: sizeSelected 0.3s ease-out;
+}
+
+/* Custom Scrollbar for Size Options (when overflowing) */
+.size-options-container {
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.size-options-container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.size-options-container::-webkit-scrollbar-track {
+  background: var(--background-light);
+}
+
+.size-options-container::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 2px;
+}
+
+.size-options-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Size Variant Selection States */
+.size-selection-container[data-attribute-type=\"shoe\"] .size-option {
+  font-family: 'Roboto', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.size-selection-container[data-attribute-type=\"clothing\"] .size-option {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Error States */
+.size-selection-container.error .size-options {
+  border: 2px dashed #dc2626;
+  padding: 1rem;
+  background: #fef2f2;
+}
+
+.size-selection-error {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.size-selection-container.error .size-selection-error {
+  display: block;
+}
+
+/* Success States */
+.size-selection-success {
+  color: #16a34a;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.size-selection-container.success .size-selection-success {
+  display: block;
+}

@@ -1,9 +1,9 @@
 <?php
 /**
- * Product Gallery Component
+ * Product Gallery Component - 2025 Standards
  * 
- * Modern product gallery with Swiper slider and thumbnail navigation
- * Follows 2025 UX/UI standards with accessibility features
+ * Enhanced product gallery with Swiper slider, thumbnail navigation,
+ * lightbox functionality, and accessibility features
  *
  * @package thewalkingtheme
  */
@@ -25,6 +25,37 @@ $all_image_ids = array_filter($all_image_ids); // Remove empty values
 
 if (empty($all_image_ids)) {
     return;
+}
+
+// Get product badges for overlay
+$badges = array();
+if ($product->is_on_sale()) {
+    $regular_price = $product->get_regular_price();
+    $sale_price = $product->get_sale_price();
+    if ($regular_price && $sale_price) {
+        $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
+        $badges[] = array(
+            'type' => 'sale',
+            'text' => sprintf(__('-%d%%', 'thewalkingtheme'), $percentage),
+            'class' => 'badge-sale'
+        );
+    }
+}
+
+if (!$product->is_in_stock()) {
+    $badges[] = array(
+        'type' => 'stock',
+        'text' => __('Out of Stock', 'thewalkingtheme'),
+        'class' => 'badge-out-of-stock'
+    );
+}
+
+// Check for additional product badges
+$product_badges = get_post_meta($product->get_id(), '_product_badges', true);
+if ($product_badges) {
+    foreach ($product_badges as $badge) {
+        $badges[] = $badge;
+    }
 }
 
 ?>
@@ -149,21 +180,13 @@ if (empty($all_image_ids)) {
     
 </div>
 
-<!-- Product Badge -->
-<?php if ($product->is_on_sale()) : ?>
-<div class="product-badge sale-badge">
-    <?php
-    $percentage = 0;
-    if ($product->get_regular_price() && $product->get_sale_price()) {
-        $percentage = round((($product->get_regular_price() - $product->get_sale_price()) / $product->get_regular_price()) * 100);
-    }
-    ?>
-    <span class="badge-text">
-        <?php if ($percentage > 0) : ?>
-            <?php echo sprintf(__('-%d%%', 'thewalkingtheme'), $percentage); ?>
-        <?php else : ?>
-            <?php _e('Sale', 'thewalkingtheme'); ?>
-        <?php endif; ?>
-    </span>
+<!-- Product Badge Overlay -->
+<?php if (!empty($badges)) : ?>
+<div class="product-badges-overlay">
+    <?php foreach ($badges as $badge) : ?>
+    <div class="product-badge <?php echo esc_attr($badge['class']); ?>">
+        <span class="badge-text"><?php echo esc_html($badge['text']); ?></span>
+    </div>
+    <?php endforeach; ?>
 </div>
 <?php endif; ?>

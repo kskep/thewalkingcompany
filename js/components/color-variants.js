@@ -6,350 +6,510 @@
  * @package E-Shop Theme
  */
 
+/**
+ * Enhanced Color Variants Component - 2025 Standards
+ * 
+ * Handles color variant selection with grouped SKU functionality,
+ * smooth transitions, and accessibility features
+ *
+ * @package thewalkingtheme
+ */
+
 class EshopColorVariants {
     constructor(container) {
         this.container = container;
-        this.currentProductId = container.dataset.productId;
+        this.productId = container.dataset.productId;
         this.variants = [];
+        this.selectedVariant = null;
         this.isLoading = false;
         
         this.init();
     }
-    
+
+    /**
+     * Initialize the color variants component
+     */
     init() {
+        this.setupVariants();
         this.bindEvents();
-        this.loadVariants();
+        this.handleInitialSelection();
         this.setupKeyboardNavigation();
     }
-    
+
     /**
-     * Bind click and interaction events
+     * Setup variant data from DOM elements
+     */
+    setupVariants() {
+        const variantElements = this.container.querySelectorAll('.color-variant');
+        
+        this.variants = Array.from(variantElements).map(element => ({
+            element: element,
+            id: element.dataset.productId,
+            url: element.dataset.url,
+            colorName: element.dataset.colorName,
+            price: element.dataset.price,
+            inStock: element.dataset.inStock === '1',
+            isCurrent: element.classList.contains('selected')
+        }));
+        
+        // Find currently selected variant
+        this.selectedVariant = this.variants.find(variant => variant.isCurrent);
+    }
+
+    /**
+     * Bind event listeners
      */
     bindEvents() {
-        // Color variant click handlers
-        this.container.addEventListener('click', (e) => {
-            const variant = e.target.closest('.color-variant');
-            if (variant && !variant.classList.contains('selected') && !variant.classList.contains('out-of-stock')) {
+        this.variants.forEach(variant => {
+            // Click events
+            variant.element.addEventListener('click', (e) => {
+                e.preventDefault();
                 this.selectVariant(variant);
-            }
-        });
-        
-        // Hover effects for better UX
-        this.container.addEventListener('mouseenter', (e) => {
-            const variant = e.target.closest('.color-variant');
-            if (variant && !variant.classList.contains('out-of-stock')) {
+            });
+
+            // Touch events for mobile
+            variant.element.addEventListener('touchstart', (e) => {
+                if (!variant.inStock) {
+                    e.preventDefault();
+                }
+            });
+
+            // Mouse events for hover feedback
+            variant.element.addEventListener('mouseenter', () => {
                 this.showVariantPreview(variant);
-            }
-        }, true);
-        
-        this.container.addEventListener('mouseleave', (e) => {
-            const variant = e.target.closest('.color-variant');
-            if (variant) {
-                this.hideVariantPreview(variant);
-            }
-        }, true);
+            });
+
+            variant.element.addEventListener('mouseleave', () => {
+                this.hideVariantPreview();
+            });
+        });
+
+        // Handle browser back/forward navigation
+        window.addEventListener('popstate', () => {
+            this.handleUrlChange();
+        });
     }
-    
+
     /**
-     * Setup keyboard navigation for accessibility
+     * Setup keyboard navigation
      */
     setupKeyboardNavigation() {
-        this.container.addEventListener('keydown', (e) => {
-            const variant = e.target.closest('.color-variant');
-            if (!variant) return;
+        this.variants.forEach((variant, index) => {
+            variant.element.setAttribute('tabindex', '0');
+            variant.element.setAttribute('role', 'button');
             
-            switch (e.key) {
-                case 'Enter':
-                case ' ':
-                    e.preventDefault();
-                    if (!variant.classList.contains('selected') && !variant.classList.contains('out-of-stock')) {
-                        this.selectVariant(variant);
-                    }
-                    break;
-                    
-                case 'ArrowLeft':
-                case 'ArrowRight':
-                    e.preventDefault();
-                    this.navigateVariants(variant, e.key === 'ArrowRight');
-                    break;
-            }
+            variant.element.addEventListener('keydown', (e) => {
+                this.handleKeyboardNavigation(e, index);
+            });
         });
     }
-    
+
     /**
-     * Navigate between variants using arrow keys
+     * Handle keyboard navigation
      */
-    navigateVariants(currentVariant, forward = true) {
-        const variants = Array.from(this.container.querySelectorAll('.color-variant'));
-        const currentIndex = variants.indexOf(currentVariant);
+    handleKeyboardNavigation(e, currentIndex) {
+        let targetIndex = currentIndex;
         
-        if (currentIndex === -1) return;
+        switch (e.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+                e.preventDefault();
+                targetIndex = (currentIndex + 1) % this.variants.length;
+                break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                e.preventDefault();
+                targetIndex = currentIndex === 0 ? this.variants.length - 1 : currentIndex - 1;
+                break;
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                this.selectVariant(this.variants[currentIndex]);
+                return;
+            case 'Home':
+                e.preventDefault();
+                targetIndex = 0;
+                break;
+            case 'End':
+                e.preventDefault();
+                targetIndex = this.variants.length - 1;
+                break;
+        }
         
-        const nextIndex = forward 
-            ? (currentIndex + 1) % variants.length 
-            : (currentIndex - 1 + variants.length) % variants.length;
-            
-        const nextVariant = variants[nextIndex];
-        if (nextVariant) {
-            nextVariant.focus();
+        if (targetIndex !== currentIndex) {
+            this.variants[targetIndex].element.focus();
         }
     }
-    
-    /**
-     * Load variants data via AJAX
-     */
-    async loadVariants() {
-        if (this.isLoading) return;
-        
-        this.isLoading = true;
-        this.showLoadingState();
-        
-        try {
-            const response = await this.fetchVariants();
-            if (response.success) {
-                this.variants = response.data.variants;
-                this.updateVariantDisplay();
-            } else {
-                this.showError(response.data.message || 'Failed to load color variants');
-            }
-        } catch (error) {
-            console.error('Error loading color variants:', error);
-            this.showError('Network error loading color variants');
-        } finally {
-            this.isLoading = false;
-            this.hideLoadingState();
-        }
-    }
-    
-    /**
-     * Fetch variants from server
-     */
-    async fetchVariants() {
-        const formData = new FormData();
-        formData.append('action', 'get_color_variants');
-        formData.append('product_id', this.currentProductId);
-        formData.append('nonce', eshop_ajax.nonce);
-        
-        const response = await fetch(eshop_ajax.ajax_url, {
-            method: 'POST',
-            body: formData
-        });
-        
-        return await response.json();
-    }
-    
+
     /**
      * Select a color variant
      */
-    selectVariant(variantElement) {
-        const productId = variantElement.dataset.productId;
-        const url = variantElement.dataset.url;
-        const colorName = variantElement.dataset.colorName;
-        const inStock = variantElement.dataset.inStock === '1';
-        
-        if (!inStock) {
-            this.showFeedback(`${colorName} is currently out of stock`, 'error');
+    selectVariant(variant) {
+        if (!variant.inStock) {
+            this.showError(__('This color is out of stock', 'thewalkingtheme'));
             return;
         }
+
+        if (this.isLoading) {
+            return;
+        }
+
+        // Don't reload if selecting the same variant
+        if (variant.isCurrent) {
+            return;
+        }
+
+        this.setLoading(true);
+        
+        // Update visual selection immediately for better UX
+        this.updateSelection(variant);
+        
+        // Fire event before navigation
+        this.fireEvent('variantChanging', {
+            from: this.selectedVariant,
+            to: variant
+        });
+        
+        // Navigate to new product URL
+        this.navigateToVariant(variant);
+    }
+
+    /**
+     * Update visual selection
+     */
+    updateSelection(newVariant) {
+        // Clear previous selection
+        this.variants.forEach(variant => {
+            variant.element.classList.remove('selected');
+            variant.isCurrent = false;
+        });
+        
+        // Set new selection
+        newVariant.element.classList.add('selected');
+        newVariant.isCurrent = true;
+        this.selectedVariant = newVariant;
+        
+        // Update selected color info
+        this.updateSelectedColorInfo(newVariant);
         
         // Show selection feedback
-        this.showFeedback(`Switching to ${colorName}...`, 'loading');
+        this.showSelectionFeedback(newVariant.colorName);
         
-        // Update URL and navigate
-        if (url && url !== window.location.href) {
-            // Use history API for smooth transition
-            if (history.pushState) {
-                history.pushState({productId: productId}, '', url);
-                this.handleProductChange(productId, colorName);
+        // Fire selection event
+        this.fireEvent('variantSelected', { variant: newVariant });
+    }
+
+    /**
+     * Navigate to variant URL
+     */
+    navigateToVariant(variant) {
+        if (variant.url && variant.url !== window.location.href) {
+            // Use history API for smooth navigation
+            if (this.shouldUseHistoryAPI()) {
+                history.pushState(null, null, variant.url);
+                this.loadVariantContent(variant);
             } else {
-                // Fallback for older browsers
-                window.location.href = url;
+                // Fallback to direct navigation
+                window.location.href = variant.url;
+            }
+        } else {
+            this.setLoading(false);
+        }
+    }
+
+    /**
+     * Check if we should use History API for navigation
+     */
+    shouldUseHistoryAPI() {
+        // Use History API if the theme supports AJAX loading
+        return typeof window.eshopAjaxEnabled !== 'undefined' && window.eshopAjaxEnabled;
+    }
+
+    /**
+     * Load variant content via AJAX
+     */
+    loadVariantContent(variant) {
+        fetch(variant.url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            this.updatePageContent(html, variant);
+            this.setLoading(false);
+        })
+        .catch(error => {
+            console.error('Error loading variant:', error);
+            // Fallback to direct navigation
+            window.location.href = variant.url;
+        });
+    }
+
+    /**
+     * Update page content with new variant data
+     */
+    updatePageContent(html, variant) {
+        const parser = new DOMParser();
+        const newDoc = parser.parseFromString(html, 'text/html');
+        
+        // Update product gallery
+        const newGallery = newDoc.querySelector('.product-gallery-container');
+        const currentGallery = document.querySelector('.product-gallery-container');
+        if (newGallery && currentGallery) {
+            currentGallery.innerHTML = newGallery.innerHTML;
+            // Reinitialize gallery if needed
+            if (typeof EshopProductGallery !== 'undefined') {
+                currentGallery.eshopGallery = new EshopProductGallery(currentGallery);
             }
         }
+        
+        // Update price
+        const newPrice = newDoc.querySelector('.price');
+        const currentPrice = document.querySelector('.price');
+        if (newPrice && currentPrice) {
+            currentPrice.innerHTML = newPrice.innerHTML;
+        }
+        
+        // Update product title if it differs
+        const newTitle = newDoc.querySelector('.product_title, .entry-title');
+        const currentTitle = document.querySelector('.product_title, .entry-title');
+        if (newTitle && currentTitle && newTitle.textContent !== currentTitle.textContent) {
+            currentTitle.textContent = newTitle.textContent;
+            document.title = newTitle.textContent;
+        }
+        
+        // Update size selection if present
+        const newSizeSelection = newDoc.querySelector('.size-selection-container');
+        const currentSizeSelection = document.querySelector('.size-selection-container');
+        if (newSizeSelection && currentSizeSelection) {
+            currentSizeSelection.innerHTML = newSizeSelection.innerHTML;
+            // Reinitialize size selection
+            if (typeof EshopSizeSelection !== 'undefined') {
+                currentSizeSelection.eshopSizeSelection = new EshopSizeSelection(currentSizeSelection);
+            }
+        }
+        
+        this.fireEvent('contentUpdated', { variant, html });
     }
-    
+
     /**
-     * Handle product change without full page reload
+     * Handle URL changes (back/forward navigation)
      */
-    async handleProductChange(newProductId, colorName) {
-        try {
-            // Update current product context
-            this.currentProductId = newProductId;
-            this.container.dataset.productId = newProductId;
-            
-            // Show success feedback
-            this.showFeedback(`Switched to ${colorName}`, 'success');
-            
-            // Reload the page to update all product data
-            // In a more advanced implementation, this could update content via AJAX
-            setTimeout(() => {
-                window.location.reload();
-            }, 500);
-            
-        } catch (error) {
-            console.error('Error handling product change:', error);
-            this.showFeedback('Error switching color variant', 'error');
+    handleUrlChange() {
+        const currentUrl = window.location.href;
+        const matchingVariant = this.variants.find(variant => variant.url === currentUrl);
+        
+        if (matchingVariant && !matchingVariant.isCurrent) {
+            this.updateSelection(matchingVariant);
         }
     }
-    
+
     /**
-     * Update variant display after loading
+     * Handle initial selection on page load
      */
-    updateVariantDisplay() {
-        // This method could update the display if variants are loaded dynamically
-        // For now, variants are rendered server-side, so this is a placeholder
-        this.showFeedback('Color variants loaded', 'success');
-        
-        // Hide feedback after a delay
-        setTimeout(() => {
-            this.hideFeedback();
-        }, 2000);
+    handleInitialSelection() {
+        if (this.selectedVariant) {
+            this.updateSelectedColorInfo(this.selectedVariant);
+        }
     }
-    
+
     /**
      * Show variant preview on hover
      */
-    showVariantPreview(variantElement) {
-        const colorName = variantElement.dataset.colorName;
-        const price = variantElement.dataset.price;
-        const inStock = variantElement.dataset.inStock === '1';
-        
-        // Update selected color info temporarily
-        const selectedInfo = this.container.querySelector('.selected-color-info');
-        if (selectedInfo) {
-            const nameElement = selectedInfo.querySelector('.selected-color-name');
-            const priceElement = selectedInfo.querySelector('.selected-color-price');
-            
-            if (nameElement) {
-                nameElement.textContent = `Preview: ${colorName}`;
-                nameElement.style.fontStyle = 'italic';
-                nameElement.style.opacity = '0.8';
-            }
-            
-            if (priceElement && price) {
-                priceElement.innerHTML = price;
-                priceElement.style.opacity = '0.8';
-            }
+    showVariantPreview(variant) {
+        if (variant.isCurrent || !variant.inStock) {
+            return;
         }
         
-        // Show stock status if out of stock
-        if (!inStock) {
-            this.showFeedback(`${colorName} - Out of Stock`, 'warning');
-        }
+        // You could implement image preloading or price preview here
+        this.fireEvent('variantPreview', { variant });
     }
-    
+
     /**
      * Hide variant preview
      */
-    hideVariantPreview(variantElement) {
-        // Restore original selected color info
-        const selectedInfo = this.container.querySelector('.selected-color-info');
-        if (selectedInfo) {
-            const nameElement = selectedInfo.querySelector('.selected-color-name');
-            const priceElement = selectedInfo.querySelector('.selected-color-price');
-            
-            // Find current variant data to restore
-            const currentVariant = this.container.querySelector('.color-variant.selected');
-            if (currentVariant && nameElement) {
-                const originalName = currentVariant.dataset.colorName;
-                const originalPrice = currentVariant.dataset.price;
-                
-                nameElement.textContent = `Selected: ${originalName}`;
-                nameElement.style.fontStyle = 'normal';
-                nameElement.style.opacity = '1';
-                
-                if (priceElement && originalPrice) {
-                    priceElement.innerHTML = originalPrice;
-                    priceElement.style.opacity = '1';
-                }
-            }
+    hideVariantPreview() {
+        this.fireEvent('variantPreviewHide');
+    }
+
+    /**
+     * Update selected color information display
+     */
+    updateSelectedColorInfo(variant) {
+        const selectedColorInfo = this.container.querySelector('.selected-color-info');
+        if (!selectedColorInfo) return;
+        
+        const nameElement = selectedColorInfo.querySelector('.selected-color-name');
+        const priceElement = selectedColorInfo.querySelector('.selected-color-price');
+        
+        if (nameElement) {
+            nameElement.textContent = sprintf(__('Selected: %s', 'thewalkingtheme'), variant.colorName);
         }
         
-        this.hideFeedback();
+        if (priceElement && variant.price) {
+            priceElement.innerHTML = variant.price;
+        }
     }
-    
+
     /**
-     * Show loading state
+     * Show selection feedback
      */
-    showLoadingState() {
-        const loadingElement = this.container.querySelector('.color-variants-loading');
-        const variantsContainer = this.container.querySelector('.color-variants-container');
+    showSelectionFeedback(colorName) {
+        const feedback = this.container.querySelector('.color-selection-feedback');
+        if (!feedback) return;
         
-        if (loadingElement && variantsContainer) {
-            variantsContainer.style.display = 'none';
-            loadingElement.style.display = 'flex';
+        const feedbackText = feedback.querySelector('.feedback-text');
+        if (feedbackText) {
+            feedbackText.textContent = sprintf(__('Selected %s', 'thewalkingtheme'), colorName);
         }
-    }
-    
-    /**
-     * Hide loading state
-     */
-    hideLoadingState() {
-        const loadingElement = this.container.querySelector('.color-variants-loading');
-        const variantsContainer = this.container.querySelector('.color-variants-container');
         
-        if (loadingElement && variantsContainer) {
-            loadingElement.style.display = 'none';
-            variantsContainer.style.display = 'flex';
-        }
-    }
-    
-    /**
-     * Show feedback message
-     */
-    showFeedback(message, type = 'info') {
-        const feedbackElement = this.container.querySelector('.color-selection-feedback');
-        const textElement = feedbackElement?.querySelector('.feedback-text');
+        feedback.style.display = 'block';
+        feedback.classList.add('selection-changed');
         
-        if (feedbackElement && textElement) {
-            textElement.textContent = message;
-            feedbackElement.className = `color-selection-feedback ${type}`;
-            feedbackElement.style.display = 'block';
-            
-            // Add animation class
-            feedbackElement.classList.add('selection-changed');
-            
-            // Remove animation class after animation completes
-            setTimeout(() => {
-                feedbackElement.classList.remove('selection-changed');
-            }, 300);
-        }
+        // Hide feedback after delay
+        setTimeout(() => {
+            feedback.style.display = 'none';
+            feedback.classList.remove('selection-changed');
+        }, 3000);
     }
-    
-    /**
-     * Hide feedback message
-     */
-    hideFeedback() {
-        const feedbackElement = this.container.querySelector('.color-selection-feedback');
-        if (feedbackElement) {
-            feedbackElement.style.display = 'none';
-        }
-    }
-    
+
     /**
      * Show error message
      */
     showError(message) {
-        this.showFeedback(message, 'error');
-        console.error('Color variants error:', message);
+        const feedback = this.container.querySelector('.color-selection-feedback');
+        if (!feedback) {
+            alert(message);
+            return;
+        }
+        
+        const feedbackText = feedback.querySelector('.feedback-text');
+        if (feedbackText) {
+            feedbackText.textContent = message;
+        }
+        
+        feedback.style.display = 'block';
+        feedback.classList.add('error');
+        
+        setTimeout(() => {
+            feedback.style.display = 'none';
+            feedback.classList.remove('error');
+        }, 5000);
+        
+        this.fireEvent('error', { message });
+    }
+
+    /**
+     * Set loading state
+     */
+    setLoading(loading) {
+        this.isLoading = loading;
+        
+        this.variants.forEach(variant => {
+            variant.element.classList.toggle('loading', loading);
+        });
+        
+        // Show/hide loading skeleton
+        const loadingSkeleton = this.container.querySelector('.color-variants-loading');
+        const variantsContainer = this.container.querySelector('.color-variants-container');
+        
+        if (loadingSkeleton && variantsContainer) {
+            loadingSkeleton.style.display = loading ? 'flex' : 'none';
+            variantsContainer.style.display = loading ? 'none' : 'flex';
+        }
+        
+        this.fireEvent(loading ? 'loadingStart' : 'loadingEnd');
+    }
+
+    /**
+     * Fire custom event
+     */
+    fireEvent(eventName, detail = {}) {
+        const event = new CustomEvent(`eshop:colorVariants:${eventName}`, {
+            detail: {
+                colorVariants: this,
+                productId: this.productId,
+                selectedVariant: this.selectedVariant,
+                ...detail
+            },
+            bubbles: true
+        });
+        this.container.dispatchEvent(event);
+    }
+
+    /**
+     * Get selected variant
+     */
+    getSelectedVariant() {
+        return this.selectedVariant;
+    }
+
+    /**
+     * Get all variants
+     */
+    getVariants() {
+        return this.variants;
+    }
+
+    /**
+     * Refresh component
+     */
+    refresh() {
+        this.setupVariants();
+        this.fireEvent('refreshed');
+    }
+
+    /**
+     * Destroy component
+     */
+    destroy() {
+        // Remove event listeners
+        this.variants.forEach(variant => {
+            variant.element.removeAttribute('tabindex');
+            variant.element.removeAttribute('role');
+        });
+        
+        this.fireEvent('destroyed');
     }
 }
 
-// Auto-initialize when DOM is ready
+/**
+ * Utility functions
+ */
+function __(text, domain) {
+    return window.wp && window.wp.i18n && window.wp.i18n.__ 
+        ? window.wp.i18n.__(text, domain) 
+        : text;
+}
+
+function sprintf(format, ...args) {
+    return format.replace(/%s/g, () => args.shift() || '');
+}
+
+/**
+ * Auto-initialize color variants
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    const colorVariantsContainers = document.querySelectorAll('.product-color-variants');
-    colorVariantsContainers.forEach(container => {
-        new EshopColorVariants(container);
+    const colorVariantContainers = document.querySelectorAll('.product-color-variants');
+    
+    colorVariantContainers.forEach(container => {
+        container.eshopColorVariants = new EshopColorVariants(container);
     });
 });
 
-// Handle browser back/forward navigation
-window.addEventListener('popstate', function(event) {
-    if (event.state && event.state.productId) {
-        // Reload page to show correct product
-        window.location.reload();
-    }
-});
+/**
+ * Export for module systems
+ */
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EshopColorVariants;
+}
 
-// Make class globally available
+// Make available globally
 window.EshopColorVariants = EshopColorVariants;
