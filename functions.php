@@ -149,15 +149,7 @@ add_action('wp_enqueue_scripts', 'eshop_theme_scripts');
 // Hide WooCommerce archive page titles; we use breadcrumbs instead
 add_filter('woocommerce_show_page_title', '__return_false');
 
-/**
- * Change related products count to 4
- */
-function eshop_related_products_args($args) {
-    $args['posts_per_page'] = 4;
-    $args['columns'] = 4;
-    return $args;
-}
-add_filter('woocommerce_output_related_products_args', 'eshop_related_products_args');
+// Removed duplicate eshop_related_products_args (defined in inc/woocommerce-functions.php)
 
 /**
  * Handle custom filter parameters for WooCommerce
