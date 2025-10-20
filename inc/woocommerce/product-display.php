@@ -38,10 +38,25 @@ function eshop_get_product_color_variants($product, $limit = 4) {
     $colors_shown = array();
     $color_count = 0;
     
+    // Small helper to safely read an attribute value from a variation array
+    $read_attr = function(array $variation, string $attrTax) {
+        // $attrTax can be like 'pa_color' or 'color'
+        $candidates = array(
+            'attribute_' . sanitize_title($attrTax),                   // attribute_pa_color OR attribute_color
+            'attribute_' . sanitize_title(str_replace('pa_', '', $attrTax))
+        );
+        foreach ($candidates as $key) {
+            if (isset($variation['attributes'][$key])) {
+                return $variation['attributes'][$key];
+            }
+        }
+        return '';
+    };
+
     foreach ($available_variations as $variation) {
         if ($color_count >= $limit) break;
         
-        $color_value = $variation['attributes']['attribute_' . strtolower(str_replace('pa_', '', $color_attribute))];
+    $color_value = $read_attr($variation, $color_attribute);
         
         if (!in_array($color_value, $colors_shown) && $color_value) {
             $colors_shown[] = $color_value;
@@ -124,11 +139,25 @@ function eshop_get_product_size_variants($product, $limit = 8) {
     $sizes_data = array();
 
     // Collect all size variations with their stock status
+    // Reuse safe attribute reader from color variants if available
+    $read_attr = function(array $variation, string $attrTax) {
+        $candidates = array(
+            'attribute_' . sanitize_title($attrTax),
+            'attribute_' . sanitize_title(str_replace('pa_', '', $attrTax))
+        );
+        foreach ($candidates as $key) {
+            if (isset($variation['attributes'][$key])) {
+                return $variation['attributes'][$key];
+            }
+        }
+        return '';
+    };
+
     foreach ($available_variations as $variation) {
         $variation_obj = wc_get_product($variation['variation_id']);
         if (!$variation_obj) continue;
 
-        $size_value = $variation['attributes']['attribute_' . strtolower(str_replace('pa_', '', $size_attribute))];
+    $size_value = $read_attr($variation, $size_attribute);
 
         if ($size_value && !isset($sizes_data[$size_value])) {
             $sizes_data[$size_value] = array(
