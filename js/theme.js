@@ -455,12 +455,45 @@
                     }
                 };
 
-                new Swiper(el, swiperConfig);
+                var swiper = new Swiper(el, swiperConfig);
+                el.__swiper = swiper;
+
+                // Hover-to-second-image behavior
+                var originalIndex = 0;
+                el.addEventListener('mouseenter', function(){
+                    try { swiper.slideToLoop(1, 200); } catch(e) {}
+                });
+                el.addEventListener('mouseleave', function(){
+                    try { swiper.slideToLoop(0, 200); } catch(e) {}
+                });
             } catch (e) {
                 console.warn('Swiper init failed for product slider', e);
             }
         });
     }
+
+    // Simple hover-to-second-image fallback for product cards without Swiper
+    $(document).on('mouseenter', '.twc-card', function() {
+        var $card = $(this);
+        if ($card.data('hover-swap-initialized')) return;
+        $card.data('hover-swap-initialized', true);
+
+        var $img = $card.find('.twc-card__image img').first();
+        if ($img.length === 0) return;
+
+        var $gallery = $card.data('gallery');
+        // If we have a swiper in the card, skip fallback
+        if ($card.find('.product-slider.swiper').length) return;
+
+        // Try to find a secondary image in Woo markup (common pattern)
+        var $secondary = $card.find('img.secondary-image').first();
+        if ($secondary.length) {
+            var primarySrc = $img.attr('src');
+            var secondarySrc = $secondary.attr('src');
+            $card.on('mouseenter', function(){ $img.attr('src', secondarySrc); });
+            $card.on('mouseleave', function(){ $img.attr('src', primarySrc); });
+        }
+    });
 
     // Product Filter Functions (fallback if component not loaded)
     function initProductFilters() {

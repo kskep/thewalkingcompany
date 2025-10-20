@@ -44,20 +44,39 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
 
 <article <?php wc_product_class('twc-card', $product); ?>>
   <div class="twc-card__image">
-    <a href="<?php the_permalink(); ?>">
-      <?php echo $image_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-    </a>
+    <?php if ($image_count > 1) : ?>
+      <div class="product-slider swiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <a href="<?php the_permalink(); ?>">
+              <?php echo $image_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            </a>
+          </div>
+          <?php foreach ($gallery_ids as $gid) : ?>
+            <div class="swiper-slide">
+              <a href="<?php the_permalink(); ?>">
+                <?php echo wp_get_attachment_image($gid, 'woocommerce_thumbnail', false, array('class' => 'w-full h-full object-cover', 'loading' => 'lazy', 'alt' => esc_attr($product->get_name()))); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+              </a>
+            </div>
+          <?php endforeach; ?>
+        </div>
+        <!-- Navigation -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+      </div>
+    <?php else : ?>
+      <a href="<?php the_permalink(); ?>">
+        <?php echo $image_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+      </a>
+    <?php endif; ?>
+
     <div class="twc-card__badges">
       <?php if ($is_sale) : ?><span class="twc-badge twc-badge--sale">SALE</span><?php endif; ?>
       <?php if ($is_new) : ?><span class="twc-badge twc-badge--new">NEW</span><?php endif; ?>
     </div>
-    <?php if ($image_count > 1) : ?>
-      <div class="twc-card__dots" aria-hidden="true">
-        <?php for ($i = 0; $i < $image_count; $i++) : ?>
-          <span class="dot<?php echo $i === 0 ? ' is-active' : ''; ?>"></span>
-        <?php endfor; ?>
-      </div>
-    <?php endif; ?>
+    
 
     <?php
     // Size overlay: use helper if available

@@ -31,6 +31,15 @@
   display: block;
   transition: none !important; /* ensure no fade/zoom from external CSS */
 }
+.twc-card__image .swiper,
+.twc-card__image .swiper-wrapper,
+.twc-card__image .swiper-slide { width: 100%; height: 100%; }
+.twc-card__image .swiper-button-prev,
+.twc-card__image .swiper-button-next { color: #000; --swiper-navigation-size: 18px; opacity: 0; transition: opacity .15s ease; }
+.twc-card:hover .swiper-button-prev,
+.twc-card:hover .swiper-button-next { opacity: 1; }
+.twc-card__image .swiper-pagination-bullets .swiper-pagination-bullet { background: var(--dot); opacity: 1; width: 6px; height: 6px; }
+.twc-card__image .swiper-pagination-bullet-active { background: var(--dot-active); }
 .twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
 
 .twc-card__badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 2; }
