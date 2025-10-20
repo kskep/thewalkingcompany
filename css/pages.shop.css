@@ -309,10 +309,12 @@ body.tax-product_tag {
   border-color: #d1d5db;
 }
 
-/* Override WooCommerce default styles - but allow our custom grid */
+/* Ensure WooCommerce default products list remains visible */
 .woocommerce ul.products:not(.products-grid) {
-  display: none !important;
+  display: grid !important;
 }
+/* Avoid hiding WooCommerce default ul.products to prevent flashes; our template outputs .products-grid directly */
+/* .woocommerce ul.products:not(.products-grid) { display: none !important; } */
 
 /* Ensure our custom grid is always visible and properly styled */
 .products-wrapper .products-grid,
@@ -346,9 +348,8 @@ body.tax-product_tag {
   margin: 0 !important;
   padding: 0 !important;
   list-style: none !important;
-  display: block !important;
   grid-column: span 1;
-  display: flex !important; /* allow stretching */
+  display: block !important; /* block avoids unintended row layouts */
 }
 
 @media (min-width: 640px) {

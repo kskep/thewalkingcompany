@@ -29,7 +29,10 @@ defined('ABSPATH') || exit;
 <?php
 // Off-canvas filter panel
 ?>
-<aside id="filters-panel" class="fixed inset-y-0 left-0 w-80 max-w-[90vw] bg-white shadow-xl z-50 translate-x-[-100%] transition-transform">
+<!-- Backdrop for filter drawer -->
+<div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+<aside id="filter-drawer" class="fixed inset-y-0 left-0 w-80 max-w-[90vw] bg-white shadow-xl z-50 translate-x-[-100%] transition-transform">
   <div class="p-4 border-b border-gray-200 flex items-center justify-between">
     <h3 class="text-base font-semibold"><?php _e('Filters', 'eshop-theme'); ?></h3>
     <button id="close-filters" class="p-2" aria-label="<?php esc_attr_e('Close Filters', 'eshop-theme'); ?>"><span class="material-icons">close</span></button>
@@ -45,16 +48,28 @@ defined('ABSPATH') || exit;
     get_template_part('template-parts/components/filters/sale-filter');
     ?>
   </div>
+ </div>
 </aside>
 
 <script>
   (function(){
+    // Inline minimal open/close behavior as a progressive enhancement
     const openBtn = document.getElementById('open-filters');
     const closeBtn = document.getElementById('close-filters');
-    const panel = document.getElementById('filters-panel');
-    function open(){ panel.style.transform = 'translateX(0)'; }
-    function close(){ panel.style.transform = 'translateX(-100%)'; }
-    if(openBtn) openBtn.addEventListener('click', open);
-    if(closeBtn) closeBtn.addEventListener('click', close);
+    const drawer = document.getElementById('filter-drawer');
+    const backdrop = document.getElementById('filter-backdrop');
+    function open(){
+      if(backdrop){ backdrop.classList.remove('hidden'); backdrop.classList.add('show'); }
+      if(drawer){ drawer.style.transform = 'translateX(0)'; }
+      document.body.classList.add('overflow-hidden');
+    }
+    function close(){
+      if(backdrop){ backdrop.classList.remove('show'); backdrop.classList.add('hidden'); }
+      if(drawer){ drawer.style.transform = 'translateX(-100%)'; }
+      document.body.classList.remove('overflow-hidden');
+    }
+    if(openBtn) openBtn.addEventListener('click', function(e){ e.preventDefault(); open(); });
+    if(closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); close(); });
+    if(backdrop) backdrop.addEventListener('click', close);
   })();
 </script>

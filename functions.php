@@ -101,7 +101,7 @@ function eshop_theme_scripts() {
         wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
 
         // Ensure we reference the correct location of the filters script
-        $filter_js_rel_path = '/js/blocks/components/filters-simple.js';
+        $filter_js_rel_path = '/js/components/filters-simple.js';
         $filter_js_path = get_template_directory_uri() . $filter_js_rel_path;
         $filter_js_file = get_template_directory() . $filter_js_rel_path;
         $filter_js_version = file_exists($filter_js_file) ? filemtime($filter_js_file) : '1.0.0';
