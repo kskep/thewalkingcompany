@@ -23,7 +23,7 @@
 }
 .twc-card:hover { cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
 
-.twc-card__image { position: relative; min-height: 0; }
+.twc-card__image { position: relative; min-height: 0; overflow: hidden; }
 .twc-card__image a { display: block; width: 100%; height: 100%; }
 .twc-card__image img {
   width: 100%; height: 100%; object-fit: cover; /* fill the image area */
@@ -31,15 +31,23 @@
   display: block;
   transition: none !important; /* ensure no fade/zoom from external CSS */
 }
-.twc-card__image .swiper,
-.twc-card__image .swiper-wrapper,
-.twc-card__image .swiper-slide { width: 100%; height: 100%; }
+.twc-card__image .swiper { width: 100%; height: 100%; overflow: hidden; }
+.twc-card__image .swiper-wrapper { height: 100%; }
+.twc-card__image .swiper-slide { height: 100%; }
 .twc-card__image .swiper-button-prev,
 .twc-card__image .swiper-button-next { color: #000; --swiper-navigation-size: 18px; opacity: 0; transition: opacity .15s ease; }
 .twc-card:hover .swiper-button-prev,
 .twc-card:hover .swiper-button-next { opacity: 1; }
 .twc-card__image .swiper-pagination-bullets .swiper-pagination-bullet { background: var(--dot); opacity: 1; width: 6px; height: 6px; }
 .twc-card__image .swiper-pagination-bullet-active { background: var(--dot-active); }
+
+/* Safety: if Swiper core CSS hasn't applied width rules yet */
+.twc-card__image .swiper-android .swiper-slide,
+.twc-card__image .swiper-ios .swiper-slide,
+.twc-card__image .swiper-wrapper .swiper-slide { width: 100% !important; }
+
+/* Ensure grid items don't overflow container due to long content or slider sizing */
+.twc-card { min-width: 0; }
 .twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
 
 .twc-card__badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 2; }

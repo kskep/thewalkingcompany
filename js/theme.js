@@ -433,7 +433,11 @@
                         nextEl: el.querySelector('.swiper-button-next'),
                         prevEl: el.querySelector('.swiper-button-prev'),
                     },
-                    loop: true,
+                    loop: false,
+                    slidesPerView: 1,
+                    observer: true,
+                    observeParents: true,
+                    watchOverflow: true,
                     // Disable autoplay on archive product sliders
                     autoplay: false,
                     effect: 'fade',
@@ -461,10 +465,10 @@
                 // Hover-to-second-image behavior
                 var originalIndex = 0;
                 el.addEventListener('mouseenter', function(){
-                    try { swiper.slideToLoop(1, 200); } catch(e) {}
+                    try { swiper.slideTo(1, 200); } catch(e) {}
                 });
                 el.addEventListener('mouseleave', function(){
-                    try { swiper.slideToLoop(0, 200); } catch(e) {}
+                    try { swiper.slideTo(0, 200); } catch(e) {}
                 });
             } catch (e) {
                 console.warn('Swiper init failed for product slider', e);

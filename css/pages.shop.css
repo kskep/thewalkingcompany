@@ -350,6 +350,7 @@ body.tax-product_tag {
   list-style: none !important;
   grid-column: span 1;
   display: block !important; /* block avoids unintended row layouts */
+  min-width: 0; /* prevent overflow from inner content */
 }
 
 @media (min-width: 640px) {
