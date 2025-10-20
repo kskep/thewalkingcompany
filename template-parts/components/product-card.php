@@ -77,6 +77,13 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
       <?php if ($is_new) : ?><span class="twc-badge twc-badge--new">NEW</span><?php endif; ?>
     </div>
     
+    <?php if ($image_count > 1) : ?>
+      <div class="twc-card__dots" aria-hidden="true">
+        <?php for ($i = 0; $i < $image_count; $i++) : ?>
+          <span class="dot<?php echo $i === 0 ? ' is-active' : ''; ?>"></span>
+        <?php endfor; ?>
+      </div>
+    <?php endif; ?>
 
     <?php
     // Size overlay: use helper if available

@@ -1,13 +1,14 @@
+/* Use theme's CSS variables for consistency */
 :root {
   --card-bg: #F5F5F5;
-  --ink: #111111;
-  --ink-soft: #666666;
+  --ink: var(--ink, #111111);
+  --ink-soft: var(--ink-soft, #666666);
   --price-red: #E11900; /* vibrant red */
   --badge-yellow: #FFD600;
   --badge-new-bg: #FFFFFF;
   --dot: #DDDDDD;
   --dot-active: #000000;
-  --line: #E5E5E5;
+  --line: var(--rule, #E5E5E5);
 }
 
 .twc-card {
@@ -23,6 +24,7 @@
 }
 .twc-card:hover { cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
 
+/* Image area (top ~80%) */
 .twc-card__image { position: relative; min-height: 0; overflow: hidden; }
 .twc-card__image a { display: block; width: 100%; height: 100%; }
 .twc-card__image img {
@@ -31,6 +33,8 @@
   display: block;
   transition: none !important; /* ensure no fade/zoom from external CSS */
 }
+/* Prevent any hover fade/zoom from inherited styles */
+.twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
 .twc-card__image .swiper { width: 100%; height: 100%; overflow: hidden; }
 .twc-card__image .swiper-wrapper { height: 100%; }
 .twc-card__image .swiper-slide { height: 100%; }
@@ -64,12 +68,12 @@
 .twc-card__dots .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dot); }
 .twc-card__dots .dot.is-active { background: var(--dot-active); }
 
-/* Size selector overlay */
+/* Size selector (absolute overlay inside image; does not resize the card) */
 .twc-card__sizes {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
   display: flex; align-items: center; justify-content: center; gap: 10px;
   padding: 10px 12px;
-  background: #ffffff; /* solid white */
+  background: #ffffff; /* solid white background as requested */
   opacity: 0; pointer-events: none; transition: opacity 160ms ease;
 }
 .twc-card:hover .twc-card__sizes { opacity: 1; pointer-events: auto; }
@@ -87,7 +91,7 @@
 }
 .twc-card__sizes .size .status .material-icons { font-size: 10px; line-height: 1; color: var(--price-red); }
 
-/* Tooltip */
+/* Tooltip for low stock items (Greek) */
 .twc-card__sizes .size[data-tooltip] { position: relative; }
 .twc-card__sizes .size[data-tooltip]::after {
   content: attr(data-tooltip);
@@ -104,6 +108,7 @@
 .twc-card__sizes .size[data-tooltip]:hover::after,
 .twc-card__sizes .size[data-tooltip]:hover::before { opacity: 1; }
 
+/* Information area (bottom ~20%) */
 .twc-card__info { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 12px; }
 .twc-card__title {
   margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
