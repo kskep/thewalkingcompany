@@ -27,6 +27,28 @@ Version: 1.0
   --border-light: #E5E7EB;
   --border-lighter: #F3F4F6;
   
+  /* Editorial palette derived from primary pink (no gradients) */
+  --pink-50: #FEEDF4;   /* very light tint */
+  --pink-100: #FBD6E5;
+  --pink-200: #F7BDD6;
+  --pink-300: #F3A5C7;
+  --pink-400: #EF8CB8;
+  --pink-500: #EE81B3;  /* primary */
+  --pink-600: #E56EA6;
+  --pink-700: #D95B98;  /* dark accent */
+  --pink-800: #C24B85;
+  --pink-900: #A43E71;
+
+  /* Editorial neutrals (paper/ink) */
+  --paper: #FFFFFF;           /* clean paper */
+  --paper-warm: #F8F7F5;      /* warm background used on shop */
+  --ink: #2F2A26;             /* rich dark text */
+  --ink-soft: #6B7280;        /* secondary text */
+  --rule: #E7E5E4;            /* subtle divider */
+  --rule-strong: #D6D3D1;     /* stronger divider */
+  --accent: var(--pink-500);  /* pink accent */
+  --accent-strong: var(--pink-700);
+  
   /* Magazine-style spacing and typography */
   --letter-spacing-wide: 0.05em;
   --letter-spacing-wider: 0.1em;
@@ -46,7 +68,7 @@ Version: 1.0
 body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--off-white);
-  color: var(--dark-gray);
+  color: var(--ink);
   line-height: var(--line-height-relaxed);
   margin: 0;
   padding: 0;
@@ -174,13 +196,7 @@ body {
   overflow: hidden;
 }
 
-.product-image img,
-.post-image img {
-}
-
-.product-card:hover .product-image img,
-.post-card:hover .post-image img {
-}
+/* Intentionally minimal: image styles defined in component CSS */
 
 /* Magazine-style content spacing */
 .card-content {
@@ -377,8 +393,7 @@ textarea:focus {
 
 /* Minimal hover effects for fashion focus */
 /* .hover-lift intentionally disabled for flatter aesthetic */
-.hover-lift {}
-.hover-lift:hover {}
+/* lift effect disabled for flat aesthetic */
 
 .hover-fade {
   transition: opacity 0.4s ease;

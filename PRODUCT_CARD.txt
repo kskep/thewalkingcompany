@@ -1,0 +1,53 @@
+Product Card Design Description (Revised)
+This is a minimalist, image-focused e-commerce product card designed for a grid layout. It has two states: a Default State and a Hover State.
+1. Default State
+A. Card Container & Layout
+Shape: Vertical rectangle with sharp corners.
+Background: A very light, neutral grey (e.g., #F5F5F5).
+Structure: Composed of two main vertical sections: the upper Image Area and the lower Information Area.
+B. Image Area (Top 80% of the card)
+Content: The entire area is filled with a full-size product image. The image must have a transparent background (e.g., PNG format), allowing the card's light grey background to show through around the product.
+Badges/Tags (Top-Left Corner):
+Two small, rectangular badges are placed horizontally next to each other with minimal spacing.
+The first badge has a bright yellow background with black, uppercase text: "SALE".
+The second badge has a white or very light grey background with black, uppercase text: "NEW".
+Image Carousel Indicators (Bottom-Center):
+A series of small, solid circular dots are centered horizontally just above the bottom edge of the image area.
+The active image is indicated by a black dot.
+Inactive images are indicated by light grey dots.
+C. Information Area (Bottom 20% of the card)
+Padding: Consistent padding on the left and right sides.
+Layout: A two-column layout. The left column contains text information, and the right column contains an action icon.
+Left Column (Text):
+Product Name: A short, descriptive title.
+Product Code/SKU: Placed directly below the name, in a smaller, lighter-weight font.
+Price: The most prominent text element, displayed in a large, bold, vibrant red font. Includes the currency symbol.
+Right Column (Icon):
+Wishlist Icon: A simple, outlined heart icon, vertically aligned with the Product Name.
+2. Hover State
+The hover state is triggered when the user's cursor moves over the entire card. It introduces a new "Size Selector" panel with a smooth animation.
+A. Overall Transition
+Animation: The "Size Selector" panel animates into view from the bottom of the Image Area, smoothly pushing the entire Information Area downwards. The card's overall height remains fixed.
+B. Changes and New Elements
+New Element: Size Selector
+Position: Appears between the Image Area and the Information Area.
+Layout: A horizontal list of available sizes (e.g., "36", "37", "38").
+Styling: Sizes are displayed as bold numbers with even spacing between them.
+Status Indicators: Some sizes may have a small icon below them: a red-outlined circle containing a clock symbol, indicating a special status like "Low Stock".
+Information Area: This entire block (Name, Code, Price, Icon) is shifted downwards, with its top portion being obscured to make space for the Size Selector.
+Cursor: The cursor changes from the default arrow to a pointer (hand icon).
+Global Styling & Typography Notes
+Primary Font (Headings, Prominent Text): IBM Plex Sans
+Use for: Product Name, Price, Size Numbers, Badge Text ("SALE", "NEW").
+Weight: Use bold for Price and Sizes; regular or semi-bold for Product Name.
+Secondary Font (Body, Ancillary Text): Open Sans
+Use for: Product Code/SKU.
+Weight: Regular.
+Colors:
+Card Background: Light Grey (#F5F5F5)
+Default Text: Dark Grey / Black
+Price Text: Vibrant Red
+SALE Badge: Yellow background, Black text
+NEW Badge: White/Light Grey background, Black text
+Icons: Medium Grey (default state), Red (status indicators).
+Iconography: Icons (heart, clock) should be from a consistent line-icon set for visual harmony.

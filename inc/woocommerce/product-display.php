@@ -184,7 +184,7 @@ function eshop_get_product_badges($product) {
     }
 
     if ($product->managing_stock() && $product->get_stock_quantity() <= 5 && $product->get_stock_quantity() > 0) {
-        $badges[] = array('text' => __('LOW STOCK', 'eshop-theme'), 'class' => 'badge-low-stock', 'style' => 'background-color: #f59e0b; color: white;');
+        $badges[] = array('text' => __('ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ', 'eshop-theme'), 'class' => 'badge-low-stock', 'style' => 'background-color: #f59e0b; color: white;');
     }
 
     return $badges;

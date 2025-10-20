@@ -50,6 +50,8 @@ function eshop_theme_scripts() {
 
     if (is_shop() || is_product_category() || is_product_tag()) {
         wp_enqueue_style('eshop-shop', get_template_directory_uri() . '/css/pages.shop.css', array('eshop-theme-style'), '1.0.0');
+        // Product Card component CSS
+        wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-shop'), filemtime(get_template_directory() . '/css/components/product-card.css'));
         // Price slider (noUiSlider) for filters
         wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
         wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
@@ -67,6 +69,8 @@ function eshop_theme_scripts() {
     }
 
     // External CSS
+    wp_enqueue_style('google-fonts-ibm-open', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap', array(), null);
+    wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', array(), null);
     wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
     wp_enqueue_style('feather-icons', 'https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.css', array(), '4.29.0');
     wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css', array(), '10.3.1');
@@ -453,7 +457,8 @@ function eshop_customize_shop_toolbar_hooks() {
         // Filter drawer is now rendered directly in the template
     }
 }
-add_action('wp', 'eshop_customize_shop_toolbar_hooks');
+// Disabled: We render a new componentized toolbar/filters directly in the archive template
+// add_action('wp', 'eshop_customize_shop_toolbar_hooks');
 
 function eshop_render_shop_toolbar() {
     echo '<div class="shop-toolbar flex items-center justify-between mb-6 pb-4 border-b border-gray-200">';

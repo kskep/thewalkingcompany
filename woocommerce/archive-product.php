@@ -9,35 +9,9 @@ defined('ABSPATH') || exit;
 
 get_header('shop'); ?>
 
-<div class="mx-auto px-4 py-8 shop-layout">
+<div class="shop-layout">
 
-    <!-- Shop Toolbar: Filter (left) + Sorting (right); page title removed in favor of breadcrumbs -->
-    <div class="shop-toolbar flex items-center justify-between mb-6 pb-4">
-        <!-- Left: Filter button opens off-canvas drawer -->
-        <button id="open-filters" class="filter-toggle-btn-flat flex items-center gap-2 px-4 py-2 bg-transparent hover:bg-gray-100 transition-all duration-200" aria-label="Open Filters">
-            <i class="fas fa-sliders-h text-sm" aria-hidden="true"></i>
-            <span class="text-sm font-medium uppercase tracking-wide"><?php _e('Filters', 'eshop-theme'); ?></span>
-        </button>
-
-        <!-- Right: Sorting -->
-        <div class="shop-ordering">
-            <?php woocommerce_catalog_ordering(); ?>
-        </div>
-    </div>
-
-    <!-- Active Filters Bar -->
-    <div class="active-filters-bar bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-4 mb-6" style="display: none;">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex flex-wrap items-center gap-2">
-                <span class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><?php _e('Active Filters:', 'eshop-theme'); ?></span>
-                <div class="active-filters-list flex flex-wrap gap-2"></div>
-            </div>
-            <button class="clear-all-filters text-sm text-red-600 hover:text-red-800 font-semibold uppercase tracking-wide transition-colors">
-                <i class="fas fa-times mr-1"></i>
-                <?php _e('Clear All', 'eshop-theme'); ?>
-            </button>
-        </div>
-    </div>
+    <?php get_template_part('template-parts/components/filters'); ?>
 
 
     <!-- Products Grid -->

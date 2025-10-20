@@ -1,0 +1,100 @@
+:root {
+  --card-bg: #F5F5F5;
+  --ink: #111111;
+  --ink-soft: #666666;
+  --price-red: #E11900; /* vibrant red */
+  --badge-yellow: #FFD600;
+  --badge-new-bg: #FFFFFF;
+  --dot: #DDDDDD;
+  --dot-active: #000000;
+  --line: #E5E5E5;
+}
+
+.twc-card {
+  background: var(--card-bg);
+  display: grid;
+  grid-template-rows: 1fr auto; /* image | info; sizes overlay is absolute */
+  aspect-ratio: 3 / 4; /* vertical rectangle */
+  position: relative;
+  overflow: hidden;
+  border-radius: 0; /* sharp corners per spec */
+  cursor: default;
+  transition: box-shadow 160ms ease;
+}
+.twc-card:hover { cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+
+.twc-card__image { position: relative; min-height: 0; }
+.twc-card__image a { display: block; width: 100%; height: 100%; }
+.twc-card__image img {
+  width: 100%; height: 100%; object-fit: cover; /* fill the image area */
+  background: transparent;
+  display: block;
+  transition: none !important; /* ensure no fade/zoom from external CSS */
+}
+.twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
+
+.twc-card__badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 2; }
+.twc-badge {
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 4px 6px; border-radius: 2px; line-height: 1; color: #000;
+  border: 1px solid transparent;
+}
+.twc-badge--sale { background: var(--badge-yellow); }
+.twc-badge--new { background: var(--badge-new-bg); border-color: var(--line); }
+
+.twc-card__dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
+.twc-card__dots .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dot); }
+.twc-card__dots .dot.is-active { background: var(--dot-active); }
+
+/* Size selector overlay */
+.twc-card__sizes {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 10px 12px;
+  background: #ffffff; /* solid white */
+  opacity: 0; pointer-events: none; transition: opacity 160ms ease;
+}
+.twc-card:hover .twc-card__sizes { opacity: 1; pointer-events: auto; }
+.twc-card__sizes .size {
+  border: 1px solid var(--line); background: transparent; color: var(--ink);
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 700; font-size: 12px; line-height: 1; padding: 7px 10px; border-radius: 9999px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  cursor: pointer;
+}
+.twc-card__sizes .size:hover { border-color: #CFCFCF; }
+.twc-card__sizes .size .status {
+  display: block; margin-top: 4px; width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid var(--price-red); display: flex; align-items: center; justify-content: center;
+}
+.twc-card__sizes .size .status .material-icons { font-size: 10px; line-height: 1; color: var(--price-red); }
+
+/* Tooltip */
+.twc-card__sizes .size[data-tooltip] { position: relative; }
+.twc-card__sizes .size[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+  background: #111; color: #fff; font-size: 11px; line-height: 1; padding: 6px 8px; border-radius: 4px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 120ms ease;
+}
+.twc-card__sizes .size[data-tooltip]::before {
+  content: '';
+  position: absolute; left: 50%; bottom: calc(100% + 2px); transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: #111;
+  opacity: 0; transition: opacity 120ms ease;
+}
+.twc-card__sizes .size[data-tooltip]:hover::after,
+.twc-card__sizes .size[data-tooltip]:hover::before { opacity: 1; }
+
+.twc-card__info { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 12px; }
+.twc-card__title {
+  margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 600; font-size: 0.95rem; color: var(--ink);
+}
+.twc-card__title a { color: inherit; text-decoration: none; }
+.twc-card__sku { margin-top: 2px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
+.twc-card__price { margin-top: 6px; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-weight: 700; color: var(--price-red); font-size: 1rem; }
+.twc-card__wishlist { appearance: none; background: transparent; border: 0; padding: 2px; align-self: start; cursor: pointer; }
+.twc-card__wishlist .material-icons { color: #666; font-size: 22px; }
+.twc-card__wishlist:hover .material-icons { color: var(--price-red); }

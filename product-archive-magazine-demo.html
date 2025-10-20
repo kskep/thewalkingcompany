@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product Archive – Magazine Demo</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/pages.shop.css" />
+  <!-- Fonts for PRODUCT CARD demo -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Demo: make archive fill the full screen width */
+    .demo-container { width: 100%; margin: 0; }
+
+    /* ==== PRODUCT CARD (per PRODUCT_CARD.txt) ==== */
+    :root {
+      --card-bg: #F5F5F5;
+      --ink: #111111;
+      --ink-soft: #666666;
+      --price-red: #E11900; /* vibrant red */
+      --badge-yellow: #FFD600;
+      --badge-new-bg: #FFFFFF;
+      --dot: #DDDDDD;
+      --dot-active: #000000;
+      --line: #E5E5E5;
+    }
+
+    .products-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+    @media (max-width: 1200px) { .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 900px)  { .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px)  { .products-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
+
+    .product { margin: 0; }
+
+    .twc-card {
+      background: var(--card-bg);
+      display: grid;
+      grid-template-rows: 1fr auto; /* image | info; sizes overlay is absolute */
+      aspect-ratio: 3 / 4; /* vertical rectangle */
+      position: relative;
+      overflow: hidden;
+      border-radius: 0; /* sharp corners per spec */
+      cursor: default;
+      transition: box-shadow 160ms ease;
+    }
+    .twc-card:hover { cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+
+    /* Image area (top ~80%) */
+    .twc-card__image { position: relative; min-height: 0; }
+    .twc-card__image a { display: block; width: 100%; height: 100%; }
+    .twc-card__image img {
+      width: 100%; height: 100%; object-fit: cover; /* fill the image area */
+      background: transparent;
+      display: block;
+      transition: none !important; /* ensure no fade/zoom from external CSS */
+    }
+    /* Prevent any hover fade/zoom from inherited styles */
+    .twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
+    .twc-card__badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 2; }
+    .twc-badge {
+      font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 4px 6px; border-radius: 2px; line-height: 1; color: #000;
+      border: 1px solid transparent;
+    }
+    .twc-badge--sale { background: var(--badge-yellow); }
+    .twc-badge--new { background: var(--badge-new-bg); border-color: var(--line); }
+
+    /* Carousel dots (bottom-center of image area) */
+    .twc-card__dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
+    .twc-card__dots .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dot); }
+    .twc-card__dots .dot.is-active { background: var(--dot-active); }
+
+    /* Size selector (absolute overlay inside image; does not resize the card) */
+    .twc-card__sizes {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 10px 12px;
+      background: #ffffff; /* solid white background as requested */
+      opacity: 0; pointer-events: none; transition: opacity 160ms ease;
+    }
+    .twc-card:hover .twc-card__sizes { opacity: 1; pointer-events: auto; }
+    .twc-card__sizes .size {
+      border: 1px solid var(--line); background: transparent; color: var(--ink);
+      font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-weight: 700; font-size: 12px; line-height: 1; padding: 7px 10px; border-radius: 9999px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      cursor: pointer;
+    }
+    .twc-card__sizes .size:hover { border-color: #CFCFCF; }
+    .twc-card__sizes .size .status {
+      display: block; margin-top: 4px; width: 14px; height: 14px; border-radius: 50%;
+      border: 1px solid var(--price-red); display: flex; align-items: center; justify-content: center;
+    }
+    .twc-card__sizes .size .status .material-icons { font-size: 10px; line-height: 1; color: var(--price-red); }
+
+  /* Tooltip for low stock items (Greek) */
+    .twc-card__sizes .size[data-tooltip] { position: relative; }
+    .twc-card__sizes .size[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+      background: #111; color: #fff; font-size: 11px; line-height: 1; padding: 6px 8px; border-radius: 4px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 120ms ease;
+    }
+    .twc-card__sizes .size[data-tooltip]::before {
+      content: '';
+      position: absolute; left: 50%; bottom: calc(100% + 2px); transform: translateX(-50%);
+      border: 6px solid transparent; border-top-color: #111;
+      opacity: 0; transition: opacity 120ms ease;
+    }
+    .twc-card__sizes .size[data-tooltip]:hover::after,
+    .twc-card__sizes .size[data-tooltip]:hover::before { opacity: 1; }
+
+    /* Information area (bottom ~20%) */
+    .twc-card__info { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 12px; }
+    .twc-card__title {
+      margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-weight: 600; font-size: 0.95rem; color: var(--ink);
+    }
+    .twc-card__sku { margin-top: 2px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
+    .twc-card__price { margin-top: 6px; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-weight: 700; color: var(--price-red); font-size: 1rem; }
+    .twc-card__wishlist { appearance: none; background: transparent; border: 0; padding: 2px; align-self: start; cursor: pointer; }
+    .twc-card__wishlist .material-icons { color: #666; font-size: 22px; }
+    .twc-card__wishlist:hover .material-icons { color: var(--price-red); }
+  </style>
+</head>
+<body class="woocommerce-shop">
+  <div class="shop-layout demo-container">
+    <div class="shop-inner">
+
+    <!-- Toolbar -->
+    <div class="shop-toolbar flex items-center justify-between mb-6 pb-4">
+      <button class="filter-toggle-btn-flat flex items-center gap-2 px-4 py-2 bg-transparent" aria-label="Open Filters">
+        <span class="material-icons text-base">tune</span>
+        <span class="text-sm font-medium uppercase tracking-wide">Filters</span>
+      </button>
+
+      <div class="shop-ordering">
+        <label class="text-sm mr-2" for="orderby">Sort by:</label>
+        <select id="orderby">
+          <option value="menu_order">Default</option>
+          <option value="popularity">Popularity</option>
+          <option value="rating">Average rating</option>
+          <option value="date">Latest</option>
+          <option value="price">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Active Filters Bar (example) -->
+    <div class="active-filters-bar mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-sm font-semibold uppercase tracking-wide" style="color: var(--ink-soft);">Active Filters:</span>
+          <div class="active-filters-list flex flex-wrap gap-2">
+            <span class="active-filter">Pink <button class="remove-filter" title="Remove">×</button></span>
+            <span class="active-filter">Size M <button class="remove-filter" title="Remove">×</button></span>
+          </div>
+        </div>
+        <button class="clear-all-filters text-sm font-semibold uppercase tracking-wide" style="color: var(--ink);">Clear All</button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-wrapper">
+      <ul class="products-grid">
+        <!-- Product 1 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p1/900/900" alt="Satin Slip Dress" />
+              </a>
+              <div class="twc-card__badges">
+                <span class="twc-badge twc-badge--sale">SALE</span>
+                <span class="twc-badge twc-badge--new">NEW</span>
+              </div>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">36</button>
+              <button class="size" data-tooltip="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ">37 <span class="status" title="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ"><span class="material-icons">schedule</span></span></button>
+              <button class="size">38</button>
+              <button class="size">39</button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Satin Slip Dress in Blush</h3>
+                <div class="twc-card__sku">SKU: SATIN-001</div>
+                <div class="twc-card__price">$99.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 2 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p2/900/900" alt="Oversized Blazer" />
+              </a>
+              <div class="twc-card__badges">
+                <span class="twc-badge twc-badge--sale">SALE</span>
+              </div>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">34</button>
+              <button class="size">36</button>
+              <button class="size" data-tooltip="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ">38 <span class="status" title="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ"><span class="material-icons">schedule</span></span></button>
+              <button class="size">40</button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Oversized Blazer in Ink</h3>
+                <div class="twc-card__sku">SKU: BLAZ-442</div>
+                <div class="twc-card__price">$189.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 3 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p3/900/900" alt="Ribbed Knit Top" />
+              </a>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">XS</button>
+              <button class="size">S</button>
+              <button class="size">M</button>
+              <button class="size" data-tooltip="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ">L <span class="status" title="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ"><span class="material-icons">schedule</span></span></button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Ribbed Knit Top</h3>
+                <div class="twc-card__sku">SKU: RIB-220</div>
+                <div class="twc-card__price">$59.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 4 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p4/900/900" alt="Wide-Leg Trousers" />
+              </a>
+              <div class="twc-card__badges">
+                <span class="twc-badge twc-badge--sale">SALE</span>
+              </div>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">28</button>
+              <button class="size">30</button>
+              <button class="size">32</button>
+              <button class="size">34</button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Wide-Leg Trousers</h3>
+                <div class="twc-card__sku">SKU: TR-918</div>
+                <div class="twc-card__price">$109.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 5 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p5/900/900" alt="Cotton Shirt Dress" />
+              </a>
+              <div class="twc-card__badges">
+                <span class="twc-badge twc-badge--new">NEW</span>
+              </div>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">2</button>
+              <button class="size">4</button>
+              <button class="size">6</button>
+              <button class="size" data-tooltip="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ">8 <span class="status" title="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ"><span class="material-icons">schedule</span></span></button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Cotton Shirt Dress</h3>
+                <div class="twc-card__sku">SKU: DR-302</div>
+                <div class="twc-card__price">$129.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 6 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p6/900/900" alt="Boxy Denim Jacket" />
+              </a>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">S</button>
+              <button class="size">M</button>
+              <button class="size">L</button>
+              <button class="size">XL</button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Boxy Denim Jacket</h3>
+                <div class="twc-card__sku">SKU: DJ-110</div>
+                <div class="twc-card__price">$129.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 7 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p7/900/900" alt="Pleated Midi Skirt" />
+              </a>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">0</button>
+              <button class="size">2</button>
+              <button class="size" data-tooltip="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ">4 <span class="status" title="ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ"><span class="material-icons">schedule</span></span></button>
+              <button class="size">6</button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Pleated Midi Skirt</h3>
+                <div class="twc-card__sku">SKU: SK-507</div>
+                <div class="twc-card__price">$89.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+        <!-- Product 8 -->
+        <li class="product">
+          <article class="twc-card">
+            <div class="twc-card__image">
+              <a href="#">
+                <img src="https://picsum.photos/seed/p8/900/900" alt="Rib Tank Bodysuit" />
+              </a>
+              <div class="twc-card__dots" aria-hidden="true">
+                <span class="dot is-active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="twc-card__sizes" aria-hidden="true">
+              <button class="size">XS</button>
+              <button class="size">S</button>
+              <button class="size">M</button>
+              <button class="size">L</button>
+              </div>
+            </div>
+            <div class="twc-card__info">
+              <div>
+                <h3 class="twc-card__title">Rib Tank Bodysuit</h3>
+                <div class="twc-card__sku">SKU: BOD-021</div>
+                <div class="twc-card__price">$39.00</div>
+              </div>
+              <button class="twc-card__wishlist" title="Add to wishlist" aria-label="Add to wishlist"><span class="material-icons">favorite_border</span></button>
+            </div>
+          </article>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="woocommerce-pagination" aria-label="Pagination">
+      <ul class="page-numbers">
+        <li><a class="page-numbers" href="#">1</a></li>
+        <li><span class="page-numbers current">2</span></li>
+        <li><a class="page-numbers" href="#">3</a></li>
+        <li><a class="next page-numbers" href="#">Next »</a></li>
+      </ul>
+    </nav>
+    </div>
+  </div>
+</body>
+</html>
