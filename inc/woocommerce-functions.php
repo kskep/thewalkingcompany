@@ -453,7 +453,7 @@ function eshop_filter_products() {
 
     if ($query->have_posts()) {
         // Start the products grid container
-    echo '<ul class="products-grid" id="products-grid">';
+        echo '<ul class="products-grid" id="products-grid">';
 
         while ($query->have_posts()) {
             $query->the_post();
@@ -462,17 +462,18 @@ function eshop_filter_products() {
 
     echo '</ul>'; // Close products-grid
 
-        // Pagination
+        // Build pagination HTML separately
+        $pagination_html = '';
         if ($query->max_num_pages > 1) {
-            echo '<div class="pagination-wrapper mt-8">';
-            echo paginate_links(array(
-                'total' => $query->max_num_pages,
-                'current' => $paged,
-                'format' => '?paged=%#%',
-                'prev_text' => '<i class="fas fa-chevron-left"></i>',
-                'next_text' => '<i class="fas fa-chevron-right"></i>',
-            ));
-            echo '</div>';
+            $pagination_html = '<nav class="woocommerce-pagination" aria-label="Pagination">' .
+                paginate_links(array(
+                    'total' => $query->max_num_pages,
+                    'current' => $paged,
+                    'format' => '?paged=%#%',
+                    'prev_text' => '&laquo;',
+                    'next_text' => '&raquo;',
+                )) .
+            '</nav>';
         }
     } else {
         echo '<div class="no-products-found text-center py-12">';
@@ -504,6 +505,7 @@ function eshop_filter_products() {
 
     wp_send_json_success(array(
         'products' => $products_html,
+        'pagination' => isset($pagination_html) ? $pagination_html : '',
         'result_count' => $result_count,
         'found_posts' => $total_products,
     ));

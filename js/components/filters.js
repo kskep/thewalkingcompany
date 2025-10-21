@@ -209,6 +209,17 @@
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);
                         $('.woocommerce-result-count').html(response.data.result_count);
+                        // Replace pagination that sits below products
+                        if (typeof response.data.pagination !== 'undefined') {
+                            // If there's already a pagination nav, replace it; else append after wrapper
+                            var $existing = $('.woocommerce-pagination');
+                            if ($existing.length) {
+                                $existing.replaceWith(response.data.pagination);
+                            } else {
+                                // Append after products wrapper to mirror template structure
+                                $('.products-wrapper').after(response.data.pagination);
+                            }
+                        }
                         
                         // Re-init product sliders on new DOM
                         if (typeof initializeProductCardSliders === 'function') {

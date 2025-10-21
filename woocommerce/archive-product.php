@@ -8,6 +8,10 @@ get_header('shop'); ?>
 
 <div class="shop-layout demo-container">
     <div class="shop-inner">
+        <!-- TEMP dev banner: remove after verification -->
+        <div class="twc-dev-banner" style="background:#fffbcc;border:1px solid #f6e05e;color:#111;padding:8px 12px;margin:12px 0;border-radius:4px;">
+            Magazine Archive Template Active
+        </div>
 
         <?php
         // Toolbar + Active Filters + Off-canvas drawer
@@ -26,9 +30,6 @@ get_header('shop'); ?>
 
                 <?php woocommerce_product_loop_end(); ?>
 
-                <?php // Pagination (kept inside wrapper to align with AJAX updates)
-                do_action('woocommerce_after_shop_loop'); ?>
-
             <?php else : ?>
                 <div class="no-products-found text-center py-12">
                     <div class="mb-6"><i class="fas fa-search text-6xl text-gray-300"></i></div>
@@ -39,8 +40,11 @@ get_header('shop'); ?>
             <?php endif; ?>
         </div>
 
+        <?php // Pagination moved below products wrapper to mirror demo layout
+        do_action('woocommerce_after_shop_loop'); ?>
+
     </div>
-    <!-- Note: Demo places pagination outside grid; we keep Woo pagination hook inside products-wrapper for AJAX consistency. -->
+    <!-- Pagination now rendered below products to mirror demo layout. -->
 </div>
 
 <?php do_action('woocommerce_after_main_content'); ?>
