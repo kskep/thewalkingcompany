@@ -8,11 +8,6 @@ get_header('shop'); ?>
 
 <div class="shop-layout demo-container">
     <div class="shop-inner">
-        <!-- TEMP dev banner: remove after verification -->
-        <div class="twc-dev-banner" style="background:#fffbcc;border:1px solid #f6e05e;color:#111;padding:8px 12px;margin:12px 0;border-radius:4px;">
-            Magazine Archive Template Active
-        </div>
-
         <?php
         // Toolbar + Active Filters + Off-canvas drawer
         get_template_part('template-parts/components/filters');

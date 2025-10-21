@@ -30,9 +30,9 @@ defined('ABSPATH') || exit;
 // Off-canvas filter panel
 ?>
 <!-- Backdrop for filter drawer -->
-<div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+<div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40" style="display: none;"></div>
 
-<aside id="filter-drawer" class="fixed inset-y-0 left-0 w-80 max-w-[90vw] bg-white shadow-xl z-50">
+<aside id="filter-drawer" class="fixed inset-y-0 left-0 w-80 max-w-[90vw] bg-white shadow-xl z-50" style="transform: translateX(-100%);">
   <div class="p-4 border-b border-gray-200 flex items-center justify-between">
     <h3 class="text-base font-semibold"><?php _e('Filters', 'eshop-theme'); ?></h3>
     <button id="close-filters" class="p-2" aria-label="<?php esc_attr_e('Close Filters', 'eshop-theme'); ?>"><span class="material-icons">close</span></button>
