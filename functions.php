@@ -49,9 +49,14 @@ function eshop_theme_scripts() {
     wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), '1.0.0');
 
     if (is_shop() || is_product_category() || is_product_tag()) {
-        wp_enqueue_style('eshop-shop', get_template_directory_uri() . '/css/pages.shop.css', array('eshop-theme-style'), '1.0.0');
-        // Product Card component CSS
-        wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-shop'), filemtime(get_template_directory() . '/css/components/product-card.css'));
+        // New archive page CSS
+        $archive_css_path = get_template_directory() . '/css/pages.archive-magazine.css';
+        $archive_css_ver = file_exists($archive_css_path) ? filemtime($archive_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-archive-magazine', get_template_directory_uri() . '/css/pages.archive-magazine.css', array('eshop-theme-style'), $archive_css_ver);
+
+        // Product Card component CSS (no dependency on old shop CSS)
+        wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime(get_template_directory() . '/css/components/product-card.css'));
+
         // Price slider (noUiSlider) for filters
         wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
         wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
@@ -94,18 +99,12 @@ function eshop_theme_scripts() {
         wp_enqueue_style('eshop-wishlist', get_template_directory_uri() . '/css/components/wishlist.css', array('eshop-theme-style'), '1.0.0');
     }
 
-    // Filter component JavaScript - Simple version for WordPress compatibility
+    // Filter component JavaScript (full version)
     if (is_shop() || is_product_category() || is_product_tag()) {
-        // Load noUiSlider for price range
-        wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
-        wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
-
-        // Ensure we reference the correct location of the filters script
-        $filter_js_rel_path = '/js/components/filters-simple.js';
-        $filter_js_path = get_template_directory_uri() . $filter_js_rel_path;
-        $filter_js_file = get_template_directory() . $filter_js_rel_path;
-        $filter_js_version = file_exists($filter_js_file) ? filemtime($filter_js_file) : '1.0.0';
-        wp_enqueue_script('eshop-filters-simple', $filter_js_path, array('jquery', 'nouislider'), $filter_js_version, true);
+        $filters_js_rel = '/js/components/filters.js';
+        $filters_js_file = get_template_directory() . $filters_js_rel;
+        $filters_js_ver = file_exists($filters_js_file) ? filemtime($filters_js_file) : '1.0.0';
+        wp_enqueue_script('eshop-filters', get_template_directory_uri() . $filters_js_rel, array('jquery', 'nouislider', 'eshop-theme-script'), $filters_js_ver, true);
     }
 
     // Also load on shop pages specifically

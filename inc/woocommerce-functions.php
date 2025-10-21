@@ -272,13 +272,14 @@ remove_action('woocommerce_output_content_wrapper_end', 'woocommerce_output_cont
 
 // Override product loop start to output our custom grid container
 function eshop_woocommerce_product_loop_start($html) {
-    return '<div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">';
+    // Use UL to match magazine demo markup
+    return '<ul class="products-grid" id="products-grid">';
 }
 add_filter('woocommerce_product_loop_start', 'eshop_woocommerce_product_loop_start');
 
 // Override product loop end to close our custom grid container
 function eshop_woocommerce_product_loop_end($html) {
-    return '</div>';
+    return '</ul>';
 }
 add_filter('woocommerce_product_loop_end', 'eshop_woocommerce_product_loop_end');
 
@@ -452,14 +453,14 @@ function eshop_filter_products() {
 
     if ($query->have_posts()) {
         // Start the products grid container
-        echo '<div class="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">';
+    echo '<ul class="products-grid" id="products-grid">';
 
         while ($query->have_posts()) {
             $query->the_post();
             wc_get_template_part('content', 'product');
         }
 
-        echo '</div>'; // Close products-grid
+    echo '</ul>'; // Close products-grid
 
         // Pagination
         if ($query->max_num_pages > 1) {
