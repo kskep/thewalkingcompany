@@ -195,10 +195,18 @@
             $('.products-wrapper').addClass('relative');
             $('.products-loading').removeClass('hidden');
 
+            var data = {
+                action: 'filter_products',
+                filters: filters,
+                paged: page,
+                orderby: orderby,
+                nonce: eshop_ajax.nonce
+            };
+
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
-                data: $.param(filterData),
+                data: $.param(data),
                 success: function(response) {
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);
