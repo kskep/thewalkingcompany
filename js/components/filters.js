@@ -41,14 +41,20 @@
             $('#apply-filters').on('click', this.applyFiltersAndClose);
             $('#clear-filters').on('click', this.clearAllFilters);
             
-            // Filter change handlers
-            $(document).on('change', '#filter-drawer input[type="checkbox"]', function() {
-                // Auto-apply filters on change (optional)
-                // EShopFilters.applyFilters();
+            // Filter change handlers - auto-apply on checkbox changes
+            $(document).on('change', '#filter-drawer input[type="checkbox"]', function(e) {
+                e.preventDefault();
+                EShopFilters.applyFilters(1);
             });
 
-            $(document).on('click', '.apply-price-filter', this.applyFilters);
-            $(document).on('change', '.woocommerce-ordering select', this.applyFilters);
+            // Ensure we pass a numeric page, not the event object
+            $(document).on('click', '.apply-price-filter', function(e){
+                e.preventDefault();
+                EShopFilters.applyFilters(1);
+            });
+            $(document).on('change', '.woocommerce-ordering select', function(){
+                EShopFilters.applyFilters(1);
+            });
 
             // Quick filter buttons
             $(document).on('click', '.quick-filter-btn:not(.more-filters-btn)', this.handleQuickFilter);
