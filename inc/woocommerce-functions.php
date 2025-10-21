@@ -382,6 +382,24 @@ function eshop_filter_products() {
         'tax_query' => array(),
     );
 
+    // Respect current archive context if provided by client
+    $context_tax = isset($_POST['context_taxonomy']) ? sanitize_text_field(wp_unslash($_POST['context_taxonomy'])) : (isset($data['context_taxonomy']) ? sanitize_text_field($data['context_taxonomy']) : '');
+    $context_terms = array();
+    if (isset($_POST['context_terms'])) {
+        $context_terms = is_array($_POST['context_terms']) ? array_map('intval', $_POST['context_terms']) : array();
+    } elseif (isset($data['context_terms'])) {
+        $context_terms = is_array($data['context_terms']) ? array_map('intval', $data['context_terms']) : array();
+    }
+    if ($context_tax && !empty($context_terms)) {
+        $args['tax_query'][] = array(
+            'taxonomy' => $context_tax,
+            'field' => 'term_id',
+            'terms' => $context_terms,
+            'include_children' => true,
+            'operator' => 'IN',
+        );
+    }
+
     // Handle ordering
     switch ($orderby) {
         case 'price':
@@ -470,6 +488,11 @@ function eshop_filter_products() {
     }
 
     // Note: Do not use legacy _visibility meta; modern WooCommerce handles catalog visibility via taxonomy/queries.
+
+    // If we have multiple tax queries, ensure AND relation so context is preserved
+    if (!empty($args['tax_query']) && count($args['tax_query']) > 1) {
+        $args['tax_query']['relation'] = 'AND';
+    }
 
     $query = new WP_Query($args);
 

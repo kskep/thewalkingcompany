@@ -230,7 +230,10 @@
                     filters: filters,
                     paged: page,
                     orderby: orderby,
-                    nonce: eshop_ajax.nonce
+                    nonce: eshop_ajax.nonce,
+                    // Send current archive context so server can constrain results
+                    context_taxonomy: typeof eshop_ajax.context_taxonomy !== 'undefined' ? eshop_ajax.context_taxonomy : '',
+                    context_terms: typeof eshop_ajax.context_terms !== 'undefined' ? eshop_ajax.context_terms : []
                 },
                 success: function(response) {
                     if (response.success) {

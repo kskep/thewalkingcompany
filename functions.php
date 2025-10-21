@@ -114,10 +114,30 @@ function eshop_theme_scripts() {
         // Additional shop-specific initialization if needed
     }
 
-    // Localize script for AJAX
+    // Localize script for AJAX with page context (shop/category/tag)
+    $context_taxonomy = '';
+    $context_terms = array();
+    if (class_exists('WooCommerce')) {
+        if (is_product_category()) {
+            $term = get_queried_object();
+            if ($term && !is_wp_error($term)) {
+                $context_taxonomy = 'product_cat';
+                $context_terms = array((int) $term->term_id);
+            }
+        } elseif (is_product_tag()) {
+            $term = get_queried_object();
+            if ($term && !is_wp_error($term)) {
+                $context_taxonomy = 'product_tag';
+                $context_terms = array((int) $term->term_id);
+            }
+        }
+    }
+
     wp_localize_script('eshop-theme-script', 'eshop_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('eshop_nonce')
+        'nonce' => wp_create_nonce('eshop_nonce'),
+        'context_taxonomy' => $context_taxonomy,
+        'context_terms' => $context_terms,
     ));
     
     // Add custom script for related products initialization
