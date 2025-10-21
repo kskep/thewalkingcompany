@@ -344,11 +344,19 @@ add_filter('woocommerce_single_product_image_thumbnail_html', 'eshop_woocommerce
  * AJAX handler for product filtering
  */
 function eshop_filter_products() {
-    check_ajax_referer('eshop_nonce', 'nonce');
+    // Get the raw POST data
+    $raw_data = file_get_contents('php://input');
+    $data = json_decode($raw_data, true);
 
-    $filters = isset($_POST['filters']) ? $_POST['filters'] : array();
-    $paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
-    $orderby = isset($_POST['orderby']) ? sanitize_text_field($_POST['orderby']) : 'menu_order';
+    // Check nonce from the decoded data
+    if (!isset($data['nonce']) || !wp_verify_nonce($data['nonce'], 'eshop_nonce')) {
+        wp_send_json_error('Invalid nonce');
+        return;
+    }
+
+    $filters = isset($data['filters']) ? $data['filters'] : array();
+    $paged = isset($data['paged']) ? intval($data['paged']) : 1;
+    $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'menu_order';
 
     // Build WP_Query args
     $args = array(

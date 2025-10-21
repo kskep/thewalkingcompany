@@ -198,13 +198,7 @@
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'filter_products',
-                    filters: filters,
-                    paged: page,
-                    orderby: orderby,
-                    nonce: eshop_ajax.nonce
-                },
+                data: $.param(filterData),
                 success: function(response) {
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);
