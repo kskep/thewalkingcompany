@@ -150,7 +150,14 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
       endif;
       ?>
       <div class="twc-card__price">
-        <?php echo wp_kses_post($product->get_price_html()); ?>
+        <?php 
+        // Only show price in red if on sale, otherwise use default color
+        if ($is_sale) {
+            echo wp_kses_post($product->get_price_html());
+        } else {
+            echo '<span class="price">' . wp_kses_post($product->get_price_html()) . '</span>';
+        }
+        ?>
       </div>
     </div>
 

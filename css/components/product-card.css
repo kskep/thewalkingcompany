@@ -118,15 +118,11 @@
 .twc-card__title a:hover { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; }
 .twc-card__sku { margin-top: 2px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
 .twc-card__category { margin-top: 4px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
-.twc-card__price { 
-  margin-top: 6px; 
-  font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
-  font-weight: 700; 
-  font-size: 1rem; 
-  color: var(--ink); /* Default price color is now black */
-}
-.twc-card__price ins { text-decoration: none; color: var(--price-red); } /* Sale price is red */
-.twc-card__price del { color: var(--ink-soft); opacity: 0.7; } /* Strikethrough price is muted gray */
+.twc-card__price { margin-top: 6px; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-weight: 700; font-size: 1rem; }
+.twc-card__price { color: var(--price-red); }
+.twc-card__price .price { color: var(--ink); font-weight: 700; }
+.twc-card__price ins { text-decoration: none; color: var(--price-red); }
+.twc-card__price del { opacity: 0.5; }
 .twc-card__wishlist { appearance: none; background: transparent !important; border: 0; padding: 2px; align-self: start; cursor: pointer; }
 .twc-card__wishlist .material-icons { color: #666; font-size: 22px; }
 .twc-card__wishlist:hover .material-icons { color: var(--price-red); }

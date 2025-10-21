@@ -12,26 +12,9 @@ $min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : '';
 $max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : '';
 
 // Get price range from products
-global $wpdb;
 $min_price_range = 0;
-$max_price_range = 1000;
+$max_price_range = eshop_get_max_product_price();
 
-// Try to get actual price range from products
-$prices = $wpdb->get_row("
-    SELECT MIN(CAST(meta_value AS DECIMAL(10,2))) as min_price,
-           MAX(CAST(meta_value AS DECIMAL(10,2))) as max_price
-    FROM {$wpdb->postmeta} pm
-    INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
-    WHERE pm.meta_key = '_price'
-    AND p.post_type = 'product'
-    AND p.post_status = 'publish'
-    AND pm.meta_value != ''
-");
-
-if ($prices && $prices->max_price > 0) {
-    $min_price_range = floor($prices->min_price);
-    $max_price_range = ceil($prices->max_price);
-}
 ?>
 
 <div class="filter-section mb-6">
@@ -65,7 +48,7 @@ if ($prices && $prices->max_price > 0) {
 
         <!-- Price Range Slider -->
         <div class="price-slider-container mb-4">
-            <div id="price-slider" class="price-slider"></div>
+            <div id="price-slider" class="price-slider" data-max="<?php echo esc_attr($max_price_range); ?>"></div>
         </div>
 
         <!-- Price Range Display -->

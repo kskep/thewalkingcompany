@@ -44,7 +44,7 @@
             // Filter change handlers
             $(document).on('change', '#filter-drawer input[type="checkbox"]', function() {
                 // Auto-apply filters on change (optional)
-                // EShopFilters.applyFilters();
+                EShopFilters.applyFilters();
             });
 
             $(document).on('click', '.apply-price-filter', this.applyFilters);
@@ -165,14 +165,15 @@
             var maxInput = document.getElementById('max-price');
             if (!minInput || !maxInput) return;
             
+            var maxPrice = parseFloat(sliderEl.getAttribute('data-max')) || 1000;
             var minStart = parseFloat(minInput.value) || 0;
-            var maxStart = parseFloat(maxInput.value) || 1000;
+            var maxStart = parseFloat(maxInput.value) || maxPrice;
             var start = [minStart, maxStart];
             
             noUiSlider.create(sliderEl, {
                 start: start,
                 connect: true,
-                range: { min: 0, max: 1000 },
+                range: { min: 0, max: maxPrice },
                 step: 1,
             });
             
@@ -195,18 +196,10 @@
             $('.products-wrapper').addClass('relative');
             $('.products-loading').removeClass('hidden');
 
-            var data = {
-                action: 'filter_products',
-                filters: filters,
-                paged: page,
-                orderby: orderby,
-                nonce: eshop_ajax.nonce
-            };
-
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
-                data: $.param(data),
+                data: $.param(filterData),
                 success: function(response) {
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);
