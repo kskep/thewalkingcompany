@@ -165,14 +165,18 @@
             var maxInput = document.getElementById('max-price');
             if (!minInput || !maxInput) return;
             
-            var minStart = parseFloat(minInput.value) || 0;
-            var maxStart = parseFloat(maxInput.value) || 1000;
+            // Get min/max from input attributes (set by PHP from actual product prices)
+            var minRange = parseFloat(minInput.getAttribute('min')) || 0;
+            var maxRange = parseFloat(maxInput.getAttribute('max')) || 1000;
+            
+            var minStart = parseFloat(minInput.value) || minRange;
+            var maxStart = parseFloat(maxInput.value) || maxRange;
             var start = [minStart, maxStart];
             
             noUiSlider.create(sliderEl, {
                 start: start,
                 connect: true,
-                range: { min: 0, max: 1000 },
+                range: { min: minRange, max: maxRange },
                 step: 1,
             });
             
@@ -198,13 +202,14 @@
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
-                data: {
+                contentType: 'application/json',
+                data: JSON.stringify({
                     action: 'filter_products',
                     filters: filters,
                     paged: page,
                     orderby: orderby,
                     nonce: eshop_ajax.nonce
-                },
+                }),
                 success: function(response) {
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);

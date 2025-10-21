@@ -45,7 +45,7 @@ $selected_categories = isset($_GET['product_cat']) ? (array) $_GET['product_cat'
                         <input 
                             type="checkbox" 
                             name="product_cat[]" 
-                            value="<?php echo esc_attr($category->slug); ?>"
+                            value="<?php echo esc_attr($category->term_id); ?>"
                             class="text-primary focus:ring-primary border-gray-300 rounded"
                             <?php checked($is_checked); ?>
                         >
@@ -69,7 +69,7 @@ $selected_categories = isset($_GET['product_cat']) ? (array) $_GET['product_cat'
                                     <input 
                                         type="checkbox" 
                                         name="product_cat[]" 
-                                        value="<?php echo esc_attr($subcategory->slug); ?>"
+                                        value="<?php echo esc_attr($subcategory->term_id); ?>"
                                         class="text-primary focus:ring-primary border-gray-300 rounded"
                                         <?php checked($sub_is_checked); ?>
                                     >
