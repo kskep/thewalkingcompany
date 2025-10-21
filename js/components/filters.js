@@ -44,7 +44,7 @@
             // Filter change handlers
             $(document).on('change', '#filter-drawer input[type="checkbox"]', function() {
                 // Auto-apply filters on change (optional)
-                EShopFilters.applyFilters();
+                // EShopFilters.applyFilters();
             });
 
             $(document).on('click', '.apply-price-filter', this.applyFilters);
@@ -148,7 +148,7 @@
             var page = EShopFilters.getParameterByName('paged', url);
             if (!page) {
                 // Try to extract /page/2/ from pretty permalinks
-                var match = url && url.match(/\/(?:page)\/(\d+)\/?/i);
+                var match = url && url.match(/\/(?:page)\/(\d+)\/\/?/i);
                 page = match && match[1] ? parseInt(match[1], 10) : 1;
             } else {
                 page = parseInt(page, 10) || 1;
@@ -165,15 +165,14 @@
             var maxInput = document.getElementById('max-price');
             if (!minInput || !maxInput) return;
             
-            var maxPrice = parseFloat(sliderEl.getAttribute('data-max')) || 1000;
             var minStart = parseFloat(minInput.value) || 0;
-            var maxStart = parseFloat(maxInput.value) || maxPrice;
+            var maxStart = parseFloat(maxInput.value) || 1000;
             var start = [minStart, maxStart];
             
             noUiSlider.create(sliderEl, {
                 start: start,
                 connect: true,
-                range: { min: 0, max: maxPrice },
+                range: { min: 0, max: 1000 },
                 step: 1,
             });
             
@@ -199,7 +198,13 @@
             $.ajax({
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
-                data: $.param(filterData),
+                data: {
+                    action: 'filter_products',
+                    filters: filters,
+                    paged: page,
+                    orderby: orderby,
+                    nonce: eshop_ajax.nonce
+                },
                 success: function(response) {
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);
@@ -407,7 +412,7 @@
         // Helper function to get URL parameter
         getParameterByName: function(name, url) {
             if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, '\\$&');
+            name = name.replace(/[[\]]/g, '\\$&');
             var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
             var results = regex.exec(url);
             if (!results) return null;
