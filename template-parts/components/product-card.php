@@ -18,10 +18,10 @@ $main_image_id = $product->get_image_id();
 $gallery_ids   = $product->get_gallery_image_ids();
 $image_count   = ($main_image_id ? 1 : 0) + count($gallery_ids);
 
-// Helper: get image HTML (cover)
+// Helper: get image HTML (cover) - use large high-quality size
 $image_html = '';
 if ($main_image_id) {
-    $image_html = wp_get_attachment_image($main_image_id, 'product-thumbnail-hq', false, array(
+    $image_html = wp_get_attachment_image($main_image_id, 'product-large-hq', false, array(
         'class' => 'w-full h-full object-cover',
         'alt'   => $product->get_name(),
         'loading' => 'lazy'
@@ -55,7 +55,7 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
           <?php foreach ($gallery_ids as $gid) : ?>
             <div class="swiper-slide">
               <a href="<?php the_permalink(); ?>">
-                <?php echo wp_get_attachment_image($gid, 'woocommerce_thumbnail', false, array('class' => 'w-full h-full object-cover', 'loading' => 'lazy', 'alt' => esc_attr($product->get_name()))); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                <?php echo wp_get_attachment_image($gid, 'product-large-hq', false, array('class' => 'w-full h-full object-cover', 'loading' => 'lazy', 'alt' => esc_attr($product->get_name()))); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
               </a>
             </div>
           <?php endforeach; ?>
@@ -63,8 +63,6 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
         <!-- Navigation -->
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
-        <!-- Pagination -->
-        <div class="swiper-pagination"></div>
       </div>
     <?php else : ?>
       <a href="<?php the_permalink(); ?>">
@@ -125,8 +123,41 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
         echo $sku ? esc_html__('SKU: ', 'thewalkingtheme') . esc_html($sku) : '&nbsp;';
         ?>
       </div>
+      <?php
+      // Display category hierarchy (parent > child)
+      $categories = get_the_terms($product_id, 'product_cat');
+      if ($categories && !is_wp_error($categories)) :
+          $cat_hierarchy = array();
+          foreach ($categories as $category) {
+              // Skip uncategorized
+              if ($category->slug === 'uncategorized') continue;
+              // Get parent if exists
+              if ($category->parent) {
+                  $parent = get_term($category->parent, 'product_cat');
+                  if ($parent && !is_wp_error($parent)) {
+                      $cat_hierarchy[] = esc_html($parent->name) . ' > ' . esc_html($category->name);
+                  } else {
+                      $cat_hierarchy[] = esc_html($category->name);
+                  }
+              } else {
+                  $cat_hierarchy[] = esc_html($category->name);
+              }
+          }
+          if (!empty($cat_hierarchy)) :
+              ?>
+              <div class="twc-card__category"><?php echo implode(', ', array_unique($cat_hierarchy)); ?></div>
+          <?php endif;
+      endif;
+      ?>
       <div class="twc-card__price">
-        <?php echo wp_kses_post($product->get_price_html()); ?>
+        <?php 
+        // Only show price in red if on sale, otherwise use default color
+        if ($is_sale) {
+            echo wp_kses_post($product->get_price_html());
+        } else {
+            echo '<span class="price">' . wp_kses_post($product->get_price_html()) . '</span>';
+        }
+        ?>
       </div>
     </div>
 
