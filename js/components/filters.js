@@ -144,15 +144,29 @@
         // Handle pagination clicks
         handlePagination: function(e) {
             e.preventDefault();
-            var url = $(this).attr('href');
-            var page = EShopFilters.getParameterByName('paged', url);
-            if (!page) {
-                // Try to extract /page/2/ from pretty permalinks
-                var match = url && url.match(/\/(?:page)\/(\d+)\/\/?/i);
-                page = match && match[1] ? parseInt(match[1], 10) : 1;
-            } else {
-                page = parseInt(page, 10) || 1;
+            var href = $(this).attr('href') || '';
+
+            var page = 1;
+            try {
+                var urlObj = new URL(href, window.location.origin);
+                page = urlObj.searchParams.get('paged') ||
+                       urlObj.searchParams.get('page') ||
+                       urlObj.searchParams.get('product-page');
+                if (!page) {
+                    var m = urlObj.pathname.match(/\/(?:page)\/(\d+)\/?/i);
+                    if (m && m[1]) {
+                        page = parseInt(m[1], 10);
+                    }
+                }
+            } catch (err) {
+                // Fallback if URL constructor fails (e.g., relative oddities)
+                var m2 = href.match(/\/(?:page)\/(\d+)\/?/i);
+                if (m2 && m2[1]) {
+                    page = parseInt(m2[1], 10) || 1;
+                }
             }
+
+            page = parseInt(page, 10) || 1;
             EShopFilters.applyFilters(page);
         },
 
@@ -200,16 +214,18 @@
             $('.products-loading').removeClass('hidden');
 
             $.ajax({
+                // Ensure WordPress admin-ajax correctly routes the request
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
+                dataType: 'json',
+                // Use form-encoded payload so WP sees `action` in $_POST
+                data: {
                     action: 'filter_products',
                     filters: filters,
                     paged: page,
                     orderby: orderby,
                     nonce: eshop_ajax.nonce
-                }),
+                },
                 success: function(response) {
                     if (response.success) {
                         $('.products-wrapper').html(response.data.products);
@@ -239,6 +255,10 @@
                             scrollTop: $('.shop-toolbar').offset().top - 100
                         }, 300);
                     }
+                },
+                error: function(xhr, status, error) {
+                    // Surface errors for easier debugging without breaking UX
+                    console.error('Filter AJAX failed:', status, error, xhr && xhr.responseText);
                 },
                 complete: function() {
                     $('.products-loading').addClass('hidden');

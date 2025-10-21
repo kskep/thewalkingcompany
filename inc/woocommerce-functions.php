@@ -344,17 +344,30 @@ add_filter('woocommerce_single_product_image_thumbnail_html', 'eshop_woocommerce
  * AJAX handler for product filtering
  */
 function eshop_filter_products() {
-    // Get the raw POST data
-    $raw_data = file_get_contents('php://input');
-    $data = json_decode($raw_data, true);
+    // Accept both JSON payloads and standard form-encoded POST
+    $data = null;
 
-    // Check nonce from the decoded data
-    if (!isset($data['nonce']) || !wp_verify_nonce($data['nonce'], 'eshop_nonce')) {
-        wp_send_json_error('Invalid nonce');
-        return;
+    if (!empty($_POST)) {
+        // Form-encoded request (preferred for WP admin-ajax)
+        $data = array(
+            'nonce'   => isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '',
+            'filters' => isset($_POST['filters']) ? $_POST['filters'] : array(),
+            'paged'   => isset($_POST['paged']) ? intval($_POST['paged']) : 1,
+            'orderby' => isset($_POST['orderby']) ? sanitize_text_field(wp_unslash($_POST['orderby'])) : 'menu_order',
+        );
+    } else {
+        // JSON body fallback
+        $raw_data = file_get_contents('php://input');
+        $decoded = json_decode($raw_data, true);
+        $data = is_array($decoded) ? $decoded : array();
     }
 
-    $filters = isset($data['filters']) ? $data['filters'] : array();
+    // Verify nonce
+    if (!isset($data['nonce']) || !wp_verify_nonce($data['nonce'], 'eshop_nonce')) {
+        wp_send_json_error(array('message' => 'Invalid nonce'));
+    }
+
+    $filters = isset($data['filters']) && is_array($data['filters']) ? $data['filters'] : array();
     $paged = isset($data['paged']) ? intval($data['paged']) : 1;
     $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'menu_order';
 
@@ -415,10 +428,13 @@ function eshop_filter_products() {
 
     // Category filter
     if (!empty($filters['product_cat'])) {
+        $cat_terms = $filters['product_cat'];
+        // Support both IDs and slugs if ever passed
+        $all_numeric = is_array($cat_terms) && count(array_filter($cat_terms, 'is_numeric')) === count($cat_terms);
         $args['tax_query'][] = array(
             'taxonomy' => 'product_cat',
-            'field' => 'term_id',
-            'terms' => array_map('intval', $filters['product_cat']),
+            'field' => $all_numeric ? 'term_id' : 'slug',
+            'terms' => $all_numeric ? array_map('intval', $cat_terms) : array_map('sanitize_text_field', $cat_terms),
             'operator' => 'IN',
         );
     }

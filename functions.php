@@ -192,14 +192,18 @@ function eshop_handle_custom_filters($query) {
 
         // Category filter
         if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
-            $categories = explode(',', sanitize_text_field($_GET['product_cat']));
+            $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
+            $tokens = array_filter(array_map('trim', explode(',', $raw)));
+            $all_numeric = !empty($tokens) && count(array_filter($tokens, 'is_numeric')) === count($tokens);
+            $terms = $all_numeric ? array_map('intval', $tokens) : array_map('sanitize_text_field', $tokens);
+
             $query->set('tax_query', array_merge(
                 $query->get('tax_query', array()),
                 array(
                     array(
                         'taxonomy' => 'product_cat',
-                        'field' => 'slug',
-                        'terms' => $categories,
+                        'field' => $all_numeric ? 'term_id' : 'slug',
+                        'terms' => $terms,
                         'operator' => 'IN'
                     )
                 )

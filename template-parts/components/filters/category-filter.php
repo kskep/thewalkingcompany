@@ -18,8 +18,11 @@ if (empty($categories) || is_wp_error($categories)) {
     return;
 }
 
-// Get currently selected categories
-$selected_categories = isset($_GET['product_cat']) ? (array) $_GET['product_cat'] : array();
+// Get currently selected categories from URL (supports comma-separated IDs or slugs)
+$selected_raw = isset($_GET['product_cat']) ? sanitize_text_field(wp_unslash($_GET['product_cat'])) : '';
+$selected_tokens = $selected_raw !== '' ? array_filter(array_map('trim', explode(',', $selected_raw))) : array();
+$selected_ids = array_map('intval', array_filter($selected_tokens, 'is_numeric'));
+$selected_slugs = array_values(array_filter($selected_tokens, function($v){ return !is_numeric($v); }));
 ?>
 
 <div class="filter-section mb-6">
@@ -29,7 +32,7 @@ $selected_categories = isset($_GET['product_cat']) ? (array) $_GET['product_cat'
     
     <div class="category-filter space-y-2 max-h-48 overflow-y-auto">
         <?php foreach ($categories as $category) : 
-            $is_checked = in_array($category->slug, $selected_categories);
+            $is_checked = in_array($category->term_id, $selected_ids, true) || in_array($category->slug, $selected_slugs, true);
             $product_count = $category->count;
             
             // Get subcategories if any
@@ -61,7 +64,7 @@ $selected_categories = isset($_GET['product_cat']) ? (array) $_GET['product_cat'
                 <?php if (!empty($subcategories)) : ?>
                     <div class="subcategories ml-6 mt-1 space-y-1">
                         <?php foreach ($subcategories as $subcategory) : 
-                            $sub_is_checked = in_array($subcategory->slug, $selected_categories);
+                            $sub_is_checked = in_array($subcategory->term_id, $selected_ids, true) || in_array($subcategory->slug, $selected_slugs, true);
                             $sub_product_count = $subcategory->count;
                         ?>
                             <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded text-sm group">
