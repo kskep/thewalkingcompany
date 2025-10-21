@@ -372,10 +372,17 @@ function eshop_filter_products() {
     $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'menu_order';
 
     // Build WP_Query args
+    $computed_per_page = intval(wc_get_default_products_per_row()) * intval(wc_get_default_product_rows_per_page());
+    if ($computed_per_page < 1) {
+        // Fallbacks to avoid empty queries due to misconfigured settings
+        $computed_per_page = function_exists('wc_get_default_products_per_page') ? intval(wc_get_default_products_per_page()) : 12;
+        if ($computed_per_page < 1) { $computed_per_page = 12; }
+    }
+
     $args = array(
         'post_type' => 'product',
         'post_status' => 'publish',
-        'posts_per_page' => wc_get_default_products_per_row() * wc_get_default_product_rows_per_page(),
+        'posts_per_page' => $computed_per_page,
         'paged' => $paged,
         'orderby' => $orderby,
         'meta_query' => array(),
@@ -490,8 +497,12 @@ function eshop_filter_products() {
     // Note: Do not use legacy _visibility meta; modern WooCommerce handles catalog visibility via taxonomy/queries.
 
     // If we have multiple tax queries, ensure AND relation so context is preserved
-    if (!empty($args['tax_query']) && count($args['tax_query']) > 1) {
-        $args['tax_query']['relation'] = 'AND';
+    if (!empty($args['tax_query'])) {
+        // Count only numeric entries
+        $tax_items = array_values(array_filter($args['tax_query'], 'is_array'));
+        if (count($tax_items) > 1) {
+            $args['tax_query']['relation'] = 'AND';
+        }
     }
 
     $query = new WP_Query($args);
