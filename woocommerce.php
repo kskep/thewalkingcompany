@@ -1,9 +1,19 @@
 <?php
 /**
  * WooCommerce Template
- * 
- * This template is used for all WooCommerce pages
+ *
+ * This template is used for all WooCommerce pages.
+ * Note: When this file exists, it takes priority over archive-product.php.
+ * To allow a custom archive layout, we delegate product archives explicitly
+ * to our override template and return early.
  */
+
+// If on Shop or Product Taxonomy archive, delegate to our magazine archive template
+if (function_exists('is_shop') && (is_shop() || is_product_category() || is_product_tag())) {
+    // Load the theme's Woo archive template which includes its own header/footer
+    wc_get_template('archive-product.php');
+    return;
+}
 
 get_header(); ?>
 
