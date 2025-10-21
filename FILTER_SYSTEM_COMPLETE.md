@@ -116,3 +116,20 @@ Your filter system is now complete and ready for production! The off-canvas draw
 - **Scalable** - Automatically adapts to your product attributes
 
 The system integrates seamlessly with your existing navigation and footer improvements, creating a cohesive and professional e-commerce experience.
+
+## Archive v2 selectors (magazine layout)
+
+When migrating the product archive to the magazine layout we standardized the DOM and JS selectors the filter system relies on. Add this to your developer notes:
+
+- Swap target (AJAX replacement): `.products-wrapper`
+- Grid container: `ul.products-grid` (also available with `id="products-grid"`)
+- Product item: `li.product > article.twc-card`
+- Result count (textual): `.woocommerce-result-count`
+- Pagination links: `.woocommerce-pagination .page-numbers a` and `.pagination a`
+- Filters drawer: `#filter-drawer` with backdrop `#filter-backdrop`
+- Active filters list: `.active-filters-list` (chips appended here)
+
+Notes:
+- The filters JS (`js/components/filters.js`) expects the replacement HTML returned by AJAX to include the `ul.products-grid` wrapper so it can be injected directly into `.products-wrapper`.
+- Keep `id="products-grid"` only if other integrations depend on it; the CSS grid uses the class `.products-grid`.
+- If you later change these selectors, update both the PHP renderer in `inc/woocommerce-functions.php::eshop_filter_products` and `js/components/filters.js`.

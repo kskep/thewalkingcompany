@@ -18,6 +18,6 @@ if (!$product->is_in_stock()) {
 
 // Wrap component in <li class="product"> to match UL grid semantics
 ?>
-<li class="product">
+<li <?php wc_product_class('product', $product); ?>>
   <?php get_template_part('template-parts/components/product-card'); ?>
 </li>
