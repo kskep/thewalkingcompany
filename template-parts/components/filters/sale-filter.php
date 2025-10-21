@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) { exit; }
 $on_sale_selected = isset($_GET['on_sale']) && $_GET['on_sale'] == '1';
 
 // Get count of products on sale
-$sale_count = get_sale_products_count();
+$sale_count = function_exists('eshop_get_sale_products_count') ? eshop_get_sale_products_count() : 0;
 
 // Don't show if no products on sale
 if ($sale_count <= 0) {
@@ -47,7 +47,7 @@ if ($sale_count <= 0) {
         <!-- Additional sale-related filters could go here -->
         <?php
         // Check if we have featured products
-        $featured_count = get_featured_products_count();
+    $featured_count = function_exists('eshop_get_featured_products_count') ? eshop_get_featured_products_count() : 0;
         if ($featured_count > 0) :
             $featured_selected = isset($_GET['featured']) && $_GET['featured'] == '1';
         ?>
@@ -73,20 +73,4 @@ if ($sale_count <= 0) {
     </div>
 </div>
 
-<?php
-// Helper function to get sale products count
-if (!function_exists('get_sale_products_count')) {
-    function get_sale_products_count() {
-        $sale_products = wc_get_product_ids_on_sale();
-        return count($sale_products);
-    }
-}
-
-// Helper function to get featured products count
-if (!function_exists('get_featured_products_count')) {
-    function get_featured_products_count() {
-        $featured_products = wc_get_featured_product_ids();
-        return count($featured_products);
-    }
-}
-?>
+<?php // Helpers moved to inc/woocommerce-functions.php for global availability ?>

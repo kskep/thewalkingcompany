@@ -520,6 +520,25 @@ add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
 
 /**
  * Enhanced Related Products - Display 4 products
+
+/**
+ * Helpers: counts for sale and featured products (used by filters UI)
+ */
+if (!function_exists('eshop_get_sale_products_count')) {
+    function eshop_get_sale_products_count() {
+        if (!class_exists('WooCommerce')) { return 0; }
+        $sale_products = wc_get_product_ids_on_sale();
+        return is_array($sale_products) ? count($sale_products) : 0;
+    }
+}
+
+if (!function_exists('eshop_get_featured_products_count')) {
+    function eshop_get_featured_products_count() {
+        if (!class_exists('WooCommerce')) { return 0; }
+        $featured_products = wc_get_featured_product_ids();
+        return is_array($featured_products) ? count($featured_products) : 0;
+    }
+}
  */
 
 // Remove default related products output
