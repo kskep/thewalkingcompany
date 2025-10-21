@@ -32,7 +32,7 @@ defined('ABSPATH') || exit;
 <!-- Backdrop for filter drawer -->
 <div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
 
-<aside id="filter-drawer" class="fixed inset-y-0 left-0 w-80 max-w-[90vw] bg-white shadow-xl z-50 translate-x-[-100%] transition-transform">
+<aside id="filter-drawer" class="fixed inset-y-0 left-0 w-80 max-w-[90vw] bg-white shadow-xl z-50">
   <div class="p-4 border-b border-gray-200 flex items-center justify-between">
     <h3 class="text-base font-semibold"><?php _e('Filters', 'eshop-theme'); ?></h3>
     <button id="close-filters" class="p-2" aria-label="<?php esc_attr_e('Close Filters', 'eshop-theme'); ?>"><span class="material-icons">close</span></button>
@@ -60,12 +60,12 @@ defined('ABSPATH') || exit;
     const backdrop = document.getElementById('filter-backdrop');
     function open(){
       if(backdrop){ backdrop.classList.remove('hidden'); backdrop.classList.add('show'); }
-      if(drawer){ drawer.style.transform = 'translateX(0)'; }
+      if(drawer){ drawer.classList.add('open'); }
       document.body.classList.add('overflow-hidden');
     }
     function close(){
       if(backdrop){ backdrop.classList.remove('show'); backdrop.classList.add('hidden'); }
-      if(drawer){ drawer.style.transform = 'translateX(-100%)'; }
+      if(drawer){ drawer.classList.remove('open'); }
       document.body.classList.remove('overflow-hidden');
     }
     if(openBtn) openBtn.addEventListener('click', function(e){ e.preventDefault(); open(); });

@@ -45,8 +45,10 @@ function eshop_theme_scripts() {
         wp_enqueue_style('eshop-cart-checkout', get_template_directory_uri() . '/css/pages.cart-checkout.css', array('eshop-theme-style'), '1.0.0');
     }
 
-    // Load filter CSS on all pages for testing
-    wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), '1.0.0');
+    // Load filter CSS (cache-busted)
+    $filters_css_path = get_template_directory() . '/css/components/filters.css';
+    $filters_css_ver = file_exists($filters_css_path) ? filemtime($filters_css_path) : '1.0.0';
+    wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), $filters_css_ver);
 
     if (is_shop() || is_product_category() || is_product_tag()) {
         // New archive page CSS

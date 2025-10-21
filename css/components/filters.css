@@ -6,15 +6,28 @@
 /* Filter Drawer */
 #filter-drawer {
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%); /* hidden by default (no Tailwind) */
+    transition: transform 0.25s ease;
 }
 
 #filter-drawer.open {
     transform: translateX(0);
 }
 
+/* Backdrop default hidden without Tailwind */
+#filter-backdrop {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
 #filter-backdrop.show {
+    display: block;
     opacity: 1;
 }
+
+/* Utility when templates toggle .hidden class */
+.hidden { display: none !important; }
 
 /* Filter Sections */
 .filter-section {
