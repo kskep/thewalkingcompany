@@ -48,7 +48,6 @@ defined('ABSPATH') || exit;
     get_template_part('template-parts/components/filters/sale-filter');
     ?>
   </div>
- </div>
 </aside>
 
 <script>
