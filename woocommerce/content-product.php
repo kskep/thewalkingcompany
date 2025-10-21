@@ -16,5 +16,8 @@ if (!$product->is_in_stock()) {
     return;
 }
 
-// Render our component
-get_template_part('template-parts/components/product-card');
+// Wrap component in <li class="product"> to match UL grid semantics
+?>
+<li class="product">
+  <?php get_template_part('template-parts/components/product-card'); ?>
+</li>

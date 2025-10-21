@@ -53,8 +53,8 @@
             // Quick filter buttons
             $(document).on('click', '.quick-filter-btn:not(.more-filters-btn)', this.handleQuickFilter);
 
-            // Pagination
-            $(document).on('click', '.pagination a', this.handlePagination);
+            // Pagination (both custom and Woo default)
+            $(document).on('click', '.pagination a, .woocommerce-pagination .page-numbers a', this.handlePagination);
 
             // Remove individual filters
             $(document).on('click', '.remove-filter', this.removeFilter);
@@ -145,7 +145,14 @@
         handlePagination: function(e) {
             e.preventDefault();
             var url = $(this).attr('href');
-            var page = EShopFilters.getParameterByName('paged', url) || 1;
+            var page = EShopFilters.getParameterByName('paged', url);
+            if (!page) {
+                // Try to extract /page/2/ from pretty permalinks
+                var match = url && url.match(/\/(?:page)\/(\d+)\/?/i);
+                page = match && match[1] ? parseInt(match[1], 10) : 1;
+            } else {
+                page = parseInt(page, 10) || 1;
+            }
             EShopFilters.applyFilters(page);
         },
 
