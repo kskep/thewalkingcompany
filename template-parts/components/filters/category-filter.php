@@ -1,19 +1,11 @@
 <?php
 /**
- * Category Filter Component
- * 
- * @package E-Shop Theme
- */
-
-if (!defined('ABSPATH')) { exit; }
-
-// Get product categories
-<?php
-/**
  * Category Filter Component (context-aware)
  *
  * - Hides on product category archives (redundant there)
  * - Otherwise lists only categories available in current context
+ *
+ * @package E-Shop Theme
  */
 
 if (!defined('ABSPATH')) { exit; }
@@ -66,4 +58,3 @@ $selected_slugs = array_values(array_filter($selected_tokens, function($v){ retu
         <?php endforeach; ?>
     </div>
 </div>
-                        ?>
