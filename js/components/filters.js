@@ -201,8 +201,14 @@
             });
             
             sliderEl.__inited = true;
-            
-            sliderEl.noUiSlider.on('update', function(values) {
+
+            // Store defaults on the inputs for comparison when collecting filters
+            minInput.setAttribute('data-default', String(minRange));
+            maxInput.setAttribute('data-default', String(maxRange));
+
+            // Only update inputs when the slider is set by user interaction,
+            // not on every update/initialization
+            sliderEl.noUiSlider.on('set', function(values) {
                 var v0 = Math.round(values[0]);
                 var v1 = Math.round(values[1]);
                 minInput.value = v0;
@@ -281,10 +287,22 @@
             var filters = {};
 
             // Price filters
-            var minPrice = $('#min-price').val();
-            var maxPrice = $('#max-price').val();
-            if (minPrice) filters.min_price = minPrice;
-            if (maxPrice) filters.max_price = maxPrice;
+            var $minEl = $('#min-price');
+            var $maxEl = $('#max-price');
+            var minPrice = $minEl.val();
+            var maxPrice = $maxEl.val();
+            var minAttr = parseFloat($minEl.attr('min')) || 0;
+            var maxAttr = parseFloat($maxEl.attr('max')) || 0;
+            var minDefault = parseFloat($minEl.data('default')) || minAttr;
+            var maxDefault = parseFloat($maxEl.data('default')) || maxAttr;
+
+            // Only send price if different from defaults and non-empty
+            if (minPrice !== '' && parseFloat(minPrice) !== minDefault) {
+                filters.min_price = minPrice;
+            }
+            if (maxPrice !== '' && parseFloat(maxPrice) !== maxDefault) {
+                filters.max_price = maxPrice;
+            }
 
             // Category filters
             var categories = [];
@@ -422,6 +440,16 @@
         clearAllFilters: function() {
             $('#filter-drawer input[type="checkbox"]').prop('checked', false);
             $('#min-price, #max-price').val('');
+
+            // Reset price slider back to full range if present
+            var sliderEl = document.getElementById('price-slider');
+            var minInput = document.getElementById('min-price');
+            var maxInput = document.getElementById('max-price');
+            if (sliderEl && sliderEl.noUiSlider && minInput && maxInput) {
+                var minDefault = parseFloat(minInput.getAttribute('data-default')) || parseFloat(minInput.getAttribute('min')) || 0;
+                var maxDefault = parseFloat(maxInput.getAttribute('data-default')) || parseFloat(maxInput.getAttribute('max')) || 0;
+                sliderEl.noUiSlider.set([minDefault, maxDefault]);
+            }
             $('.active-filters').hide();
             $('.active-filters-bar').hide();
             $('.clear-filters').hide();
