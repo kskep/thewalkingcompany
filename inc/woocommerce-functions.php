@@ -520,6 +520,7 @@ add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
 
 /**
  * Enhanced Related Products - Display 4 products
+ */
 
 /**
  * Helpers: counts for sale and featured products (used by filters UI)
@@ -539,7 +540,7 @@ if (!function_exists('eshop_get_featured_products_count')) {
         return is_array($featured_products) ? count($featured_products) : 0;
     }
 }
- */
+
 
 // Remove default related products output
 remove_action('woocommerce_output_related_products', 'woocommerce_output_related_products', 20);
