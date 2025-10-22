@@ -8,6 +8,7 @@
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
     transform: translateX(-100%); /* hidden by default (no Tailwind) */
     transition: transform 0.25s ease;
+    overflow: hidden; /* Prevent double scrollbars */
 }
 
 #filter-drawer.open {
@@ -32,12 +33,14 @@
 /* Filter Sections */
 .filter-section {
     border-bottom: 1px solid #f3f4f6;
-    padding-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
 }
 
 .filter-section:last-child {
     border-bottom: none;
     padding-bottom: 0;
+    margin-bottom: 0;
 }
 
 .filter-title {
@@ -93,6 +96,13 @@
 }
 
 /* Category Filter */
+.category-filter {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-right: -4px; /* Compensate for scrollbar width */
+    padding-right: 4px; /* Add padding to prevent content from being cut off */
+}
+
 .category-filter::-webkit-scrollbar {
     width: 4px;
 }
@@ -109,6 +119,26 @@
 
 .category-filter::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* Make category items more compact */
+.category-filter label {
+    padding: 1px 8px !important;
+    margin-bottom: 1px;
+}
+
+.category-filter .text-sm {
+    font-size: 0.75rem !important;
+}
+
+.category-filter .text-xs {
+    font-size: 0.65rem !important;
+    padding: 1px 4px !important;
+}
+
+.category-filter input[type="checkbox"] {
+    width: 14px !important;
+    height: 14px !important;
 }
 
 .category-item .subcategories {
@@ -200,6 +230,13 @@
 }
 
 /* Attribute Filter */
+.attribute-filter {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-right: -4px; /* Compensate for scrollbar width */
+    padding-right: 4px; /* Add padding to prevent content from being cut off */
+}
+
 .attribute-filter::-webkit-scrollbar {
     width: 4px;
 }
@@ -216,6 +253,40 @@
 
 .attribute-filter::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* Make attribute items more compact */
+.attribute-filter .attribute-terms {
+    space-y: 1px;
+}
+
+.attribute-filter label {
+    padding: 1px 8px !important;
+    margin-bottom: 1px;
+}
+
+.attribute-filter .text-sm {
+    font-size: 0.75rem !important;
+}
+
+.attribute-filter .text-xs {
+    font-size: 0.65rem !important;
+    padding: 1px 4px !important;
+}
+
+.attribute-filter input[type="checkbox"] {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.attribute-filter .w-4 {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.attribute-filter .w-6 {
+    width: 14px !important;
+    height: 14px !important;
 }
 
 /* Color swatches */
@@ -337,7 +408,7 @@
     
     .category-filter,
     .attribute-filter {
-        max-height: 150px;
+        max-height: 180px;
     }
 }
 
