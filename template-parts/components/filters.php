@@ -39,31 +39,32 @@ defined('ABSPATH') || exit;
   </div>
   <div class="p-4 space-y-6 overflow-y-auto h-full">
     <?php
-  // Price, categories, and attributes using existing helper endpoints
+    // Price, categories, and attributes using existing helper endpoints
     get_template_part('template-parts/components/filters/price-filter');
     get_template_part('template-parts/components/filters/category-filter');
-  // Attributes: dynamically include all registered product attributes that have available terms
-  <?php
-  if (function_exists('wc_get_attribute_taxonomies')) {
-    $attribute_taxonomies = wc_get_attribute_taxonomies();
-    if (!empty($attribute_taxonomies)) {
-      foreach ($attribute_taxonomies as $attr) {
-        // $attr is stdClass with properties attribute_name, attribute_label, etc.
-        $taxonomy = 'pa_' . $attr->attribute_name;
 
-        // Optionally skip attributes you never want to show
-        $skip = apply_filters('eshop_filters_skip_attribute', false, $taxonomy, $attr);
-        if ($skip) { continue; }
+    // Attributes: dynamically include all registered product attributes that have available terms
+    if (function_exists('wc_get_attribute_taxonomies')) {
+        $attribute_taxonomies = wc_get_attribute_taxonomies();
+        if (!empty($attribute_taxonomies)) {
+            foreach ($attribute_taxonomies as $attr) {
+                // $attr is stdClass with properties attribute_name, attribute_label, etc.
+                $taxonomy = 'pa_' . $attr->attribute_name;
 
-        // Render attribute filter; component will early-return if there are no terms in current context
-        get_template_part('template-parts/components/filters/attribute-filter', null, array(
-          'taxonomy' => $taxonomy,
-          'label'    => $attr->attribute_label,
-        ));
-      }
+                // Optionally skip attributes you never want to show
+                $skip = apply_filters('eshop_filters_skip_attribute', false, $taxonomy, $attr);
+                if ($skip) { continue; }
+
+                // Render attribute filter; component will early-return if there are no terms in current context
+                get_template_part('template-parts/components/filters/attribute-filter', null, array(
+                    'taxonomy' => $taxonomy,
+                    'label'    => $attr->attribute_label,
+                ));
+            }
+        }
     }
-  }
-  ?>
+
+    // Sale filter
     get_template_part('template-parts/components/filters/sale-filter');
     ?>
   </div>
