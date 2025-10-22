@@ -2,7 +2,7 @@
 /**
  * Category Filter Component (context-aware)
  *
- * - On shop/tag: lists categories available in current context
+ * - On shop/tag: lists top-level categories with their children available in current context
  * - On a category archive: lists direct child categories so users can filter into subcategories
  *
  * @package E-Shop Theme
@@ -18,15 +18,21 @@ $selected_slugs = array_values(array_filter($selected_tokens, function($v){ retu
 
 // Build hierarchical list of categories to display
 $available_categories = array();
+$current_category_id = 0;
+
+// Build hierarchical list of categories to display
+$available_categories = array();
+$current_category_id = 0;
 
 if (is_product_category()) {
     // On a category archive: show direct children of current category
     $current = get_queried_object();
     if ($current && !is_wp_error($current)) {
+        $current_category_id = (int) $current->term_id;
         $children = get_terms(array(
             'taxonomy' => 'product_cat',
-            'hide_empty' => true,
-            'parent' => (int) $current->term_id,
+            'hide_empty' => false, // Show all children even if temporarily empty due to other filters
+            'parent' => $current_category_id,
             'orderby' => 'name',
             'order' => 'ASC',
         ));
@@ -36,7 +42,7 @@ if (is_product_category()) {
                 // Get grandchildren for this child
                 $grandchildren = get_terms(array(
                     'taxonomy' => 'product_cat',
-                    'hide_empty' => true,
+                    'hide_empty' => false,
                     'parent' => (int) $term->term_id,
                     'orderby' => 'name',
                     'order' => 'ASC',
@@ -69,7 +75,7 @@ if (is_product_category()) {
         }
     }
 } else {
-    // On other archives: get top-level categories and their children
+    // On other archives (shop page, tags, etc): get top-level categories and their children
     $top_level_categories = get_terms(array(
         'taxonomy' => 'product_cat',
         'hide_empty' => true,
@@ -149,7 +155,22 @@ if (empty($available_categories)) {
 
 <div class="filter-section mb-6">
     <h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">
-        <?php esc_html_e('Categories', 'eshop-theme'); ?>
+        <?php 
+        if (is_product_category() && $current_category_id > 0) {
+            $current_cat = get_term($current_category_id, 'product_cat');
+            if ($current_cat && !is_wp_error($current_cat)) {
+                printf(
+                    /* translators: %s: current category name */
+                    esc_html__('Filter %s', 'eshop-theme'),
+                    '<span class="font-normal text-gray-600">' . esc_html($current_cat->name) . '</span>'
+                );
+            } else {
+                esc_html_e('Categories', 'eshop-theme');
+            }
+        } else {
+            esc_html_e('Categories', 'eshop-theme');
+        }
+        ?>
     </h4>
 
     <div class="category-filter space-y-1 max-h-64 overflow-y-auto">

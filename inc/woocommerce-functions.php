@@ -397,7 +397,13 @@ function eshop_filter_products() {
     } elseif (isset($data['context_terms'])) {
         $context_terms = is_array($data['context_terms']) ? array_map('intval', $data['context_terms']) : array();
     }
-    if ($context_tax && !empty($context_terms)) {
+    
+    // If user has selected specific categories via the filter, use those instead of context
+    // This allows filtering down to child categories when on a parent category page
+    $has_category_filter = !empty($filters['product_cat']);
+    
+    if ($context_tax && !empty($context_terms) && !$has_category_filter) {
+        // No category filter applied, so use the archive context
         // If this is a product category, include all child categories
         $all_category_terms = array();
         if ($context_tax === 'product_cat') {
@@ -472,15 +478,40 @@ function eshop_filter_products() {
     }
 
     // Category filter
+    // When user explicitly selects categories, show only products in those categories (and their children)
     if (!empty($filters['product_cat'])) {
         $cat_terms = $filters['product_cat'];
         // Support both IDs and slugs if ever passed
         $all_numeric = is_array($cat_terms) && count(array_filter($cat_terms, 'is_numeric')) === count($cat_terms);
+        
+        // Expand to include child categories for each selected category
+        $expanded_cat_terms = array();
+        if ($all_numeric) {
+            $cat_term_ids = array_map('intval', $cat_terms);
+            foreach ($cat_term_ids as $cat_id) {
+                $expanded_cat_terms[] = $cat_id;
+                // Get all child categories recursively
+                $child_cats = get_terms(array(
+                    'taxonomy' => 'product_cat',
+                    'child_of' => $cat_id,
+                    'hide_empty' => true,
+                    'fields' => 'ids'
+                ));
+                if (!empty($child_cats) && !is_wp_error($child_cats)) {
+                    $expanded_cat_terms = array_merge($expanded_cat_terms, $child_cats);
+                }
+            }
+            $expanded_cat_terms = array_unique($expanded_cat_terms);
+        } else {
+            $expanded_cat_terms = array_map('sanitize_text_field', $cat_terms);
+        }
+        
         $args['tax_query'][] = array(
             'taxonomy' => 'product_cat',
             'field' => $all_numeric ? 'term_id' : 'slug',
-            'terms' => $all_numeric ? array_map('intval', $cat_terms) : array_map('sanitize_text_field', $cat_terms),
+            'terms' => $expanded_cat_terms,
             'operator' => 'IN',
+            'include_children' => false, // We've manually expanded above
         );
     }
 
