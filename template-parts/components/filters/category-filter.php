@@ -16,7 +16,7 @@ $selected_tokens = $selected_raw !== '' ? array_filter(array_map('trim', explode
 $selected_ids = array_map('intval', array_filter($selected_tokens, 'is_numeric'));
 $selected_slugs = array_values(array_filter($selected_tokens, function($v){ return !is_numeric($v); }));
 
-// Build list of categories to display
+// Build hierarchical list of categories to display
 $available_categories = array();
 
 if (is_product_category()) {
@@ -33,18 +33,112 @@ if (is_product_category()) {
 
         if (!empty($children) && !is_wp_error($children)) {
             foreach ($children as $term) {
-                $available_categories[] = array(
+                // Get grandchildren for this child
+                $grandchildren = get_terms(array(
+                    'taxonomy' => 'product_cat',
+                    'hide_empty' => true,
+                    'parent' => (int) $term->term_id,
+                    'orderby' => 'name',
+                    'order' => 'ASC',
+                ));
+                
+                $child_data = array(
                     'term_id' => (int) $term->term_id,
                     'name' => $term->name,
                     'slug' => $term->slug,
                     'count' => isset($term->count) ? (int) $term->count : 0,
+                    'children' => array(),
+                    'level' => 1,
                 );
+                
+                // Add grandchildren if they exist
+                if (!empty($grandchildren) && !is_wp_error($grandchildren)) {
+                    foreach ($grandchildren as $grandchild) {
+                        $child_data['children'][] = array(
+                            'term_id' => (int) $grandchild->term_id,
+                            'name' => $grandchild->name,
+                            'slug' => $grandchild->slug,
+                            'count' => isset($grandchild->count) ? (int) $grandchild->count : 0,
+                            'level' => 2,
+                        );
+                    }
+                }
+                
+                $available_categories[] = $child_data;
             }
         }
     }
 } else {
-    // On other archives: use context-aware categories helper
-    $available_categories = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
+    // On other archives: get top-level categories and their children
+    $top_level_categories = get_terms(array(
+        'taxonomy' => 'product_cat',
+        'hide_empty' => true,
+        'parent' => 0,
+        'orderby' => 'name',
+        'order' => 'ASC',
+    ));
+    
+    if (!empty($top_level_categories) && !is_wp_error($top_level_categories)) {
+        foreach ($top_level_categories as $category) {
+            // Get children for this top-level category
+            $children = get_terms(array(
+                'taxonomy' => 'product_cat',
+                'hide_empty' => true,
+                'parent' => (int) $category->term_id,
+                'orderby' => 'name',
+                'order' => 'ASC',
+            ));
+            
+            $category_data = array(
+                'term_id' => (int) $category->term_id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'count' => isset($category->count) ? (int) $category->count : 0,
+                'children' => array(),
+                'level' => 0,
+            );
+            
+            // Add children if they exist
+            if (!empty($children) && !is_wp_error($children)) {
+                foreach ($children as $child) {
+                    // Get grandchildren for this child
+                    $grandchildren = get_terms(array(
+                        'taxonomy' => 'product_cat',
+                        'hide_empty' => true,
+                        'parent' => (int) $child->term_id,
+                        'orderby' => 'name',
+                        'order' => 'ASC',
+                    ));
+                    
+                    $child_data = array(
+                        'term_id' => (int) $child->term_id,
+                        'name' => $child->name,
+                        'slug' => $child->slug,
+                        'count' => isset($child->count) ? (int) $child->count : 0,
+                        'children' => array(),
+                        'level' => 1,
+                    );
+                    
+                    // Add grandchildren if they exist
+                    if (!empty($grandchildren) && !is_wp_error($grandchildren)) {
+                        foreach ($grandchildren as $grandchild) {
+                            $child_data['children'][] = array(
+                                'term_id' => (int) $grandchild->term_id,
+                                'name' => $grandchild->name,
+                                'slug' => $grandchild->slug,
+                                'count' => isset($grandchild->count) ? (int) $grandchild->count : 0,
+                                'level' => 2,
+                            );
+                        }
+                    }
+                    
+                    $category_data['children'][] = $child_data;
+                }
+            }
+            
+            $available_categories[] = $category_data;
+        }
+    }
 }
 
 // If nothing to show, bail
@@ -58,28 +152,50 @@ if (empty($available_categories)) {
         <?php esc_html_e('Categories', 'eshop-theme'); ?>
     </h4>
 
-    <div class="category-filter space-y-2 max-h-48 overflow-y-auto">
-        <?php foreach ($available_categories as $cat) :
-            // $cat has term_id, name, slug, count
-            $is_checked = in_array((int)$cat['term_id'], $selected_ids, true) || in_array($cat['slug'], $selected_slugs, true);
-        ?>
-            <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">
-                <div class="flex items-center space-x-2">
-                    <input
-                        type="checkbox"
-                        name="product_cat[]"
-                        value="<?php echo esc_attr((int)$cat['term_id']); ?>"
-                        class="text-primary focus:ring-primary border-gray-300 rounded"
-                        <?php checked($is_checked); ?>
-                    >
-                    <span class="text-sm text-gray-700 group-hover:text-gray-900">
-                        <?php echo esc_html($cat['name']); ?>
+    <div class="category-filter space-y-1 max-h-64 overflow-y-auto">
+        <?php
+        // Recursive function to render category hierarchy
+        function render_category_hierarchy($categories, $selected_ids, $selected_slugs, $level = 0) {
+            foreach ($categories as $cat) {
+                $is_checked = in_array((int)$cat['term_id'], $selected_ids, true) || in_array($cat['slug'], $selected_slugs, true);
+                $indent_class = $level > 0 ? 'ml-' . ($level * 4) : '';
+                $text_size = $level === 0 ? 'text-sm' : 'text-xs';
+                $font_weight = $level === 0 ? 'font-medium' : 'font-normal';
+                
+                // Add icon for parent categories with children
+                $has_children = !empty($cat['children']);
+                $icon = $has_children ? '<i class="fas fa-chevron-right text-xs text-gray-400 mr-1"></i>' : '<span class="inline-block w-3 mr-1"></span>';
+                
+                ?>
+                <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group <?php echo esc_attr($indent_class); ?>">
+                    <div class="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            name="product_cat[]"
+                            value="<?php echo esc_attr((int)$cat['term_id']); ?>"
+                            class="text-primary focus:ring-primary border-gray-300 rounded"
+                            <?php checked($is_checked); ?>
+                        >
+                        <?php echo $icon; ?>
+                        <span class="<?php echo esc_attr($text_size . ' ' . $font_weight); ?> text-gray-700 group-hover:text-gray-900">
+                            <?php echo esc_html($cat['name']); ?>
+                        </span>
+                    </div>
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                        <?php echo isset($cat['count']) ? esc_html((string)$cat['count']) : ''; ?>
                     </span>
-                </div>
-                <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
-                    <?php echo isset($cat['count']) ? esc_html((string)$cat['count']) : ''; ?>
-                </span>
-            </label>
-        <?php endforeach; ?>
+                </label>
+                <?php
+                
+                // Render children if they exist
+                if ($has_children) {
+                    render_category_hierarchy($cat['children'], $selected_ids, $selected_slugs, $level + 1);
+                }
+            }
+        }
+        
+        // Render the hierarchy
+        render_category_hierarchy($available_categories, $selected_ids, $selected_slugs);
+        ?>
     </div>
 </div>

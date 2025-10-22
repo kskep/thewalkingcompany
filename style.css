@@ -319,30 +319,45 @@ textarea:focus {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  margin: 3rem 0;
+  gap: 4px;
+  margin: 4rem 0;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 .pagination a,
 .pagination span {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border-light);
-  color: var(--dark-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 400;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pagination a:hover {
-  border-color: var(--primary-pink);
-  color: var(--primary-pink);
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(47, 42, 38, 0.12);
 }
 
 .pagination .current {
-  background-color: var(--primary-pink);
-  color: var(--white);
-  border-color: var(--primary-pink);
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 /* Clean, minimal spacing utilities */
