@@ -631,8 +631,10 @@ function eshop_filter_products() {
         'found_posts' => $total_products,
     ));
 }
-add_action('wp_ajax_filter_products', 'eshop_filter_products');
-add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
+// AJAX actions for product filtering are now disabled
+// Standard page navigation is used instead
+// add_action('wp_ajax_filter_products', 'eshop_filter_products');
+// add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
 
 
 
