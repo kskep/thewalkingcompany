@@ -240,14 +240,14 @@
                 filters.max_price = maxPrice;
             }
 
-            // Category filters
+            // Category filters - convert to comma-separated string
             var categories = [];
             $('input[name="product_cat[]"]:checked').each(function() {
                 categories.push($(this).val());
             });
-            if (categories.length) filters.product_cat = categories;
+            if (categories.length) filters.product_cat = categories.join(',');
 
-            // Attribute filters
+            // Attribute filters - convert to comma-separated strings
             $('.attribute-filter').each(function() {
                 var attribute = $(this).data('attribute');
                 var taxonomy = 'pa_' + attribute;
@@ -258,16 +258,16 @@
                 });
 
                 if (values.length) {
-                    filters[taxonomy] = values;
+                    filters[taxonomy] = values.join(',');
                 }
             });
 
-            // Stock status
+            // Stock status - convert to comma-separated string
             var stockStatus = [];
             $('input[name="stock_status[]"]:checked').each(function() {
                 stockStatus.push($(this).val());
             });
-            if (stockStatus.length) filters.stock_status = stockStatus;
+            if (stockStatus.length) filters.stock_status = stockStatus.join(',');
 
             // On sale
             if ($('input[name="on_sale"]:checked').length) {
@@ -310,10 +310,11 @@
                 );
             }
 
-            // Category filters
+            // Category filters - handle comma-separated string
             if (filters.product_cat) {
                 hasFilters = true;
-                filters.product_cat.forEach(function(cat) {
+                var categories = filters.product_cat.split(',');
+                categories.forEach(function(cat) {
                     var catName = $('input[value="' + cat + '"]').siblings('span').first().text();
                     $activeFiltersList.append(
                         '<div class="active-filter flex items-center justify-between bg-gray-100 px-3 py-1 text-sm">' +
@@ -366,7 +367,7 @@
                 $('.quick-filter-btn[data-filter="on_sale"]').addClass('active');
             }
 
-            // Update stock status filter
+            // Update stock status filter - handle comma-separated string
             if (filters.stock_status && filters.stock_status.includes('instock')) {
                 $('.quick-filter-btn[data-filter="stock_status"][data-value="instock"]').addClass('active');
             }
@@ -402,6 +403,8 @@
                 $('#min-price, #max-price').val('');
             } else if (filterType === 'product_cat') {
                 $('input[name="product_cat[]"][value="' + filterValue + '"]').prop('checked', false);
+            } else if (filterType === 'stock_status') {
+                $('input[name="stock_status[]"][value="' + filterValue + '"]').prop('checked', false);
             }
 
             EShopFilters.applyFilters();
