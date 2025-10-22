@@ -20,10 +20,6 @@ $selected_slugs = array_values(array_filter($selected_tokens, function($v){ retu
 $available_categories = array();
 $current_category_id = 0;
 
-// Build hierarchical list of categories to display
-$available_categories = array();
-$current_category_id = 0;
-
 if (is_product_category()) {
     // On a category archive: show direct children of current category
     $current = get_queried_object();
@@ -83,6 +79,12 @@ if (is_product_category()) {
         'orderby' => 'name',
         'order' => 'ASC',
     ));
+    
+    // Debug: Check what categories are found
+    echo '<!-- Category Debug: Found ' . (is_array($top_level_categories) ? count($top_level_categories) : 0) . ' top-level categories -->';
+    if (is_wp_error($top_level_categories)) {
+        echo '<!-- Category Error: ' . esc_html($top_level_categories->get_error_message()) . ' -->';
+    }
     
     if (!empty($top_level_categories) && !is_wp_error($top_level_categories)) {
         foreach ($top_level_categories as $category) {
@@ -149,8 +151,12 @@ if (is_product_category()) {
 
 // If nothing to show, bail
 if (empty($available_categories)) {
+    // Show a message for debugging
+    echo '<div class="filter-section mb-6"><p class="text-xs text-gray-400 italic px-4"><!-- No categories found with products. Please assign products to categories in WooCommerce. --></p></div>';
     return;
 }
+
+echo '<!-- Category Debug: Rendering ' . count($available_categories) . ' categories -->';
 ?>
 
 <div class="filter-section mb-6">
@@ -173,7 +179,7 @@ if (empty($available_categories)) {
         ?>
     </h4>
 
-    <div class="category-filter space-y-1 max-h-64 overflow-y-auto">
+    <div class="category-filter space-y-1">
         <?php
         // Recursive function to render category hierarchy
         function render_category_hierarchy($categories, $selected_ids, $selected_slugs, $level = 0) {

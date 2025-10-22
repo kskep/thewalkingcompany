@@ -64,7 +64,7 @@ if (isset($_GET[$taxonomy]) && !empty($_GET[$taxonomy])) {
         <?php echo esc_html($attribute_label); ?>
     </h4>
 
-    <div class="attribute-terms space-y-2 max-h-48 overflow-y-auto">
+    <div class="attribute-terms space-y-2">
         <?php foreach ($terms as $term) :
             $slug = isset($term->slug) ? $term->slug : '';
             $is_checked = in_array($slug, $selected_values, true);

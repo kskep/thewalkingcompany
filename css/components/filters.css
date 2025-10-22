@@ -93,11 +93,6 @@
 }
 
 /* Category Filter */
-.category-filter {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
 .category-filter::-webkit-scrollbar {
     width: 4px;
 }
@@ -205,11 +200,6 @@
 }
 
 /* Attribute Filter */
-.attribute-filter {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
 .attribute-filter::-webkit-scrollbar {
     width: 4px;
 }
