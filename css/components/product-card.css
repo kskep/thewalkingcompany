@@ -119,7 +119,7 @@
 .twc-card__sku { margin-top: 2px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
 .twc-card__category { margin-top: 4px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
 .twc-card__price { margin-top: 6px; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-weight: 700; font-size: 1rem; }
-.twc-card__price { color: var(--price-red); }
+.twc-card__price { color: var(--ink); }
 .twc-card__price .price { color: var(--ink); font-weight: 700; }
 .twc-card__price ins { text-decoration: none; color: var(--price-red); }
 .twc-card__price del { opacity: 0.5; }

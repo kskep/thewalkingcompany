@@ -341,14 +341,30 @@ function eshop_get_current_context_product_ids() {
     $where_clauses = array("p.post_status = 'publish'", "p.post_type = 'product'");
     $join_clauses = array();
 
-    // Add current category context
+    // Add current category context (including child categories)
     if (is_product_category()) {
         $current_category = get_queried_object();
-        if ($current_category && isset($current_category->slug)) {
+        if ($current_category && isset($current_category->term_id)) {
+            // Get all child categories of the current category
+            $child_categories = get_terms(array(
+                'taxonomy' => 'product_cat',
+                'child_of' => $current_category->term_id,
+                'hide_empty' => true,
+                'fields' => 'ids'
+            ));
+            
+            // Include current category and all its children
+            $category_ids = array($current_category->term_id);
+            if (!empty($child_categories) && !is_wp_error($child_categories)) {
+                $category_ids = array_merge($category_ids, $child_categories);
+            }
+            
+            // Create placeholders for the category IDs
+            $category_placeholders = implode(',', array_fill(0, count($category_ids), '%d'));
+            
             $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_cat ON p.ID = tr_cat.object_id";
             $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_cat ON tr_cat.term_taxonomy_id = tt_cat.term_taxonomy_id AND tt_cat.taxonomy = 'product_cat'";
-            $join_clauses[] = "INNER JOIN {$wpdb->terms} t_cat ON tt_cat.term_id = t_cat.term_id";
-            $where_clauses[] = $wpdb->prepare("t_cat.slug = %s", $current_category->slug);
+            $where_clauses[] = $wpdb->prepare("tt_cat.term_id IN ($category_placeholders)", $category_ids);
         }
     }
 

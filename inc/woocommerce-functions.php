@@ -398,11 +398,31 @@ function eshop_filter_products() {
         $context_terms = is_array($data['context_terms']) ? array_map('intval', $data['context_terms']) : array();
     }
     if ($context_tax && !empty($context_terms)) {
+        // If this is a product category, include all child categories
+        $all_category_terms = array();
+        if ($context_tax === 'product_cat') {
+            foreach ($context_terms as $term_id) {
+                $all_category_terms[] = $term_id;
+                // Get child categories
+                $child_categories = get_terms(array(
+                    'taxonomy' => 'product_cat',
+                    'child_of' => $term_id,
+                    'hide_empty' => true,
+                    'fields' => 'ids'
+                ));
+                if (!empty($child_categories) && !is_wp_error($child_categories)) {
+                    $all_category_terms = array_merge($all_category_terms, $child_categories);
+                }
+            }
+        } else {
+            $all_category_terms = $context_terms;
+        }
+        
         $args['tax_query'][] = array(
             'taxonomy' => $context_tax,
             'field' => 'term_id',
-            'terms' => $context_terms,
-            'include_children' => true,
+            'terms' => $all_category_terms,
+            'include_children' => false, // We've already included children manually
             'operator' => 'IN',
         );
     }
@@ -598,16 +618,50 @@ add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
 if (!function_exists('eshop_get_sale_products_count')) {
     function eshop_get_sale_products_count() {
         if (!class_exists('WooCommerce')) { return 0; }
+        
+        // Get all sale product IDs
         $sale_products = wc_get_product_ids_on_sale();
-        return is_array($sale_products) ? count($sale_products) : 0;
+        if (empty($sale_products) || !is_array($sale_products)) {
+            return 0;
+        }
+        
+        // Get current context product IDs (respects category, other filters, etc.)
+        $context_product_ids = eshop_get_current_context_product_ids();
+        
+        // If no context products, return 0
+        if (empty($context_product_ids)) {
+            return 0;
+        }
+        
+        // Count only sale products that are in the current context
+        $context_sale_products = array_intersect($sale_products, $context_product_ids);
+        
+        return count($context_sale_products);
     }
 }
 
 if (!function_exists('eshop_get_featured_products_count')) {
     function eshop_get_featured_products_count() {
         if (!class_exists('WooCommerce')) { return 0; }
+        
+        // Get all featured product IDs
         $featured_products = wc_get_featured_product_ids();
-        return is_array($featured_products) ? count($featured_products) : 0;
+        if (empty($featured_products) || !is_array($featured_products)) {
+            return 0;
+        }
+        
+        // Get current context product IDs (respects category, other filters, etc.)
+        $context_product_ids = eshop_get_current_context_product_ids();
+        
+        // If no context products, return 0
+        if (empty($context_product_ids)) {
+            return 0;
+        }
+        
+        // Count only featured products that are in the current context
+        $context_featured_products = array_intersect($featured_products, $context_product_ids);
+        
+        return count($context_featured_products);
     }
 }
 
