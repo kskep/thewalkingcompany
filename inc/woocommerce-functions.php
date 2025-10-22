@@ -485,13 +485,25 @@ function eshop_filter_products() {
         );
     }
 
-    // On sale filter
+    // On sale filter - use WooCommerce helper to ensure variable products are included
     if (!empty($filters['on_sale'])) {
-        $args['meta_query'][] = array(
-            'key' => '_sale_price',
-            'value' => '',
-            'compare' => '!=',
-        );
+        $on_sale_ids = wc_get_product_ids_on_sale();
+        $on_sale_ids = array_map('intval', is_array($on_sale_ids) ? $on_sale_ids : array());
+        if (!empty($on_sale_ids)) {
+            if (!empty($args['post__in'])) {
+                // Intersect with any existing post__in
+                $args['post__in'] = array_values(array_intersect($args['post__in'], $on_sale_ids));
+                if (empty($args['post__in'])) {
+                    // Force no results
+                    $args['post__in'] = array(-1);
+                }
+            } else {
+                $args['post__in'] = $on_sale_ids;
+            }
+        } else {
+            // No sale products at all; force empty result
+            $args['post__in'] = array(-1);
+        }
     }
 
     // Note: Do not use legacy _visibility meta; modern WooCommerce handles catalog visibility via taxonomy/queries.

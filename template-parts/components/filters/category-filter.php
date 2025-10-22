@@ -2,30 +2,55 @@
 /**
  * Category Filter Component (context-aware)
  *
- * - Hides on product category archives (redundant there)
- * - Otherwise lists only categories available in current context
+ * - On shop/tag: lists categories available in current context
+ * - On a category archive: lists direct child categories so users can filter into subcategories
  *
  * @package E-Shop Theme
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-// Hide the category filter on category archive pages (handled by context)
-if (is_product_category()) {
-    return;
-}
-
-// Get available categories from current context (helper returns [] if none)
-$available_categories = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
-if (empty($available_categories)) {
-    return;
-}
-
 // Parse selected categories from URL (IDs or slugs)
 $selected_raw = isset($_GET['product_cat']) ? sanitize_text_field(wp_unslash($_GET['product_cat'])) : '';
 $selected_tokens = $selected_raw !== '' ? array_filter(array_map('trim', explode(',', $selected_raw))) : array();
 $selected_ids = array_map('intval', array_filter($selected_tokens, 'is_numeric'));
 $selected_slugs = array_values(array_filter($selected_tokens, function($v){ return !is_numeric($v); }));
+
+// Build list of categories to display
+$available_categories = array();
+
+if (is_product_category()) {
+    // On a category archive: show direct children of current category
+    $current = get_queried_object();
+    if ($current && !is_wp_error($current)) {
+        $children = get_terms(array(
+            'taxonomy' => 'product_cat',
+            'hide_empty' => true,
+            'parent' => (int) $current->term_id,
+            'orderby' => 'name',
+            'order' => 'ASC',
+        ));
+
+        if (!empty($children) && !is_wp_error($children)) {
+            foreach ($children as $term) {
+                $available_categories[] = array(
+                    'term_id' => (int) $term->term_id,
+                    'name' => $term->name,
+                    'slug' => $term->slug,
+                    'count' => isset($term->count) ? (int) $term->count : 0,
+                );
+            }
+        }
+    }
+} else {
+    // On other archives: use context-aware categories helper
+    $available_categories = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
+}
+
+// If nothing to show, bail
+if (empty($available_categories)) {
+    return;
+}
 ?>
 
 <div class="filter-section mb-6">
