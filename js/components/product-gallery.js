@@ -59,6 +59,9 @@ class EshopProductGallery {
         const mainSliderEl = this.container.querySelector('#productMainSlider');
         if (!mainSliderEl) return;
 
+        const nextBtn = this.container.querySelector('.product-main-slider .swiper-button-next');
+        const prevBtn = this.container.querySelector('.product-main-slider .swiper-button-prev');
+
         this.mainSlider = new Swiper(mainSliderEl, {
             loop: this.images.length > 1,
             spaceBetween: 0,
@@ -68,8 +71,8 @@ class EshopProductGallery {
                 enabled: true,
             },
             navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
+                nextEl: nextBtn || undefined,
+                prevEl: prevBtn || undefined,
             },
             pagination: {
                 el: '.swiper-pagination',
@@ -121,10 +124,8 @@ class EshopProductGallery {
         });
 
         // Connect thumbnails to main slider
-        if (this.mainSlider) {
-            this.mainSlider.controller.control = this.thumbsSlider;
-            this.thumbsSlider.controller.control = this.mainSlider;
-        }
+        // Ensure initial thumbnail state matches main slider
+        this.updateThumbnailsActive();
     }
 
     /**
@@ -310,6 +311,10 @@ class EshopProductGallery {
         thumbnails.forEach((thumbnail, index) => {
             thumbnail.classList.toggle('active', index === this.currentSlideIndex);
         });
+
+        if (this.thumbsSlider) {
+            this.thumbsSlider.slideTo(this.currentSlideIndex);
+        }
     }
 
     /**
