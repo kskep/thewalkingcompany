@@ -40,9 +40,6 @@ if (post_password_required()) {
                      * @hooked woocommerce_show_product_images - 20
                      */
                     do_action('woocommerce_before_single_product_summary');
-                    
-                    // Use our enhanced product gallery component
-                    get_template_part('template-parts/components/product-gallery');
                     ?>
                 </div>
                 
