@@ -1,328 +1,440 @@
 /**
- * Enhanced Single Product Page JavaScript - 2025
- * Handles all interactive elements on the single product page
+ * Single Product Page JavaScript
+ * Enhanced functionality for magazine-style single product page
+ *
+ * @package thewalkingtheme
  */
 
-class SingleProductEnhanced {
-    constructor() {
+(function($) {
+    'use strict';
+
+    // Product Actions Component
+    window.ProductActions = function(container) {
+        this.container = $(container);
         this.init();
-    }
+    };
 
-    init() {
-        this.handleQuantityControls();
-        this.handleSizeSelection();
-        this.handleColorVariants();
-        this.handleAddToCart();
-        this.handleWishlist();
-        this.handleSocialSharing();
-    }
+    ProductActions.prototype = {
+        init: function() {
+            this.bindEvents();
+            this.checkStockStatus();
+        },
 
-    /**
-     * Enhanced Quantity Controls
-     */
-    handleQuantityControls() {
-        const quantityWrapper = document.querySelector('.cart .quantity');
-        if (!quantityWrapper) return;
+        bindEvents: function() {
+            var self = this;
 
-        // Add custom quantity buttons if they don't exist
-        const quantityInput = quantityWrapper.querySelector('input[name="quantity"]');
-        if (!quantityInput) return;
+            // Add to cart button
+            this.container.find('.add-to-cart-btn').on('click', function(e) {
+                e.preventDefault();
+                self.addToCart($(this));
+            });
 
-        // Check if custom buttons already exist
-        if (!quantityWrapper.querySelector('.quantity-decrease')) {
-            // Create decrease button
-            const decreaseBtn = document.createElement('button');
-            decreaseBtn.type = 'button';
-            decreaseBtn.className = 'quantity-decrease px-3 py-2 hover:bg-gray-100 border-r border-gray-200';
-            decreaseBtn.innerHTML = '−';
-            decreaseBtn.setAttribute('aria-label', 'Decrease quantity');
+            // Wishlist button
+            this.container.find('.wishlist-btn').on('click', function(e) {
+                e.preventDefault();
+                self.toggleWishlist($(this));
+            });
 
-            // Create increase button
-            const increaseBtn = document.createElement('button');
-            increaseBtn.type = 'button';
-            increaseBtn.className = 'quantity-increase px-3 py-2 hover:bg-gray-100 border-l border-gray-200';
-            increaseBtn.innerHTML = '+';
-            increaseBtn.setAttribute('aria-label', 'Increase quantity');
+            // Stock status updates
+            $(document.body).on('woocommerce_variation_has_changed', function() {
+                self.checkStockStatus();
+            });
+        },
 
-            // Style the input
-            quantityInput.className = 'w-16 text-center border-0 focus:outline-none';
+        addToCart: function(button) {
+            var self = this;
+            var productId = button.data('product-id');
+            var quantity = 1;
 
-            // Wrap with flex container
-            const flexContainer = document.createElement('div');
-            flexContainer.className = 'flex border-2 border-gray-200 no-radius';
+            // Check if variation is selected for variable products
+            var variationId = this.getSelectedVariation();
+            if (this.container.closest('form').find('.variations select').length > 0) {
+                if (!variationId) {
+                    this.showFeedback('Παρακαλώ επιλέξτε νούμερο πριν προσθέσετε στο καλάθι.', 'error');
+                    return;
+                }
+                productId = variationId;
+            }
+
+            // Show loading state
+            this.setButtonLoading(button, true);
+
+            // Prepare data
+            var data = {
+                action: 'woocommerce_add_to_cart',
+                product_id: productId,
+                quantity: quantity,
+                nonce: woocommerce_params ? woocommerce_params.nonce : ''
+            };
+
+            // Add variation data if present
+            var variationData = this.container.closest('form').serialize();
+            if (variationData) {
+                data = $.extend(data, this.parseQuery(variationData));
+            }
+
+            // Make AJAX request
+            $.ajax({
+                url: woocommerce_params.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    self.handleAddToCartResponse(response, button);
+                },
+                error: function() {
+                    self.showFeedback('Σφάλμα κατά την προσθήκη στο καλάθι.', 'error');
+                },
+                complete: function() {
+                    self.setButtonLoading(button, false);
+                }
+            });
+        },
+
+        toggleWishlist: function(button) {
+            var self = this;
+            var productId = button.data('product-id');
+            var nonce = button.data('nonce');
+
+            $.ajax({
+                url: wc_add_to_cart_params.ajax_url || woocommerce_params.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'add_to_wishlist',
+                    product_id: productId,
+                    nonce: nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var isInWishlist = response.data.is_in_wishlist;
+                        self.updateWishlistButton(button, isInWishlist);
+                        self.showFeedback(response.data.message, 'success');
+                        self.updateWishlistCount();
+                    } else {
+                        self.showFeedback(response.data || 'Σφάλμα κατά την προσθήκη στα αγαπημένα.', 'error');
+                    }
+                },
+                error: function() {
+                    self.showFeedback('Σφάλμα κατά την προσθήκη στα αγαπημένα.', 'error');
+                }
+            });
+        },
+
+        getSelectedVariation: function() {
+            var variationSelect = this.container.closest('form').find('.variations select');
+            var variationId = '';
+
+            variationSelect.each(function() {
+                if ($(this).val() && $(this).val() !== '') {
+                    variationId = $(this).val();
+                }
+            });
+
+            return variationId;
+        },
+
+        setButtonLoading: function(button, loading) {
+            if (loading) {
+                button.addClass('btn-loading').prop('disabled', true);
+            } else {
+                button.removeClass('btn-loading').prop('disabled', false);
+            }
+        },
+
+        handleAddToCartResponse: function(response, button) {
+            if (response.error && response.product_url) {
+                window.location = response.product_url;
+                return;
+            }
+
+            // Update cart fragments
+            $(document.body).trigger('added_to_cart', [response.fragments, response.cart_hash, button]);
+            this.showFeedback('Προστέθηκε στο καλάθι!', 'success');
             
-            // Add elements in order
-            flexContainer.appendChild(decreaseBtn);
-            flexContainer.appendChild(quantityInput);
-            flexContainer.appendChild(increaseBtn);
+            // Update cart count in header if exists
+            this.updateCartCount();
+        },
 
-            // Replace the original quantity wrapper content
-            quantityWrapper.innerHTML = '';
-            quantityWrapper.appendChild(flexContainer);
-        }
+        updateWishlistButton: function(button, isInWishlist) {
+            var textElement = button.find('.wishlist-text');
+            var iconElement = button.find('.heart-icon');
 
-        // Add event listeners
-        const decreaseBtn = quantityWrapper.querySelector('.quantity-decrease');
-        const increaseBtn = quantityWrapper.querySelector('.quantity-increase');
+            if (isInWishlist) {
+                button.addClass('active');
+                textElement.text('Αγαπημένα');
+                iconElement.attr('fill', 'currentColor');
+            } else {
+                button.removeClass('active');
+                textElement.text('Προσθήκη στα αγαπημένα');
+                iconElement.attr('fill', 'none');
+            }
+        },
 
-        if (decreaseBtn) {
-            decreaseBtn.addEventListener('click', () => {
-                const current = parseInt(quantityInput.value) || 1;
-                if (current > 1) {
-                    quantityInput.value = current - 1;
-                    quantityInput.dispatchEvent(new Event('change'));
+        updateWishlistCount: function() {
+            // This would update wishlist count in header if needed
+            $.ajax({
+                url: woocommerce_params.ajax_url,
+                type: 'GET',
+                data: { action: 'get_wishlist_count' },
+                success: function(response) {
+                    $('.wishlist-count').text(response.data || 0);
                 }
             });
-        }
+        },
 
-        if (increaseBtn) {
-            increaseBtn.addEventListener('click', () => {
-                const current = parseInt(quantityInput.value) || 1;
-                const max = parseInt(quantityInput.getAttribute('max')) || 999;
-                if (current < max) {
-                    quantityInput.value = current + 1;
-                    quantityInput.dispatchEvent(new Event('change'));
-                }
+        updateCartCount: function() {
+            // Trigger fragment update
+            $(document.body).trigger('wc_fragment_refresh');
+        },
+
+        checkStockStatus: function() {
+            var availabilityDiv = this.container.find('#product-availability');
+            if (availabilityDiv.length === 0) return;
+
+            var stockStatus = $('form.variations_form').find('.stock').text();
+            var stockQty = $('form.variations_form').find('.stock').data('stock') || 0;
+
+            if (stockStatus && stockStatus.indexOf('in stock') !== -1) {
+                availabilityDiv.find('.stock-status').removeClass('out-of-stock').addClass('in-stock')
+                    .find('span').text('Σε απόθεμα');
+                this.container.find('.add-to-cart-btn').prop('disabled', false);
+            } else {
+                availabilityDiv.find('.stock-status').removeClass('in-stock').addClass('out-of-stock')
+                    .find('span').text('Εξαντλήθηκε');
+                this.container.find('.add-to-cart-btn').prop('disabled', true);
+            }
+        },
+
+        showFeedback: function(message, type) {
+            var feedback = this.container.find('#action-feedback');
+            feedback.removeClass('success error').addClass(type).text(message);
+            
+            setTimeout(function() {
+                feedback.removeClass('success error').hide();
+            }, 5000);
+        },
+
+        parseQuery: function(query) {
+            var params = {};
+            query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+                params[key] = decodeURIComponent(value);
             });
+            return params;
         }
-    }
+    };
 
-    /**
-     * Enhanced Size Selection
-     */
-    handleSizeSelection() {
-        const sizeOptions = document.querySelectorAll('.size-option-single');
-        const sizeSelects = document.querySelectorAll('select[data-attribute_name*="size"]');
+    // Product Accordions Component
+    window.ProductAccordions = function(container) {
+        this.container = $(container);
+        this.init();
+    };
 
-        sizeOptions.forEach(option => {
-            option.addEventListener('click', (e) => {
-                const target = e.currentTarget;
-                const isInStock = target.getAttribute('data-in-stock') === 'true';
-                
-                if (!isInStock) return;
+    ProductAccordions.prototype = {
+        init: function() {
+            this.bindEvents();
+            this.handleHash();
+        },
 
-                // Remove selected class from all size options
-                sizeOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // Add selected class to clicked option
-                target.classList.add('selected');
+        bindEvents: function() {
+            var self = this;
 
-                // Update hidden select
-                const attributeName = target.getAttribute('data-attribute');
-                const selectedValue = target.getAttribute('data-value');
-                const hiddenSelect = document.querySelector(`select[data-attribute_name*="${attributeName}"]`);
-                
-                if (hiddenSelect) {
-                    hiddenSelect.value = selectedValue;
-                    hiddenSelect.dispatchEvent(new Event('change'));
-                }
-
-                // Update label
-                const label = target.closest('.variation-wrapper').querySelector('.selected-value');
-                if (label) {
-                    label.textContent = `Size ${selectedValue}`;
-                }
+            this.container.find('.accordion-header').on('click', function(e) {
+                e.preventDefault();
+                self.toggleAccordion($(this));
             });
 
             // Handle keyboard navigation
-            option.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
+            this.container.find('.accordion-header').on('keydown', function(e) {
+                if (e.which === 13 || e.which === 32) { // Enter or Space
                     e.preventDefault();
-                    option.click();
+                    self.toggleAccordion($(this));
                 }
             });
-        });
-    }
 
-    /**
-     * Enhanced Color Variants
-     */
-    handleColorVariants() {
-        const colorOptions = document.querySelectorAll('.color-variant');
-
-        colorOptions.forEach(option => {
-            option.addEventListener('click', (e) => {
-                const target = e.currentTarget;
-                
-                // Remove selected class from all color options
-                colorOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // Add selected class to clicked option
-                target.classList.add('selected');
-
-                // Update selected color display
-                const colorName = target.getAttribute('data-color-name');
-                const selectedText = document.getElementById('selected-color');
-                if (selectedText) selectedText.textContent = colorName;
+            // Handle hash changes
+            $(window).on('hashchange', function() {
+                self.handleHash();
             });
-        });
-    }
+        },
 
-    /**
-     * Enhanced Add to Cart Button
-     */
-    handleAddToCart() {
-        const addToCartBtn = document.querySelector('.single_add_to_cart_button');
-        if (!addToCartBtn) return;
+        toggleAccordion: function(header) {
+            var isExpanded = header.attr('aria-expanded') === 'true';
+            var panel = header.siblings('.accordion-panel');
 
-        // Ensure magazine styling
-        addToCartBtn.classList.add('no-radius', 'no-shadow');
+            // Close all other accordions
+            this.container.find('.accordion-header').attr('aria-expanded', 'false');
+            this.container.find('.accordion-panel').removeClass('expanded').attr('aria-hidden', 'true');
 
-        // Add enhanced click feedback
-        addToCartBtn.addEventListener('click', (e) => {
-            if (addToCartBtn.disabled) return;
+            // Toggle current accordion
+            if (!isExpanded) {
+                header.attr('aria-expanded', 'true');
+                panel.addClass('expanded').attr('aria-hidden', 'false');
 
-            // Add loading state
-            addToCartBtn.classList.add('loading');
-            addToCartBtn.disabled = true;
-            
-            const originalText = addToCartBtn.textContent;
-            addToCartBtn.textContent = 'Adding to Cart...';
-
-            // Handle form submission normally, but provide visual feedback
-            setTimeout(() => {
-                if (!addToCartBtn.classList.contains('added')) {
-                    addToCartBtn.textContent = 'Added to Cart!';
-                    addToCartBtn.classList.remove('loading');
-                    addToCartBtn.classList.add('added', 'bg-green-600');
-                    addToCartBtn.classList.remove('from-pink-500', 'to-pink-600');
-
-                    setTimeout(() => {
-                        addToCartBtn.textContent = originalText;
-                        addToCartBtn.classList.remove('added', 'bg-green-600');
-                        addToCartBtn.classList.add('from-pink-500', 'to-pink-600');
-                        addToCartBtn.disabled = false;
-                    }, 2000);
+                // Update hash for deep linking
+                var accordionId = header.attr('id');
+                if (accordionId) {
+                    window.location.hash = accordionId;
                 }
-            }, 1000);
-        });
+            }
+        },
 
-        // Handle WooCommerce AJAX events
-        document.body.addEventListener('added_to_cart', () => {
-            addToCartBtn.classList.remove('loading');
-            addToCartBtn.classList.add('added');
-        });
-    }
+        handleHash: function() {
+            var hash = window.location.hash.substring(1);
+            if (hash) {
+                var targetHeader = this.container.find('#' + hash);
+                if (targetHeader.length) {
+                    // Close all first
+                    this.container.find('.accordion-header').attr('aria-expanded', 'false');
+                    this.container.find('.accordion-panel').removeClass('expanded').attr('aria-hidden', 'true');
 
-    /**
-     * Enhanced Wishlist Functionality
-     */
-    handleWishlist() {
-        const wishlistBtns = document.querySelectorAll('.add-to-wishlist, [data-action="wishlist"]');
-
-        wishlistBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                const icon = btn.querySelector('svg path, i');
-                const productId = btn.getAttribute('data-product-id') || btn.closest('.product').querySelector('[data-product-id]')?.getAttribute('data-product-id');
-                
-                // Toggle wishlist state
-                const isInWishlist = btn.classList.contains('in-wishlist');
-                
-                if (isInWishlist) {
-                    btn.classList.remove('in-wishlist', 'text-red-500');
-                    btn.classList.add('text-gray-600');
-                    this.showFeedback(btn, 'Removed from Wishlist');
-                } else {
-                    btn.classList.add('in-wishlist', 'text-red-500');
-                    btn.classList.remove('text-gray-600');
-                    this.showFeedback(btn, 'Added to Wishlist!');
+                    // Open target
+                    targetHeader.attr('aria-expanded', 'true');
+                    targetHeader.siblings('.accordion-panel').addClass('expanded').attr('aria-hidden', 'false');
                 }
+            }
+        }
+    };
 
-                // Here you would typically make an AJAX call to update the wishlist
-                // this.updateWishlistAjax(productId, !isInWishlist);
+    // Enhanced Product Gallery (extends existing functionality)
+    window.EnhancedProductGallery = function() {
+        this.init();
+    };
+
+    EnhancedProductGallery.prototype = {
+        init: function() {
+            this.setupLazyLoading();
+            this.enhanceNavigation();
+            this.setupSwipeGestures();
+        },
+
+        setupLazyLoading: function() {
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.classList.remove('lazy');
+                                imageObserver.unobserve(img);
+                            }
+                        }
+                    });
+                });
+
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+        },
+
+        enhanceNavigation: function() {
+            // Add keyboard navigation
+            $(document).on('keydown', function(e) {
+                if ($('.product-gallery-container').length === 0) return;
+
+                if (e.which === 37) { // Left arrow
+                    $('.swiper-button-prev').click();
+                } else if (e.which === 39) { // Right arrow
+                    $('.swiper-button-next').click();
+                }
             });
-        });
-    }
+        },
 
-    /**
-     * Enhanced Social Sharing
-     */
-    handleSocialSharing() {
-        const copyLinkBtn = document.querySelector('.copy-link');
-        
-        if (copyLinkBtn) {
-            copyLinkBtn.addEventListener('click', async () => {
-                try {
-                    await navigator.clipboard.writeText(window.location.href);
-                    copyLinkBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
-                    copyLinkBtn.classList.add('copied', 'bg-green-600');
-                    
-                    setTimeout(() => {
-                        copyLinkBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>';
-                        copyLinkBtn.classList.remove('copied', 'bg-green-600');
-                    }, 2000);
-                } catch (err) {
-                    console.error('Failed to copy link:', err);
-                    this.showFeedback(copyLinkBtn, 'Failed to copy link');
+        setupSwipeGestures: function() {
+            let startX = 0;
+            let endX = 0;
+
+            $('.product-main-slider').on('touchstart', function(e) {
+                startX = e.originalEvent.touches[0].clientX;
+            });
+
+            $('.product-main-slider').on('touchend', function(e) {
+                endX = e.originalEvent.changedTouches[0].clientX;
+                const diff = startX - endX;
+
+                if (Math.abs(diff) > 50) { // Minimum swipe distance
+                    if (diff > 0) {
+                        $('.swiper-button-next').click();
+                    } else {
+                        $('.swiper-button-prev').click();
+                    }
                 }
             });
         }
+    };
 
-        // Handle social share buttons
-        const socialBtns = document.querySelectorAll('.social-share-btn[href]');
-        socialBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const url = btn.getAttribute('href');
-                window.open(url, 'social-share', 'width=600,height=400,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no');
-            });
+    // Initialize components when document is ready
+    $(document).ready(function() {
+        // Initialize enhanced gallery
+        if ($('.product-gallery-container').length > 0) {
+            new EnhancedProductGallery();
+        }
+
+        // Initialize product accordions
+        $('.product-accordions-container').each(function() {
+            new ProductAccordions(this);
         });
-    }
 
-    /**
-     * Show feedback message
-     */
-    showFeedback(element, message) {
-        const feedback = document.createElement('div');
-        feedback.textContent = message;
-        feedback.className = 'absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 text-xs rounded z-20 whitespace-nowrap';
-        
-        element.style.position = 'relative';
-        element.appendChild(feedback);
-        
-        setTimeout(() => {
-            feedback.remove();
-        }, 2000);
-    }
+        // Initialize product actions
+        $('.product-actions-container').each(function() {
+            new ProductActions(this);
+        });
 
-    /**
-     * Update wishlist via AJAX (placeholder for actual implementation)
-     */
-    updateWishlistAjax(productId, addToWishlist) {
-        // This would typically make an AJAX call to your wishlist handler
-        const action = addToWishlist ? 'add_to_wishlist' : 'remove_from_wishlist';
-        
-        fetch(wc_add_to_cart_params.ajax_url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                action: action,
-                product_id: productId,
-                security: wc_add_to_cart_params.wc_ajax_nonce
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Wishlist updated successfully');
+        // Handle AJAX cart updates
+        $(document.body).on('added_to_cart', function(event, fragments, cart_hash, button) {
+            // Update cart count
+            $('.cart-count').text(fragments['.cart-count']);
+            
+            // Show success message
+            const cartButton = $('.add-to-cart-btn');
+            cartButton.removeClass('btn-loading').prop('disabled', false);
+            
+            // Trigger flying cart if exists
+            if (typeof updateFlyingCart === 'function') {
+                updateFlyingCart();
             }
-        })
-        .catch(error => {
-            console.error('Wishlist update failed:', error);
         });
+
+        // Handle variation changes for variable products
+        $('form.variations_form').on('found_variation', function(event, variation) {
+            const addToCartBtn = $('.add-to-cart-btn');
+            
+            // Update button state based on availability
+            if (variation.is_in_stock && variation.is_in_stock !== false) {
+                addToCartBtn.prop('disabled', false).removeClass('disabled');
+            } else {
+                addToCartBtn.prop('disabled', true).addClass('disabled');
+            }
+
+            // Update price display if needed
+            if (variation.display_price) {
+                $('.current-price').text(wc_price(variation.display_price));
+            }
+        });
+
+        // Reset button when no variation is selected
+        $('form.variations_form').on('reset_data', function() {
+            $('.add-to-cart-btn').prop('disabled', true).addClass('disabled');
+        });
+    });
+
+    // Helper function to format prices
+    function wc_price(price) {
+        if (typeof woocommerce_params !== 'undefined') {
+            return accounting.formatMoney(price, {
+                symbol: woocommerce_params.currency_format_symbol,
+                decimal: woocommerce_params.currency_format_decimal_sep,
+                thousand: woocommerce_params.currency_format_thousand_sep,
+                precision: woocommerce_params.currency_format_num_decimals,
+                format: woocommerceParams.currency_format
+            });
+        }
+        return '€' + parseFloat(price).toFixed(2);
     }
-}
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    new SingleProductEnhanced();
-});
+    // Expose globals for inline scripts
+    window.ProductActions = ProductActions;
+    window.ProductAccordions = ProductAccordions;
+    window.EnhancedProductGallery = EnhancedProductGallery;
 
-// Also initialize on WooCommerce variation form found (for AJAX loaded content)
-document.addEventListener('wc_variation_form', () => {
-    new SingleProductEnhanced();
-});
+})(jQuery);
