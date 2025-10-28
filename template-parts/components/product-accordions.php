@@ -180,9 +180,24 @@ if (!$product) {
 <script>
 // Initialize product accordions when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    const accordionsContainer = document.querySelector('.product-accordions-container');
-    if (accordionsContainer && typeof ProductAccordions !== 'undefined') {
-        new ProductAccordions(accordionsContainer);
-    }
+    // Simple accordion toggle - matching demo HTML structure
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+            const panel = this.nextElementSibling;
+            
+            // Toggle state
+            this.setAttribute('aria-expanded', String(!expanded));
+            panel.setAttribute('aria-hidden', String(expanded));
+            
+            // Rotate icon
+            const icon = this.querySelector('.accordion-icon');
+            if (icon) {
+                icon.style.transform = expanded ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+        });
+    });
 });
 </script>
