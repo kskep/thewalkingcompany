@@ -62,10 +62,19 @@ if (function_exists('is_product') && is_product()) {
                     <div class="product-actions">
                         <?php 
                         echo '<!-- Loading add to cart -->';
-                        // Temporarily comment out to test rest of page
-                        // woocommerce_template_single_add_to_cart();
-                        echo '<p style="background: #ff0; padding: 1rem;">ADD TO CART FORM DISABLED FOR TESTING</p>';
-                        echo '<!-- add to cart SKIPPED -->';
+                        
+                        // Use output buffering to catch any errors
+                        ob_start();
+                        woocommerce_template_single_add_to_cart();
+                        $add_to_cart_output = ob_get_clean();
+                        
+                        if (!empty($add_to_cart_output)) {
+                            echo $add_to_cart_output;
+                        } else {
+                            echo '<p style="color: #999;">Add to cart form could not be loaded.</p>';
+                        }
+                        
+                        echo '<!-- add to cart loaded -->';
                         ?>
                     </div>
                     
