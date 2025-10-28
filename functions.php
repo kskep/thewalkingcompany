@@ -17,6 +17,7 @@ require_once get_template_directory() . '/inc/theme-setup.php';
 require_once get_template_directory() . '/inc/wishlist-functions.php';
 require_once get_template_directory() . '/inc/woocommerce-functions.php';
 require_once get_template_directory() . '/inc/woocommerce/product-display.php';
+require_once get_template_directory() . '/inc/woocommerce/size-transformation.php';
 require_once get_template_directory() . '/inc/mega-menu-walker.php';
 require_once get_template_directory() . '/inc/color-grouping-functions.php';
 require_once get_template_directory() . '/inc/auth-functions.php';
@@ -68,15 +69,42 @@ function eshop_theme_scripts() {
         $single_product_css_path = get_template_directory() . '/css/pages/single-product.css';
         $single_product_css_ver = file_exists($single_product_css_path) ? filemtime($single_product_css_path) : '1.0.0';
         wp_enqueue_style('eshop-single-product', get_template_directory_uri() . '/css/pages/single-product.css', array('eshop-theme-style'), $single_product_css_ver);
-        wp_enqueue_style('eshop-product-gallery', get_template_directory_uri() . '/css/components/product-gallery.css', array('eshop-theme-style'), '1.0.0');
+        
+        // Product Gallery Component CSS with proper versioning
+        $product_gallery_css_path = get_template_directory() . '/css/components/product-gallery.css';
+        $product_gallery_css_ver = file_exists($product_gallery_css_path) ? filemtime($product_gallery_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-product-gallery', get_template_directory_uri() . '/css/components/product-gallery.css', array('eshop-theme-style'), $product_gallery_css_ver);
+        
+        // Size Selection Component CSS with proper versioning
+        $size_selection_css_path = get_template_directory() . '/css/components/size-selection.css';
+        $size_selection_css_ver = file_exists($size_selection_css_path) ? filemtime($size_selection_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-size-selection', get_template_directory_uri() . '/css/components/size-selection.css', array('eshop-theme-style'), $size_selection_css_ver);
+        
         wp_enqueue_style('eshop-color-variants', get_template_directory_uri() . '/css/components/color-variants.css', array('eshop-theme-style'), '1.0.0');
-        wp_enqueue_style('eshop-size-selection', get_template_directory_uri() . '/css/components/size-selection.css', array('eshop-theme-style'), '1.0.0');
+
+        // Trust badges and sticky ATC components
+        $trust_css_path = get_template_directory() . '/css/components/trust-badges.css';
+        if (file_exists($trust_css_path)) {
+            wp_enqueue_style('eshop-trust-badges', get_template_directory_uri() . '/css/components/trust-badges.css', array('eshop-theme-style'), filemtime($trust_css_path));
+        }
+        $sticky_atc_css_path = get_template_directory() . '/css/components/sticky-atc.css';
+        if (file_exists($sticky_atc_css_path)) {
+            wp_enqueue_style('eshop-sticky-atc', get_template_directory_uri() . '/css/components/sticky-atc.css', array('eshop-theme-style'), filemtime($sticky_atc_css_path));
+        }
+        
+        // Product Gallery Component JS with proper versioning
         $product_gallery_js_path = get_template_directory() . '/js/components/product-gallery.js';
         $product_gallery_js_ver = file_exists($product_gallery_js_path) ? filemtime($product_gallery_js_path) : '1.0.0';
         wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), $product_gallery_js_ver, true);
+        
         wp_enqueue_script('eshop-color-variants', get_template_directory_uri() . '/js/components/color-variants.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('eshop-size-selection', get_template_directory_uri() . '/js/components/size-selection.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
-        wp_enqueue_script('eshop-single-product', get_template_directory_uri() . '/js/single-product.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        wp_enqueue_script('size-transformation', get_template_directory_uri() . '/js/components/size-transformation.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        // Sticky ATC and single-page interactions
+        $single_product_js_path = get_template_directory() . '/js/single-product.js';
+        if (file_exists($single_product_js_path)) {
+            wp_enqueue_script('eshop-single-product', get_template_directory_uri() . '/js/single-product.js', array('jquery', 'eshop-theme-script'), filemtime($single_product_js_path), true);
+        }
     }
 
     // External CSS
@@ -111,6 +139,8 @@ function eshop_theme_scripts() {
         $filters_js_file = get_template_directory() . $filters_js_rel;
         $filters_js_ver = file_exists($filters_js_file) ? filemtime($filters_js_file) : '1.0.0';
         wp_enqueue_script('eshop-filters', get_template_directory_uri() . $filters_js_rel, array('jquery', 'nouislider', 'eshop-theme-script'), $filters_js_ver, true);
+        // Enqueue size transformation script on shop/archive pages
+        wp_enqueue_script('size-transformation', get_template_directory_uri() . '/js/components/size-transformation.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
     }
 
     // Also load on shop pages specifically
@@ -292,6 +322,16 @@ function eshop_include_filter_modal() {
     }
 }
 add_action('wp_footer', 'eshop_include_filter_modal');
+
+/**
+ * Include sticky add-to-cart bar on single product pages
+ */
+function eshop_include_sticky_atc() {
+    if (class_exists('WooCommerce') && is_product()) {
+        get_template_part('template-parts/components/sticky-atc');
+    }
+}
+add_action('wp_footer', 'eshop_include_sticky_atc', 15);
 
 /**
  * Get available attribute terms from current query results

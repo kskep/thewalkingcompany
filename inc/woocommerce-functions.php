@@ -298,6 +298,43 @@ function eshop_dequeue_woocommerce_styles() {
 add_action('wp_enqueue_scripts', 'eshop_dequeue_woocommerce_styles', 100);
 
 /**
+ * Single Product summary customizations: remove rating and move Add to Cart
+ */
+function eshop_customize_single_product_summary_hooks() {
+    if (!function_exists('is_product') || !is_product()) { return; }
+    // Remove reviews/rating from summary
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10);
+    // Prevent duplicate Add to Cart in summary; we'll render it in our Product Actions block
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
+}
+add_action('wp', 'eshop_customize_single_product_summary_hooks');
+
+/**
+ * Add Wishlist next to Add to Cart across product types
+ * We open a small wrapper before the ATC button and close after, injecting the wishlist button.
+ */
+function eshop_purchase_actions_open() {
+    if (!function_exists('is_product') || !is_product()) { return; }
+    echo '<div class="purchase-actions">';
+}
+add_action('woocommerce_before_add_to_cart_button', 'eshop_purchase_actions_open', 5);
+
+function eshop_purchase_actions_wishlist_button() {
+    if (!function_exists('is_product') || !is_product()) { return; }
+    if (function_exists('eshop_wishlist_button_enhanced')) {
+        // Use enhanced wishlist button with our classes
+        eshop_wishlist_button_enhanced(null, true, 'add-to-wishlist');
+    }
+}
+add_action('woocommerce_after_add_to_cart_button', 'eshop_purchase_actions_wishlist_button', 10);
+
+function eshop_purchase_actions_close() {
+    if (!function_exists('is_product') || !is_product()) { return; }
+    echo '</div>';
+}
+add_action('woocommerce_after_add_to_cart_button', 'eshop_purchase_actions_close', 1000);
+
+/**
  * Override WooCommerce image sizes for better quality
  */
 function eshop_woocommerce_image_dimensions() {

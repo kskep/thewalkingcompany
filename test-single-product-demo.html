@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Product Demo - The Walking Company</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Theme base styles and variables -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Component styles used in this demo -->
+    <link rel="stylesheet" href="css/components/product-gallery.css">
+    <link rel="stylesheet" href="css/components/color-variants.css">
+    <link rel="stylesheet" href="css/components/wishlist.css">
+    <!-- Page styles -->
+    <link rel="stylesheet" href="css/pages/single-product.css">
+    <!-- Demo-only modern overrides -->
+    <link rel="stylesheet" href="css/pages/single-product.demo-modern.css">
+</head>
+<body>
+    <!-- Debug Overlay -->
+    <div class="debug-overlay">
+        <strong>Debug Info</strong><br>
+        Max-width: 1630px<br>
+        Grid: 2 columns<br>
+        <span id="current-image">Image: 1/4</span>
+    </div>
+
+    <!-- Responsive Indicator -->
+    <div class="responsive-indicator" id="responsive-indicator">
+        Width: <span id="viewport-width">1920px</span>
+    </div>
+
+    <!-- Header -->
+    <header class="component-section">
+        <div class="container">
+            <span class="component-label">Header</span>
+            <h1 style="margin: 0; padding: 1rem 0;">The Walking Company - Single Product Demo</h1>
+        </div>
+    </header>
+
+    <!-- Main Product Container -->
+    <div class="product-main-container grid-boundary">
+        <!-- Left Column: Product Gallery -->
+        <div class="product-gallery-column component-section">
+            <span class="component-label">Product Gallery</span>
+            
+            <div class="product-gallery" data-product-id="123">
+                <!-- Sale Badge -->
+                <span class="onsale">Sale</span>
+                
+                <!-- Main Image Container -->
+                <div class="product-gallery__main">
+                    <div class="product-gallery__main-image-wrapper">
+                        <!-- Image 1 -->
+                        <div class="product-gallery__main-image is-active" data-index="0">
+                            <img src="https://picsum.photos/seed/product1/800/800.jpg" 
+                                 alt="Product front view" 
+                                 class="product-gallery__main-image-img">
+                        </div>
+                        
+                        <!-- Image 2 -->
+                        <div class="product-gallery__main-image" data-index="1">
+                            <img src="https://picsum.photos/seed/product2/800/800.jpg" 
+                                 alt="Product side view" 
+                                 class="product-gallery__main-image-img">
+                        </div>
+                        
+                        <!-- Image 3 -->
+                        <div class="product-gallery__main-image" data-index="2">
+                            <img src="https://picsum.photos/seed/product3/800/800.jpg" 
+                                 alt="Product detail view" 
+                                 class="product-gallery__main-image-img">
+                        </div>
+                        
+                        <!-- Image 4 -->
+                        <div class="product-gallery__main-image" data-index="3">
+                            <img src="https://picsum.photos/seed/product4/800/800.jpg" 
+                                 alt="Product back view" 
+                                 class="product-gallery__main-image-img">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thumbnail Gallery -->
+                <div class="product-gallery__thumbnails">
+                    <div class="product-gallery__thumbnails-wrapper">
+                        <button class="product-gallery__thumbnail is-active" data-index="0">
+                            <img src="https://picsum.photos/seed/product1/150/150.jpg" alt="Thumbnail 1">
+                        </button>
+                        <button class="product-gallery__thumbnail" data-index="1">
+                            <img src="https://picsum.photos/seed/product2/150/150.jpg" alt="Thumbnail 2">
+                        </button>
+                        <button class="product-gallery__thumbnail" data-index="2">
+                            <img src="https://picsum.photos/seed/product3/150/150.jpg" alt="Thumbnail 3">
+                        </button>
+                        <button class="product-gallery__thumbnail" data-index="3">
+                            <img src="https://picsum.photos/seed/product4/150/150.jpg" alt="Thumbnail 4">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Product Details -->
+        <div class="product-details-column component-section">
+            <span class="component-label">Product Details</span>
+            
+            <div class="product-details-wrapper">
+                <!-- Breadcrumbs -->
+                <nav class="breadcrumbs" aria-label="Breadcrumb">
+                    <a href="#">Home</a>
+                    <span aria-hidden="true">/</span>
+                    <a href="#">Jackets</a>
+                    <span aria-hidden="true">/</span>
+                    <span aria-current="page">Premium Fashion Jacket</span>
+                </nav>
+                <!-- Product Header -->
+                <div class="product-header">
+                    <h1 class="product_title">PREMIUM FASHION JACKET</h1>
+                    <p class="price">
+                        <span class="woocommerce-Price-amount amount">
+                            <bdi><span class="woocommerce-Price-currencySymbol">$</span>189.99</bdi>
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Product Actions -->
+                <div class="product-actions component-section">
+                    <span class="component-label">Product Actions</span>
+                    
+                    <!-- Size Selection -->
+                    <div class="variation-wrapper">
+                        <label class="variation-label">Size: <span class="selected-value">Select size</span></label>
+                        <div class="size-options-single">
+                            <button class="size-option-single" data-size="XS">XS</button>
+                            <button class="size-option-single" data-size="S">S</button>
+                            <button class="size-option-single selected" data-size="M">M</button>
+                            <button class="size-option-single" data-size="L">L</button>
+                            <button class="size-option-single" data-size="XL">XL</button>
+                            <button class="size-option-single out-of-stock" data-size="XXL">XXL</button>
+                        </div>
+                    </div>
+
+                    <!-- Color Variations -->
+                    <div class="variation-wrapper">
+                        <label class="variation-label">Color: <span class="selected-value">Black</span></label>
+                        <div class="attribute-options-single">
+                            <button class="attribute-option-single selected" data-color="black">Black</button>
+                            <button class="attribute-option-single" data-color="navy">Navy</button>
+                            <button class="attribute-option-single" data-color="burgundy">Burgundy</button>
+                            <button class="attribute-option-single" data-color="forest">Forest</button>
+                        </div>
+                    </div>
+
+                    <!-- Color Variants with Images -->
+                    <div class="product-color-variants">
+                        <h3 class="color-variants-title">Available Colors</h3>
+                        <div class="color-variants-container">
+                            <div class="color-variant selected" data-color-name="Black" data-url="#black">
+                                <img src="https://picsum.photos/seed/black/100/100.jpg" alt="Black">
+                            </div>
+                            <div class="color-variant" data-color-name="Navy" data-url="#navy">
+                                <img src="https://picsum.photos/seed/navy/100/100.jpg" alt="Navy">
+                            </div>
+                            <div class="color-variant" data-color-name="Burgundy" data-url="#burgundy">
+                                <img src="https://picsum.photos/seed/burgundy/100/100.jpg" alt="Burgundy">
+                            </div>
+                            <div class="color-variant out-of-stock" data-color-name="Forest" data-url="#forest">
+                                <img src="https://picsum.photos/seed/forest/100/100.jpg" alt="Forest">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantity and Add to Cart -->
+                    <div class="variation-wrapper quantity-wrapper">
+                        <label class="variation-label">Quantity</label>
+                        <div class="quantity">
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
+                        </div>
+                    </div>
+
+                    <div class="purchase-actions">
+                        <button type="submit" class="single_add_to_cart_button">
+                            Add to Cart
+                        </button>
+                        <button type="button" class="modern-action-btn add-to-wishlist" aria-pressed="false" data-product-id="123">
+                            <i class="fa-regular fa-heart" aria-hidden="true"></i>
+                            <span>Add to Wishlist</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="trust-badges" aria-label="Purchase benefits">
+                    <div class="trust-badge"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><span>Free shipping over $75</span></div>
+                    <div class="trust-badge"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i><span>30-day free returns</span></div>
+                    <div class="trust-badge"><i class="fa-solid fa-shield" aria-hidden="true"></i><span>Secure checkout</span></div>
+                </div>
+
+                <!-- Product Details Accordion -->
+                <section class="product-accordions" aria-label="Product information">
+                    <button class="accordion" aria-expanded="true">
+                        <span>Details</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="accordion-panel">
+                        <p>Experience ultimate style and comfort with our premium fashion jacket. Crafted from high-quality materials with attention to every detail, this jacket combines contemporary design with timeless elegance.</p>
+                        <ul>
+                            <li>Modern tailored fit</li>
+                            <li>Durable, lightweight shell</li>
+                            <li>Breathable lining</li>
+                            <li>Machine washable</li>
+                        </ul>
+                    </div>
+
+                    <button class="accordion" aria-expanded="false">
+                        <span>Materials & Care</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="accordion-panel" hidden>
+                        <p>Shell: 65% Polyester, 35% Cotton. Lining: 100% Cotton. Wash cold with like colors. Do not bleach. Tumble dry low. Cool iron if needed.</p>
+                    </div>
+
+                    <button class="accordion" aria-expanded="false">
+                        <span>Shipping & Returns</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="accordion-panel" hidden>
+                        <p>Free standard shipping on orders over $75. 30-day hassle-free returns on unworn items with tags attached.</p>
+                    </div>
+                </section>
+
+                <!-- Product Meta -->
+                <div class="product-meta component-section">
+                    <span class="component-label">Product Meta</span>
+                    <span class="sku_wrapper">SKU: <span>FWJ-2024-001</span></span>
+                    <span class="posted_in">Categories: <a href="#">Jackets</a>, <a href="#">Fashion</a></span>
+                    <span class="tagged_as">Tags: <a href="#">Premium</a>, <a href="#">Modern</a>, <a href="#">Versatile</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Section -->
+    <div class="container">
+        <div class="instructions">
+            <h2>What to Look For</h2>
+            <ul>
+                <li><strong>Grid Layout:</strong> Two-column layout with 1630px max-width (updated from 90rem)</li>
+                <li><strong>Product Gallery:</strong> Click thumbnails to switch images, hover effects on main image</li>
+                <li><strong>Size Selection:</strong> Circular buttons with selected/out-of-stock states</li>
+                <li><strong>Color Variations:</strong> Both text buttons and image-based color swatches</li>
+                <li><strong>Responsive Design:</strong> Resize browser to see breakpoint changes</li>
+                <li><strong>Visual Indicators:</strong> Component boundaries and grid overlay for testing</li>
+                <li><strong>Debug Info:</strong> Top-right corner shows current state</li>
+                <li><strong>Responsive Indicator:</strong> Bottom-left shows current viewport width</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Sticky Add to Cart (mobile) -->
+    <div class="sticky-atc" aria-live="polite">
+        <div class="sticky-atc__content">
+            <div class="sticky-atc__info">
+                <div class="sticky-atc__title">PREMIUM FASHION JACKET</div>
+                <div class="sticky-atc__meta"><span class="sticky-atc__selection">M / Black</span> · <span class="sticky-atc__price">$189.99</span></div>
+            </div>
+            <button class="sticky-atc__button" type="button">Add to Cart</button>
+        </div>
+    </div>
+
+    <script>
+        // Gallery Image Switching
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.product-gallery__thumbnail');
+            const mainImages = document.querySelectorAll('.product-gallery__main-image');
+            const currentImageSpan = document.getElementById('current-image');
+            
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    
+                    // Update active states
+                    thumbnails.forEach(t => t.classList.remove('is-active'));
+                    mainImages.forEach(img => img.classList.remove('is-active'));
+                    
+                    this.classList.add('is-active');
+                    mainImages[index].classList.add('is-active');
+                    
+                    // Update debug info
+                    currentImageSpan.textContent = `Image: ${index + 1}/${mainImages.length}`;
+                });
+            });
+
+            // Size Selection Interaction
+            const sizeButtons = document.querySelectorAll('.size-option-single');
+            const selectedSizeSpan = document.querySelector('.variation-wrapper .selected-value');
+            
+            sizeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.classList.contains('out-of-stock')) {
+                        alert('This size is out of stock');
+                        return;
+                    }
+                    
+                    // Update selected state
+                    sizeButtons.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Update label
+                    const size = this.dataset.size;
+                    selectedSizeSpan.textContent = size;
+                });
+            });
+
+            // Color Variation Switching
+            const colorButtons = document.querySelectorAll('.attribute-option-single');
+            const colorVariants = document.querySelectorAll('.color-variant');
+            const selectedColorSpan = document.querySelectorAll('.variation-wrapper .selected-value')[1];
+            
+            colorButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update selected state
+                    colorButtons.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Update label
+                    const color = this.dataset.color;
+                    selectedColorSpan.textContent = color.charAt(0).toUpperCase() + color.slice(1);
+                });
+            });
+
+            // Color Variant Selection
+            colorVariants.forEach(variant => {
+                variant.addEventListener('click', function() {
+                    if (this.classList.contains('out-of-stock')) {
+                        alert('This color is out of stock');
+                        return;
+                    }
+                    
+                    // Update selected state
+                    colorVariants.forEach(v => v.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Update color name
+                    const colorName = this.dataset.colorName;
+                    selectedColorSpan.textContent = colorName;
+                });
+            });
+
+            // Responsive Width Indicator
+            const viewportWidthSpan = document.getElementById('viewport-width');
+            const responsiveIndicator = document.getElementById('responsive-indicator');
+            
+            function updateViewportWidth() {
+                const width = window.innerWidth;
+                viewportWidthSpan.textContent = width + 'px';
+                
+                // Update indicator background based on breakpoint
+                if (width <= 480) {
+                    responsiveIndicator.style.background = 'rgba(220, 38, 38, 0.8)'; // Red for mobile
+                } else if (width <= 768) {
+                    responsiveIndicator.style.background = 'rgba(245, 158, 11, 0.8)'; // Orange for tablet
+                } else if (width <= 1024) {
+                    responsiveIndicator.style.background = 'rgba(59, 130, 246, 0.8)'; // Blue for small desktop
+                } else {
+                    responsiveIndicator.style.background = 'rgba(16, 185, 129, 0.8)'; // Green for large desktop
+                }
+            }
+            
+            updateViewportWidth();
+            window.addEventListener('resize', updateViewportWidth);
+
+            // Add to Cart Button Interaction
+            const addToCartButton = document.querySelector('.single_add_to_cart_button');
+            addToCartButton.addEventListener('click', function() {
+                const selectedSize = document.querySelector('.size-option-single.selected');
+                const selectedColor = document.querySelector('.attribute-option-single.selected');
+                const quantity = document.getElementById('quantity').value;
+                
+                if (!selectedSize) {
+                    alert('Please select a size');
+                    return;
+                }
+                
+                if (!selectedColor) {
+                    alert('Please select a color');
+                    return;
+                }
+                
+                // Simulate add to cart
+                this.textContent = 'Adding to Cart...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    this.textContent = 'Added to Cart!';
+                    setTimeout(() => {
+                        this.textContent = 'Add to Cart';
+                        this.disabled = false;
+                    }, 2000);
+                }, 1000);
+                
+                console.log('Added to cart:', {
+                    size: selectedSize.dataset.size,
+                    color: selectedColor.dataset.color,
+                    quantity: quantity
+                });
+            });
+
+            // Main Image Zoom (Desktop)
+            const mainImageImgs = document.querySelectorAll('.product-gallery__main-image-img');
+            mainImageImgs.forEach(img => {
+                img.addEventListener('click', function() {
+                    if (window.innerWidth > 768) {
+                        // Simple zoom simulation
+                        this.style.transform = this.style.transform === 'scale(1.5)' ? 'scale(1.02)' : 'scale(1.5)';
+                    }
+                });
+            });
+
+            // Accordions
+            const accordions = document.querySelectorAll('.accordion');
+            accordions.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const expanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', String(!expanded));
+                    const panel = btn.nextElementSibling;
+                    if (panel) {
+                        if (expanded) {
+                            panel.setAttribute('hidden', '');
+                        } else {
+                            panel.removeAttribute('hidden');
+                        }
+                    }
+                });
+            });
+
+            // Sticky ATC interactions
+            const stickyAtc = document.querySelector('.sticky-atc');
+            const stickyAtcSelection = document.querySelector('.sticky-atc__selection');
+            const stickyAtcBtn = document.querySelector('.sticky-atc__button');
+
+            function updateStickySelection() {
+                const selSize = document.querySelector('.size-option-single.selected')?.dataset.size || 'Select size';
+                const selColor = document.querySelector('.attribute-option-single.selected')?.dataset.color || 'Select color';
+                stickyAtcSelection.textContent = `${selSize} / ${selColor.charAt(0).toUpperCase() + selColor.slice(1)}`;
+            }
+
+            updateStickySelection();
+            document.querySelectorAll('.size-option-single, .attribute-option-single').forEach(el => {
+                el.addEventListener('click', updateStickySelection);
+            });
+
+            stickyAtcBtn.addEventListener('click', () => {
+                document.querySelector('.single_add_to_cart_button')?.click();
+            });
+
+            // Wishlist toggle (demo)
+            const wishlistBtn = document.querySelector('.add-to-wishlist');
+            if (wishlistBtn) {
+                wishlistBtn.addEventListener('click', () => {
+                    const isActive = wishlistBtn.classList.toggle('in-wishlist');
+                    wishlistBtn.setAttribute('aria-pressed', String(isActive));
+                    const icon = wishlistBtn.querySelector('i');
+                    const label = wishlistBtn.querySelector('span');
+                    if (icon) {
+                        icon.classList.toggle('fa-regular', !isActive);
+                        icon.classList.toggle('fa-solid', isActive);
+                    }
+                    if (label) {
+                        label.textContent = isActive ? 'Saved' : 'Add to Wishlist';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

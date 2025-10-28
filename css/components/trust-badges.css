@@ -1,0 +1,13 @@
+/* Trust Badges Component */
+.trust-badges {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border-lighter, #f3f4f6);
+  background: var(--paper, #fff);
+  margin-top: 1rem;
+}
+.trust-badge { display:flex; align-items:center; gap:0.5rem; color: var(--ink-soft, #6b7280); font-size: 0.9rem; }
+.trust-badge i { color: var(--primary-pink, #EE81B3); }
+@media (max-width: 640px){ .trust-badges{ grid-template-columns: 1fr 1fr; } }

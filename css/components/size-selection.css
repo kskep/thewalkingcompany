@@ -1,0 +1,135 @@
+/* Size Selection Component */
+.size-selection {
+  margin: 1.5rem 0;
+}
+
+.size-selection__label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+  color: var(--text-primary, #2F2A26);
+}
+
+.size-selection__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.size-selection__button {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: var(--text-primary, #2F2A26);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.size-selection__button:hover:not(.is-out-of-stock):not(.is-selected) {
+  border-color: var(--primary-pink, #ee81b3);
+  color: var(--primary-pink, #ee81b3);
+  transform: translateY(-1px);
+}
+
+.size-selection__button.is-selected {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.size-selection__button.is-out-of-stock {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.size-selection__button.is-out-of-stock:hover {
+  transform: none;
+}
+
+.size-selection__button:focus {
+  outline: 2px solid var(--primary-pink, #ee81b3);
+  outline-offset: 2px;
+}
+
+.size-selection__button.is-selected:focus {
+  outline-color: #ffffff;
+}
+
+.size-selection__guide {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--primary-pink, #ee81b3);
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.size-selection__guide:hover {
+  color: var(--primary-pink-dark, #d946a0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .size-selection__options {
+    gap: 0.5rem;
+  }
+  
+  .size-selection__button {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .size-selection__options {
+    gap: 0.4rem;
+  }
+  
+  .size-selection__button {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .size-selection__label {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .size-selection__button,
+  .size-selection__guide {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .size-selection__button {
+    border-width: 2px;
+  }
+  
+  .size-selection__button:focus {
+    outline-width: 3px;
+  }
+}
