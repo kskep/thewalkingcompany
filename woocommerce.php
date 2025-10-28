@@ -62,8 +62,10 @@ if (function_exists('is_product') && is_product()) {
                     <div class="product-actions">
                         <?php 
                         echo '<!-- Loading add to cart -->';
-                        woocommerce_template_single_add_to_cart(); 
-                        echo '<!-- add to cart loaded -->';
+                        // Temporarily comment out to test rest of page
+                        // woocommerce_template_single_add_to_cart();
+                        echo '<p style="background: #ff0; padding: 1rem;">ADD TO CART FORM DISABLED FOR TESTING</p>';
+                        echo '<!-- add to cart SKIPPED -->';
                         ?>
                     </div>
                     
