@@ -30,6 +30,28 @@ class EshopProductGallery {
             return;
         }
 
+        if (!window.__eshopPatchedSetProperty) {
+            const originalSetProperty = CSSStyleDeclaration.prototype.setProperty;
+            CSSStyleDeclaration.prototype.setProperty = function(property, value, priority) {
+                if (property === 'width' && typeof value === 'string') {
+                    const numeric = parseFloat(value);
+                    if (!Number.isNaN(numeric) && numeric > 2000) {
+                            const owner = this && this._ownerElement ? this._ownerElement : (this && this.ownerNode ? this.ownerNode : null);
+                            console.trace('[EshopProductGallery] CSSStyleDeclaration.setProperty width', {
+                                element: owner,
+                                elementClass: owner && owner.className ? owner.className : null,
+                            value,
+                            numeric,
+                            property,
+                            priority
+                        });
+                    }
+                }
+                return originalSetProperty.call(this, property, value, priority);
+            };
+            window.__eshopPatchedSetProperty = true;
+        }
+
         console.log('[EshopProductGallery] init start', {
             productId: this.productId,
             container: this.container,
@@ -42,6 +64,7 @@ class EshopProductGallery {
         this.initLightbox();
         this.bindEvents();
         this.handleKeyboardNavigation();
+        this.observeSlideMutations();
     }
 
     /**
@@ -378,6 +401,36 @@ class EshopProductGallery {
             });
             this.thumbsSlider.slideTo(this.currentSlideIndex);
         }
+    }
+
+    observeSlideMutations() {
+        const slides = this.container.querySelectorAll('.product-main-slider .swiper-slide');
+        if (!slides.length || typeof MutationObserver === 'undefined') {
+            return;
+        }
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const target = mutation.target;
+                    const width = target.style.width;
+                    const numeric = width ? parseFloat(width) : null;
+                    if (numeric && numeric > 2000) {
+                        console.trace('[EshopProductGallery] MutationObserver slide width change', {
+                            productId: this.productId,
+                            width,
+                            numeric,
+                            slide: target,
+                            mutation
+                        });
+                    }
+                }
+            });
+        });
+
+        slides.forEach(slide => observer.observe(slide, { attributes: true, attributeFilter: ['style'] }));
+
+        this.slideObserver = observer;
     }
 
     /**
