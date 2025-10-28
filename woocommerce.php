@@ -18,52 +18,90 @@ if (function_exists('is_shop') && (is_shop() || is_product_category() || is_prod
 if (function_exists('is_product') && is_product()) {
     get_header('shop');
     
+    // Debug output
+    echo '<!-- SINGLE PRODUCT TEMPLATE LOADING -->';
+    
     ?>
     <div class="product-main-container grid-boundary">
         <?php while (have_posts()) : the_post(); ?>
             <?php global $product; ?>
             
+            <?php echo '<!-- LEFT COLUMN START -->'; ?>
             <!-- Left Column: Product Image Gallery -->
             <div class="product-gallery-column">
-                <?php get_template_part('template-parts/components/product-gallery'); ?>
+                <?php 
+                echo '<!-- Loading product-gallery component -->';
+                get_template_part('template-parts/components/product-gallery'); 
+                echo '<!-- product-gallery component loaded -->';
+                ?>
             </div>
+            <?php echo '<!-- LEFT COLUMN END -->'; ?>
             
+            <?php echo '<!-- RIGHT COLUMN START -->'; ?>
             <!-- Right Column: Product Details & Actions -->
             <div class="product-details-column">
                 <div class="product-details-wrapper">
-                    <?php get_template_part('template-parts/components/breadcrumbs'); ?>
+                    <?php 
+                    echo '<!-- Loading breadcrumbs -->';
+                    get_template_part('template-parts/components/breadcrumbs'); 
+                    echo '<!-- breadcrumbs loaded -->';
+                    ?>
                     
                     <!-- Product Header: Title, Rating, Price -->
                     <div class="product-header">
                         <?php
+                        echo '<!-- Loading title/rating/price -->';
                         woocommerce_template_single_title();
                         woocommerce_template_single_rating();
                         woocommerce_template_single_price();
+                        echo '<!-- title/rating/price loaded -->';
                         ?>
                     </div>
                     
                     <!-- Product Actions (Variations, Add to Cart + Wishlist) -->
                     <div class="product-actions">
-                        <?php woocommerce_template_single_add_to_cart(); ?>
+                        <?php 
+                        echo '<!-- Loading add to cart -->';
+                        woocommerce_template_single_add_to_cart(); 
+                        echo '<!-- add to cart loaded -->';
+                        ?>
                     </div>
                     
                     <!-- Trust Badges -->
-                    <?php get_template_part('template-parts/components/trust-badges'); ?>
+                    <?php 
+                    echo '<!-- Loading trust badges -->';
+                    get_template_part('template-parts/components/trust-badges'); 
+                    echo '<!-- trust badges loaded -->';
+                    ?>
                     
                     <!-- Product Accordions -->
-                    <?php get_template_part('template-parts/components/product-accordions'); ?>
+                    <?php 
+                    echo '<!-- Loading accordions -->';
+                    get_template_part('template-parts/components/product-accordions'); 
+                    echo '<!-- accordions loaded -->';
+                    ?>
                     
                     <!-- Product Meta -->
                     <div class="product-meta">
-                        <?php woocommerce_template_single_meta(); ?>
+                        <?php 
+                        echo '<!-- Loading meta -->';
+                        woocommerce_template_single_meta(); 
+                        echo '<!-- meta loaded -->';
+                        ?>
                     </div>
                 </div>
             </div>
+            <?php echo '<!-- RIGHT COLUMN END -->'; ?>
         <?php endwhile; ?>
     </div>
+    <?php echo '<!-- PRODUCT MAIN CONTAINER END -->'; ?>
     
     <!-- Sticky Add to Cart -->
-    <?php get_template_part('template-parts/components/sticky-atc'); ?>
+    <?php 
+    echo '<!-- Loading sticky ATC -->';
+    get_template_part('template-parts/components/sticky-atc'); 
+    echo '<!-- sticky ATC loaded -->';
+    ?>
     
     <?php
     get_footer('shop');
