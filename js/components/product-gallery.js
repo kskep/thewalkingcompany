@@ -58,7 +58,9 @@ class EshopProductGallery {
             imageCount: this.container.querySelectorAll('.swiper-slide img').length
         });
 
-        this.setupImages();
+        if (this.images.length === 0) {
+            this.setupImages();
+        }
         this.initMainSlider();
         this.initThumbsSlider();
         this.initLightbox();
