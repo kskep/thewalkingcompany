@@ -43,7 +43,7 @@
 }
 
 .product-main-slider .swiper-slide {
-  width: 100% !important;
+  width: 100%;
   height: auto;
   display: flex;
   justify-content: center;
@@ -584,25 +584,13 @@
   opacity: 0.3;
 }
 
-/* Critical: Force slide widths to prevent infinite expansion */
+/* Critical: allow Swiper to size slides while keeping them full width */
 .product-main-slider .swiper-slide {
-  width: 100% !important;
-  flex-shrink: 0 !important;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .product-main-slider .swiper-wrapper {
-  display: flex !important;
-  width: auto !important;
-  transform: none !important;
-}
-
-/* Prevent Swiper from calculating infinite wrapper width */
-.product-main-slider .swiper-wrapper {
-  width: max-content !important;
-}
-
-/* Override Swiper's automatic width calculations */
-.product-main-slider .swiper-slide {
-  min-width: 100% !important;
-  max-width: 100% !important;
+  display: flex;
+  width: 100%;
 }
