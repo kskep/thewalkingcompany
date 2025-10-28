@@ -79,6 +79,12 @@ function eshop_theme_scripts() {
             wp_enqueue_style('eshop-single-product-standalone', get_template_directory_uri() . '/css/pages/single-product.standalone.css', array(), filemtime($single_product_standalone_path));
         }
         
+        // Demo Modern CSS - Important refinements for modern single product layout
+        $demo_modern_css_path = get_template_directory() . '/css/pages/single-product.demo-modern.css';
+        if (file_exists($demo_modern_css_path)) {
+            wp_enqueue_style('eshop-single-product-demo-modern', get_template_directory_uri() . '/css/pages/single-product.demo-modern.css', array('eshop-single-product'), filemtime($demo_modern_css_path));
+        }
+        
         // Product Gallery Component CSS with proper versioning
         $product_gallery_css_path = get_template_directory() . '/css/components/product-gallery.css';
         $product_gallery_css_ver = file_exists($product_gallery_css_path) ? filemtime($product_gallery_css_path) : '1.0.0';

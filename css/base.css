@@ -1,5 +1,19 @@
 /* Base utilities & variables specific to theme overrides beyond global style.css */
 
+/* CSS Variables for consistent theming */
+:root {
+  --primary-pink: #EE81B3;
+  --primary-pink-dark: #d946a0;
+  --ink: #2F2A26;
+  --ink-soft: #6b7280;
+  --paper: #ffffff;
+  --text-lighter: #9CA3AF;
+  --border-light: #e5e7eb;
+  --border-lighter: #f3f4f6;
+  --rule: #e5e7eb;
+  --max-width: 1630px;
+}
+
 /* Full-bleed utility */
 .full-bleed {
   margin-left: calc(50% - 50vw);

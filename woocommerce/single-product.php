@@ -70,14 +70,12 @@ get_header( 'shop' ); ?>
                         <!-- Trust Badges -->
                         <?php get_template_part('template-parts/components/trust-badges'); ?>
                         
+                        <!-- Product Accordions (Details, Materials, Shipping, Help) -->
+                        <?php get_template_part('template-parts/components/product-accordions'); ?>
+                        
                         <!-- Product Meta Information -->
                         <div class="product-meta">
                             <?php woocommerce_template_single_meta(); ?>
-                        </div>
-                        
-                        <!-- Product Sharing -->
-                        <div class="product-sharing">
-                            <?php woocommerce_template_single_sharing(); ?>
                         </div>
                         
                     </div>
@@ -103,6 +101,9 @@ get_header( 'shop' ); ?>
         
     <?php endwhile; // end of the loop. ?>
 </div>
+
+<!-- Sticky Add to Cart (Mobile) -->
+<?php get_template_part('template-parts/components/sticky-atc'); ?>
 
 <?php get_footer( 'shop' );
 
