@@ -102,6 +102,9 @@ class EshopProductGallery {
             slideCount: mainSliderEl.querySelectorAll('.swiper-slide').length
         });
 
+        // Calculate slide width explicitly to prevent Swiper width calculation issues
+        const containerWidth = mainSliderEl.clientWidth || mainSliderEl.offsetWidth || 668;
+        
         this.mainSlider = new Swiper(mainSliderEl, {
             loop: this.images.length > 1,
             spaceBetween: 0,
@@ -118,6 +121,8 @@ class EshopProductGallery {
                 el: '.swiper-pagination',
                 clickable: true,
             },
+            // Force fixed slide widths to prevent calculation issues
+            width: containerWidth,
             on: {
                 slideChange: (swiper) => {
                     const slideWidths = swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width || null) : [];
@@ -139,6 +144,11 @@ class EshopProductGallery {
                     this.updateThumbnailsActive();
                 },
                 init: (swiper) => {
+                    // Force each slide to have consistent width
+                    swiper.slides.forEach((slide, index) => {
+                        slide.style.width = containerWidth + 'px';
+                    });
+                    
                     const slideWidths = swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width || null) : [];
                     const numericSlideWidths = slideWidths.map(val => val ? parseFloat(val) : null);
                     console.log('[EshopProductGallery] main slider initialized', {
@@ -150,10 +160,18 @@ class EshopProductGallery {
                         numericSlideWidths,
                         swiperWidth: swiper.width,
                         elClientWidth: swiper.el ? swiper.el.clientWidth : null,
-                        elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
+                        elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null,
+                        containerWidth
                     });
                     console.log('[EshopProductGallery] init numeric slide widths', numericSlideWidths);
                     this.updateProgress();
+                },
+                resize: (swiper) => {
+                    // Recalculate slide widths on resize to prevent width calculation drift
+                    const newWidth = swiper.el.clientWidth || swiper.width;
+                    swiper.slides.forEach(slide => {
+                        slide.style.width = newWidth + 'px';
+                    });
                 }
             }
         });

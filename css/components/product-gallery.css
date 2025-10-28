@@ -31,19 +31,26 @@
   height: auto;
   background: var(--gallery-bg);
   border: 1px solid var(--gallery-border-color);
+  /* Prevent width calculation overflow */
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .product-main-slider .swiper-wrapper {
   align-items: center;
+  /* Force consistent slide widths */
+  width: auto !important;
 }
 
 .product-main-slider .swiper-slide {
-  width: 100%;
+  width: 100% !important;
   height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
   background: var(--gallery-bg);
+  /* Prevent width expansion */
+  flex-shrink: 0;
 }
 
 /* Gallery Image Wrapper */
@@ -575,4 +582,27 @@
 /* Disable default Swiper button styles */
 .product-main-slider .swiper-button-disabled {
   opacity: 0.3;
+}
+
+/* Critical: Force slide widths to prevent infinite expansion */
+.product-main-slider .swiper-slide {
+  width: 100% !important;
+  flex-shrink: 0 !important;
+}
+
+.product-main-slider .swiper-wrapper {
+  display: flex !important;
+  width: auto !important;
+  transform: none !important;
+}
+
+/* Prevent Swiper from calculating infinite wrapper width */
+.product-main-slider .swiper-wrapper {
+  width: max-content !important;
+}
+
+/* Override Swiper's automatic width calculations */
+.product-main-slider .swiper-slide {
+  min-width: 100% !important;
+  max-width: 100% !important;
 }
