@@ -16,8 +16,8 @@ if (function_exists('is_shop') && (is_shop() || is_product_category() || is_prod
 
 // If on Single Product page, delegate to our custom single product template
 if (function_exists('is_product') && is_product()) {
-    // Load the theme's single product template which includes its own header/footer
-    wc_get_template('single-product.php');
+    // Include our custom template directly since wc_get_template may not work from here
+    include(locate_template('woocommerce/single-product.php'));
     return;
 }
 
