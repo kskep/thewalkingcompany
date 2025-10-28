@@ -38,6 +38,7 @@
     
     .product-gallery-column {
         order: 1;
+        min-width: 0;
     }
     
     .product-details-column {
