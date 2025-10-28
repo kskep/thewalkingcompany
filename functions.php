@@ -29,6 +29,9 @@ function eshop_theme_scripts() {
     // Enqueue main stylesheet
     wp_enqueue_style('eshop-theme-style', get_stylesheet_uri(), array(), '1.0.0');
 
+    // Google Fonts - Roboto Condensed for modern editorial look
+    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap', array(), null);
+
     // Ensure Tailwind utilities are available without relying on @import in style.css (some hosts block remote @import)
     wp_enqueue_style('tailwind-cdn', 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css', array(), '2.2.19');
 

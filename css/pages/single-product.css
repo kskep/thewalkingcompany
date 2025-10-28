@@ -15,6 +15,13 @@
     margin: 0 auto; /* Center horizontally */
 }
 
+/* Add explicit boundary class for max-width */
+.grid-boundary {
+    max-width: 1630px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Media query to stack columns on smaller screens */
 @media (max-width: 768px) {
     .product-main-container {
@@ -58,6 +65,7 @@
 }
 
 .product-header .product_title {
+    font-family: 'Roboto Condensed', var(--font-heading, sans-serif);
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.2;
