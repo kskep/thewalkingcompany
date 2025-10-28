@@ -646,10 +646,23 @@ function scheduleProductGalleryInit(delay = 300) {
     }, delay);
 }
 
-if (document.readyState === 'complete') {
+// Only initialize once to prevent double execution
+let productGalleryInitScheduled = false;
+
+function scheduleProductGalleryInitOnce() {
+    if (productGalleryInitScheduled) {
+        console.log('[EshopProductGallery] Initialization already scheduled, skipping...');
+        return;
+    }
+    
+    productGalleryInitScheduled = true;
     scheduleProductGalleryInit();
+}
+
+if (document.readyState === 'complete') {
+    scheduleProductGalleryInitOnce();
 } else {
-    window.addEventListener('load', () => scheduleProductGalleryInit());
+    window.addEventListener('load', () => scheduleProductGalleryInitOnce(), { once: true });
 }
 
 // Expose manual initializer for dynamic content (e.g., AJAX refreshes)
