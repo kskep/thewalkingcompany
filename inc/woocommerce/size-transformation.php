@@ -81,23 +81,28 @@ add_filter( 'woocommerce_variation_option_name', 'twc_filter_variation_option_na
 
 /**
  * Filter product attribute terms in dropdowns
- * 
- * @param string $term The term name
- * @param WP_Term $term_object The term object
- * @param string $taxonomy The taxonomy
- * @return string The transformed term name
+ * Hook into `get_term` which passes (WP_Term $term, string $taxonomy)
+ *
+ * @param WP_Term $term The term object
+ * @param string  $taxonomy The taxonomy name
+ * @return WP_Term The (possibly) modified term
  */
-function twc_filter_attribute_term( $term, $term_object, $taxonomy ) {
-    // Check if this is a size-related attribute taxonomy
-    $size_taxonomies = array( 'pa_select-size', 'pa_size-selection' );
-    
-    if ( in_array( $taxonomy, $size_taxonomies, true ) ) {
-        return twc_transform_size_label( $term );
+function twc_filter_attribute_term( $term, $taxonomy ) {
+    // Ensure we have a term object
+    if ( ! ( $term instanceof WP_Term ) ) {
+        return $term;
     }
-    
+
+    // Only apply to size-related taxonomies
+    $size_taxonomies = array( 'pa_select-size', 'pa_size-selection' );
+
+    if ( in_array( $taxonomy, $size_taxonomies, true ) ) {
+        $term->name = twc_transform_size_label( $term->name );
+    }
+
     return $term;
 }
-add_filter( 'get_term', 'twc_filter_attribute_term', 10, 3 );
+add_filter( 'get_term', 'twc_filter_attribute_term', 10, 2 );
 
 /**
  * Add data attribute to size elements for JavaScript transformation
