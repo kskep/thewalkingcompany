@@ -71,7 +71,9 @@ function eshop_theme_scripts() {
         wp_enqueue_style('eshop-product-gallery', get_template_directory_uri() . '/css/components/product-gallery.css', array('eshop-theme-style'), '1.0.0');
         wp_enqueue_style('eshop-color-variants', get_template_directory_uri() . '/css/components/color-variants.css', array('eshop-theme-style'), '1.0.0');
         wp_enqueue_style('eshop-size-selection', get_template_directory_uri() . '/css/components/size-selection.css', array('eshop-theme-style'), '1.0.0');
-        wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), '1.0.0', true);
+        $product_gallery_js_path = get_template_directory() . '/js/components/product-gallery.js';
+        $product_gallery_js_ver = file_exists($product_gallery_js_path) ? filemtime($product_gallery_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), $product_gallery_js_ver, true);
         wp_enqueue_script('eshop-color-variants', get_template_directory_uri() . '/js/components/color-variants.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('eshop-size-selection', get_template_directory_uri() . '/js/components/size-selection.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('eshop-single-product', get_template_directory_uri() . '/js/single-product.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
