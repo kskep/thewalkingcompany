@@ -37,20 +37,20 @@
 }
 
 .product-main-slider .swiper-wrapper {
+  display: flex;
   align-items: center;
-  /* Force consistent slide widths */
-  width: auto !important;
+  flex-wrap: nowrap;
 }
 
 .product-main-slider .swiper-slide {
-  width: 100%;
+  flex: 0 0 100%;
   height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
   background: var(--gallery-bg);
   /* Prevent width expansion */
-  flex-shrink: 0;
+  max-width: 100%;
 }
 
 /* Gallery Image Wrapper */
@@ -187,11 +187,15 @@
   height: auto;
 }
 
+
 .product-thumbs-slider .swiper-wrapper {
+  display: flex;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
 .product-thumbs-slider .swiper-slide {
+  flex-shrink: 0;
   width: auto;
   height: auto;
   margin-right: 0.75rem;
@@ -575,22 +579,10 @@
 
 .product-main-slider .swiper-button-prev::after,
 .product-main-slider .swiper-button-next::after {
-  font-size: 1rem;
-  font-weight: 600;
+  content: none;
 }
 
 /* Disable default Swiper button styles */
 .product-main-slider .swiper-button-disabled {
   opacity: 0.3;
-}
-
-/* Critical: allow Swiper to size slides while keeping them full width */
-.product-main-slider .swiper-slide {
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.product-main-slider .swiper-wrapper {
-  display: flex;
-  width: 100%;
 }
