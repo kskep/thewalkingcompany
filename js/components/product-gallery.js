@@ -30,6 +30,12 @@ class EshopProductGallery {
             return;
         }
 
+        console.log('[EshopProductGallery] init start', {
+            productId: this.productId,
+            container: this.container,
+            imageCount: this.container.querySelectorAll('.swiper-slide img').length
+        });
+
         this.setupImages();
         this.initMainSlider();
         this.initThumbsSlider();
@@ -62,6 +68,14 @@ class EshopProductGallery {
         const nextBtn = this.container.querySelector('.product-main-slider .swiper-button-next');
         const prevBtn = this.container.querySelector('.product-main-slider .swiper-button-prev');
 
+        console.log('[EshopProductGallery] initMainSlider', {
+            productId: this.productId,
+            mainSliderEl,
+            nextBtn,
+            prevBtn,
+            imageCount: this.images.length
+        });
+
         this.mainSlider = new Swiper(mainSliderEl, {
             loop: this.images.length > 1,
             spaceBetween: 0,
@@ -80,14 +94,33 @@ class EshopProductGallery {
             },
             on: {
                 slideChange: (swiper) => {
+                    console.log('[EshopProductGallery] slideChange', {
+                        productId: this.productId,
+                        activeIndex: swiper.activeIndex,
+                        realIndex: swiper.realIndex,
+                        wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null,
+                        slideWidths: swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width) : []
+                    });
                     this.currentSlideIndex = swiper.realIndex || swiper.activeIndex;
                     this.updateProgress();
                     this.updateThumbnailsActive();
                 },
-                init: () => {
+                init: (swiper) => {
+                    console.log('[EshopProductGallery] main slider initialized', {
+                        productId: this.productId,
+                        initialIndex: this.currentSlideIndex,
+                        loop: this.images.length > 1,
+                        wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null
+                    });
                     this.updateProgress();
                 }
             }
+        });
+
+        console.log('[EshopProductGallery] main Swiper instance', {
+            productId: this.productId,
+            instanceExists: Boolean(this.mainSlider),
+            slideCount: this.mainSlider ? this.mainSlider.slides.length : null
         });
     }
 
@@ -97,6 +130,12 @@ class EshopProductGallery {
     initThumbsSlider() {
         const thumbsSliderEl = this.container.querySelector('#productThumbsSlider');
         if (!thumbsSliderEl || this.images.length <= 1) return;
+
+        console.log('[EshopProductGallery] initThumbsSlider', {
+            productId: this.productId,
+            thumbsSliderEl,
+            imageCount: this.images.length
+        });
 
         this.thumbsSlider = new Swiper(thumbsSliderEl, {
             spaceBetween: 12,
@@ -313,6 +352,12 @@ class EshopProductGallery {
         });
 
         if (this.thumbsSlider) {
+            console.log('[EshopProductGallery] sync thumbs', {
+                productId: this.productId,
+                currentSlideIndex: this.currentSlideIndex,
+                thumbsActiveIndex: this.thumbsSlider.activeIndex,
+                thumbsSlides: this.thumbsSlider.slides ? Array.from(this.thumbsSlider.slides).map(slide => slide.style.width) : []
+            });
             this.thumbsSlider.slideTo(this.currentSlideIndex);
         }
     }
@@ -502,17 +547,35 @@ class EshopProductGallery {
     }
 }
 
-/**
- * Auto-initialize gallery when DOM is ready
- */
-document.addEventListener('DOMContentLoaded', function() {
+function initProductGalleries() {
     const galleryContainers = document.querySelectorAll('.product-gallery-container');
-    
+
     galleryContainers.forEach(container => {
-        // Store instance on element for external access
+        if (container.dataset.galleryInitialized === 'true') {
+            return;
+        }
+
         container.eshopGallery = new EshopProductGallery(container);
+        container.dataset.galleryInitialized = 'true';
     });
-});
+}
+
+function scheduleProductGalleryInit(delay = 300) {
+    console.log('[EshopProductGallery] schedule init', { delay, readyState: document.readyState });
+    window.setTimeout(() => {
+        console.log('[EshopProductGallery] running initProductGalleries');
+        initProductGalleries();
+    }, delay);
+}
+
+if (document.readyState === 'complete') {
+    scheduleProductGalleryInit();
+} else {
+    window.addEventListener('load', () => scheduleProductGalleryInit());
+}
+
+// Expose manual initializer for dynamic content (e.g., AJAX refreshes)
+window.initializeEshopProductGalleries = scheduleProductGalleryInit;
 
 /**
  * Export for module systems
