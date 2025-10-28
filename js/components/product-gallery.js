@@ -71,7 +71,7 @@ class EshopProductGallery {
      * Setup image data for gallery
      */
     setupImages() {
-        const slides = this.container.querySelectorAll('.swiper-slide img');
+        const slides = this.container.querySelectorAll('.swiper-slide:not(.swiper-slide-duplicate) img');
         this.images = Array.from(slides).map((img, index) => ({
             src: img.src,
             largeSrc: img.dataset.large || img.src,
