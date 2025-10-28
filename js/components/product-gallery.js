@@ -68,16 +68,15 @@ class EshopProductGallery {
         const nextBtn = this.container.querySelector('.product-main-slider .swiper-button-next');
         const prevBtn = this.container.querySelector('.product-main-slider .swiper-button-prev');
 
-        console.log('[EshopProductGallery] initMainSlider', {
+        const elRect = mainSliderEl.getBoundingClientRect();
+        const elComputedWidth = window.getComputedStyle(mainSliderEl).width;
+        console.log('[EshopProductGallery] initMainSlider metrics', {
             productId: this.productId,
-            mainSliderEl,
-            nextBtn,
-            prevBtn,
-            imageCount: this.images.length,
-            slideElementsBeforeInit: mainSliderEl.querySelectorAll('.swiper-slide').length,
             elClientWidth: mainSliderEl.clientWidth,
             elOffsetWidth: mainSliderEl.offsetWidth,
-            elRectWidth: mainSliderEl.getBoundingClientRect().width
+            elRectWidth: elRect.width,
+            elComputedWidth,
+            slideCount: mainSliderEl.querySelectorAll('.swiper-slide').length
         });
 
         this.mainSlider = new Swiper(mainSliderEl, {
@@ -98,12 +97,15 @@ class EshopProductGallery {
             },
             on: {
                 slideChange: (swiper) => {
+                    const slideWidths = swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width || null) : [];
+                    const numericSlideWidths = slideWidths.map(val => val ? parseFloat(val) : null);
                     console.log('[EshopProductGallery] slideChange', {
                         productId: this.productId,
                         activeIndex: swiper.activeIndex,
                         realIndex: swiper.realIndex,
                         wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null,
-                        slideWidths: swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width) : [],
+                        slideWidths,
+                        numericSlideWidths,
                         swiperWidth: swiper.width,
                         elClientWidth: swiper.el ? swiper.el.clientWidth : null,
                         elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
@@ -113,12 +115,15 @@ class EshopProductGallery {
                     this.updateThumbnailsActive();
                 },
                 init: (swiper) => {
+                    const slideWidths = swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width || null) : [];
+                    const numericSlideWidths = slideWidths.map(val => val ? parseFloat(val) : null);
                     console.log('[EshopProductGallery] main slider initialized', {
                         productId: this.productId,
                         initialIndex: this.currentSlideIndex,
                         loop: this.images.length > 1,
                         wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null,
-                        slideWidths: swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width) : [],
+                        slideWidths,
+                        numericSlideWidths,
                         swiperWidth: swiper.width,
                         elClientWidth: swiper.el ? swiper.el.clientWidth : null,
                         elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
