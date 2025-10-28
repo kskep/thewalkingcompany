@@ -14,10 +14,59 @@ if (function_exists('is_shop') && (is_shop() || is_product_category() || is_prod
     return;
 }
 
-// If on Single Product page, delegate to our custom single product template
+// If on Single Product page, use the default single product content
 if (function_exists('is_product') && is_product()) {
-    // Include our custom template directly since wc_get_template may not work from here
-    include(locate_template('woocommerce/single-product.php'));
+    get_header('shop');
+    
+    ?>
+    <div class="product-main-container grid-boundary">
+        <?php while (have_posts()) : the_post(); ?>
+            <?php global $product; ?>
+            
+            <!-- Left Column: Product Image Gallery -->
+            <div class="product-gallery-column">
+                <?php get_template_part('template-parts/components/product-gallery'); ?>
+            </div>
+            
+            <!-- Right Column: Product Details & Actions -->
+            <div class="product-details-column">
+                <div class="product-details-wrapper">
+                    <?php get_template_part('template-parts/components/breadcrumbs'); ?>
+                    
+                    <!-- Product Header: Title, Rating, Price -->
+                    <div class="product-header">
+                        <?php
+                        woocommerce_template_single_title();
+                        woocommerce_template_single_rating();
+                        woocommerce_template_single_price();
+                        ?>
+                    </div>
+                    
+                    <!-- Product Actions (Variations, Add to Cart + Wishlist) -->
+                    <div class="product-actions">
+                        <?php woocommerce_template_single_add_to_cart(); ?>
+                    </div>
+                    
+                    <!-- Trust Badges -->
+                    <?php get_template_part('template-parts/components/trust-badges'); ?>
+                    
+                    <!-- Product Accordions -->
+                    <?php get_template_part('template-parts/components/product-accordions'); ?>
+                    
+                    <!-- Product Meta -->
+                    <div class="product-meta">
+                        <?php woocommerce_template_single_meta(); ?>
+                    </div>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+    
+    <!-- Sticky Add to Cart -->
+    <?php get_template_part('template-parts/components/sticky-atc'); ?>
+    
+    <?php
+    get_footer('shop');
     return;
 }
 
