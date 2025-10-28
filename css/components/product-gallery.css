@@ -11,9 +11,9 @@
 /* Product Gallery Container */
 .product-gallery {
   position: relative;
-  background-color: var(--white);
-  border: 1px solid var(--border-lighter);
-  margin-bottom: 2rem;
+  background-color: transparent;
+  border: none;
+  margin-bottom: 0;
 }
 
 /* Sale Badge */
@@ -36,14 +36,15 @@
 .product-gallery__main {
   position: relative;
   overflow: hidden;
-  background-color: var(--paper-warm);
+  background-color: var(--paper-warm, #fafaf9);
+  aspect-ratio: 1 / 1;
+  max-height: 600px;
 }
 
 .product-gallery__main-image-wrapper {
   position: relative;
   width: 100%;
-  height: 0;
-  padding-bottom: 100%; /* 1:1 Aspect Ratio */
+  height: 100%;
 }
 
 .product-gallery__main-image {
@@ -63,7 +64,7 @@
 .product-gallery__main-image-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   cursor: zoom-in;
   transition: transform 0.2s ease;
 }
