@@ -29,6 +29,9 @@ function eshop_theme_scripts() {
     // Enqueue main stylesheet
     wp_enqueue_style('eshop-theme-style', get_stylesheet_uri(), array(), '1.0.0');
 
+    // Ensure Tailwind utilities are available without relying on @import in style.css (some hosts block remote @import)
+    wp_enqueue_style('tailwind-cdn', 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css', array(), '2.2.19');
+
     // Modular CSS - Load conditionally
     wp_enqueue_style('eshop-base', get_template_directory_uri() . '/css/base.css', array('eshop-theme-style'), '1.0.0');
     $header_css_ver = file_exists(get_template_directory() . '/css/components.header.css') ? filemtime(get_template_directory() . '/css/components.header.css') : '1.0.0';
