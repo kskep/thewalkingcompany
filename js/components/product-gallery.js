@@ -73,7 +73,11 @@ class EshopProductGallery {
             mainSliderEl,
             nextBtn,
             prevBtn,
-            imageCount: this.images.length
+            imageCount: this.images.length,
+            slideElementsBeforeInit: mainSliderEl.querySelectorAll('.swiper-slide').length,
+            elClientWidth: mainSliderEl.clientWidth,
+            elOffsetWidth: mainSliderEl.offsetWidth,
+            elRectWidth: mainSliderEl.getBoundingClientRect().width
         });
 
         this.mainSlider = new Swiper(mainSliderEl, {
@@ -99,7 +103,10 @@ class EshopProductGallery {
                         activeIndex: swiper.activeIndex,
                         realIndex: swiper.realIndex,
                         wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null,
-                        slideWidths: swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width) : []
+                        slideWidths: swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width) : [],
+                        swiperWidth: swiper.width,
+                        elClientWidth: swiper.el ? swiper.el.clientWidth : null,
+                        elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
                     });
                     this.currentSlideIndex = swiper.realIndex || swiper.activeIndex;
                     this.updateProgress();
@@ -110,7 +117,11 @@ class EshopProductGallery {
                         productId: this.productId,
                         initialIndex: this.currentSlideIndex,
                         loop: this.images.length > 1,
-                        wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null
+                        wrapperWidth: swiper.wrapperEl ? swiper.wrapperEl.style.width : null,
+                        slideWidths: swiper.slides ? Array.from(swiper.slides).map(slide => slide.style.width) : [],
+                        swiperWidth: swiper.width,
+                        elClientWidth: swiper.el ? swiper.el.clientWidth : null,
+                        elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
                     });
                     this.updateProgress();
                 }
