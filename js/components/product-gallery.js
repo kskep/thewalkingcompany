@@ -110,6 +110,7 @@ class EshopProductGallery {
                         elClientWidth: swiper.el ? swiper.el.clientWidth : null,
                         elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
                     });
+                    console.log('[EshopProductGallery] slideChange numeric widths', numericSlideWidths);
                     this.currentSlideIndex = swiper.realIndex || swiper.activeIndex;
                     this.updateProgress();
                     this.updateThumbnailsActive();
@@ -128,6 +129,7 @@ class EshopProductGallery {
                         elClientWidth: swiper.el ? swiper.el.clientWidth : null,
                         elRectWidth: swiper.el ? swiper.el.getBoundingClientRect().width : null
                     });
+                    console.log('[EshopProductGallery] init numeric slide widths', numericSlideWidths);
                     this.updateProgress();
                 }
             }

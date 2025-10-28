@@ -422,4 +422,106 @@ class EshopSizeSelection {
      * Fire custom event
      */
     fireEvent(eventName, detail = {}) {
-        const event = new CustomEvent(`eshop:size:${eventName}`, {\n            detail: {\n                sizeSelection: this,\n                productId: this.productId,\n                selectedSize: this.selectedSize,\n                ...detail\n            },\n            bubbles: true\n        });\n        this.container.dispatchEvent(event);\n    }\n\n    /**\n     * Get selected size value\n     */\n    getSelectedSize() {\n        return this.selectedSize;\n    }\n\n    /**\n     * Get selected size option object\n     */\n    getSelectedOption() {\n        return this.sizeOptions.find(option => option.isSelected);\n    }\n\n    /**\n     * Get all available sizes\n     */\n    getAvailableSizes() {\n        return this.sizeOptions.filter(option => option.inStock);\n    }\n\n    /**\n     * Update stock status for sizes\n     */\n    updateStock(stockData) {\n        this.sizeOptions.forEach(option => {\n            const stockInfo = stockData[option.value];\n            if (stockInfo !== undefined) {\n                option.inStock = stockInfo;\n                option.element.classList.toggle('out-of-stock', !stockInfo);\n                \n                // If currently selected size is now out of stock, clear selection\n                if (!stockInfo && option.isSelected) {\n                    this.clearSelection();\n                }\n            }\n        });\n        \n        this.fireEvent('stockUpdated', { stockData });\n    }\n\n    /**\n     * Refresh the component\n     */\n    refresh() {\n        this.setupSizeOptions();\n        this.detectAttributeType();\n        this.fireEvent('refreshed');\n    }\n\n    /**\n     * Destroy the component\n     */\n    destroy() {\n        // Clean up event listeners\n        // Modern browsers handle this automatically when elements are removed\n        this.fireEvent('destroyed');\n    }\n}\n\n/**\n * Utility function for translations (fallback)\n */\nfunction __(text, domain) {\n    // Simple fallback for translation function\n    return window.wp && window.wp.i18n && window.wp.i18n.__ \n        ? window.wp.i18n.__(text, domain) \n        : text;\n}\n\n/**\n * Auto-initialize size selection components\n */\ndocument.addEventListener('DOMContentLoaded', function() {\n    const sizeContainers = document.querySelectorAll('.size-selection-container');\n    \n    sizeContainers.forEach(container => {\n        // Store instance on element for external access\n        container.eshopSizeSelection = new EshopSizeSelection(container);\n    });\n});\n\n/**\n * Export for module systems\n */\nif (typeof module !== 'undefined' && module.exports) {\n    module.exports = EshopSizeSelection;\n}\n\n// Make available globally\nwindow.EshopSizeSelection = EshopSizeSelection;
+        const event = new CustomEvent(`eshop:size:${eventName}`, {
+            detail: {
+                sizeSelection: this,
+                productId: this.productId,
+                selectedSize: this.selectedSize,
+                ...detail
+            },
+            bubbles: true
+        });
+        this.container.dispatchEvent(event);
+    }
+
+    /**
+     * Get selected size value
+     */
+    getSelectedSize() {
+        return this.selectedSize;
+    }
+
+    /**
+     * Get selected size option object
+     */
+    getSelectedOption() {
+        return this.sizeOptions.find(option => option.isSelected);
+    }
+
+    /**
+     * Get all available sizes
+     */
+    getAvailableSizes() {
+        return this.sizeOptions.filter(option => option.inStock);
+    }
+
+    /**
+     * Update stock status for sizes
+     */
+    updateStock(stockData) {
+        this.sizeOptions.forEach(option => {
+            const stockInfo = stockData[option.value];
+            if (stockInfo !== undefined) {
+                option.inStock = stockInfo;
+                option.element.classList.toggle('out-of-stock', !stockInfo);
+
+                // If currently selected size is now out of stock, clear selection
+                if (!stockInfo && option.isSelected) {
+                    this.clearSelection();
+                }
+            }
+        });
+
+        this.fireEvent('stockUpdated', { stockData });
+    }
+
+    /**
+     * Refresh the component
+     */
+    refresh() {
+        this.setupSizeOptions();
+        this.detectAttributeType();
+        this.fireEvent('refreshed');
+    }
+
+    /**
+     * Destroy the component
+     */
+    destroy() {
+        // Clean up event listeners
+        // Modern browsers handle this automatically when elements are removed
+        this.fireEvent('destroyed');
+    }
+}
+
+/**
+ * Utility function for translations (fallback)
+ */
+function __(text, domain) {
+    // Simple fallback for translation function
+    return window.wp && window.wp.i18n && window.wp.i18n.__
+        ? window.wp.i18n.__(text, domain)
+        : text;
+}
+
+/**
+ * Auto-initialize size selection components
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    const sizeContainers = document.querySelectorAll('.size-selection-container');
+
+    sizeContainers.forEach(container => {
+        // Store instance on element for external access
+        container.eshopSizeSelection = new EshopSizeSelection(container);
+    });
+});
+
+/**
+ * Export for module systems
+ */
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EshopSizeSelection;
+}
+
+// Make available globally
+window.EshopSizeSelection = EshopSizeSelection;
