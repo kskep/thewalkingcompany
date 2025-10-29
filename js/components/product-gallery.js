@@ -70,6 +70,11 @@
     var $overlay = $gallery.find('.product-gallery__zoom-overlay');
     var $zoomImg = $overlay.find('.product-gallery__zoom-image');
 
+    function closeZoom() {
+      $overlay.removeClass('is-active').attr('aria-hidden', 'true');
+      $zoomImg.attr({src: '', alt: ''});
+    }
+
     $gallery.on('click', '.product-gallery__main-image-img', function(){
       if (window.innerWidth <= 768) return;
       var src = $(this).attr('src');
@@ -80,8 +85,14 @@
     
     $overlay.on('click', '.product-gallery__zoom-close, .product-gallery__zoom-overlay', function(e){
       if ($(e.target).is('.product-gallery__zoom-image')) return;
-      $overlay.removeClass('is-active').attr('aria-hidden', 'true');
-      $zoomImg.attr({src: '', alt: ''});
+      closeZoom();
+    });
+
+    // ESC key to close zoom
+    $(document).on('keydown', function(e){
+      if (e.key === 'Escape' && $overlay.hasClass('is-active')) {
+        closeZoom();
+      }
     });
   }
 
