@@ -53,6 +53,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 1;
 }
 
 .product-gallery__main-image-img {
@@ -61,6 +62,7 @@
   object-fit: contain;
   cursor: zoom-in;
   transition: transform 0.2s ease;
+  opacity: 1;
 }
 
 .product-gallery__main-image-img:hover {
