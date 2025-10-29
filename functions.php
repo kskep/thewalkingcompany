@@ -364,14 +364,7 @@ function eshop_single_product_inline_critical_css() {
             .product-gallery{position:relative;border:1px solid #F3F4F6;background:#fff}
             .product-gallery .onsale{position:absolute;top:12px;left:12px;background:#dc2626;color:#fff;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;z-index:5}
             .product-gallery__main{position:relative;overflow:hidden;background:#F8F7F5}
-            .product-gallery__main-image-wrapper{position:relative;width:100%;height:0;padding-bottom:100%}
-            .product-gallery__main-image{position:absolute;inset:0;opacity:0;transition:opacity .2s ease}
-            .product-gallery__main-image.is-active{opacity:1}
-            .product-gallery__main-image-img{width:100%;height:100%;object-fit:cover}
             .product-gallery__thumbnails{padding:12px;border-top:1px solid #F3F4F6;background:#fff}
-            .product-gallery__thumbnails-wrapper{display:flex;gap:8px;overflow-x:auto}
-            .product-gallery__thumbnail{width:80px;height:80px;border:2px solid transparent;background:none;padding:0;cursor:pointer}
-            .product-gallery__thumbnail.is-active{border-color:#EE81B3}
             .product-details-column{display:flex;flex-direction:column;gap:24px}
             .product-header{border-bottom:1px solid #E5E7EB;padding-bottom:16px}
             .product-header .product_title{margin:0 0 8px;font-size:32px;line-height:1.2;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
