@@ -2,37 +2,51 @@
   'use strict';
 
   function initProductGallery($gallery){
-    var $mainSlides = $gallery.find('.product-gallery__main-image');
-    var $thumbs = $gallery.find('.product-gallery__thumbnail');
-    var $counterCurrent = $gallery.find('.product-gallery__counter-current');
-    var total = $mainSlides.length;
-
-    function setActive(index){
-      index = Math.max(0, Math.min(index, total - 1));
-      $mainSlides.removeClass('is-active').attr('aria-hidden', 'true');
-      $mainSlides.filter('[data-index="'+index+'"]').addClass('is-active').attr('aria-hidden', 'false');
-
-      $thumbs.removeClass('is-active').attr('aria-selected', 'false');
-      $thumbs.filter('[data-index="'+index+'"]').addClass('is-active').attr('aria-selected', 'true');
-
-      if ($counterCurrent.length){ $counterCurrent.text(index + 1); }
-    }
-
-    // Thumbnail click
-    $thumbs.on('click', function(e){
-      e.preventDefault();
-      var index = parseInt($(this).data('index'), 10) || 0;
-      setActive(index);
+    // Initialize thumbnail swiper
+    var thumbsSwiper = new Swiper($gallery.find('.product-gallery__thumbnails')[0], {
+      spaceBetween: 8,
+      slidesPerView: 'auto',
+      freeMode: true,
+      watchSlidesProgress: true,
+      breakpoints: {
+        320: {
+          slidesPerView: 4,
+          spaceBetween: 6
+        },
+        480: {
+          slidesPerView: 5,
+          spaceBetween: 8
+        },
+        768: {
+          slidesPerView: 6,
+          spaceBetween: 8
+        },
+        1024: {
+          slidesPerView: 7,
+          spaceBetween: 8
+        }
+      }
     });
 
-    // Mobile prev/next
-    $gallery.find('.product-gallery__mobile-nav--prev').on('click', function(){
-      var idx = $mainSlides.index($mainSlides.filter('.is-active')) - 1;
-      setActive(idx);
-    });
-    $gallery.find('.product-gallery__mobile-nav--next').on('click', function(){
-      var idx = $mainSlides.index($mainSlides.filter('.is-active')) + 1;
-      setActive(idx);
+    // Initialize main gallery swiper
+    var mainSwiper = new Swiper($gallery.find('.product-gallery__main-image-wrapper')[0], {
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.product-gallery__pagination',
+        type: 'fraction',
+      },
+      thumbs: {
+        swiper: thumbsSwiper,
+      },
+      keyboard: {
+        enabled: true,
+      },
+      loop: false,
+      grabCursor: true,
     });
 
     // Simple zoom overlay for desktop images
@@ -46,13 +60,12 @@
       $zoomImg.attr({src: src, alt: alt});
       $overlay.addClass('is-active').attr('aria-hidden', 'false');
     });
-    $overlay.on('click', '.product-gallery__zoom-close, .product-gallery__zoom-overlay', function(){
+    
+    $overlay.on('click', '.product-gallery__zoom-close, .product-gallery__zoom-overlay', function(e){
+      if ($(e.target).is('.product-gallery__zoom-image')) return;
       $overlay.removeClass('is-active').attr('aria-hidden', 'true');
       $zoomImg.attr({src: '', alt: ''});
     });
-
-    // Initialize counter
-    if ($counterCurrent.length){ $counterCurrent.text(1); }
   }
 
   $(function(){

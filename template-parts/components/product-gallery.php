@@ -64,42 +64,46 @@ if (empty($gallery_images)) {
         </span>
     <?php endif; ?>
     
-    <!-- Main Image Container -->
+    <!-- Main Image Container with Swiper -->
     <div class="product-gallery__main">
-        <div class="product-gallery__main-image-wrapper">
-            <?php foreach ($gallery_images as $index => $image) : ?>
-                <div class="product-gallery__main-image <?php echo $index === 0 ? 'is-active' : ''; ?>" 
-                     data-index="<?php echo esc_attr($index); ?>"
-                     role="tabpanel"
-                     id="gallery-image-<?php echo esc_attr($index); ?>"
-                     aria-hidden="<?php echo $index === 0 ? 'false' : 'true'; ?>">
-                    
-                    <?php if ($image['is_video']) : ?>
-                        <video class="product-gallery__video"
-                               controls
-                               preload="metadata"
-                               aria-label="<?php echo esc_attr($image['alt']); ?>">
-                            <source src="<?php echo esc_url($image['url']); ?>" type="video/mp4">
-                            <?php esc_html_e('Your browser does not support the video tag.', 'eshop-theme'); ?>
-                        </video>
-                    <?php else : ?>
-                        <img src="<?php echo esc_url($image['url']); ?>"
-                             alt="<?php echo esc_attr($image['alt']); ?>"
-                             title="<?php echo esc_attr($image['title']); ?>"
-                             class="product-gallery__main-image-img"
-                             loading="eager"
-                             decoding="async"
-                             width="<?php echo esc_attr(wp_get_attachment_metadata($image['id'])['width'] ?? '800'); ?>"
-                             height="<?php echo esc_attr(wp_get_attachment_metadata($image['id'])['height'] ?? '800'); ?>"
-                             style="max-width: 100%; height: auto;">
-                    <?php endif; ?>
-                    
-                    <!-- Loading State -->
-                    <div class="product-gallery__loading" aria-hidden="true">
-                        <div class="product-gallery__loading-spinner"></div>
+        <div class="product-gallery__main-image-wrapper swiper">
+            <div class="swiper-wrapper">
+                <?php foreach ($gallery_images as $index => $image) : ?>
+                    <div class="product-gallery__main-image swiper-slide" 
+                         data-index="<?php echo esc_attr($index); ?>"
+                         role="tabpanel"
+                         id="gallery-image-<?php echo esc_attr($index); ?>">
+                        
+                        <?php if ($image['is_video']) : ?>
+                            <video class="product-gallery__video"
+                                   controls
+                                   preload="metadata"
+                                   aria-label="<?php echo esc_attr($image['alt']); ?>">
+                                <source src="<?php echo esc_url($image['url']); ?>" type="video/mp4">
+                                <?php esc_html_e('Your browser does not support the video tag.', 'eshop-theme'); ?>
+                            </video>
+                        <?php else : ?>
+                            <img src="<?php echo esc_url($image['url']); ?>"
+                                 alt="<?php echo esc_attr($image['alt']); ?>"
+                                 title="<?php echo esc_attr($image['title']); ?>"
+                                 class="product-gallery__main-image-img"
+                                 loading="eager"
+                                 decoding="async"
+                                 width="<?php echo esc_attr(wp_get_attachment_metadata($image['id'])['width'] ?? '800'); ?>"
+                                 height="<?php echo esc_attr(wp_get_attachment_metadata($image['id'])['height'] ?? '800'); ?>">
+                        <?php endif; ?>
+                        
+                        <!-- Loading State -->
+                        <div class="product-gallery__loading" aria-hidden="true">
+                            <div class="product-gallery__loading-spinner"></div>
+                        </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Swiper Navigation -->
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
         </div>
         
         <!-- Zoom Overlay (Desktop) -->
@@ -111,16 +115,15 @@ if (empty($gallery_images)) {
         </div>
     </div>
     
-    <!-- Thumbnail Gallery -->
+    <!-- Thumbnail Gallery with Swiper -->
     <?php if (count($gallery_images) > 1) : ?>
-        <div class="product-gallery__thumbnails">
-            <div class="product-gallery__thumbnails-wrapper">
+        <div class="product-gallery__thumbnails swiper">
+            <div class="product-gallery__thumbnails-wrapper swiper-wrapper">
                 <?php foreach ($gallery_images as $index => $image) : ?>
-                    <button class="product-gallery__thumbnail <?php echo $index === 0 ? 'is-active' : ''; ?>"
+                    <div class="product-gallery__thumbnail swiper-slide"
                             data-index="<?php echo esc_attr($index); ?>"
                             aria-label="<?php echo esc_attr(sprintf(__('View image %d of %d: %s', 'eshop-theme'), $index + 1, count($gallery_images), $image['title'])); ?>"
                             aria-controls="gallery-image-<?php echo esc_attr($index); ?>"
-                            aria-selected="<?php echo $index === 0 ? 'true' : 'false'; ?>"
                             role="tab">
                         
                         <?php if ($image['is_video']) : ?>
@@ -139,43 +142,15 @@ if (empty($gallery_images)) {
                                  loading="lazy"
                                  decoding="async">
                         <?php endif; ?>
-                    </button>
+                    </div>
                 <?php endforeach; ?>
             </div>
-            
-            <!-- Thumbnail Navigation (Mobile) -->
-            <?php if (count($gallery_images) > 4) : ?>
-                <button class="product-gallery__thumbnail-nav product-gallery__thumbnail-nav--prev" 
-                        aria-label="<?php esc_attr_e('Previous thumbnails', 'eshop-theme'); ?>">
-                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
-                </button>
-                <button class="product-gallery__thumbnail-nav product-gallery__thumbnail-nav--next"
-                        aria-label="<?php esc_attr_e('Next thumbnails', 'eshop-theme'); ?>">
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </button>
-            <?php endif; ?>
         </div>
     <?php endif; ?>
     
-    <!-- Gallery Navigation (Mobile Swipe) -->
-    <div class="product-gallery__mobile-nav">
-        <button class="product-gallery__mobile-nav-btn product-gallery__mobile-nav--prev"
-                aria-label="<?php esc_attr_e('Previous image', 'eshop-theme'); ?>">
-            <i class="fas fa-chevron-left" aria-hidden="true"></i>
-        </button>
-        <button class="product-gallery__mobile-nav-btn product-gallery__mobile-nav--next"
-                aria-label="<?php esc_attr_e('Next image', 'eshop-theme'); ?>">
-            <i class="fas fa-chevron-right" aria-hidden="true"></i>
-        </button>
-    </div>
-    
-    <!-- Image Counter -->
+    <!-- Image Counter (Pagination) -->
     <?php if (count($gallery_images) > 1) : ?>
-        <div class="product-gallery__counter" aria-live="polite">
-            <span class="product-gallery__counter-current">1</span>
-            <span class="product-gallery__counter-separator">/</span>
-            <span class="product-gallery__counter-total"><?php echo count($gallery_images); ?></span>
-        </div>
+        <div class="product-gallery__pagination swiper-pagination"></div>
     <?php endif; ?>
 </div>
 
