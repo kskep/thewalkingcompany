@@ -8,6 +8,8 @@
       slidesPerView: 'auto',
       freeMode: true,
       watchSlidesProgress: true,
+      observer: true,
+      observeParents: true,
       breakpoints: {
         320: {
           slidesPerView: 4,
@@ -31,6 +33,9 @@
     // Initialize main gallery swiper
     var mainSwiper = new Swiper($gallery.find('.product-gallery__main-image-wrapper')[0], {
       spaceBetween: 10,
+      slidesPerView: 1,
+      observer: true,
+      observeParents: true,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
@@ -47,6 +52,18 @@
       },
       loop: false,
       grabCursor: true,
+      on: {
+        init: function() {
+          // Force update after initialization
+          this.update();
+        }
+      }
+    });
+
+    // Force update on window resize
+    $(window).on('resize', function() {
+      mainSwiper.update();
+      thumbsSwiper.update();
     });
 
     // Simple zoom overlay for desktop images
