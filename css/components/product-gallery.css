@@ -160,7 +160,7 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.95);
-  z-index: 999999;
+  z-index: 9999999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -307,6 +307,12 @@
   left: auto;
 }
 
+/* Adjust pagination position when thumbnails are present */
+.product-gallery.has-thumbnails .product-gallery__pagination {
+  bottom: calc(100% + 1rem);
+  top: auto;
+}
+
 /* Remove old thumbnail and mobile nav styles */
 
 /* Responsive Design */
@@ -365,6 +371,11 @@
     right: 0.75rem;
     padding: 0.375rem 0.625rem;
     font-size: 0.6875rem;
+  }
+  
+  /* Adjust pagination position when thumbnails are present on mobile */
+  .product-gallery.has-thumbnails .product-gallery__pagination {
+    bottom: calc(100% + 0.75rem);
   }
 }
 

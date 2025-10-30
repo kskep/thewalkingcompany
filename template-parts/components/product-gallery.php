@@ -55,7 +55,7 @@ if (empty($gallery_images)) {
 }
 ?>
 
-<div class="product-gallery" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
+<div class="product-gallery<?php echo count($gallery_images) > 1 ? ' has-thumbnails' : ''; ?>" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
     
     <!-- Sale Badge -->
     <?php if ($product->is_on_sale()) : ?>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Gallery Fixes Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
+    <link rel="stylesheet" href="css/components/product-gallery.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Simulate header with z-index */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Add spacing for fixed header */
+        body {
+            padding-top: 100px;
+        }
+        
+        /* Container for testing */
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .test-section {
+            margin-bottom: 3rem;
+            border: 1px solid #e5e7eb;
+            padding: 2rem;
+        }
+        
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2F2A26;
+        }
+        
+        .test-description {
+            margin-bottom: 1rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Simulated Header -->
+    <header class="site-header">
+        SITE HEADER (z-index: 50) - Should be behind lightbox
+    </header>
+
+    <div class="test-container">
+        <div class="test-section">
+            <h2 class="test-title">Product Gallery with Thumbnails</h2>
+            <p class="test-description">This gallery has multiple images with thumbnails. The pagination counter should appear above the thumbnails, not overlapping them.</p>
+            
+            <!-- Product Gallery with Thumbnails -->
+            <div class="product-gallery has-thumbnails" data-product-id="123">
+                <!-- Sale Badge -->
+                <span class="onsale" aria-label="On sale">SALE</span>
+                
+                <!-- Main Image Container with Swiper -->
+                <div class="product-gallery__main">
+                    <div class="product-gallery__main-image-wrapper swiper">
+                        <div class="swiper-wrapper">
+                            <div class="product-gallery__main-image swiper-slide" data-index="0" role="tabpanel" id="gallery-image-0">
+                                <img src="https://picsum.photos/seed/product1/800/800.jpg" alt="Product Image 1" class="product-gallery__main-image-img" width="800" height="800">
+                                <div class="product-gallery__loading" aria-hidden="true">
+                                    <div class="product-gallery__loading-spinner"></div>
+                                </div>
+                            </div>
+                            <div class="product-gallery__main-image swiper-slide" data-index="1" role="tabpanel" id="gallery-image-1">
+                                <img src="https://picsum.photos/seed/product2/800/800.jpg" alt="Product Image 2" class="product-gallery__main-image-img" width="800" height="800">
+                                <div class="product-gallery__loading" aria-hidden="true">
+                                    <div class="product-gallery__loading-spinner"></div>
+                                </div>
+                            </div>
+                            <div class="product-gallery__main-image swiper-slide" data-index="2" role="tabpanel" id="gallery-image-2">
+                                <img src="https://picsum.photos/seed/product3/800/800.jpg" alt="Product Image 3" class="product-gallery__main-image-img" width="800" height="800">
+                                <div class="product-gallery__loading" aria-hidden="true">
+                                    <div class="product-gallery__loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Swiper Navigation -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                    
+                    <!-- Zoom Overlay (Desktop) -->
+                    <div class="product-gallery__zoom-overlay" aria-hidden="true">
+                        <img src="" alt="" class="product-gallery__zoom-image">
+                        <button class="product-gallery__zoom-close" aria-label="Close zoom">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Thumbnail Gallery with Swiper -->
+                <div class="product-gallery__thumbnails swiper">
+                    <div class="product-gallery__thumbnails-wrapper swiper-wrapper">
+                        <div class="product-gallery__thumbnail swiper-slide" data-index="0" aria-label="View image 1 of 3: Product Image 1" aria-controls="gallery-image-0" role="tab">
+                            <img src="https://picsum.photos/seed/product1/150/150.jpg" alt="Product Image 1" loading="lazy" decoding="async">
+                        </div>
+                        <div class="product-gallery__thumbnail swiper-slide" data-index="1" aria-label="View image 2 of 3: Product Image 2" aria-controls="gallery-image-1" role="tab">
+                            <img src="https://picsum.photos/seed/product2/150/150.jpg" alt="Product Image 2" loading="lazy" decoding="async">
+                        </div>
+                        <div class="product-gallery__thumbnail swiper-slide" data-index="2" aria-label="View image 3 of 3: Product Image 3" aria-controls="gallery-image-2" role="tab">
+                            <img src="https://picsum.photos/seed/product3/150/150.jpg" alt="Product Image 3" loading="lazy" decoding="async">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image Counter (Pagination) -->
+                <div class="product-gallery__pagination swiper-pagination"></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">Product Gallery without Thumbnails</h2>
+            <p class="test-description">This gallery has only one image. The pagination counter should appear in the bottom-right of the main image.</p>
+            
+            <!-- Product Gallery without Thumbnails -->
+            <div class="product-gallery" data-product-id="456">
+                <!-- Sale Badge -->
+                <span class="onsale" aria-label="On sale">SALE</span>
+                
+                <!-- Main Image Container with Swiper -->
+                <div class="product-gallery__main">
+                    <div class="product-gallery__main-image-wrapper swiper">
+                        <div class="swiper-wrapper">
+                            <div class="product-gallery__main-image swiper-slide" data-index="0" role="tabpanel" id="gallery-image-single-0">
+                                <img src="https://picsum.photos/seed/single/800/800.jpg" alt="Single Product Image" class="product-gallery__main-image-img" width="800" height="800">
+                                <div class="product-gallery__loading" aria-hidden="true">
+                                    <div class="product-gallery__loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Swiper Navigation -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                    
+                    <!-- Zoom Overlay (Desktop) -->
+                    <div class="product-gallery__zoom-overlay" aria-hidden="true">
+                        <img src="" alt="" class="product-gallery__zoom-image">
+                        <button class="product-gallery__zoom-close" aria-label="Close zoom">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Image Counter (Pagination) - Not shown for single image -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/components/product-gallery.js"></script>
+    
+    <script>
+        // Add Font Awesome for icons
+        const fontAwesome = document.createElement('link');
+        fontAwesome.rel = 'stylesheet';
+        fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+        document.head.appendChild(fontAwesome);
+        
+        // Test instructions
+        console.log('Product Gallery Fixes Test');
+        console.log('1. The pagination counter should appear above thumbnails, not overlapping them');
+        console.log('2. Click on main images to open zoom overlay - it should appear above the header');
+        console.log('3. The close button should be visible and clickable');
+    </script>
+</body>
+</html>
