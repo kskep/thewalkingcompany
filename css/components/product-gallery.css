@@ -317,6 +317,16 @@
   top: auto;
 }
 
+/* Specific Swiper state overrides for fraction horizontal pagination */
+.product-gallery__pagination.swiper-pagination.swiper-pagination-fraction.swiper-pagination-horizontal {
+  width: fit-content;
+  background: #ffffff30;
+  bottom: 0.25rem;
+  top: unset;
+  right: 0;
+  left: unset;
+}
+
 /* Remove old thumbnail and mobile nav styles */
 
 /* Responsive Design */

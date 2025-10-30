@@ -86,9 +86,18 @@
       $overlay.addClass('is-active').attr('aria-hidden', 'false');
     });
     
-    $overlay.on('click', '.product-gallery__zoom-close, .product-gallery__zoom-overlay', function(e){
+    $overlay.on('click', function(e){
+      // Close on overlay background click, but not on the image itself
       if ($(e.target).is('.product-gallery__zoom-image')) return;
-      closeZoom();
+      // Close on close button click
+      if ($(e.target).is('.product-gallery__zoom-close') || $(e.target).closest('.product-gallery__zoom-close').length) {
+        closeZoom();
+        return;
+      }
+      // Close on overlay background click
+      if ($(e.target).is('.product-gallery__zoom-overlay')) {
+        closeZoom();
+      }
     });
 
     // ESC key to close zoom
