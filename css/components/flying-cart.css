@@ -78,6 +78,15 @@
   animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+/* Restore intended layout for the cart badge when a global `.visible` utility
+   (which sets display:block !important) exists in the project. The badge
+   needs flexbox to center the number, so force it back to flex here. */
+.cart-count-badge.visible {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Cart Total Display */
 .cart-total-display {
   flex: 1;
