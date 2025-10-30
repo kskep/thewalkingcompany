@@ -168,6 +168,8 @@
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
   cursor: zoom-out;
+  /* Ensure it's not contained by any parent stacking context */
+  transform: translateZ(0);
 }
 
 .product-gallery__zoom-overlay.is-active {
@@ -205,8 +207,10 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  z-index: 1000000;
+  z-index: 10000000;
   border-radius: 50%;
+  /* Ensure it's not contained by any parent stacking context */
+  transform: translateZ(0);
 }
 
 .product-gallery__zoom-close:hover {

@@ -106,13 +106,14 @@ if (empty($gallery_images)) {
             <div class="swiper-button-next"></div>
         </div>
         
-        <!-- Zoom Overlay (Desktop) -->
-        <div class="product-gallery__zoom-overlay" aria-hidden="true">
-            <img src="" alt="" class="product-gallery__zoom-image">
-            <button class="product-gallery__zoom-close" aria-label="<?php esc_attr_e('Close zoom', 'eshop-theme'); ?>">
-                <i class="fas fa-times" aria-hidden="true"></i>
-            </button>
-        </div>
+    </div>
+    
+    <!-- Zoom Overlay (Desktop) - Moved outside gallery container -->
+    <div class="product-gallery__zoom-overlay" aria-hidden="true">
+        <img src="" alt="" class="product-gallery__zoom-image">
+        <button class="product-gallery__zoom-close" aria-label="<?php esc_attr_e('Close zoom', 'eshop-theme'); ?>">
+            <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
     </div>
     
     <!-- Thumbnail Gallery with Swiper -->

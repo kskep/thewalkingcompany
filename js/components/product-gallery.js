@@ -67,7 +67,7 @@
     });
 
     // Simple zoom overlay for desktop images
-    var $overlay = $gallery.find('.product-gallery__zoom-overlay');
+    var $overlay = $('.product-gallery__zoom-overlay');
     var $zoomImg = $overlay.find('.product-gallery__zoom-image');
 
     function closeZoom() {
@@ -80,6 +80,9 @@
       var src = $(this).attr('src');
       var alt = $(this).attr('alt') || '';
       $zoomImg.attr({src: src, alt: alt});
+      
+      // Move overlay to body to avoid stacking context issues
+      $('body').append($overlay);
       $overlay.addClass('is-active').attr('aria-hidden', 'false');
     });
     

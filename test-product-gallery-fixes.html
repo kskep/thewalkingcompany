@@ -100,14 +100,6 @@
                         <div class="swiper-button-prev"></div>
                         <div class="swiper-button-next"></div>
                     </div>
-                    
-                    <!-- Zoom Overlay (Desktop) -->
-                    <div class="product-gallery__zoom-overlay" aria-hidden="true">
-                        <img src="" alt="" class="product-gallery__zoom-image">
-                        <button class="product-gallery__zoom-close" aria-label="Close zoom">
-                            <i class="fas fa-times" aria-hidden="true"></i>
-                        </button>
-                    </div>
                 </div>
                 
                 <!-- Thumbnail Gallery with Swiper -->
@@ -127,6 +119,14 @@
                 
                 <!-- Image Counter (Pagination) -->
                 <div class="product-gallery__pagination swiper-pagination"></div>
+            </div>
+            
+            <!-- Zoom Overlay (Desktop) - Moved outside gallery container -->
+            <div class="product-gallery__zoom-overlay" aria-hidden="true">
+                <img src="" alt="" class="product-gallery__zoom-image">
+                <button class="product-gallery__zoom-close" aria-label="Close zoom">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
 
