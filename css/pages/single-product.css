@@ -84,6 +84,23 @@
     margin-bottom: 1rem;
 }
 
+/* Product Pricing Component - regular vs sale colors
+   Regular (non-sale) price should be black. Sale price uses theme accent (pink).
+   Original (regular) price when product is on sale should be muted and struck-through. */
+.product-pricing-container .pricing-display .current-price {
+    color: #000000; /* regular price: black */
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.product-pricing-container .pricing-display.sale-active .current-price {
+    color: #ee81b3; /* sale price uses theme accent */
+}
+.product-pricing-container .price-original .original-price {
+    color: #6b7280; /* muted grey for original price */
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+}
+
 .product-header .woocommerce-product-rating {
     margin-bottom: 1rem;
 }

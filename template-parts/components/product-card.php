@@ -93,7 +93,14 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
           $in_stock = !empty($size['in_stock']);
           $tooltip = '';
           $show_status = false;
-          if ($in_stock && !empty($size['variation_id'])) {
+          $disabled_class = '';
+          
+          if (!$in_stock) {
+              // Out of stock - mark as disabled
+              $disabled_class = ' disabled';
+              $tooltip = 'ΜΗ ΔΙΑΘΕΣΙΜΟ';
+          } elseif (!empty($size['variation_id'])) {
+              // In stock - check for low stock
               $variation = wc_get_product($size['variation_id']);
               if ($variation && $variation->managing_stock()) {
                   $vqty = $variation->get_stock_quantity();
@@ -103,9 +110,10 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
                   }
               }
           }
+          
           $btn_attrs = $tooltip ? ' data-tooltip="' . esc_attr($tooltip) . '"' : '';
           ?>
-          <button class="size"<?php echo $btn_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+          <button class="size<?php echo esc_attr($disabled_class); ?>"<?php echo $btn_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php echo !$in_stock ? ' disabled' : ''; ?>>
             <?php echo esc_html($label); ?>
             <?php if ($show_status) : ?><span class="status" title="<?php echo esc_attr($tooltip);?>"><span class="material-icons">schedule</span></span><?php endif; ?>
           </button>

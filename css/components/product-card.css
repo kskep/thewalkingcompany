@@ -83,8 +83,35 @@
   font-weight: 700; font-size: 12px; line-height: 1; padding: 7px 10px; border-radius: 9999px;
   display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 .twc-card__sizes .size:hover { border-color: #CFCFCF; }
+
+/* Out of stock / disabled size styling */
+.twc-card__sizes .size.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f5f5f5;
+  color: #999;
+  border-color: #ddd;
+  position: relative;
+}
+.twc-card__sizes .size.disabled:hover {
+  border-color: #ddd;
+  background: #f5f5f5;
+}
+/* Strikethrough line for out of stock sizes */
+.twc-card__sizes .size.disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background-color: #999;
+  transform: translateY(-50%) rotate(-10deg);
+}
+
 .twc-card__sizes .size .status {
   display: block; margin-top: 4px; width: 14px; height: 14px; border-radius: 50%;
   border: 1px solid var(--price-red); display: flex; align-items: center; justify-content: center;
