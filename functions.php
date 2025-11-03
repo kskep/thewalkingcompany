@@ -72,16 +72,22 @@ function eshop_theme_scripts() {
     }
 
     if (is_product()) {
+        // Magazine Style Single Product CSS
+        $single_product_magazine_path = get_template_directory() . '/css/pages/single-product-magazine.css';
+        if (file_exists($single_product_magazine_path)) {
+            wp_enqueue_style('eshop-single-product-magazine', get_template_directory_uri() . '/css/pages/single-product-magazine.css', array('eshop-theme-style'), filemtime($single_product_magazine_path));
+        }
+
         $single_product_css_path = get_template_directory() . '/css/pages/single-product.css';
         $single_product_css_ver = file_exists($single_product_css_path) ? filemtime($single_product_css_path) : '1.0.0';
         wp_enqueue_style('eshop-single-product', get_template_directory_uri() . '/css/pages/single-product.css', array('eshop-theme-style'), $single_product_css_ver);
-        
+
         // Fallback standalone CSS that does not rely on Tailwind or CSS variables
         $single_product_standalone_path = get_template_directory() . '/css/pages/single-product.standalone.css';
         if (file_exists($single_product_standalone_path)) {
             wp_enqueue_style('eshop-single-product-standalone', get_template_directory_uri() . '/css/pages/single-product.standalone.css', array(), filemtime($single_product_standalone_path));
         }
-        
+
         // Demo Modern CSS - Important refinements for modern single product layout
         $demo_modern_css_path = get_template_directory() . '/css/pages/single-product.demo-modern.css';
         if (file_exists($demo_modern_css_path)) {
@@ -114,6 +120,11 @@ function eshop_theme_scripts() {
         $product_gallery_js_path = get_template_directory() . '/js/components/product-gallery.js';
         $product_gallery_js_ver = file_exists($product_gallery_js_path) ? filemtime($product_gallery_js_path) : '1.0.0';
         wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), $product_gallery_js_ver, true);
+
+        // Magazine Style Gallery JS
+        $product_gallery_magazine_js_path = get_template_directory() . '/js/components/product-gallery-magazine.js';
+        $product_gallery_magazine_js_ver = file_exists($product_gallery_magazine_js_path) ? filemtime($product_gallery_magazine_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-product-gallery-magazine', get_template_directory_uri() . '/js/components/product-gallery-magazine.js', array('jquery'), $product_gallery_magazine_js_ver, true);
         
         wp_enqueue_script('eshop-color-variants', get_template_directory_uri() . '/js/components/color-variants.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('eshop-size-selection', get_template_directory_uri() . '/js/components/size-selection.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
@@ -123,6 +134,11 @@ function eshop_theme_scripts() {
         if (file_exists($single_product_js_path)) {
             wp_enqueue_script('eshop-single-product', get_template_directory_uri() . '/js/single-product.js', array('jquery', 'eshop-theme-script'), filemtime($single_product_js_path), true);
         }
+
+        // Magazine Style Sticky ATC JS
+        $sticky_atc_magazine_js_path = get_template_directory() . '/js/components/sticky-atc-magazine.js';
+        $sticky_atc_magazine_js_ver = file_exists($sticky_atc_magazine_js_path) ? filemtime($sticky_atc_magazine_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-sticky-atc-magazine', get_template_directory_uri() . '/js/components/sticky-atc-magazine.js', array('jquery'), $sticky_atc_magazine_js_ver, true);
     }
 
     // External CSS
@@ -310,6 +326,16 @@ function eshop_handle_custom_filters($query) {
     }
 }
 add_action('pre_get_posts', 'eshop_handle_custom_filters');
+
+/**
+ * Force 12 products per page for all product categories including clothing
+ */
+function eshop_force_12_products_per_page($query) {
+    if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
+        $query->set('posts_per_page', 12);
+    }
+}
+add_action('pre_get_posts', 'eshop_force_12_products_per_page', 20);
 
 /**
  * Custom Product Gallery Integration

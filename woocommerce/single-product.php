@@ -1,9 +1,9 @@
 <?php
 /**
- * Single Product Template
+ * Single Product Template - Magazine Style
  *
- * This template is a wrapper for single product pages.
- * It implements a modern CSS Grid layout with images on the left and details on the right.
+ * Magazine-style single product with editorial layout.
+ * Features custom gallery navigation, enhanced typography, and modern design.
  *
  * @package E-Shop Theme
  */
@@ -12,64 +12,94 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' ); ?>
 
-<div class="product-main-container grid-boundary">
-    <?php while ( have_posts() ) : ?>
-        <?php the_post(); ?>
-        
-        <?php global $product; ?>
-            
-        <!-- Left Column: Product Image Gallery -->
-        <div class="product-gallery-column">
-            <?php
-            /**
-             * Custom Product Gallery Component
-             * Replaces default WooCommerce gallery with our custom implementation
-             */
-            get_template_part('template-parts/components/product-gallery');
-            ?>
+<!-- Main Product Container -->
+<div id="product-<?php the_ID(); ?>" class="product">
+    <div class="magazine-container">
+
+        <!-- Magazine Header -->
+        <div class="magazine-header">
+            <h1 class="magazine-title"><?php echo esc_html(get_bloginfo('name')); ?></h1>
+            <p class="magazine-subtitle"><?php echo esc_html(get_bloginfo('description')); ?></p>
         </div>
-                
-                <!-- Right Column: Product Details & Actions -->
-                <div class="product-details-column">
-                    <div class="product-details-wrapper">
-                        <?php // Breadcrumbs ?>
-                        <?php get_template_part('template-parts/components/breadcrumbs'); ?>
-                        
-                        <!-- Product Header: Title, Rating, Price -->
-                        <div class="product-header">
-                            <?php
-                            // Title
-                            woocommerce_template_single_title();
-                            
-                            // Rating (if enabled)
-                            woocommerce_template_single_rating();
-                            
-                            // Price
-                            woocommerce_template_single_price();
-                            ?>
-                        </div>
-                        
-                        <!-- Product Actions (Variations, Add to Cart + Wishlist) -->
-                        <div class="product-actions">
-                            <?php woocommerce_template_single_add_to_cart(); ?>
-                        </div>
-                        
-                        <!-- Trust Badges -->
-                        <?php get_template_part('template-parts/components/trust-badges'); ?>
-                        
-                        <!-- Product Accordions (Details, Materials, Shipping, Help) -->
-                        <?php get_template_part('template-parts/components/product-accordions'); ?>
-                        
-                        <!-- Product Meta Information -->
-                        <div class="product-meta">
-                            <?php woocommerce_template_single_meta(); ?>
-                        </div>
-                        
-                    </div>
+
+        <!-- Editorial Layout -->
+        <div class="editorial-layout">
+
+            <!-- Left Column: Product Gallery -->
+            <div class="editorial-content">
+                <?php
+                /**
+                 * Custom Product Gallery Component
+                 * Replaces default WooCommerce gallery with our custom implementation
+                 */
+                get_template_part('template-parts/components/product-gallery');
+                ?>
+            </div>
+
+            <!-- Right Column: Product Details -->
+            <div class="product-details">
+
+                <!-- Breadcrumbs -->
+                <?php get_template_part('template-parts/components/breadcrumbs'); ?>
+
+                <!-- Product Header -->
+                <div class="product-header">
+                    <?php
+                    // Title
+                    woocommerce_template_single_title();
+
+                    // Rating (if enabled)
+                    woocommerce_template_single_rating();
+
+                    // Price
+                    woocommerce_template_single_price();
+
+                    // Stock Status
+                    global $product;
+                    if ($product->is_in_stock()) {
+                        echo '<div class="stock in-stock">';
+                        echo '<i class="fas fa-check-circle"></i>';
+                        echo '<span>' . esc_html__('In Stock - Ships Today', 'eshop-theme') . '</span>';
+                        echo '</div>';
+                    }
+                    ?>
                 </div>
-        
-    <?php endwhile; // end of the loop. ?>
-</div><!-- .product-main-container -->
+
+                <!-- Product Actions -->
+                <div class="product-actions">
+                    <?php woocommerce_template_single_add_to_cart(); ?>
+                </div>
+
+                <!-- Trust Badges -->
+                <?php get_template_part('template-parts/components/trust-badges'); ?>
+
+                <!-- Product Accordions -->
+                <?php get_template_part('template-parts/components/product-accordions'); ?>
+
+                <!-- Product Meta Information -->
+                <div class="product-meta">
+                    <?php woocommerce_template_single_meta(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Tabs -->
+    <div class="product-tabs-container">
+        <div class="magazine-container">
+            <?php woocommerce_output_product_data_tabs(); ?>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    <?php
+    /**
+     * Related Products
+     * woocommerce_output_related_products is hooked in woocommerce-functions.php
+     */
+    woocommerce_output_related_products();
+    ?>
+</div>
 
 <!-- Sticky Add to Cart (Mobile) -->
 <?php get_template_part('template-parts/components/sticky-atc'); ?>

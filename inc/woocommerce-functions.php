@@ -416,6 +416,9 @@ function eshop_filter_products() {
         if ($computed_per_page < 1) { $computed_per_page = 12; }
     }
 
+    // Force 12 products per page for consistency across all categories including clothing
+    $computed_per_page = 12;
+
     $args = array(
         'post_type' => 'product',
         'post_status' => 'publish',
