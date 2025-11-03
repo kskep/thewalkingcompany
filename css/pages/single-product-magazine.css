@@ -81,10 +81,11 @@
     outline: none !important;
 }
 
-/* Override WooCommerce gallery styles */
+/* Ensure WooCommerce gallery works with our styles */
 .woocommerce-product-gallery {
     position: relative !important;
     opacity: 1 !important;
+    margin: 0 !important;
 }
 
 .woocommerce-product-gallery__wrapper {
@@ -95,10 +96,66 @@
     margin: 0 !important;
 }
 
-/* Remove WooCommerce gallery elements that might interfere */
+/* Enable lightbox trigger with magazine styling */
 .woocommerce-product-gallery__trigger,
 .woocommerce-product-gallery__lightbox-trigger {
-    display: none !important;
+    display: block !important;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 15;
+}
+
+.product-gallery:hover .woocommerce-product-gallery__trigger,
+.product-gallery:hover .woocommerce-product-gallery__lightbox-trigger {
+    opacity: 1;
+}
+
+/* Style Swiper navigation arrows */
+.swiper-button-prev,
+.swiper-button-next {
+    display: none !important; /* Hide default Swiper arrows */
+}
+
+/* Custom magazine-style navigation arrows */
+.product-gallery__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border-light);
+    color: var(--ink);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+}
+
+.product-gallery__nav:hover {
+    background: var(--primary-pink);
+    color: var(--paper);
+}
+
+.product-gallery__nav--prev {
+    left: 1rem;
+}
+
+.product-gallery__nav--next {
+    right: 1rem;
 }
 
 .product-gallery__main {

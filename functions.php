@@ -116,10 +116,15 @@ function eshop_theme_scripts() {
             wp_enqueue_style('eshop-sticky-atc', get_template_directory_uri() . '/css/components/sticky-atc.css', array('eshop-theme-style'), filemtime($sticky_atc_css_path));
         }
         
-        // Magazine Style Gallery JS (only load this for single products)
+        // Product Gallery Component JS with proper versioning
+        $product_gallery_js_path = get_template_directory() . '/js/components/product-gallery.js';
+        $product_gallery_js_ver = file_exists($product_gallery_js_path) ? filemtime($product_gallery_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), $product_gallery_js_ver, true);
+
+        // Magazine Style Gallery JS (load after main gallery)
         $product_gallery_magazine_js_path = get_template_directory() . '/js/components/product-gallery-magazine.js';
         $product_gallery_magazine_js_ver = file_exists($product_gallery_magazine_js_path) ? filemtime($product_gallery_magazine_js_path) : '1.0.0';
-        wp_enqueue_script('eshop-product-gallery-magazine', get_template_directory_uri() . '/js/components/product-gallery-magazine.js', array('jquery'), $product_gallery_magazine_js_ver, true);
+        wp_enqueue_script('eshop-product-gallery-magazine', get_template_directory_uri() . '/js/components/product-gallery-magazine.js', array('jquery', 'eshop-product-gallery'), $product_gallery_magazine_js_ver, true);
         
         wp_enqueue_script('eshop-color-variants', get_template_directory_uri() . '/js/components/color-variants.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('eshop-size-selection', get_template_directory_uri() . '/js/components/size-selection.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
@@ -346,19 +351,19 @@ function eshop_custom_product_gallery() {
 add_action('init', 'eshop_custom_product_gallery');
 
 /**
- * Disable WooCommerce gallery features that conflict with our magazine style
+ * Configure WooCommerce gallery features for magazine style
  */
-function eshop_disable_wc_gallery_features() {
-    // Remove WooCommerce gallery zoom
-    remove_theme_support('wc-product-gallery-zoom');
+function eshop_configure_wc_gallery_features() {
+    // Keep WooCommerce gallery lightbox (user wants it)
+    add_theme_support('wc-product-gallery-lightbox');
 
-    // Remove WooCommerce gallery lightbox
-    remove_theme_support('wc-product-gallery-lightbox');
+    // Keep WooCommerce gallery zoom but style it our way
+    add_theme_support('wc-product-gallery-zoom');
 
-    // Remove WooCommerce gallery slider
-    remove_theme_support('wc-product-gallery-slider');
+    // Enable slider for proper mobile navigation
+    add_theme_support('wc-product-gallery-slider');
 }
-add_action('after_setup_theme', 'eshop_disable_wc_gallery_features', 100);
+add_action('after_setup_theme', 'eshop_configure_wc_gallery_features', 100);
 
 /**
  * Display custom product gallery

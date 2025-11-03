@@ -1,6 +1,6 @@
 /**
- * Product Gallery - Magazine Style
- * Simple gallery functionality based on single-product-page_mydemo.html
+ * Product Gallery - Magazine Style Enhancement
+ * Enhances the default WooCommerce gallery with magazine styling and custom navigation
  *
  * @package E-Shop Theme
  */
@@ -8,142 +8,137 @@
 (function($) {
     'use strict';
 
-    function initMagazineGallery() {
+    function initMagazineGalleryEnhancements() {
         // Find all gallery containers on the page
         const galleryContainers = document.querySelectorAll('.product-gallery');
 
         galleryContainers.forEach(function(galleryContainer) {
-            // Gallery state for each container
-            let currentImageIndex = 0;
-            const thumbnails = galleryContainer.querySelectorAll('.product-gallery__thumbnail');
-            const mainImages = galleryContainer.querySelectorAll('.product-gallery__main-image');
-            const totalImages = mainImages.length;
-            const currentCounter = galleryContainer.querySelector('.product-gallery__counter-current');
+            // Get Swiper instance if available
+            const swiperContainer = galleryContainer.querySelector('.product-gallery__main-image-wrapper');
+            let mainSwiper = null;
 
-            if (!mainImages.length) return;
-
-            function updateGallery(index) {
-                if (index < 0 || index >= totalImages) return;
-
-                currentImageIndex = index;
-
-                // Update thumbnails
-                thumbnails.forEach((t, i) => {
-                    t.classList.toggle('is-active', i === index);
-                    t.setAttribute('aria-selected', i === index ? 'true' : 'false');
-                });
-
-                // Update main images
-                mainImages.forEach((img, i) => {
-                    img.classList.toggle('is-active', i === index);
-                    img.setAttribute('aria-hidden', i === index ? 'false' : 'true');
-                });
-
-                // Update counter
-                if (currentCounter) {
-                    currentCounter.textContent = index + 1;
-                }
-
-                // Trigger custom event for other scripts
-                $(galleryContainer).trigger('gallery:change', [index]);
+            if (swiperContainer && swiperContainer.swiper) {
+                mainSwiper = swiperContainer.swiper;
             }
 
-            // Thumbnail click handlers
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index, 10);
-                    if (!isNaN(index)) {
-                        updateGallery(index);
-                    }
-                });
-            });
+            const totalImages = galleryContainer.querySelectorAll('.product-gallery__main-image').length;
+            const currentCounter = galleryContainer.querySelector('.product-gallery__counter-current');
 
-            // Gallery arrow functionality
+            if (!totalImages) return;
+
+            // Function to update counter
+            function updateCounter(activeIndex) {
+                if (currentCounter) {
+                    currentCounter.textContent = activeIndex + 1;
+                }
+            }
+
+            // Custom magazine navigation arrows
             const nextBtn = galleryContainer.querySelector('.product-gallery__nav--next');
             const prevBtn = galleryContainer.querySelector('.product-gallery__nav--prev');
 
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const nextIndex = (currentImageIndex + 1) % totalImages;
-                    updateGallery(nextIndex);
+            if (mainSwiper) {
+                // If Swiper is initialized, hook into its events
+                mainSwiper.on('slideChange', function() {
+                    updateCounter(mainSwiper.activeIndex);
                 });
-            }
 
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const prevIndex = (currentImageIndex - 1 + totalImages) % totalImages;
-                    updateGallery(prevIndex);
-                });
-            }
+                // Hook custom arrows to Swiper
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        mainSwiper.slideNext();
+                    });
+                }
 
-            // Touch/swipe support for mobile
-            let touchStartX = 0;
-            let touchEndX = 0;
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        mainSwiper.slidePrev();
+                    });
+                }
 
-            galleryContainer.addEventListener('touchstart', function(e) {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
+                // Initialize counter
+                updateCounter(mainSwiper.activeIndex);
 
-            galleryContainer.addEventListener('touchend', function(e) {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, { passive: true });
+            } else {
+                // Fallback: Use manual navigation if Swiper is not available
+                let currentImageIndex = 0;
+                const mainImages = galleryContainer.querySelectorAll('.product-gallery__main-image');
 
-            function handleSwipe() {
-                const swipeThreshold = 50;
-                const diff = touchStartX - touchEndX;
+                function updateGallery(index) {
+                    if (index < 0 || index >= totalImages) return;
 
-                if (Math.abs(diff) > swipeThreshold) {
-                    if (diff > 0) {
-                        // Swipe left - next image
+                    currentImageIndex = index;
+
+                    // Update main images
+                    mainImages.forEach((img, i) => {
+                        img.classList.toggle('swiper-slide-active', i === index);
+                        img.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+                    });
+
+                    // Update counter
+                    updateCounter(index);
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
                         const nextIndex = (currentImageIndex + 1) % totalImages;
                         updateGallery(nextIndex);
-                    } else {
-                        // Swipe right - previous image
+                    });
+                }
+
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
                         const prevIndex = (currentImageIndex - 1 + totalImages) % totalImages;
                         updateGallery(prevIndex);
-                    }
+                    });
                 }
+
+                // Initialize first image
+                updateGallery(0);
             }
 
-            // Keyboard navigation
-            galleryContainer.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    const prevIndex = (currentImageIndex - 1 + totalImages) % totalImages;
-                    updateGallery(prevIndex);
-                } else if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    const nextIndex = (currentImageIndex + 1) % totalImages;
-                    updateGallery(nextIndex);
-                }
-            });
+            // Ensure lightbox trigger is visible and styled
+            const lightboxTrigger = galleryContainer.querySelector('.woocommerce-product-gallery__trigger');
+            if (lightboxTrigger) {
+                lightboxTrigger.innerHTML = '<i class="fas fa-expand"></i>';
+                lightboxTrigger.setAttribute('title', 'View image gallery');
+            }
 
-            // Auto-initialize first image
-            updateGallery(0);
+            // Ensure click on main image opens lightbox
+            const mainImages = galleryContainer.querySelectorAll('.product-gallery__main-image img');
+            mainImages.forEach(function(img) {
+                img.style.cursor = 'zoom-in';
+                img.addEventListener('click', function() {
+                    if (lightboxTrigger) {
+                        lightboxTrigger.click();
+                    }
+                });
+            });
         });
     }
 
-    // Initialize on DOM ready
+    // Initialize after Swiper has been initialized
     $(document).ready(function() {
-        // Small delay to ensure all elements are loaded
-        setTimeout(initMagazineGallery, 100);
+        // Wait for Swiper to initialize
+        setTimeout(initMagazineGalleryEnhancements, 500);
     });
 
     // Re-initialize when variations change
     $(document).on('found_variation', '.variations_form', function() {
-        setTimeout(initMagazineGallery, 200);
+        setTimeout(initMagazineGalleryEnhancements, 600);
     });
 
     $(document).on('reset_image', '.variations_form', function() {
-        setTimeout(initMagazineGallery, 200);
+        setTimeout(initMagazineGalleryEnhancements, 600);
     });
 
     // Handle AJAX loaded content
     $(document).ajaxComplete(function() {
-        setTimeout(initMagazineGallery, 100);
+        setTimeout(initMagazineGalleryEnhancements, 500);
     });
 
 })(jQuery);
