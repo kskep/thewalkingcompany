@@ -116,12 +116,7 @@ function eshop_theme_scripts() {
             wp_enqueue_style('eshop-sticky-atc', get_template_directory_uri() . '/css/components/sticky-atc.css', array('eshop-theme-style'), filemtime($sticky_atc_css_path));
         }
         
-        // Product Gallery Component JS with proper versioning
-        $product_gallery_js_path = get_template_directory() . '/js/components/product-gallery.js';
-        $product_gallery_js_ver = file_exists($product_gallery_js_path) ? filemtime($product_gallery_js_path) : '1.0.0';
-        wp_enqueue_script('eshop-product-gallery', get_template_directory_uri() . '/js/components/product-gallery.js', array('jquery', 'swiper'), $product_gallery_js_ver, true);
-
-        // Magazine Style Gallery JS
+        // Magazine Style Gallery JS (only load this for single products)
         $product_gallery_magazine_js_path = get_template_directory() . '/js/components/product-gallery-magazine.js';
         $product_gallery_magazine_js_ver = file_exists($product_gallery_magazine_js_path) ? filemtime($product_gallery_magazine_js_path) : '1.0.0';
         wp_enqueue_script('eshop-product-gallery-magazine', get_template_directory_uri() . '/js/components/product-gallery-magazine.js', array('jquery'), $product_gallery_magazine_js_ver, true);
@@ -344,11 +339,26 @@ add_action('pre_get_posts', 'eshop_force_12_products_per_page', 20);
 function eshop_custom_product_gallery() {
     // Remove default WooCommerce product images
     remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
-    
+
     // Add our custom gallery component
     add_action('woocommerce_before_single_product_summary', 'eshop_show_custom_product_gallery', 20);
 }
 add_action('init', 'eshop_custom_product_gallery');
+
+/**
+ * Disable WooCommerce gallery features that conflict with our magazine style
+ */
+function eshop_disable_wc_gallery_features() {
+    // Remove WooCommerce gallery zoom
+    remove_theme_support('wc-product-gallery-zoom');
+
+    // Remove WooCommerce gallery lightbox
+    remove_theme_support('wc-product-gallery-lightbox');
+
+    // Remove WooCommerce gallery slider
+    remove_theme_support('wc-product-gallery-slider');
+}
+add_action('after_setup_theme', 'eshop_disable_wc_gallery_features', 100);
 
 /**
  * Display custom product gallery

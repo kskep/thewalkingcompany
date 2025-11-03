@@ -78,6 +78,27 @@
     position: relative;
     background: var(--paper);
     border: 1px solid var(--border-light);
+    outline: none !important;
+}
+
+/* Override WooCommerce gallery styles */
+.woocommerce-product-gallery {
+    position: relative !important;
+    opacity: 1 !important;
+}
+
+.woocommerce-product-gallery__wrapper {
+    display: block !important;
+}
+
+.woocommerce-product-gallery__image {
+    margin: 0 !important;
+}
+
+/* Remove WooCommerce gallery elements that might interfere */
+.woocommerce-product-gallery__trigger,
+.woocommerce-product-gallery__lightbox-trigger {
+    display: none !important;
 }
 
 .product-gallery__main {
@@ -309,7 +330,7 @@
     /* Increased price font size */
     font-size: 2.25rem;
     font-weight: 700;
-    color: var(--primary-pink);
+    color: var(--primary-pink) !important;
     line-height: 1;
     display: flex;
     align-items: center;
@@ -319,9 +340,23 @@
 .price .original-price {
     /* Increased original price font size */
     font-size: 1.5rem;
-    color: var(--ink-soft);
+    color: var(--ink-soft) !important;
     text-decoration: line-through;
     font-weight: 400;
+}
+
+/* Ensure price elements inherit correct colors */
+.price .woocommerce-Price-amount.amount {
+    color: inherit;
+}
+
+.price ins .woocommerce-Price-amount.amount {
+    color: var(--primary-pink) !important;
+    text-decoration: none;
+}
+
+.price del .woocommerce-Price-amount.amount {
+    color: var(--ink-soft) !important;
 }
 
 /* Stock Status */
