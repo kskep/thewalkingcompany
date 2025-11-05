@@ -14,104 +14,16 @@ if (!defined('ABSPATH')) {
 }
 
 // Check if ACF is available
-if (!function_exists('get_field')) {
-    return;
-}
-
-// Get the custom fields for each container
-$containers = array();
-$category_names = array('Shoes', 'Clothes', 'Accessories', 'Bags');
-$field_patterns = array(
-    1 => array('shoes_image', 'shoes_title', 'shoes_link'),
-    2 => array('clothes_image', 'clothes_title', 'clothes_link'),
-    3 => array('acc_image', 'acc_title', 'acc_link'),
-    4 => array('bag_image', 'bag_title', 'bag_link')
-);
-
-for ($i = 1; $i <= 4; $i++) {
-    $pattern = $field_patterns[$i];
-
-    // Get individual fields directly (not from a group)
-    $image = get_field($pattern[0]);
-    $title = get_field($pattern[1]);
-    $link = get_field($pattern[2]);
-
-    // Use category name as fallback for title if title is empty
-    if (empty($title)) {
-        $title = $category_names[$i-1];
-    }
-
-    // Check if we have the essential data (image and link are required, title has fallback)
-    if ($image && $link) {
-        $containers[] = array(
-            'data' => array(
-                'image' => $image,
-                'title' => $title,
-                'link' => $link
-            ),
-            'index' => $i,
-            'category' => $category_names[$i-1]
-        );
-    }
-}
+// Build containers from theme settings (no ACF)
+$containers = function_exists('eshop_get_category_tiles') ? eshop_get_category_tiles() : array();
 
 // If no containers are found, show a placeholder message for admin users
 if (empty($containers)) {
     if (current_user_can('manage_options')) {
         echo '<div class="container mx-auto px-4 py-8">';
         echo '<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">';
-        echo '<strong>Admin Notice:</strong> Front page category grid is not configured properly.<br>';
-        echo 'Please ensure the following individual fields are set up on this page:<br>';
-        echo '<ul class="mt-2 ml-4">';
-        echo '<li>• shoes_image, shoes_title (optional), shoes_link</li>';
-        echo '<li>• clothes_image, clothes_title (optional), clothes_link</li>';
-        echo '<li>• acc_image, acc_title (optional), acc_link</li>';
-        echo '<li>• bag_image, bag_title (optional), bag_link</li>';
-        echo '</ul>';
-        echo '<p class="mt-2"><em>Note: Title fields are optional and will default to category names if empty.</em></p>';
-
-        // Debug information
-        echo '<div class="mt-4 text-sm">';
-        echo '<strong>Debug Info:</strong><br>';
-        $front_page_id = get_option('page_on_front');
-        echo "Front page ID: " . ($front_page_id ?: 'Not set') . '<br>';
-
-        // Let's check all fields on the front page to see what's actually there
-        if ($front_page_id) {
-            echo '<br><strong>All fields on front page:</strong><br>';
-            $all_fields = get_fields($front_page_id);
-            if ($all_fields) {
-                foreach ($all_fields as $field_name => $field_value) {
-                    echo "• $field_name: " . (is_array($field_value) ? 'Array (' . count($field_value) . ' items)' : gettype($field_value)) . '<br>';
-                    if (is_array($field_value)) {
-                        foreach ($field_value as $sub_key => $sub_value) {
-                            echo "&nbsp;&nbsp;- $sub_key: " . (is_array($sub_value) ? 'Array' : gettype($sub_value)) . '<br>';
-                        }
-                    }
-                }
-            } else {
-                echo "No fields found on front page.<br>";
-            }
-        }
-
-        // Also check current post
-        echo '<br><strong>All fields on current post:</strong><br>';
-        $current_fields = get_fields();
-        if ($current_fields) {
-            foreach ($current_fields as $field_name => $field_value) {
-                echo "• $field_name: " . (is_array($field_value) ? 'Array (' . count($field_value) . ' items)' : gettype($field_value)) . '<br>';
-                if (is_array($field_value)) {
-                    foreach ($field_value as $sub_key => $sub_value) {
-                        echo "&nbsp;&nbsp;- $sub_key: " . (is_array($sub_value) ? 'Array' : gettype($sub_value)) . '<br>';
-                    }
-                }
-            }
-        } else {
-            echo "No fields found on current post.<br>";
-        }
-
-        echo '</div>';
-
+        echo '<strong>Admin Notice:</strong> Front page category grid is not configured yet.<br>';
+        echo 'Go to Appearance → Front Page and add Category Grid tiles.';
         echo '</div>';
         echo '</div>';
     }
@@ -122,9 +34,9 @@ if (empty($containers)) {
 <section class="category-grid-section">
         <div class="category-grid grid grid-cols-1 md:grid-cols-2 gap-1">
             <?php foreach ($containers as $container_info) :
-                $container = $container_info['data'];
-                $index = $container_info['index'] - 1; // Convert to 0-based index
-                $category_name = $container_info['category'];
+                $container = $container_info; // already normalized
+                $index = ($container_info['index'] ?? 1) - 1; // Convert to 0-based index
+                $category_name = $container_info['category'] ?? '';
 
                 // Extract the data from each container
                 $image = $container['image'] ?? null;

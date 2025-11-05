@@ -20,10 +20,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-if (!function_exists('have_rows') || !function_exists('get_sub_field')) {
-    return; // ACF required
-}
-
 // Extract args with defaults
 $args = isset($args) && is_array($args) ? $args : array();
 $post_id          = $args['post_id'] ?? get_the_ID();
@@ -34,56 +30,16 @@ $mobile_field     = $args['mobile_field'] ?? 'mobile_image';
 $show_nav         = isset($args['show_nav']) ? (bool) $args['show_nav'] : true;
 $wrapper_classes  = isset($args['wrapper_classes']) ? trim($args['wrapper_classes']) : '';
 
-if (!function_exists('eshop_component_get_slider_images')) {
-    function eshop_component_get_slider_images($repeater_name, $image_field, $post_id = null) {
-        $slides = array();
-        if (have_rows($repeater_name, $post_id)) {
-            while (have_rows($repeater_name, $post_id)) { the_row();
-                $img = get_sub_field($image_field);
-                if ($img && !empty($img['url'])) {
-                    $slides[] = array(
-                        'url' => esc_url($img['url']),
-                        'alt' => esc_attr($img['alt'] ?? ''),
-                    );
-                }
-            }
-            if (function_exists('reset_rows')) {
-                reset_rows();
-            }
-        }
-        return $slides;
-    }
-}
+// Get slides from theme settings (no ACF required)
+if (!function_exists('eshop_get_hero_slides')) { return; }
 
-$desktop_slides = eshop_component_get_slider_images($desktop_repeater, $desktop_field, $post_id);
-$mobile_slides  = eshop_component_get_slider_images($mobile_repeater, $mobile_field, $post_id);
+$desktop_slides = eshop_get_hero_slides('desktop');
+$mobile_slides  = eshop_get_hero_slides('mobile');
 
-// If no separate mobile repeater, try mobile_image subfield within desktop_repeater
-if (empty($mobile_slides) && have_rows($desktop_repeater, $post_id)) {
-    $tmp = array();
-    while (have_rows($desktop_repeater, $post_id)) { the_row();
-        $mimg = get_sub_field($mobile_field);
-        if ($mimg && !empty($mimg['url'])) {
-            $tmp[] = array(
-                'url' => esc_url($mimg['url']),
-                'alt' => esc_attr($mimg['alt'] ?? ''),
-            );
-        }
-    }
-    if (function_exists('reset_rows')) {
-        reset_rows();
-    }
-    $mobile_slides = $tmp;
-}
+// Fallback: if mobile is empty, reuse desktop
+if (empty($mobile_slides)) { $mobile_slides = $desktop_slides; }
 
-// Fallback: if mobile is still empty, reuse desktop
-if (empty($mobile_slides)) {
-    $mobile_slides = $desktop_slides;
-}
-
-if (empty($desktop_slides) && empty($mobile_slides)) {
-    return; // Nothing to render
-}
+if (empty($desktop_slides) && empty($mobile_slides)) { return; }
 ?>
 
 <section class="hero-slider-wrapper js-hero-slider <?php echo esc_attr($wrapper_classes); ?>">

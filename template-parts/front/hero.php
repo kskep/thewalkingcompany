@@ -15,11 +15,6 @@ $defaults = array(
     'wrapper_classes'  => 'mb-8 full-bleed',
 );
 
-// If ACF option page holds the slider, use it
-if (function_exists('have_rows') && have_rows('desktop_slider', 'option')) {
-    $defaults['post_id'] = 'option';
-}
-
 $component_args = apply_filters('eshop/front/hero_slider_args', $defaults);
 
 get_template_part('template-parts/components/hero-slider', null, $component_args);

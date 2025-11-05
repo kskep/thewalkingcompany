@@ -1,0 +1,11 @@
+/* Front Page Meta UI styles */
+.eshop-meta .description{ margin: 6px 0 12px; color:#555; }
+.eshop-repeater-list{ list-style:none; margin:0; padding:0; }
+.eshop-repeater-item{ display:flex; align-items:center; gap:12px; padding:8px; border:1px solid #e2e2e2; background:#fff; margin-bottom:8px; }
+.eshop-repeater-item .thumb{ width:120px; height:70px; background:#f6f7f7; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #ddd; }
+.eshop-repeater-item .thumb img{ max-width:100%; height:auto; }
+.eshop-repeater-item .fields{ display:flex; gap:8px; align-items:center; flex:1; }
+.eshop-repeater-item .handle{ cursor:move; color:#888; }
+.eshop-tiles-table .image-cell{ display:flex; align-items:center; gap:10px; }
+.eshop-tiles-table .thumb{ width:80px; height:60px; background:#f6f7f7; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.eshop-tiles-table .thumb img{ max-width:100%; height:auto; }
