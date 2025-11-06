@@ -409,14 +409,8 @@ function eshop_filter_products() {
     $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'menu_order';
 
     // Build WP_Query args
-    $computed_per_page = intval(wc_get_default_products_per_row()) * intval(wc_get_default_product_rows_per_page());
-    if ($computed_per_page < 1) {
-        // Fallbacks to avoid empty queries due to misconfigured settings
-        $computed_per_page = function_exists('wc_get_default_products_per_page') ? intval(wc_get_default_products_per_page()) : 12;
-        if ($computed_per_page < 1) { $computed_per_page = 12; }
-    }
-
-    // Force 12 products per page for consistency across all categories including clothing
+    // Force 12 products per page for consistency across all categories
+    // This must match the value set in eshop_force_12_products_per_page() in functions.php
     $computed_per_page = 12;
 
     $args = array(

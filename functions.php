@@ -340,6 +340,14 @@ function eshop_force_12_products_per_page($query) {
 add_action('pre_get_posts', 'eshop_force_12_products_per_page', 20);
 
 /**
+ * Override WooCommerce products per page setting to ensure consistency
+ */
+function eshop_override_wc_products_per_page($cols) {
+    return 12;
+}
+add_filter('loop_shop_per_page', 'eshop_override_wc_products_per_page', 20);
+
+/**
  * Custom Product Gallery Integration
  * Replace default WooCommerce gallery with our custom component
  */
