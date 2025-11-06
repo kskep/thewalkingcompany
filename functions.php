@@ -247,6 +247,7 @@ add_filter('woocommerce_show_page_title', '__return_false');
 
 /**
  * Handle custom filter parameters for WooCommerce
+ * Priority 5 to run early, before our products_per_page override
  */
 function eshop_handle_custom_filters($query) {
     if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
@@ -327,25 +328,58 @@ function eshop_handle_custom_filters($query) {
         }
     }
 }
-add_action('pre_get_posts', 'eshop_handle_custom_filters');
+add_action('pre_get_posts', 'eshop_handle_custom_filters', 5);
 
 /**
  * Force 12 products per page for all product categories including clothing
+ * Priority 999 to ensure it runs last and overrides everything else
  */
 function eshop_force_12_products_per_page($query) {
     if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
+        // Force 12 products per page, overriding any WooCommerce or other theme settings
         $query->set('posts_per_page', 12);
+        
+        // Also remove any potential pagination offset that might cause inconsistency
+        if ($query->get('offset')) {
+            $paged = max(1, absint($query->get('paged')));
+            $offset = ($paged - 1) * 12;
+            $query->set('offset', $offset);
+        }
+        
+        // Debug: Log to check if this is running (remove after testing)
+        // error_log('Products per page set to: ' . $query->get('posts_per_page') . ' | Page: ' . $query->get('paged'));
     }
 }
-add_action('pre_get_posts', 'eshop_force_12_products_per_page', 20);
+add_action('pre_get_posts', 'eshop_force_12_products_per_page', 999);
 
 /**
  * Override WooCommerce products per page setting to ensure consistency
+ * Multiple filters to catch all possible WooCommerce pagination methods
  */
 function eshop_override_wc_products_per_page($cols) {
     return 12;
 }
-add_filter('loop_shop_per_page', 'eshop_override_wc_products_per_page', 20);
+add_filter('loop_shop_per_page', 'eshop_override_wc_products_per_page', 999);
+
+/**
+ * Force products per page via option filter (catches WooCommerce settings)
+ */
+function eshop_force_wc_catalog_per_page($value, $option) {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        return 12;
+    }
+    return $value;
+}
+add_filter('option_woocommerce_catalog_rows', '__return_false', 999);
+add_filter('option_woocommerce_catalog_columns', '__return_false', 999);
+
+/**
+ * Override the WooCommerce products per page completely
+ */
+function eshop_force_catalog_page_size() {
+    return 12;
+}
+add_filter('loop_shop_per_page', 'eshop_force_catalog_page_size', 999);
 
 /**
  * Custom Product Gallery Integration
