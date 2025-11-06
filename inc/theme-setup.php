@@ -14,6 +14,10 @@ if (!defined('ABSPATH')) {
  * Theme Setup
  */
 function eshop_theme_setup() {
+    // Make theme available for translation
+    // Translations can be filed in the /languages/ directory
+    load_theme_textdomain('eshop-theme', get_template_directory() . '/languages');
+    
     // Add theme support for various features
     add_theme_support('post-thumbnails');
     add_theme_support('title-tag');
@@ -150,3 +154,47 @@ function eshop_remove_page_titles($title) {
     return $title;
 }
 add_filter('the_title', 'eshop_remove_page_titles');
+
+/**
+ * Admin notice for missing translation compilation
+ */
+function eshop_translation_admin_notice() {
+    // Only show to admins
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    
+    // Check if we have .po files but missing .mo files
+    $languages_dir = get_template_directory() . '/languages';
+    $po_files = glob($languages_dir . '/*.po');
+    
+    if (!empty($po_files)) {
+        foreach ($po_files as $po_file) {
+            $mo_file = str_replace('.po', '.mo', $po_file);
+            if (!file_exists($mo_file)) {
+                $locale = basename($po_file, '.po');
+                ?>
+                <div class="notice notice-warning is-dismissible">
+                    <p><strong><?php esc_html_e('Translation Compilation Required', 'eshop-theme'); ?></strong></p>
+                    <p>
+                        <?php
+                        /* translators: %s: locale code (e.g., el_GR) */
+                        printf(
+                            esc_html__('Translation file for %s needs to be compiled. Please install and use Poedit, Loco Translate plugin, or WP-CLI to compile the .po file to .mo format.', 'eshop-theme'),
+                            '<code>' . esc_html($locale) . '</code>'
+                        );
+                        ?>
+                    </p>
+                    <p>
+                        <a href="https://poedit.net/" target="_blank" class="button button-primary"><?php esc_html_e('Download Poedit', 'eshop-theme'); ?></a>
+                        <a href="<?php echo esc_url(admin_url('plugin-install.php?s=loco%20translate&tab=search&type=term')); ?>" class="button"><?php esc_html_e('Install Loco Translate Plugin', 'eshop-theme'); ?></a>
+                        <a href="<?php echo esc_url(get_template_directory_uri() . '/languages/GREEK_SETUP_INSTRUCTIONS.txt'); ?>" target="_blank" class="button"><?php esc_html_e('View Instructions', 'eshop-theme'); ?></a>
+                    </p>
+                </div>
+                <?php
+                break; // Only show one notice
+            }
+        }
+    }
+}
+add_action('admin_notices', 'eshop_translation_admin_notice');

@@ -4,10 +4,14 @@
 .hero-slider-mobile img { width:100%; height:auto; display:block; }
 
 /* Ensure only one slider shows on each breakpoint */
-.js-hero-slider .hero-slider-desktop { display: none; }
-@media (min-width: 768px) {
-  .js-hero-slider .hero-slider-desktop { display: block; }
-  .js-hero-slider .hero-slider-mobile { display: none; }
+/* Desktop visible by default, mobile hidden */
+.js-hero-slider .hero-slider-desktop { display: block; }
+.js-hero-slider .hero-slider-mobile { display: none; }
+
+/* On mobile screens, hide desktop and show mobile */
+@media (max-width: 767px) {
+  .js-hero-slider .hero-slider-desktop { display: none; }
+  .js-hero-slider .hero-slider-mobile { display: block; }
 }
 
 /* Swiper controls */

@@ -1,0 +1,118 @@
+INSTRUCTIONS FOR GREEK LANGUAGE ACTIVATION
+==========================================
+
+The Greek language files have been created for your theme. To activate Greek:
+
+STEP 1: Compile the Translation File
+-------------------------------------
+
+The .po file needs to be compiled into a .mo file for WordPress to use it.
+
+Choose ONE of these methods:
+
+METHOD A - Using Poedit (Easiest - Recommended)
+1. Download and install Poedit from: https://poedit.net/
+2. Open languages/el_GR.po in Poedit
+3. Click "Save" (Ctrl+S)
+4. The el_GR.mo file will be automatically created
+5. Done! Go to Step 2.
+
+METHOD B - Using WP-CLI (If installed)
+1. Open terminal in your WordPress root directory
+2. Run: wp i18n make-mo wp-content/themes/thewalkingcompany/languages/
+3. Done! Go to Step 2.
+
+METHOD C - Using WordPress Plugin
+1. Install the "Loco Translate" plugin from WordPress.org
+2. Go to Loco Translate → Themes → Fashion Magazine Theme
+3. It will automatically detect and compile translations
+4. Done! Go to Step 2.
+
+METHOD D - Online Tool
+1. Go to: https://po2mo.net/
+2. Upload your el_GR.po file
+3. Download the generated el_GR.mo file
+4. Place it in: wp-content/themes/thewalkingcompany/languages/
+5. Done! Go to Step 2.
+
+
+STEP 2: Activate Greek Language
+--------------------------------
+
+Option A - Via WordPress Admin (Easiest):
+1. Log in to WordPress admin
+2. Go to Settings → General
+3. Find "Site Language"
+4. Select "Ελληνικά" (Greek)
+5. Click "Save Changes"
+6. Your site is now in Greek!
+
+Option B - Via wp-config.php:
+1. Open wp-config.php in a text editor
+2. Find the line: define('WPLANG', '');
+   OR add this line before "/* That's all, stop editing! */"
+3. Change it to: define('WPLANG', 'el_GR');
+4. Save the file
+5. Your site is now in Greek!
+
+
+VERIFICATION
+------------
+
+After completing both steps, visit your website:
+- The "Filters" button should show as "Φίλτρα"
+- "Add to Cart" should show as "Προσθήκη στο Καλάθι"
+- "Shopping Cart" should show as "Καλάθι Αγορών"
+
+If translations don't appear:
+1. Clear your browser cache (Ctrl+F5)
+2. Clear WordPress cache (if using a caching plugin)
+3. Verify the el_GR.mo file exists in the languages/ folder
+4. Check that Greek is selected in Settings → General
+
+
+UPDATING TRANSLATIONS
+---------------------
+
+To modify or add translations:
+1. Edit languages/el_GR.po with Poedit or a text editor
+2. Find the msgid (English text) and update the msgstr (Greek text)
+3. Save the file (Poedit compiles automatically)
+4. Clear cache and refresh your site
+
+
+NEED HELP?
+----------
+
+- Check languages/README.md for detailed documentation
+- WordPress i18n: https://developer.wordpress.org/apis/internationalization/
+- Poedit website: https://poedit.net/
+- Loco Translate plugin: https://wordpress.org/plugins/loco-translate/
+
+
+COMMON TRANSLATIONS IN THIS THEME
+----------------------------------
+
+Filters → Φίλτρα
+Price Range → Εύρος Τιμών
+Categories → Κατηγορίες
+Colors → Χρώματα
+Sizes → Μεγέθη
+On Sale → Σε Προσφορά
+Shopping Cart → Καλάθι Αγορών
+Add to Cart → Προσθήκη στο Καλάθι
+Checkout → Ολοκλήρωση Αγοράς
+Wishlist → Λίστα Επιθυμιών
+Search → Αναζήτηση
+Account → Λογαριασμός
+
+
+FILE LOCATIONS
+--------------
+
+Translation files are in:
+wp-content/themes/thewalkingcompany/languages/
+
+- eshop-theme.pot (template)
+- el_GR.po (Greek source - human readable)
+- el_GR.mo (Greek compiled - used by WordPress) ← YOU NEED TO CREATE THIS!
