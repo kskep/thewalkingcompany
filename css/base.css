@@ -23,12 +23,5 @@
   max-width: 100vw;
 }
 
-/* Visibility helpers in case Tailwind isn't available */
-.hidden {
-  display: none !important;
-}
-.visible {
-  display: block !important;
-}
 
 
