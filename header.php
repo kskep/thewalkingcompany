@@ -44,14 +44,14 @@
 
                     <!-- Header Actions (hidden on mobile, visible on desktop) -->
                     <div class="header-actions hidden lg:flex items-center space-x-2">
-                    
-                    <!-- Search - Temporarily hidden but keeping functionality -->
-                    <!-- <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
-                        <i class="fas fa-search icon"></i>
-                    </button> -->
-                    
-                    <!-- Wishlist -->
-                    <?php if (class_exists('WooCommerce')) : ?>
+                        
+                        <!-- Search - Temporarily hidden but keeping functionality -->
+                        <!-- <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
+                            <i class="fas fa-search icon"></i>
+                        </button> -->
+                        
+                        <!-- Wishlist -->
+                        <?php if (class_exists('WooCommerce')) : ?>
                         <div class="wishlist-wrapper relative">
                             <button class="wishlist-toggle p-2 text-dark hover:text-primary transition-colors duration-200 relative" aria-label="Wishlist">
                                 <i class="far fa-heart icon"></i>
@@ -102,10 +102,10 @@
                                 </div>
                             </div>
                         </div>
-                    <?php endif; ?>
-                    
-                    <!-- Account Dropdown -->
-                    <?php if (class_exists('WooCommerce')) : ?>
+                        <?php endif; ?>
+                        
+                        <!-- Account Dropdown -->
+                        <?php if (class_exists('WooCommerce')) : ?>
                         <div class="account-wrapper relative">
                             <button class="account-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Account">
                                 <i class="far fa-user icon"></i>
@@ -132,10 +132,10 @@
                                 </div>
                             </div>
                         </div>
-                    <?php endif; ?>
-                    
-                    <!-- Enhanced Minicart -->
-                    <?php if (class_exists('WooCommerce')) : ?>
+                        <?php endif; ?>
+                        
+                        <!-- Enhanced Minicart -->
+                        <?php if (class_exists('WooCommerce')) : ?>
                         <div class="minicart-wrapper relative">
                             <button class="minicart-toggle p-2 text-dark hover:text-primary transition-colors duration-200 relative" aria-label="Shopping Cart">
                                 <i class="fas fa-shopping-bag icon"></i>
@@ -191,9 +191,9 @@
                                 </div>
                             </div>
                         </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
         </div>
 
         <!-- Bottom Row: Navigation Menu (desktop only) -->
@@ -256,34 +256,22 @@
                                 <?php endif; ?>
                             </a>
                             
-                            <!-- Account Menu Items -->
-                            <?php
-                            $account_items = eshop_get_account_menu_items();
-                            foreach ($account_items as $key => $item) :
-                                $icon_class = 'far fa-user'; // default
-                                if (strpos($item['title'], 'Orders') !== false) {
-                                    $icon_class = 'fas fa-box';
-                                } elseif (strpos($item['title'], 'Logout') !== false || strpos($item['title'], 'Αποσύνδεση') !== false) {
-                                    $icon_class = 'fas fa-sign-out-alt';
-                                } elseif (strpos($item['title'], 'Login') !== false || strpos($item['title'], 'Σύνδεση') !== false) {
-                                    $icon_class = 'fas fa-sign-in-alt';
-                                }
-                                
-                                $css_class = 'mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg';
-                                $data_action = '';
-                                
-                                if (isset($item['action'])) {
-                                    $css_class .= ' modal-trigger';
-                                    $data_action = ' data-action="' . esc_attr($item['action']) . '"';
-                                }
-                            ?>
-                                <a href="<?php echo esc_url($item['url']); ?>" class="<?php echo $css_class; ?>"<?php echo $data_action; ?>>
-                                    <i class="<?php echo $icon_class; ?> w-6 text-lg"></i>
+                            <!-- My Account - Single Item -->
+                            <?php if (is_user_logged_in()) : ?>
+                                <a href="<?php echo wc_get_account_endpoint_url('dashboard'); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
+                                    <i class="far fa-user w-6 text-lg"></i>
                                     <span class="flex-1 font-medium text-base">
-                                        <?php echo esc_html($item['title']); ?>
+                                        <?php _e('My Account', 'eshop-theme'); ?>
                                     </span>
                                 </a>
-                            <?php endforeach; ?>
+                            <?php else : ?>
+                                <a href="#" class="mobile-utility-item modal-trigger flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg" data-action="login">
+                                    <i class="fas fa-sign-in-alt w-6 text-lg"></i>
+                                    <span class="flex-1 font-medium text-base">
+                                        <?php _e('Login / Register', 'eshop-theme'); ?>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
                             
                             <!-- Shopping Cart -->
                             <a href="<?php echo wc_get_cart_url(); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
