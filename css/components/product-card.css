@@ -39,9 +39,28 @@
 .twc-card__image .swiper-wrapper { height: 100%; }
 .twc-card__image .swiper-slide { height: 100%; }
 .twc-card__image .swiper-button-prev,
-.twc-card__image .swiper-button-next { color: #000; --swiper-navigation-size: 18px; opacity: 0; transition: opacity .15s ease; }
+.twc-card__image .swiper-button-next {
+  color: #000;
+  --swiper-navigation-size: 18px;
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 0;
+  border: 1px solid #e5e7eb;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
 .twc-card:hover .swiper-button-prev,
 .twc-card:hover .swiper-button-next { opacity: 1; }
+.twc-card__image .swiper-button-prev:hover,
+.twc-card__image .swiper-button-next:hover {
+  background-color: var(--primary-pink, #ee81b3);
+  border-color: var(--primary-pink, #ee81b3);
+}
+.twc-card__image .swiper-button-prev:hover:after,
+.twc-card__image .swiper-button-next:hover:after {
+  color: #fff;
+}
 /* Hide Swiper's built-in pagination bullets since we use custom dots */
 .twc-card__image .swiper-pagination { display: none !important; }
 

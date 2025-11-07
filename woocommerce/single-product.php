@@ -84,20 +84,13 @@ get_header( 'shop' ); ?>
         </div>
     </div>
 
-    <!-- Product Tabs -->
-    <div class="product-tabs-container">
-        <div class="magazine-container">
-            <?php woocommerce_output_product_data_tabs(); ?>
-        </div>
-    </div>
-
     <!-- Related Products -->
     <?php
     /**
-     * Related Products
-     * woocommerce_output_related_products is hooked in woocommerce-functions.php
+     * Related Products from Same Category and Parent Category
+     * Using the twc-card component from product archive
      */
-    woocommerce_output_related_products();
+    eshop_output_related_products_from_categories();
     ?>
 </div>
 
