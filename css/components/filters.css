@@ -27,8 +27,13 @@
     opacity: 1;
 }
 
-/* Utility when templates toggle .hidden class */
-.hidden { display: none !important; }
+/* Utility when filter templates toggle .hidden class - scoped to filter components only */
+#filter-drawer .hidden,
+#filter-backdrop.hidden,
+.filter-section .hidden,
+.active-filters-bar .hidden {
+    display: none !important;
+}
 
 /* Filter Sections */
 .filter-section {
@@ -256,10 +261,6 @@
 }
 
 /* Make attribute items more compact */
-.attribute-filter .attribute-terms {
-    space-y: 1px;
-}
-
 .attribute-filter label {
     padding: 1px 8px !important;
     margin-bottom: 1px;
