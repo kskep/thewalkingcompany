@@ -21,8 +21,13 @@
             <div class="container mx-auto px-4">
                 <div class="flex items-center justify-between py-3">
 
+                    <!-- Mobile Menu Toggle (visible on mobile only, left side) -->
+                    <button class="mobile-menu-toggle lg:hidden p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Menu">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+
                     <!-- Language Switcher (hidden on mobile) -->
-                    <div class="language-switcher hidden md:flex items-center space-x-2 text-sm">
+                    <div class="language-switcher hidden lg:flex items-center space-x-2 text-sm">
                         <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EN</a>
                         <span class="text-gray-300">|</span>
                         <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EL</a>
@@ -37,8 +42,8 @@
                         </a>
                     </div>
 
-                    <!-- Header Actions -->
-                    <div class="header-actions flex items-center space-x-2">
+                    <!-- Header Actions (hidden on mobile, visible on desktop) -->
+                    <div class="header-actions hidden lg:flex items-center space-x-2">
                     
                     <!-- Search - Temporarily hidden but keeping functionality -->
                     <!-- <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
@@ -129,9 +134,9 @@
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Enhanced Minicart (hidden on mobile) -->
+                    <!-- Enhanced Minicart -->
                     <?php if (class_exists('WooCommerce')) : ?>
-                        <div class="minicart-wrapper relative hidden md:block">
+                        <div class="minicart-wrapper relative">
                             <button class="minicart-toggle p-2 text-dark hover:text-primary transition-colors duration-200 relative" aria-label="Shopping Cart">
                                 <i class="fas fa-shopping-bag icon"></i>
                                 <span class="cart-count absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center <?php echo WC()->cart->get_cart_contents_count() > 0 ? '' : 'hidden'; ?>">
@@ -191,12 +196,12 @@
             </div>
         </div>
 
-        <!-- Bottom Row: Navigation Menu -->
-        <div class="header-bottom">
+        <!-- Bottom Row: Navigation Menu (desktop only) -->
+        <div class="header-bottom hidden lg:block">
             <div class="container mx-auto px-4">
                 <div class="flex justify-center py-4">
                     <!-- Main Navigation -->
-                    <nav id="site-navigation" class="main-navigation sm:hidden lg:block">
+                    <nav id="site-navigation" class="main-navigation">
                         <?php
                         wp_nav_menu(array(
                             'theme_location' => 'primary',
@@ -208,12 +213,6 @@
                         ));
                         ?>
                     </nav>
-
-                    <!-- Mobile Menu Toggle (visible on mobile) -->
-                    <button class="mobile-menu-toggle lg:hidden p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Menu">
-                        <i class="fas fa-bars icon"></i>
-                        <span class="ml-2 text-sm font-medium">MENU</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -222,6 +221,7 @@
         <nav id="mobile-navigation" class="mobile-navigation lg:hidden hidden">
             <div class="mobile-menu-wrapper bg-white border-t border-gray-200 py-4">
                 <div class="container mx-auto px-4">
+                    <!-- Main Menu Items -->
                     <?php
                     wp_nav_menu(array(
                         'theme_location' => 'primary',
@@ -231,6 +231,74 @@
                         'fallback_cb' => false,
                     ));
                     ?>
+                    
+                    <!-- Creative Divider -->
+                    <div class="mobile-menu-divider my-6 flex items-center justify-center">
+                        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                        <i class="fas fa-heart text-primary mx-4 text-xs"></i>
+                        <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    </div>
+                    
+                    <!-- Mobile Utility Menu Items -->
+                    <div class="mobile-utility-menu space-y-1">
+                        
+                        <?php if (class_exists('WooCommerce')) : ?>
+                            <!-- Wishlist -->
+                            <a href="<?php echo home_url('/wishlist'); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
+                                <i class="far fa-heart w-6 text-lg"></i>
+                                <span class="flex-1 font-medium text-base">
+                                    <?php _e('Wishlist', 'eshop-theme'); ?>
+                                </span>
+                                <?php if (eshop_get_wishlist_count() > 0) : ?>
+                                    <span class="bg-primary text-white text-xs rounded-full px-2 py-1 font-semibold">
+                                        <?php echo eshop_get_wishlist_count(); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </a>
+                            
+                            <!-- Account Menu Items -->
+                            <?php
+                            $account_items = eshop_get_account_menu_items();
+                            foreach ($account_items as $key => $item) :
+                                $icon_class = 'far fa-user'; // default
+                                if (strpos($item['title'], 'Orders') !== false) {
+                                    $icon_class = 'fas fa-box';
+                                } elseif (strpos($item['title'], 'Logout') !== false || strpos($item['title'], 'Αποσύνδεση') !== false) {
+                                    $icon_class = 'fas fa-sign-out-alt';
+                                } elseif (strpos($item['title'], 'Login') !== false || strpos($item['title'], 'Σύνδεση') !== false) {
+                                    $icon_class = 'fas fa-sign-in-alt';
+                                }
+                                
+                                $css_class = 'mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg';
+                                $data_action = '';
+                                
+                                if (isset($item['action'])) {
+                                    $css_class .= ' modal-trigger';
+                                    $data_action = ' data-action="' . esc_attr($item['action']) . '"';
+                                }
+                            ?>
+                                <a href="<?php echo esc_url($item['url']); ?>" class="<?php echo $css_class; ?>"<?php echo $data_action; ?>>
+                                    <i class="<?php echo $icon_class; ?> w-6 text-lg"></i>
+                                    <span class="flex-1 font-medium text-base">
+                                        <?php echo esc_html($item['title']); ?>
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
+                            
+                            <!-- Shopping Cart -->
+                            <a href="<?php echo wc_get_cart_url(); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
+                                <i class="fas fa-shopping-bag w-6 text-lg"></i>
+                                <span class="flex-1 font-medium text-base">
+                                    <?php _e('Shopping Cart', 'eshop-theme'); ?>
+                                </span>
+                                <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
+                                    <span class="bg-primary text-white text-xs rounded-full px-2 py-1 font-semibold">
+                                        <?php echo WC()->cart->get_cart_contents_count(); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
                     
                     <!-- Mobile Language Switcher -->
                     <div class="mobile-language-switcher flex items-center justify-center space-x-2 text-sm pt-4 mt-4 border-t border-gray-200">

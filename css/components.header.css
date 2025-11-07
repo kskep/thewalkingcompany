@@ -35,6 +35,37 @@
   transform: scale(1.02);
 }
 
+/* Mobile Logo - Larger and centered */
+@media (max-width: 767px) {
+  .site-branding img {
+    max-height: 40px; /* Slightly bigger for mobile visibility */
+  }
+  
+  /* Center logo on mobile */
+  .header-top .flex {
+    position: relative;
+  }
+  
+  .site-branding {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* Make sure mobile menu toggle stays on left */
+  .mobile-menu-toggle {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* For tablet, keep normal flow but adjust logo */
+  .site-branding img {
+    max-height: 44px;
+  }
+}
+
 /* Main Navigation */
 .main-navigation ul {
   margin: 0;
@@ -175,6 +206,50 @@
   border-bottom: none;
 }
 
+/* Mobile Utility Menu Items */
+.mobile-utility-menu {
+  margin-top: 0;
+}
+
+.mobile-utility-item {
+  font-family: 'Roboto Condensed', sans-serif;
+  text-decoration: none;
+  letter-spacing: 0.25px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.mobile-utility-item i {
+  color: var(--primary-pink);
+  flex-shrink: 0;
+}
+
+.mobile-utility-item:hover i {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Mobile Menu Divider */
+.mobile-menu-divider {
+  position: relative;
+}
+
+.mobile-menu-divider i {
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
 /* Mobile Dropdown Support */
 .mobile-menu .menu-item-has-children > a {
   position: relative;
@@ -310,6 +385,61 @@
   .minicart-dropdown {
     width: 280px;
     right: -20px;
+  }
+}
+
+/* Mobile Header Improvements */
+@media (max-width: 767px) {
+  /* Larger tap targets for mobile */
+  .header-actions button,
+  .header-actions .wishlist-toggle,
+  .header-actions .account-toggle,
+  .header-actions .minicart-toggle {
+    padding: 10px !important;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* Mobile menu toggle styling */
+  .mobile-menu-toggle {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px !important;
+  }
+  
+  .mobile-menu-toggle i {
+    font-size: 22px;
+  }
+  
+  /* Tighter header padding on mobile */
+  .header-top .py-3 {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  /* Mobile utility items spacing */
+  .mobile-utility-item {
+    font-size: 15px;
+  }
+  
+  /* Make mobile menu full height for better UX */
+  .mobile-navigation {
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet adjustments */
+  .mobile-menu-toggle {
+    padding: 8px 12px;
+  }
+  
+  .mobile-menu-toggle i {
+    font-size: 20px;
   }
 }
 
