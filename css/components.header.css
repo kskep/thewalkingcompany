@@ -312,3 +312,15 @@
     right: -20px;
   }
 }
+
+/* Hide search form when search button is disabled */
+#search-form {
+  display: none !important;
+}
+
+/* Mobile Language Switcher Styling */
+.mobile-language-switcher a {
+  font-family: 'Roboto Condensed', sans-serif;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}

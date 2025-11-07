@@ -21,8 +21,8 @@
             <div class="container mx-auto px-4">
                 <div class="flex items-center justify-between py-3">
 
-                    <!-- Language Switcher -->
-                    <div class="language-switcher flex items-center space-x-2 text-sm">
+                    <!-- Language Switcher (hidden on mobile) -->
+                    <div class="language-switcher hidden md:flex items-center space-x-2 text-sm">
                         <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EN</a>
                         <span class="text-gray-300">|</span>
                         <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EL</a>
@@ -40,10 +40,10 @@
                     <!-- Header Actions -->
                     <div class="header-actions flex items-center space-x-2">
                     
-                    <!-- Search -->
-                    <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
+                    <!-- Search - Temporarily hidden but keeping functionality -->
+                    <!-- <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
                         <i class="fas fa-search icon"></i>
-                    </button>
+                    </button> -->
                     
                     <!-- Wishlist -->
                     <?php if (class_exists('WooCommerce')) : ?>
@@ -129,9 +129,9 @@
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Enhanced Minicart -->
+                    <!-- Enhanced Minicart (hidden on mobile) -->
                     <?php if (class_exists('WooCommerce')) : ?>
-                        <div class="minicart-wrapper relative">
+                        <div class="minicart-wrapper relative hidden md:block">
                             <button class="minicart-toggle p-2 text-dark hover:text-primary transition-colors duration-200 relative" aria-label="Shopping Cart">
                                 <i class="fas fa-shopping-bag icon"></i>
                                 <span class="cart-count absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center <?php echo WC()->cart->get_cart_contents_count() > 0 ? '' : 'hidden'; ?>">
@@ -231,6 +231,13 @@
                         'fallback_cb' => false,
                     ));
                     ?>
+                    
+                    <!-- Mobile Language Switcher -->
+                    <div class="mobile-language-switcher flex items-center justify-center space-x-2 text-sm pt-4 mt-4 border-t border-gray-200">
+                        <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EN</a>
+                        <span class="text-gray-300">|</span>
+                        <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EL</a>
+                    </div>
                 </div>
             </div>
         </nav>
