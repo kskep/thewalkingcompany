@@ -346,8 +346,36 @@ function eshop_force_12_products_per_page($query) {
             $query->set('offset', $offset);
         }
         
-        // Debug: Log to check if this is running (remove after testing)
-        // error_log('Products per page set to: ' . $query->get('posts_per_page') . ' | Page: ' . $query->get('paged'));
+        // CRITICAL FIX: Exclude out-of-stock products at query level
+        // This ensures we get exactly 12 IN-STOCK products per page
+        $meta_query = $query->get('meta_query', array());
+        if (!is_array($meta_query)) {
+            $meta_query = array();
+        }
+        
+        // Check if stock status filter already exists
+        $has_stock_filter = false;
+        foreach ($meta_query as $clause) {
+            if (isset($clause['key']) && $clause['key'] === '_stock_status') {
+                $has_stock_filter = true;
+                break;
+            }
+        }
+        
+        // Only add stock filter if not already present
+        if (!$has_stock_filter) {
+            $meta_query[] = array(
+                'key' => '_stock_status',
+                'value' => 'instock',
+                'compare' => '='
+            );
+            
+            if (count($meta_query) > 1) {
+                $meta_query['relation'] = 'AND';
+            }
+            
+            $query->set('meta_query', $meta_query);
+        }
     }
 }
 add_action('pre_get_posts', 'eshop_force_12_products_per_page', 999);

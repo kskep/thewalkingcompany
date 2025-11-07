@@ -11,10 +11,8 @@ if (empty($product) || !$product->is_visible()) {
     return;
 }
 
-// Hide out of stock products completely (same behavior as before)
-if (!$product->is_in_stock()) {
-    return;
-}
+// Note: Out-of-stock products are now filtered at query level in functions.php
+// This ensures we get exactly 12 in-stock products per page
 
 // Wrap component in <li class="product"> to match UL grid semantics
 ?>

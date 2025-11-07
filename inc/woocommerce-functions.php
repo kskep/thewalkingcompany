@@ -419,7 +419,14 @@ function eshop_filter_products() {
         'posts_per_page' => $computed_per_page,
         'paged' => $paged,
         'orderby' => $orderby,
-        'meta_query' => array(),
+        'meta_query' => array(
+            // CRITICAL: Exclude out-of-stock products to ensure consistent count
+            array(
+                'key' => '_stock_status',
+                'value' => 'instock',
+                'compare' => '='
+            )
+        ),
         'tax_query' => array(),
     );
 
@@ -561,8 +568,17 @@ function eshop_filter_products() {
         }
     }
 
-    // Stock status filter
+    // Stock status filter - Override default if user explicitly filters
     if (!empty($filters['stock_status'])) {
+        // Find and replace the default instock filter
+        foreach ($args['meta_query'] as $key => $clause) {
+            if (isset($clause['key']) && $clause['key'] === '_stock_status') {
+                unset($args['meta_query'][$key]);
+                break;
+            }
+        }
+        
+        // Add user's selected stock status
         $args['meta_query'][] = array(
             'key' => '_stock_status',
             'value' => $filters['stock_status'],
