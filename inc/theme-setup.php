@@ -169,6 +169,7 @@ function eshop_translation_admin_notice() {
     $po_files = glob($languages_dir . '/*.po');
     
     if (!empty($po_files)) {
+        eshop_ensure_mo_files_exist($po_files);
         foreach ($po_files as $po_file) {
             $mo_file = str_replace('.po', '.mo', $po_file);
             if (!file_exists($mo_file)) {
@@ -198,3 +199,47 @@ function eshop_translation_admin_notice() {
     }
 }
 add_action('admin_notices', 'eshop_translation_admin_notice');
+
+/**
+ * Compile missing MO files from existing PO sources.
+ * Tries to auto-generate translations so Loco/Poedit are optional.
+ *
+ * @param array $po_files List of PO file paths.
+ * @return void
+ */
+function eshop_ensure_mo_files_exist($po_files) {
+    if (empty($po_files) || !is_array($po_files)) {
+        return;
+    }
+
+    if (!class_exists('PO')) {
+        require_once ABSPATH . 'wp-includes/pomo/po.php';
+    }
+
+    if (!class_exists('MO')) {
+        require_once ABSPATH . 'wp-includes/pomo/mo.php';
+    }
+
+    foreach ($po_files as $po_file) {
+        $mo_file = str_replace('.po', '.mo', $po_file);
+
+        if (file_exists($mo_file) || !is_readable($po_file)) {
+            continue;
+        }
+
+        $po = new PO();
+        if (!$po->import_from_file($po_file)) {
+            continue;
+        }
+
+        $mo = new MO();
+        $mo->strings = $po->strings;
+        $mo->headers = $po->headers;
+
+        if (!$mo->export_to_file($mo_file)) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log(sprintf('eshop-theme: Failed to compile MO file for %s', $po_file));
+            }
+        }
+    }
+}
