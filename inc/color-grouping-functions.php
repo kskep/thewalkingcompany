@@ -458,9 +458,8 @@ function eshop_display_color_variants() {
     ));
 }
 
-// Hook the color variants display into single product summary
-// Position it after price (10) but before excerpt (20)
-add_action('woocommerce_single_product_summary', 'eshop_display_color_variants', 15);
+// Hook color variants just before the add-to-cart form so it appears with sizing controls
+add_action('woocommerce_before_add_to_cart_form', 'eshop_display_color_variants', 5);
 
 /**
  * Utility Functions
