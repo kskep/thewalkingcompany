@@ -866,24 +866,27 @@ function eshop_output_related_products_from_categories() {
                     <?php _e('You May Also Like', 'thewalkingtheme'); ?>
                 </h2>
                 
-                <div class="products-grid" style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 48px 24px; width: 100%; margin: 0; padding: 0; list-style: none;">
+                <ul class="products-grid related-products-grid" style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 48px 24px; width: 100%; margin: 0; padding: 0; list-style: none;">
                     <?php
                     while ($related_query->have_posts()) {
                         $related_query->the_post();
 
-                        // Ensure global $product references the related item for component output
                         $related_product = wc_get_product(get_the_ID());
                         if (!$related_product || !$related_product->is_visible()) {
                             continue;
                         }
 
+                        // Ensure WooCommerce helpers receive the correct product context
                         $product = $related_product;
+                        if (function_exists('wc_setup_product_data')) {
+                            wc_setup_product_data(get_post());
+                        }
 
-                        // Use the twc-card component
-                        get_template_part('template-parts/components/product-card');
+                        // Reuse standard product card markup
+                        wc_get_template_part('content', 'product');
                     }
                     ?>
-                </div>
+                </ul>
             </div>
         </section>
         
@@ -911,7 +914,17 @@ function eshop_output_related_products_from_categories() {
     }
     
     wp_reset_postdata();
+    if (function_exists('wc_reset_product_data')) {
+        wc_reset_product_data();
+    }
+
     // Restore original product for the remainder of the single product template
+    if ($original_product instanceof WC_Product) {
+        $original_post = get_post($original_product->get_id());
+        if ($original_post && function_exists('wc_setup_product_data')) {
+            wc_setup_product_data($original_post);
+        }
+    }
     $product = $original_product;
 }
 add_action('woocommerce_after_single_product_summary', 'eshop_output_related_products_from_categories', 20);

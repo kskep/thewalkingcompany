@@ -80,6 +80,12 @@ function eshop_theme_scripts() {
             wp_enqueue_style('eshop-single-product-magazine', get_template_directory_uri() . '/css/pages/single-product-magazine.css', array('eshop-theme-style'), filemtime($single_product_magazine_path));
         }
 
+        // Reuse product card styles for related products grid
+        $product_card_css_path = get_template_directory() . '/css/components/product-card.css';
+        if (file_exists($product_card_css_path)) {
+            wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime($product_card_css_path));
+        }
+
         $single_product_css_path = get_template_directory() . '/css/pages/single-product.css';
         $single_product_css_ver = file_exists($single_product_css_path) ? filemtime($single_product_css_path) : '1.0.0';
         wp_enqueue_style('eshop-single-product', get_template_directory_uri() . '/css/pages/single-product.css', array('eshop-theme-style'), $single_product_css_ver);
