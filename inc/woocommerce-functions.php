@@ -902,3 +902,4 @@ function eshop_output_related_products_from_categories() {
     
     wp_reset_postdata();
 }
+add_action('woocommerce_after_single_product_summary', 'eshop_output_related_products_from_categories', 20);
