@@ -898,27 +898,6 @@ function eshop_output_related_products_from_categories() {
                 </ul>
             </div>
         </section>
-        
-        <style>
-            @media (min-width: 640px) {
-                .related-products-section .products-grid {
-                    grid-template-columns: repeat(2, 1fr) !important;
-                }
-            }
-            
-            @media (min-width: 768px) {
-                .related-products-section .products-grid {
-                    grid-template-columns: repeat(3, 1fr) !important;
-                }
-            }
-            
-            @media (min-width: 1024px) {
-                .related-products-section .products-grid {
-                    grid-template-columns: repeat(4, 1fr) !important;
-                    gap: 64px 32px !important;
-                }
-            }
-        </style>
         <?php
     }
     
