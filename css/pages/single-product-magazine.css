@@ -12,6 +12,7 @@
     --ink: #2F2A26;
     /* Darkened soft ink for better contrast */
     --ink-soft: #4b5563;
+    --price-red: #E11900;
     --paper: #ffffff;
     /* Darkened lighter text for better contrast */
     --text-lighter: #888;
@@ -407,9 +408,20 @@
     color: inherit;
 }
 
-.price ins .woocommerce-Price-amount.amount {
-    color: var(--primary-pink) !important;
+.price ins {
+    display: inline-flex;
+    align-items: baseline;
     text-decoration: none;
+}
+
+.price ins .woocommerce-Price-amount.amount {
+    color: var(--price-red) !important;
+}
+
+.price del {
+    display: inline-flex;
+    align-items: baseline;
+    text-decoration: line-through;
 }
 
 .price del .woocommerce-Price-amount.amount {
@@ -742,11 +754,20 @@
     font-family: var(--font-body);
 }
 
+.product-header .woocommerce-product-details__short-description {
+    margin-top: 1.5rem;
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+}
+
 /* Related Products - Magazine grid */
 .related-products-section {
     border-top: 1px solid var(--border-light);
     margin-top: 4rem;
     padding-top: 3rem;
+    background: #fff;
 }
 
 .related-products-section h2 {
@@ -758,6 +779,16 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 3rem;
+}
+
+.related-products-section .products-grid {
+    background: transparent !important;
+    padding: 0 !important;
+    gap: 48px 24px;
+}
+
+.related-products-section .twc-card {
+    background: #fff;
 }
 
 /* Sticky Add to Cart */

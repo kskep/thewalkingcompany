@@ -53,61 +53,6 @@ if (!$product) {
         </div>
     </div>
 
-    <!-- Product Features -->
-    <div class="product-accordion">
-        <button class="accordion-header" aria-expanded="false">
-            <span><?php _e('Product Features', 'eshop-theme'); ?></span>
-            <i class="fas fa-chevron-down accordion-icon"></i>
-        </button>
-        <div class="accordion-panel" aria-hidden="true">
-            <div class="accordion-content">
-                <?php
-                // Check if product has attributes to display
-                $attributes = $product->get_attributes();
-                $has_attributes = !empty($attributes);
-
-                if ($has_attributes) {
-                    // Start with default features
-                    echo '<ul>';
-                    echo '<li>' . __('Premium leather upper with breathable mesh panels', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Advanced cushioning system for all-day comfort', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Durable rubber outsole with traction pattern', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Moisture-wicking interior lining', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Removable insole for custom orthotics', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Reflective details for low-light visibility', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Weight: 10.5 oz per shoe (men\'s size 9)', 'eshop-theme') . '</li>';
-
-                    // Add product-specific attributes
-                    foreach ($attributes as $attribute) {
-                        if ($attribute->get_variation()) {
-                            continue; // Skip variation attributes
-                        }
-                        $attribute_name = $attribute->get_name();
-                        $attribute_label = wc_attribute_label($attribute_name, $product);
-                        $attribute_values = wp_get_post_terms($product->get_id(), $attribute_name, array('fields' => 'names'));
-
-                        if (!empty($attribute_values)) {
-                            echo '<li><strong>' . esc_html($attribute_label) . ':</strong> ' . esc_html(implode(', ', $attribute_values)) . '</li>';
-                        }
-                    }
-                    echo '</ul>';
-                } else {
-                    // Default features if no attributes
-                    echo '<ul>';
-                    echo '<li>' . __('Premium leather upper with breathable mesh panels', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Advanced cushioning system for all-day comfort', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Durable rubber outsole with traction pattern', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Moisture-wicking interior lining', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Removable insole for custom orthotics', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Reflective details for low-light visibility', 'eshop-theme') . '</li>';
-                    echo '<li>' . __('Weight: 10.5 oz per shoe (men\'s size 9)', 'eshop-theme') . '</li>';
-                    echo '</ul>';
-                }
-                ?>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <script>

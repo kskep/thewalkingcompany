@@ -54,6 +54,7 @@ if (function_exists('is_product') && is_product()) {
                         woocommerce_template_single_title();
                         woocommerce_template_single_rating();
                         woocommerce_template_single_price();
+                        woocommerce_template_single_excerpt();
                         echo '<!-- title/rating/price loaded -->';
                         ?>
                     </div>

@@ -309,6 +309,15 @@ function eshop_customize_single_product_summary_hooks() {
 }
 add_action('wp', 'eshop_customize_single_product_summary_hooks');
 
+// Drop the Additional Information tab to clean up the product details area
+function eshop_remove_additional_information_tab($tabs) {
+    if (isset($tabs['additional_information'])) {
+        unset($tabs['additional_information']);
+    }
+    return $tabs;
+}
+add_filter('woocommerce_product_tabs', 'eshop_remove_additional_information_tab', 98);
+
 /**
  * Add Wishlist next to Add to Cart across product types
  * We open a small wrapper before the ATC button and close after, injecting the wishlist button.
@@ -860,13 +869,13 @@ function eshop_output_related_products_from_categories() {
     
     if ($related_query->have_posts()) {
         ?>
-        <section class="related-products-section" style="background-color: var(--paper-warm, #fafaf9); padding: 4rem 0; margin-top: 4rem;">
-            <div class="magazine-container" style="max-width: 1630px; margin: 0 auto; padding: 0 2rem;">
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600; text-align: center; color: #2F2A26; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3rem;">
+        <section class="related-products-section magazine-related">
+            <div class="magazine-container">
+                <h2 class="related-products-heading">
                     <?php _e('You May Also Like', 'thewalkingtheme'); ?>
                 </h2>
-                
-                <ul class="products-grid related-products-grid" style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 48px 24px; width: 100%; margin: 0; padding: 0; list-style: none;">
+
+                <ul class="products-grid related-products-grid">
                     <?php
                     while ($related_query->have_posts()) {
                         $related_query->the_post();
