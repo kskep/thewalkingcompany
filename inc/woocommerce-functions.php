@@ -1077,9 +1077,3 @@ function eshop_output_related_products_from_categories() {
         wp_reset_postdata();
     }
 }
-
-        );
-    }
-    
-    return $items;
-}
