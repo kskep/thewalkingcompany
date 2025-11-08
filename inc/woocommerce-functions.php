@@ -807,110 +807,98 @@ function eshop_get_account_menu_items() {
  * Uses the twc-card component from product archive
  */
 function eshop_output_related_products_from_categories() {
-    error_log('--- Debug: eshop_output_related_products_from_categories called ---');
     global $product;
     
     if (!$product) {
-        error_log('Debug: $product object is not available. Exiting.');
         return;
     }
     
     $product_id = $product->get_id();
-    error_log('Debug: Product ID: ' . $product_id);
-    $related_ids = array();
     
-    // Get all product categories (including parent categories)
+    // Get all product categories
     $categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
-    error_log('Debug: Found categories: ' . print_r($categories, true));
     
-    if (!empty($categories)) {
-        // Get parent categories
-        $all_category_ids = $categories;
-        foreach ($categories as $cat_id) {
-            $ancestors = get_ancestors($cat_id, 'product_cat');
-            if (!empty($ancestors)) {
-                $all_category_ids = array_merge($all_category_ids, $ancestors);
-            }
-        }
-        $all_category_ids = array_unique($all_category_ids);
-        error_log('Debug: All category IDs (including parents): ' . print_r($all_category_ids, true));
-        
-        // Query products from same category and parent categories
-        $args = array(
-            'post_type' => 'product',
-            'posts_per_page' => 8, // Get 8 products for 2 rows of 4
-            'post__not_in' => array($product_id),
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_cat',
-                    'field' => 'term_id',
-                    'terms' => $all_category_ids,
-                    'operator' => 'IN'
-                )
-            ),
-            'meta_query' => array(
-                array(
-                    'key' => '_stock_status',
-                    'value' => 'instock',
-                    'compare' => '='
-                )
-            ),
-            'orderby' => 'rand'
-        );
-        
-        error_log('Debug: WP_Query args: ' . print_r($args, true));
-        $related_query = new WP_Query($args);
-        
-        if ($related_query->have_posts()) {
-            error_log('Debug: Query found ' . $related_query->post_count . ' related products.');
-            ?>
-            <section class="related-products-section" style="background-color: var(--paper-warm, #fafaf9); padding: 4rem 0; margin-top: 4rem;">
-                <div class="magazine-container" style="max-width: 1630px; margin: 0 auto; padding: 0 2rem;">
-                    <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600; text-align: center; color: #2F2A26; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3rem;">
-                        <?php _e('You May Also Like', 'thewalkingtheme'); ?>
-                    </h2>
-                    
-                    <div class="products-grid" style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 48px 24px; width: 100%; margin: 0; padding: 0; list-style: none;">
-                        <?php
-                        while ($related_query->have_posts()) {
-                            $related_query->the_post();
-                            global $product;
-                            // Use the twc-card component
-                            get_template_part('template-parts/components/product-card');
-                        }
-                        ?>
-                    </div>
-                </div>
-            </section>
-            
-            <style>
-                @media (min-width: 640px) {
-                    .related-products-section .products-grid {
-                        grid-template-columns: repeat(2, 1fr) !important;
-                    }
-                }
-                
-                @media (min-width: 768px) {
-                    .related-products-section .products-grid {
-                        grid-template-columns: repeat(3, 1fr) !important;
-                    }
-                }
-                
-                @media (min-width: 1024px) {
-                    .related-products-section .products-grid {
-                        grid-template-columns: repeat(4, 1fr) !important;
-                        gap: 64px 32px !important;
-                    }
-                }
-            </style>
-            <?php
-        } else {
-            error_log('Debug: No related products found.');
-        }
-        
-        wp_reset_postdata();
-    } else {
-        error_log('Debug: Product has no categories. Cannot find related products.');
+    if (empty($categories)) {
+        return; // No categories, no related products
     }
-    error_log('--- Debug: eshop_output_related_products_from_categories finished ---');
+
+    // Include parent categories
+    $all_category_ids = $categories;
+    foreach ($categories as $cat_id) {
+        $ancestors = get_ancestors($cat_id, 'product_cat');
+        if (!empty($ancestors)) {
+            $all_category_ids = array_merge($all_category_ids, $ancestors);
+        }
+    }
+    $all_category_ids = array_unique($all_category_ids);
+    
+    // Query products from same category and parent categories
+    $args = array(
+        'post_type' => 'product',
+        'posts_per_page' => 8, // Get 8 products for 2 rows of 4
+        'post__not_in' => array($product_id),
+        'tax_query' => array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field' => 'term_id',
+                'terms' => $all_category_ids,
+                'operator' => 'IN'
+            )
+        ),
+        'meta_query' => array(
+            array(
+                'key' => '_stock_status',
+                'value' => 'instock',
+                'compare' => '='
+            )
+        ),
+        'orderby' => 'rand'
+    );
+    
+    $related_query = new WP_Query($args);
+    
+    if ($related_query->have_posts()) {
+        ?>
+        <section class="related-products-section" style="background-color: var(--paper-warm, #fafaf9); padding: 4rem 0; margin-top: 4rem;">
+            <div class="magazine-container" style="max-width: 1630px; margin: 0 auto; padding: 0 2rem;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600; text-align: center; color: #2F2A26; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3rem;">
+                    <?php _e('You May Also Like', 'thewalkingtheme'); ?>
+                </h2>
+                
+                <div class="products-grid" style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 48px 24px; width: 100%; margin: 0; padding: 0; list-style: none;">
+                    <?php
+                    while ($related_query->have_posts()) {
+                        $related_query->the_post();
+                        // Use the twc-card component
+                        get_template_part('template-parts/components/product-card');
+                    }
+                    ?>
+                </div>
+            </div>
+        </section>
+        
+        <style>
+            @media (min-width: 640px) {
+                .related-products-section .products-grid {
+                    grid-template-columns: repeat(2, 1fr) !important;
+                }
+            }
+            
+            @media (min-width: 768px) {
+                .related-products-section .products-grid {
+                    grid-template-columns: repeat(3, 1fr) !important;
+                }
+            }
+            
+            @media (min-width: 1024px) {
+                .related-products-section .products-grid {
+                    grid-template-columns: repeat(4, 1fr) !important;
+                    gap: 64px 32px !important;
+                }
+            }
+        </style>
+        <?php
+    }
+    
+    wp_reset_postdata();
 }

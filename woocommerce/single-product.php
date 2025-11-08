@@ -82,20 +82,20 @@ get_header( 'shop' ); ?>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Related Products -->
-    <?php
-    /**
-     * Related Products from Same Category and Parent Category
-     * Using the twc-card component from product archive
-     */
-    eshop_output_related_products_from_categories();
-    ?>
+        <!-- Related Products -->
+        <?php
+        /**
+         * Related Products from Same Category and Parent Category
+         * Using the twc-card component from product archive
+         */
+        eshop_output_related_products_from_categories();
+        ?>
+    </div>
 </div>
 
 <!-- Sticky Add to Cart (Mobile) -->
-<?php get_template_part('template-parts/components/sticky-atc'); ?>
+<?php // get_template_part('template-parts/components/sticky-atc'); ?>
 
 <?php get_footer( 'shop' );
 
