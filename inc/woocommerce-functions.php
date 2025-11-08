@@ -982,17 +982,21 @@ function eshop_get_account_menu_items() {
  * Uses the twc-card component from product archive
  */
 function eshop_output_related_products_from_categories() {
+    error_log('--- Debug: eshop_output_related_products_from_categories called ---');
     global $product;
     
     if (!$product) {
+        error_log('Debug: $product object is not available. Exiting.');
         return;
     }
     
     $product_id = $product->get_id();
+    error_log('Debug: Product ID: ' . $product_id);
     $related_ids = array();
     
     // Get all product categories (including parent categories)
     $categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+    error_log('Debug: Found categories: ' . print_r($categories, true));
     
     if (!empty($categories)) {
         // Get parent categories
@@ -1004,6 +1008,7 @@ function eshop_output_related_products_from_categories() {
             }
         }
         $all_category_ids = array_unique($all_category_ids);
+        error_log('Debug: All category IDs (including parents): ' . print_r($all_category_ids, true));
         
         // Query products from same category and parent categories
         $args = array(
@@ -1028,9 +1033,11 @@ function eshop_output_related_products_from_categories() {
             'orderby' => 'rand'
         );
         
+        error_log('Debug: WP_Query args: ' . print_r($args, true));
         $related_query = new WP_Query($args);
         
         if ($related_query->have_posts()) {
+            error_log('Debug: Query found ' . $related_query->post_count . ' related products.');
             ?>
             <section class="related-products-section" style="background-color: var(--paper-warm, #fafaf9); padding: 4rem 0; margin-top: 4rem;">
                 <div class="magazine-container" style="max-width: 1630px; margin: 0 auto; padding: 0 2rem;">
@@ -1072,8 +1079,13 @@ function eshop_output_related_products_from_categories() {
                 }
             </style>
             <?php
+        } else {
+            error_log('Debug: No related products found.');
         }
         
         wp_reset_postdata();
+    } else {
+        error_log('Debug: Product has no categories. Cannot find related products.');
     }
+    error_log('--- Debug: eshop_output_related_products_from_categories finished ---');
 }
