@@ -455,16 +455,6 @@ function eshop_include_filter_modal() {
 add_action('wp_footer', 'eshop_include_filter_modal');
 
 /**
- * Include sticky add-to-cart bar on single product pages
- */
-function eshop_include_sticky_atc() {
-    if (class_exists('WooCommerce') && is_product()) {
-        get_template_part('template-parts/components/sticky-atc');
-    }
-}
-add_action('wp_footer', 'eshop_include_sticky_atc', 15);
-
-/**
  * Inline critical CSS for single product as last-resort fallback
  * Ensures visible layout even if external CSS fails to load on host/CDN
  */
