@@ -67,7 +67,29 @@ get_header( 'shop' ); ?>
 
                 <!-- Product Actions -->
                 <div class="product-actions">
-                    <?php woocommerce_template_single_add_to_cart(); ?>
+                    <?php
+                    global $product;
+
+                    // Render color variants before the add-to-cart form when grouped SKUs exist.
+                    if ($product && method_exists($product, 'get_id') && function_exists('eshop_get_product_color_group_variants')) {
+                        $color_variants = eshop_get_product_color_group_variants($product->get_id());
+
+                        if (count($color_variants) > 1) {
+                            get_template_part(
+                                'template-parts/components/color-variants',
+                                null,
+                                array(
+                                    'variants' => $color_variants,
+                                    'current_id' => $product->get_id(),
+                                )
+                            );
+                        }
+                    }
+                    ?>
+
+                    <div class="size-selection-container">
+                        <?php woocommerce_template_single_add_to_cart(); ?>
+                    </div>
                 </div>
 
                 <!-- Trust Badges -->

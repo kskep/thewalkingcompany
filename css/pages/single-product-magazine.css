@@ -454,6 +454,14 @@
     border: 1px solid var(--border-light);
 }
 
+.product-actions .product-color-variants {
+    margin-bottom: 2rem;
+}
+
+.product-actions .size-selection-container {
+    margin-bottom: 2rem;
+}
+
 /* Purchase Actions */
 .purchase-actions {
     display: flex;
