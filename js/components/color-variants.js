@@ -150,28 +150,11 @@ class EshopColorVariants {
             return;
         }
 
-        if (this.isLoading) {
+        if (!variant.url || variant.url === window.location.href) {
             return;
         }
 
-        // Don't reload if selecting the same variant
-        if (variant.isCurrent) {
-            return;
-        }
-
-        this.setLoading(true);
-        
-        // Update visual selection immediately for better UX
-        this.updateSelection(variant);
-        
-        // Fire event before navigation
-        this.fireEvent('variantChanging', {
-            from: this.selectedVariant,
-            to: variant
-        });
-        
-        // Navigate to new product URL
-        this.navigateToVariant(variant);
+        window.location.href = variant.url;
     }
 
     /**
