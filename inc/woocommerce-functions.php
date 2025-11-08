@@ -696,6 +696,63 @@ function eshop_filter_products() {
 // add_action('wp_ajax_nopriv_filter_products', 'eshop_filter_products');
 
 
+/**
+ * Ensure catalog queries only load in-stock products
+ * Adds a defensive meta query at the WooCommerce level so we always fetch
+ * the same number of products as we render.
+ */
+function eshop_require_instock_products_in_catalog($meta_query, $query) {
+    if (is_admin() && !wp_doing_ajax()) {
+        return $meta_query;
+    }
+
+    $bypass_stock_filter = false;
+    if (is_object($query)) {
+        if (method_exists($query, 'get')) {
+            $bypass_stock_filter = $query->get('eshop_bypass_stock_filter');
+        } elseif (isset($query->query_vars['eshop_bypass_stock_filter'])) {
+            $bypass_stock_filter = $query->query_vars['eshop_bypass_stock_filter'];
+        }
+    }
+
+    if (!empty($bypass_stock_filter)) {
+        return $meta_query;
+    }
+
+    $post_types = $query->get('post_type');
+    if (empty($post_types)) {
+        $post_types = array('product');
+    }
+
+    $post_types = (array) $post_types;
+    if (!in_array('product', $post_types, true)) {
+        return $meta_query;
+    }
+
+    $has_stock_clause = false;
+    foreach ($meta_query as $clause) {
+        if (!is_array($clause)) {
+            continue;
+        }
+        if (isset($clause['key']) && $clause['key'] === '_stock_status') {
+            $has_stock_clause = true;
+            break;
+        }
+    }
+
+    if (!$has_stock_clause) {
+        $meta_query[] = array(
+            'key' => '_stock_status',
+            'value' => 'instock',
+            'compare' => '=',
+        );
+    }
+
+    return $meta_query;
+}
+add_filter('woocommerce_product_query_meta_query', 'eshop_require_instock_products_in_catalog', 20, 2);
+
+
 
 
 

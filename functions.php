@@ -527,6 +527,10 @@ function eshop_get_current_context_product_ids() {
     $where_clauses = array("p.post_status = 'publish'", "p.post_type = 'product'");
     $join_clauses = array();
 
+    // Only consider products that are currently in stock
+    $join_clauses[] = "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'";
+    $where_clauses[] = "pm_stock.meta_value = 'instock'";
+
     // Add current category context (including child categories)
     if (is_product_category()) {
         $current_category = get_queried_object();

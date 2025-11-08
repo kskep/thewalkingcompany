@@ -33,7 +33,8 @@ function eshop_get_color_group_products($grouped_sku) {
         'status' => 'publish',
         'limit' => -1,
         'orderby' => 'menu_order',
-        'order' => 'ASC'
+        'order' => 'ASC',
+        'eshop_bypass_stock_filter' => true,
     ));
 }
 
