@@ -1,3 +1,4 @@
+/*
 (function($){
   $(function(){
     var $sticky = $('.sticky-atc');
@@ -47,3 +48,4 @@
     });
   });
 })(jQuery);
+*/
