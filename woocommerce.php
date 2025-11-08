@@ -106,6 +106,12 @@ if (function_exists('is_product') && is_product()) {
         <?php endwhile; ?>
     </div>
     <?php echo '<!-- PRODUCT MAIN CONTAINER END -->'; ?>
+
+    <?php
+    echo '<!-- AFTER SINGLE PRODUCT SUMMARY HOOKS START -->';
+    do_action('woocommerce_after_single_product_summary');
+    echo '<!-- AFTER SINGLE PRODUCT SUMMARY HOOKS END -->';
+    ?>
     
     <!-- Sticky Add to Cart -->
     <?php 
