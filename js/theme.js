@@ -437,28 +437,6 @@
                     slidesPerView: 1,
                     observer: true,
                     observeParents: true,
-                    on: {
-                        beforeInit: function() {
-                            this.slides.forEach(function(slide) {
-                                slide.style.width = '';
-                            });
-                        },
-                        init: function() {
-                            var slideCount = this.slides.length;
-                            if (slideCount <= 1) {
-                                var nav = el.querySelectorAll('.swiper-button-prev, .swiper-button-next, .swiper-pagination');
-                                nav.forEach(function(navEl) {
-                                    navEl.style.display = 'none';
-                                });
-                            }
-                        },
-                        resize: function() {
-                            this.update();
-                        },
-                        observerUpdate: function() {
-                            this.update();
-                        }
-                    },
                     watchOverflow: true,
                     // Disable autoplay on archive product sliders
                     autoplay: false,
@@ -469,15 +447,55 @@
                     speed: 300
                 };
 
+                var normaliseSlides = function(swiperInstance) {
+                    if (!swiperInstance || !swiperInstance.slides) { return; }
+                    swiperInstance.slides.forEach(function(slide) {
+                        slide.style.width = '100%';
+                    });
+                };
+
+                swiperConfig.on = {
+                    beforeInit: function() {
+                        normaliseSlides(this);
+                    },
+                    init: function() {
+                        var slideCount = this.slides.length;
+                        if (slideCount <= 1) {
+                            var nav = el.querySelectorAll('.swiper-button-prev, .swiper-button-next, .swiper-pagination');
+                            nav.forEach(function(navEl) {
+                                navEl.style.display = 'none';
+                            });
+                        }
+                        normaliseSlides(this);
+                        this.updateSlides();
+                    },
+                    resize: function() {
+                        normaliseSlides(this);
+                        this.update();
+                    },
+                    observerUpdate: function() {
+                        normaliseSlides(this);
+                        this.update();
+                    }
+                };
+
                 var swiper = new Swiper(el, swiperConfig);
                 el.__swiper = swiper;
+
+                // Final safety pass after layout settles
+                setTimeout(function() {
+                    normaliseSlides(swiper);
+                    swiper.update();
+                }, 150);
 
                 // Hover-to-second-image behavior
                 var originalIndex = 0;
                 el.addEventListener('mouseenter', function(){
+                    if (!swiper || swiper.slides.length <= 1) { return; }
                     try { swiper.slideTo(1, 200); } catch(e) {}
                 });
                 el.addEventListener('mouseleave', function(){
+                    if (!swiper) { return; }
                     try { swiper.slideTo(0, 200); } catch(e) {}
                 });
             } catch (e) {
