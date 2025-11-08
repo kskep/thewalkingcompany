@@ -437,17 +437,13 @@
                     slidesPerView: 1,
                     observer: true,
                     observeParents: true,
-                    watchOverflow: true,
-                    // Disable autoplay on archive product sliders
-                    autoplay: false,
-                    effect: 'fade',
-                    fadeEffect: {
-                        crossFade: true
-                    },
-                    speed: 300,
                     on: {
+                        beforeInit: function() {
+                            this.slides.forEach(function(slide) {
+                                slide.style.width = '';
+                            });
+                        },
                         init: function() {
-                            // Hide navigation if only one slide
                             var slideCount = this.slides.length;
                             if (slideCount <= 1) {
                                 var nav = el.querySelectorAll('.swiper-button-prev, .swiper-button-next, .swiper-pagination');
@@ -455,8 +451,22 @@
                                     navEl.style.display = 'none';
                                 });
                             }
+                        },
+                        resize: function() {
+                            this.update();
+                        },
+                        observerUpdate: function() {
+                            this.update();
                         }
-                    }
+                    },
+                    watchOverflow: true,
+                    // Disable autoplay on archive product sliders
+                    autoplay: false,
+                    effect: 'fade',
+                    fadeEffect: {
+                        crossFade: true
+                    },
+                    speed: 300
                 };
 
                 var swiper = new Swiper(el, swiperConfig);
