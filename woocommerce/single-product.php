@@ -12,6 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' ); ?>
 
+<!-- ESHOP DEBUG: single-product template loaded -->
 <!-- Main Product Container -->
 <div id="product-<?php the_ID(); ?>" class="product">
     <div class="magazine-container">
