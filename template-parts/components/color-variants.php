@@ -85,30 +85,6 @@ foreach ($variants as $variant) {
         <?php endforeach; ?>
     </div>
     
-    <?php if ($current_variant) : ?>
-        <div class="selected-color-info">
-            <div class="selected-color-name">
-                <?php echo sprintf(__('Selected: %s', 'eshop-theme'), esc_html($current_variant['name'])); ?>
-            </div>
-            <?php if ($current_variant['price']) : ?>
-                <div class="selected-color-price">
-                    <?php echo $current_variant['price']; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-    
-    <!-- Loading state (hidden by default) -->
-    <div class="color-variants-loading" style="display: none;">
-        <?php for ($i = 0; $i < 5; $i++) : ?>
-            <div class="color-variant-skeleton"></div>
-        <?php endfor; ?>
-    </div>
-    
-    <!-- Color selection feedback -->
-    <div class="color-selection-feedback" style="display: none;">
-        <span class="feedback-text"></span>
-    </div>
 </div>
 
 <script>

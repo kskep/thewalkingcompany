@@ -39,9 +39,6 @@ get_header( 'shop' ); ?>
             <!-- Right Column: Product Details -->
             <div class="product-details">
 
-                <!-- Breadcrumbs -->
-                <?php get_template_part('template-parts/components/breadcrumbs'); ?>
-
                 <!-- Product Header -->
                 <div class="product-header">
                     <?php

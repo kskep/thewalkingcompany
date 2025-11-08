@@ -8,7 +8,7 @@
 
 /* Color Variants Container */
 .product-color-variants {
-    margin: 1.5rem 0;
+    margin: 0;
 }
 
 .color-variants-title {
@@ -30,26 +30,24 @@
 /* Individual Color Variant */
 .color-variant {
     position: relative;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    border: 2px solid transparent;
+    border: 2px solid var(--border-light, #e5e7eb);
     cursor: pointer;
     overflow: hidden;
-    transition: all 0.2s ease;
-    background: #f8f8f8;
+    transition: border-color 0.2s ease;
+    background: #ffffff;
     flex-shrink: 0;
 }
 
 .color-variant:hover {
-    transform: scale(1.05);
-    border-color: var(--primary-pink, #EE81B3);
+    border-color: var(--ink-soft, #4b5563);
 }
 
 .color-variant.selected {
     border-color: var(--primary-pink, #EE81B3);
-    background: white;
-    transform: scale(1.1);
+    background: #ffffff;
 }
 
 /* Variant with featured image */
@@ -166,41 +164,7 @@
 }
 
 /* Color selection feedback */
-.color-selection-feedback {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary, #666);
-}
-
-.color-selection-feedback.selection-changed {
-    color: var(--primary-pink, #EE81B3);
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Selected color display */
-.selected-color-info {
-    margin-top: 1rem;
-    padding: 0.75rem 0;
-    border-top: 1px solid #e5e5e5;
-}
-
-.selected-color-name {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-primary, #1a1a1a);
-    margin-bottom: 0.25rem;
-}
-
-.selected-color-price {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-pink, #EE81B3);
-}
+/* Selected color display intentionally removed */
 
 /* Responsive design */
 @media (max-width: 768px) {

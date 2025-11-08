@@ -182,9 +182,6 @@
 .product-actions .variation-wrapper + .variation-wrapper {
   margin-top: 0.75rem;
 }
-.product-actions .product-color-variants {
-  margin-bottom: 1.25rem;
-}
 .product-actions .quantity-wrapper {
   margin-top: 1.5rem;
 }
