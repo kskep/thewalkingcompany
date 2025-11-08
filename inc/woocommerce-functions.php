@@ -814,6 +814,7 @@ function eshop_output_related_products_from_categories() {
     }
     
     $product_id = $product->get_id();
+    $original_product = $product; // Preserve current product context
     
     // Get all product categories
     $categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
@@ -869,6 +870,15 @@ function eshop_output_related_products_from_categories() {
                     <?php
                     while ($related_query->have_posts()) {
                         $related_query->the_post();
+
+                        // Ensure global $product references the related item for component output
+                        $related_product = wc_get_product(get_the_ID());
+                        if (!$related_product || !$related_product->is_visible()) {
+                            continue;
+                        }
+
+                        $product = $related_product;
+
                         // Use the twc-card component
                         get_template_part('template-parts/components/product-card');
                     }
@@ -901,5 +911,7 @@ function eshop_output_related_products_from_categories() {
     }
     
     wp_reset_postdata();
+    // Restore original product for the remainder of the single product template
+    $product = $original_product;
 }
 add_action('woocommerce_after_single_product_summary', 'eshop_output_related_products_from_categories', 20);
