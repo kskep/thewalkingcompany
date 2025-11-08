@@ -83,13 +83,15 @@ get_header( 'shop' ); ?>
             </div>
         </div>
 
-        <!-- Related Products -->
+        <!-- Related Products & Upsells -->
         <?php
         /**
-         * Related Products from Same Category and Parent Category
-         * Using the twc-card component from product archive
+         * Hook: woocommerce_after_single_product_summary.
+         *
+         * @hooked woocommerce_upsell_display - 15
+         * @hooked eshop_output_related_products_from_categories - 20 (Custom)
          */
-        eshop_output_related_products_from_categories();
+        do_action('woocommerce_after_single_product_summary');
         ?>
     </div>
 </div>
