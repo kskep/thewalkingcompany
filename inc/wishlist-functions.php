@@ -33,27 +33,6 @@ function eshop_set_session_wishlist($wishlist) {
     }
 }
 
-/**
- * Initialize wishlist session
- */
-function eshop_init_wishlist() {
-    // Only start session if headers haven't been sent and session isn't already active
-    if (!session_id() && !headers_sent()) {
-        session_start();
-    }
-    
-    // Initialize wishlist array in session if not set
-    if (session_id() && !isset($_SESSION['eshop_wishlist'])) {
-        $_SESSION['eshop_wishlist'] = array();
-    }
-    
-    // For logged-in users, sync with user meta
-    if (is_user_logged_in()) {
-        eshop_sync_wishlist_with_user_meta();
-    }
-}
-// Use plugins_loaded instead of init to start earlier, before most plugins send headers
-add_action('plugins_loaded', 'eshop_init_wishlist', 1);
 
 /**
  * Sync session wishlist with user meta for logged-in users
