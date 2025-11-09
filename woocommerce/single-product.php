@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' ); ?>
 
+<!-- DEBUG: Custom single-product.php template is loading correctly -->
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class( '', $product ); ?>>
     <div class="magazine-container">
 

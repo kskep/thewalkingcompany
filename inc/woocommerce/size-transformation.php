@@ -40,6 +40,34 @@ function twc_transform_size_label( $size ) {
 }
 
 /**
+ * Transform size labels from full names to abbreviations
+ * Legacy function name for backwards compatibility
+ * Per SINGLE_PRODUCT_PLAN.txt specification
+ *
+ * @param string $size_label The original size label
+ * @return string The abbreviated size label
+ */
+function eshop_transform_size_label( $size_label ) {
+    $size_map = array(
+        'XSmall/Small'  => 'XS/S',
+        'One Size'      => 'OS',
+        'XSmall'        => 'XS',
+        'Small'         => 'S',
+        'Medium'        => 'M',
+        'Large'         => 'L',
+        'XLarge'        => 'XL',
+        'XXLarge'       => 'XXL',
+        'XXXLarge'      => 'XXXL',
+        'Small/Medium'  => 'S/M',
+        'Medium/Large'  => 'M/L',
+        'Large/XLarge'  => 'L/XL',
+    );
+    
+    // Return mapped value if exists, otherwise return original
+    return isset( $size_map[ $size_label ] ) ? $size_map[ $size_label ] : $size_label;
+}
+
+/**
  * Filter WooCommerce product attribute labels
  * 
  * @param string $value The attribute value
