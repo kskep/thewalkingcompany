@@ -16,6 +16,13 @@ $stock_options = array(
     'outofstock' => __('Out of Stock', 'eshop-theme'),
     'onbackorder' => __('On Backorder', 'eshop-theme'),
 );
+
+$stock_counts = array();
+if (function_exists('eshop_get_stock_status_count')) {
+    foreach (array_keys($stock_options) as $option_key) {
+        $stock_counts[$option_key] = eshop_get_stock_status_count($option_key);
+    }
+}
 ?>
 
 <div class="filter-section mb-6">
@@ -25,13 +32,13 @@ $stock_options = array(
     
     <div class="stock-filter space-y-2">
         <?php foreach ($stock_options as $value => $label) :
-            $is_checked = in_array($value, $selected_stock);
+            $is_checked = in_array($value, $selected_stock, true);
 
-            // Get count of products with this stock status
-            $count = get_stock_status_count($value);
+            $count = isset($stock_counts[$value]) ? (int) $stock_counts[$value] : null;
 
-            // Skip if no products with this status
-            if ($count <= 0) continue;
+            if (null !== $count && $count <= 0) {
+                continue;
+            }
         ?>
             <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">
                 <div class="flex items-center space-x-2">
@@ -54,31 +61,10 @@ $stock_options = array(
                         <i class="fas fa-clock text-yellow-500 text-xs" title="<?php esc_attr_e('Available Soon', 'eshop-theme'); ?>"></i>
                     <?php endif; ?>
                 </div>
-                <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
-                    <?php echo esc_html($count); ?>
-                </span>
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                        <?php echo is_null($count) ? '&ndash;' : esc_html((string) $count); ?>
+                    </span>
             </label>
         <?php endforeach; ?>
     </div>
 </div>
-
-<?php
-// Helper function to get stock status count
-if (!function_exists('get_stock_status_count')) {
-    function get_stock_status_count($status) {
-        global $wpdb;
-        
-        $count = $wpdb->get_var($wpdb->prepare("
-            SELECT COUNT(DISTINCT p.ID) 
-            FROM {$wpdb->posts} p
-            LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
-            WHERE p.post_type = 'product'
-            AND p.post_status = 'publish'
-            AND pm.meta_key = '_stock_status'
-            AND pm.meta_value = %s
-        ", $status));
-        
-        return intval($count);
-    }
-}
-?>

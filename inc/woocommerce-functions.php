@@ -842,6 +842,40 @@ if (!function_exists('eshop_get_featured_products_count')) {
     }
 }
 
+if (!function_exists('eshop_get_stock_status_count')) {
+    /**
+     * Count products matching a specific stock status.
+     *
+     * @param string $status Stock status key (instock, outofstock, onbackorder).
+     * @return int Number of published products with the requested status.
+     */
+    function eshop_get_stock_status_count($status) {
+        global $wpdb;
+
+        $allowed_statuses = array('instock', 'outofstock', 'onbackorder');
+        $status = sanitize_key($status);
+
+        if (!in_array($status, $allowed_statuses, true)) {
+            return 0;
+        }
+
+        $query = $wpdb->prepare(
+            "SELECT COUNT(DISTINCT p.ID)
+             FROM {$wpdb->posts} p
+             INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+             WHERE p.post_type = 'product'
+               AND p.post_status = 'publish'
+               AND pm.meta_key = '_stock_status'
+               AND pm.meta_value = %s",
+            $status
+        );
+
+        $count = $wpdb->get_var($query);
+
+        return $count ? (int) $count : 0;
+    }
+}
+
 
 // Remove default related products output
 remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20);
