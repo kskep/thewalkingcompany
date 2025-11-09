@@ -62,7 +62,7 @@ if (function_exists('eshop_get_stock_status_count')) {
                     <?php endif; ?>
                 </div>
                     <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
-                        <?php echo is_null($count) ? '&ndash;' : esc_html((string) $count); ?>
+                        <?php echo is_null($count) ? esc_html('--') : esc_html((string) $count); ?>
                     </span>
             </label>
         <?php endforeach; ?>
