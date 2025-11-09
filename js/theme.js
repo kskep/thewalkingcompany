@@ -15,29 +15,36 @@
             $(this).find('i').toggleClass('fa-bars fa-times');
         });
 
-        // Mobile Dropdown Toggle - Enhanced to allow parent link navigation
-        $('.mobile-menu .menu-item-has-children > a').on('click', function(e) {
-            var $parent = $(this).parent();
+        // Add expand/collapse buttons to menu items with children
+        $('.mobile-menu .menu-item-has-children').each(function() {
+            var $menuItem = $(this);
+            var $link = $menuItem.find('> a');
+            
+            // Add expand toggle button
+            $link.after('<button class="expand-toggle" aria-label="Toggle submenu"><i class="fas fa-chevron-down"></i></button>');
+        });
+        
+        // Mobile Dropdown Toggle - Separate expand button from link
+        $('.mobile-menu .menu-item-has-children .expand-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var $parent = $(this).closest('.menu-item-has-children');
             var $submenu = $parent.find('.sub-menu');
             var isOpen = $parent.hasClass('open');
             
             // Close other submenus
             $parent.siblings('.menu-item-has-children').removeClass('open');
+            $parent.siblings('.menu-item-has-children').find('.sub-menu').slideUp(200);
             
             if (!isOpen) {
                 // Open this submenu
                 $parent.addClass('open');
                 $submenu.slideDown(200);
-                
-                // Prevent default only when opening submenu
-                e.preventDefault();
             } else {
                 // Close this submenu
                 $parent.removeClass('open');
                 $submenu.slideUp(200);
-                
-                // Allow default navigation when closing (user wants to navigate to parent)
-                // Don't prevent default here
             }
         });
 

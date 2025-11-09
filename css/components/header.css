@@ -188,7 +188,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 12px 16px;
   color: #2F2A26;
   text-decoration: none;
   font-family: 'Roboto Condensed', sans-serif;
@@ -208,27 +208,36 @@
   border-bottom: none;
 }
 
-/* Add icon indicator for menu items with children */
-.mobile-menu .menu-item-has-children > a {
+/* Add separate expand/collapse icon for menu items with children */
+.mobile-menu .menu-item-has-children {
   position: relative;
-  padding-right: 30px;
 }
 
-.mobile-menu .menu-item-has-children > a::after {
-  content: '\f078'; /* FontAwesome chevron-down icon */
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
+.mobile-menu .menu-item-has-children .expand-toggle {
   position: absolute;
-  right: 0;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.mobile-menu .menu-item-has-children .expand-toggle i {
   font-size: 12px;
   color: var(--primary-pink);
   transition: transform 0.2s ease;
 }
 
-.mobile-menu .menu-item-has-children.open > a::after {
-  transform: translateY(-50%) rotate(180deg);
+.mobile-menu .menu-item-has-children.open .expand-toggle i {
+  transform: rotate(180deg);
 }
 
 /* Mobile Utility Menu Items */
@@ -239,7 +248,7 @@
 .mobile-utility-item {
   font-family: 'Roboto Condensed', sans-serif;
   text-decoration: none;
-  letter-spacing: 0.25px;
+  letter-spacing: 0.5px;
   border-radius: 8px;
   margin-bottom: 4px;
   font-weight: 500;
@@ -247,6 +256,9 @@
   text-transform: uppercase;
   color: #2F2A26;
   transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .mobile-utility-item:hover {
@@ -256,6 +268,7 @@
 .mobile-utility-item i {
   color: var(--primary-pink);
   flex-shrink: 0;
+  margin-right: 12px;
 }
 
 .mobile-utility-item:hover i {

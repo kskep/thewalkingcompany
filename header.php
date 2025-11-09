@@ -240,14 +240,14 @@
                     </div>
                     
                     <!-- Mobile Utility Menu Items -->
-                    <div class="mobile-utility-menu space-y-1">
+                    <div class="mobile-utility-menu">
                         
                         <?php if (class_exists('WooCommerce')) : ?>
                             <!-- Wishlist -->
-                            <a href="<?php echo home_url('/wishlist'); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
-                                <i class="far fa-heart w-6 text-lg"></i>
-                                <span class="flex-1 font-medium text-base">
-                                    <?php _e('Wishlist', 'eshop-theme'); ?>
+                            <a href="<?php echo home_url('/wishlist'); ?>" class="mobile-utility-item">
+                                <i class="far fa-heart"></i>
+                                <span class="flex-1">
+                                    <?php _e('WISHLIST', 'eshop-theme'); ?>
                                 </span>
                                 <?php if (eshop_get_wishlist_count() > 0) : ?>
                                     <span class="bg-primary text-white text-xs rounded-full px-2 py-1 font-semibold">
@@ -258,26 +258,26 @@
                             
                             <!-- My Account - Single Item -->
                             <?php if (is_user_logged_in()) : ?>
-                                <a href="<?php echo wc_get_account_endpoint_url('dashboard'); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
-                                    <i class="far fa-user w-6 text-lg"></i>
-                                    <span class="flex-1 font-medium text-base">
-                                        <?php _e('My Account', 'eshop-theme'); ?>
+                                <a href="<?php echo wc_get_account_endpoint_url('dashboard'); ?>" class="mobile-utility-item">
+                                    <i class="far fa-user"></i>
+                                    <span class="flex-1">
+                                        <?php _e('MY ACCOUNT', 'eshop-theme'); ?>
                                     </span>
                                 </a>
                             <?php else : ?>
-                                <a href="#" class="mobile-utility-item modal-trigger flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg" data-action="login">
-                                    <i class="fas fa-sign-in-alt w-6 text-lg"></i>
-                                    <span class="flex-1 font-medium text-base">
-                                        <?php _e('Login / Register', 'eshop-theme'); ?>
+                                <a href="#" class="mobile-utility-item modal-trigger" data-action="login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    <span class="flex-1">
+                                        <?php _e('LOGIN / REGISTER', 'eshop-theme'); ?>
                                     </span>
                                 </a>
                             <?php endif; ?>
                             
                             <!-- Shopping Cart -->
-                            <a href="<?php echo wc_get_cart_url(); ?>" class="mobile-utility-item flex items-center px-4 py-3 text-dark hover:bg-gray-50 hover:text-primary transition-colors duration-200 rounded-lg">
-                                <i class="fas fa-shopping-bag w-6 text-lg"></i>
-                                <span class="flex-1 font-medium text-base">
-                                    <?php _e('Shopping Cart', 'eshop-theme'); ?>
+                            <a href="<?php echo wc_get_cart_url(); ?>" class="mobile-utility-item">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span class="flex-1">
+                                    <?php _e('SHOPPING CART', 'eshop-theme'); ?>
                                 </span>
                                 <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
                                     <span class="bg-primary text-white text-xs rounded-full px-2 py-1 font-semibold">
