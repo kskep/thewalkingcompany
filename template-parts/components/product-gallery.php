@@ -13,6 +13,27 @@ defined('ABSPATH') || exit;
 
 global $product;
 
+// Ensure we have a usable product instance before proceeding.
+if ($product instanceof WC_Product_Variation) {
+    $product = wc_get_product($product->get_parent_id()) ?: $product;
+} elseif (!$product instanceof WC_Product) {
+    if (is_numeric($product)) {
+        $product = wc_get_product((int) $product);
+    } elseif (is_string($product)) {
+        $product = wc_get_product($product);
+    } elseif (is_array($product)) {
+        if (isset($product['product']) && $product['product'] instanceof WC_Product) {
+            $product = $product['product'];
+        } elseif (isset($product['product_id'])) {
+            $product = wc_get_product((int) $product['product_id']);
+        }
+    }
+}
+
+if (!$product instanceof WC_Product) {
+    return;
+}
+
 // Get product gallery images
 $attachment_ids = $product->get_gallery_image_ids();
 $main_image_id = $product->get_image_id();
