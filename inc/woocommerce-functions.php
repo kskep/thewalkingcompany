@@ -942,6 +942,9 @@ function eshop_output_related_products_from_categories() {
         return;
     }
     
+    // Debug: Output a visible marker
+    echo '<!-- Related Products Function Called -->';
+    
     $product_id = $product->get_id();
     $original_product = $product; // Preserve current product context
     

@@ -24,6 +24,11 @@ require_once get_template_directory() . '/inc/auth-functions.php';
 require_once get_template_directory() . '/inc/front-fields.php';
 require_once get_template_directory() . '/inc/front-page-meta.php';
 
+// Clear PHP opcache on theme activation - TEMPORARY DEBUG
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
+
 /**
  * Enqueue Scripts and Styles
  */
