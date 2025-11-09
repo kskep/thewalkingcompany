@@ -1,0 +1,449 @@
+/* Magazine-style layout */
+.magazine-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Editorial grid layout */
+.editorial-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    padding: 3rem 0;
+    align-items: start;
+}
+
+/* Magazine header */
+.magazine-header {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+    border-bottom: 2px solid var(--primary-pink);
+}
+
+.magazine-title {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+}
+
+.magazine-subtitle {
+    font-size: 1.25rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+/* Left column - Editorial content */
+.editorial-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 0;
+    width: 100%;
+}
+
+/* Right column - Product details */
+.product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+/* Product Header - Magazine typography */
+.product-header {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 2rem;
+}
+
+.product_title {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Star Rating - Magazine style */
+.woocommerce-product-rating {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.star-rating {
+    overflow: hidden;
+    position: relative;
+    height: 1.25em;
+    line-height: 1;
+    font-size: 1.125em;
+    width: 6em;
+    font-family: 'star';
+}
+
+.star-rating:before {
+    content: "★★★★★";
+    float: left;
+    top: 0;
+    left: 0;
+    position: absolute;
+    color: var(--border-light);
+}
+
+.star-rating span {
+    overflow: hidden;
+    float: left;
+    top: 0;
+    left: 0;
+    position: absolute;
+    padding-top: 1.5em;
+}
+
+.star-rating span:before {
+    content: "★★★★★";
+    top: 0;
+    position: absolute;
+    left: 0;
+    color: var(--primary-pink);
+}
+
+.woocommerce-review-link {
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+    text-decoration: none;
+}
+.woocommerce-review-link:hover {
+    color: var(--primary-pink);
+}
+
+/* Pricing - Magazine layout */
+.product-header .price {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--primary-pink);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-header .price del {
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.product-header .price ins {
+    text-decoration: none;
+}
+
+/* Stock Status */
+.stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stock.in-stock {
+    color: #059669;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+}
+
+/* Product Actions - Magazine style */
+.product-actions {
+    background-color: #f9fafb;
+    padding: 2rem;
+    border: 1px solid var(--border-light);
+}
+.product-actions form.cart {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Size Selection */
+.variations .variation-wrapper .variation-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+.variations .size-options-single {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.size-option-single {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+.size-option-single:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
+.size-option-single.selected {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+.size-option-single.out-of-stock, .size-option-single:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    text-decoration: line-through;
+    cursor: not-allowed;
+}
+
+/* Purchase Actions Container */
+.woocommerce-variation-add-to-cart {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.single_add_to_cart_button {
+    flex: 1;
+    background-color: var(--primary-pink);
+    color: var(--paper);
+    border: none;
+    padding: 1.5rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-heading);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.single_add_to_cart_button:hover {
+    background-color: var(--primary-pink-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Wishlist Button */
+.add-to-wishlist {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem; /* Correct, proportional size */
+    height: auto;
+    border: 1px solid var(--border-light);
+    background: var(--paper);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.add-to-wishlist i {
+    font-size: 1.5rem; /* Correct, proportional icon */
+    transition: transform 0.2s ease;
+}
+.add-to-wishlist:hover {
+    border-color: var(--primary-pink);
+    color: var(--primary-pink);
+    background: #FDF2F8;
+}
+.add-to-wishlist:hover i {
+    transform: scale(1.1);
+}
+
+/* Trust Badges */
+.trust-badges {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-lighter);
+    background: var(--paper);
+}
+
+.trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.trust-badge i {
+    color: var(--primary-pink);
+}
+
+/* Product Accordions */
+.product-accordions-container {
+    border: 1px solid var(--border-light);
+}
+
+.product-accordion {
+    border-bottom: 1px solid var(--border-light);
+}
+.product-accordion:last-child {
+    border-bottom: none;
+}
+.accordion-header {
+    width: 100%;
+    background: #f9fafb;
+    border: none;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-family: var(--font-heading);
+    transition: all 0.2s ease;
+}
+.accordion-header:hover {
+    background: #f3f4f6;
+    color: var(--primary-pink);
+}
+.accordion-header[aria-expanded="true"] {
+    background: var(--primary-pink);
+    color: var(--paper);
+}
+.accordion-icon {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+.accordion-header[aria-expanded="true"] .accordion-icon {
+    transform: rotate(180deg);
+}
+.accordion-panel {
+    padding: 0;
+    color: var(--ink-soft);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    background: var(--paper);
+}
+.accordion-panel[aria-hidden="false"] {
+    max-height: 500px; /* Adjust as needed */
+    padding: 1.5rem;
+}
+.accordion-content {
+    font-family: var(--font-body);
+    line-height: 1.7;
+}
+
+/* Product Meta */
+.product-meta {
+    border-top: 1px solid var(--border-light);
+    padding-top: 2rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+}
+.product-meta > span {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.product-meta > span:last-child {
+    margin-bottom: 0;
+}
+.product-meta a {
+    color: var(--primary-pink);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.product-meta a:hover {
+    color: var(--primary-pink-dark);
+    text-decoration: underline;
+}
+
+/* Related Products */
+.related.products {
+    margin-top: 4rem;
+}
+.related.products h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3rem;
+}
+.related ul.products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    list-style: none;
+    padding: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .editorial-layout, .related ul.products {
+        grid-template-columns: 1fr 1fr;
+    }
+    .magazine-title { font-size: 2.5rem; }
+    .product_title { font-size: 2.5rem; }
+    .product-header .price { font-size: 2rem; }
+}
+@media (max-width: 768px) {
+    .editorial-layout { grid-template-columns: 1fr; }
+    .magazine-title { font-size: 2rem; }
+    .product_title { font-size: 2rem; }
+    .product-header .price { font-size: 1.75rem; }
+    .product-actions { padding: 1.5rem; }
+    .woocommerce-variation-add-to-cart { flex-direction: column; }
+    .add-to-wishlist { width: 100%; height: 3.5rem; }
+    .trust-badges { grid-template-columns: 1fr; text-align: center; }
+}
+@media (max-width: 640px) {
+    .related ul.products {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 480px) {
+    .magazine-container { padding: 0 1rem; }
+    .magazine-title { font-size: 1.75rem; }
+    .product_title { font-size: 1.75rem; }
+    .product-header .price { font-size: 1.5rem; }
+    .single_add_to_cart_button { padding: 1.25rem 1.5rem; font-size: 1rem; }
+}

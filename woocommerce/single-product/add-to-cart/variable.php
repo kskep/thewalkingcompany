@@ -1,9 +1,11 @@
 <?php
 /**
  * Variable product add to cart
- * Custom implementation with circular size buttons per SINGLE_PRODUCT_PLAN.txt
+ * Custom implementation with circular size buttons
  *
- * @package E-Shop Theme
+ * @see https://woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 9.6.0
  */
 
 defined( 'ABSPATH' ) || exit;

@@ -4,7 +4,9 @@
  *
  * This template has been completely redesigned to match the magazine-style demo.
  *
- * @package E-Shop Theme
+ * @see https://woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 1.6.4
  */
 
 defined( 'ABSPATH' ) || exit;
