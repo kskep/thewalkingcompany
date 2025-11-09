@@ -95,6 +95,27 @@ function eshop_get_product_size_variants($product, $limit = 8) {
  * Product Badges Helper
  */
 function eshop_get_product_badges($product) {
+    // Normalize to a WC_Product instance to avoid method calls on unexpected types.
+    if ($product instanceof WC_Product_Variation) {
+        $product = wc_get_product($product->get_parent_id()) ?: $product;
+    } elseif (!$product instanceof WC_Product) {
+        if (is_numeric($product)) {
+            $product = wc_get_product((int) $product);
+        } elseif (is_string($product)) {
+            $product = wc_get_product($product);
+        } elseif (is_array($product)) {
+            if (isset($product['product']) && $product['product'] instanceof WC_Product) {
+                $product = $product['product'];
+            } elseif (isset($product['product_id'])) {
+                $product = wc_get_product((int) $product['product_id']);
+            }
+        }
+    }
+
+    if (!$product instanceof WC_Product) {
+        return array();
+    }
+
     $badges = array();
 
     if ($product->is_on_sale()) {
@@ -105,8 +126,8 @@ function eshop_get_product_badges($product) {
     }
 
     // New in last 30 days
-    $created_date = get_the_date('U', $product->get_id());
-    if ($created_date > strtotime('-30 days')) {
+    $created_date = $product->get_date_created();
+    if ($created_date && $created_date->getTimestamp() > strtotime('-30 days')) {
         $badges[] = array('text' => __('NEW', 'eshop-theme'), 'class' => 'badge-new', 'style' => 'background-color: #16a34a; color: white;');
     }
 
