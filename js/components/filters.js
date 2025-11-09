@@ -1,446 +1,384 @@
 /**
- * Product Filters Component
- * Handles all filter functionality for product archives
+ * Simple Filter Component - WordPress Compatible
+ * Minimal implementation to ensure functionality works
  */
 
 (function($) {
     'use strict';
-
-    // Ensure jQuery is available
+    
+    console.log('Simple filter script loaded');
+    
+    // Ensure we have jQuery
     if (typeof $ === 'undefined') {
-        console.error('jQuery is not available for EShopFilters');
+        console.error('jQuery not available');
         return;
     }
-
-    window.EShopFilters = {
-
-        // Initialize the filter system
+    
+    // Simple filter object
+    window.SimpleFilters = {
         init: function() {
-            console.log('EShopFilters initialized');
-            console.log('Current page URL:', window.location.href);
-            console.log('Filter elements check:');
-            console.log('- Filter button (#open-filters):', $('#open-filters').length);
-            console.log('- Filter drawer (#filter-drawer):', $('#filter-drawer').length);
-            console.log('- Filter backdrop (#filter-backdrop):', $('#filter-backdrop').length);
-
+            console.log('SimpleFilters: Initializing...');
             this.bindEvents();
             this.initPriceSlider();
+            this.populateFiltersFromURL();
         },
-
-        // Bind all filter-related events
+        
         bindEvents: function() {
-            console.log('Binding filter events');
-            console.log('Filter button exists:', $('#open-filters').length > 0);
-            console.log('Filter drawer exists:', $('#filter-drawer').length > 0);
-
-            // Off-Canvas Filter Drawer
-            $('#open-filters').on('click', this.openDrawer);
-            $('#close-filters, #filter-backdrop').on('click', this.closeDrawer);
+            console.log('SimpleFilters: Binding events...');
             
-            // Apply and clear filters
-            $('#apply-filters').on('click', this.applyFiltersAndClose);
-            $('#clear-filters').on('click', this.clearAllFilters);
+            // Remove any existing handlers to prevent duplicates
+            $('#open-filters').off('click.simple');
+            $('#close-filters, #filter-backdrop').off('click.simple');
             
-            // Filter change handlers - auto-apply on checkbox changes
-            $(document).on('change', '#filter-drawer input[type="checkbox"]', function(e) {
+            // Open filter
+            $('#open-filters').on('click.simple', function(e) {
                 e.preventDefault();
-                EShopFilters.applyFilters(1);
-            });
+                console.log('SimpleFilters: Opening drawer');
 
-            // Ensure we pass a numeric page, not the event object
-            $(document).on('click', '.apply-price-filter', function(e){
+                var $backdrop = $('#filter-backdrop');
+                var $drawer = $('#filter-drawer');
+
+                console.log('SimpleFilters: Backdrop found:', $backdrop.length);
+                console.log('SimpleFilters: Drawer found:', $drawer.length);
+
+                if ($backdrop.length && $drawer.length) {
+                    $backdrop.removeClass('hidden').addClass('show');
+                    $drawer.addClass('open');
+                    $('body').addClass('overflow-hidden');
+                    console.log('SimpleFilters: Filter drawer opened successfully');
+                } else {
+                    console.error('SimpleFilters: Filter elements not found!');
+                }
+            });
+            
+            // Close filter
+            $('#close-filters, #filter-backdrop').on('click.simple', function(e) {
                 e.preventDefault();
-                EShopFilters.applyFilters(1);
+                console.log('SimpleFilters: Closing drawer');
+                
+                $('#filter-backdrop').removeClass('show').addClass('hidden');
+                $('#filter-drawer').removeClass('open');
+                $('body').removeClass('overflow-hidden');
             });
-            $(document).on('change', '.woocommerce-ordering select', function(){
-                EShopFilters.applyFilters(1);
+            
+            // Escape key
+            $(document).on('keydown.simple', function(e) {
+                if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
+                    $('#filter-backdrop').removeClass('show').addClass('hidden');
+                    $('#filter-drawer').removeClass('open');
+                    $('body').removeClass('overflow-hidden');
+                }
             });
 
-            // Quick filter buttons
-            $(document).on('click', '.quick-filter-btn:not(.more-filters-btn)', this.handleQuickFilter);
+            // Apply filters button
+            $('#apply-filters').on('click.simple', function(e) {
+                e.preventDefault();
+                console.log('SimpleFilters: Applying filters');
+                window.SimpleFilters.applyFilters();
+            });
 
-            // Pagination (both custom and Woo default)
-            $(document).on('click', '.pagination a, .woocommerce-pagination .page-numbers a', this.handlePagination);
+            // Clear filters button
+            $('#clear-filters').on('click.simple', function(e) {
+                e.preventDefault();
+                console.log('SimpleFilters: Clearing filters');
+                window.SimpleFilters.clearFilters();
+            });
 
-            // Remove individual filters
-            $(document).on('click', '.remove-filter', this.removeFilter);
+            // Price filter apply button
+            $('.apply-price-filter').on('click.simple', function(e) {
+                e.preventDefault();
+                console.log('SimpleFilters: Applying price filter');
+                window.SimpleFilters.applyFilters();
+            });
 
-            // Clear all filters
-            $(document).on('click', '.clear-filters, .clear-all-filters', this.clearAllFilters);
+            // Size grid click handlers (for hidden checkboxes) - use event delegation
+            $(document).on('click.simple', '.size-option', function(e) {
+                e.preventDefault();
+                console.log('SimpleFilters: Size option clicked');
 
-            // Keyboard accessibility - Escape to close drawer
-            $(document).on('keydown', this.handleKeyboard);
+                var $this = $(this);
+                var $checkbox = $this.find('input[type="checkbox"]');
+                var $label = $this.find('.size-label');
+
+                console.log('SimpleFilters: Found checkbox:', $checkbox.length);
+                console.log('SimpleFilters: Found label:', $label.length);
+                console.log('SimpleFilters: Current checked state:', $checkbox.prop('checked'));
+
+                // Toggle the checkbox
+                var newState = !$checkbox.prop('checked');
+                $checkbox.prop('checked', newState);
+
+                // Update visual state
+                if (newState) {
+                    $label.removeClass('bg-white text-gray-700 border-gray-300')
+                          .addClass('bg-primary text-white border-primary');
+                    console.log('SimpleFilters: Applied selected styles');
+                } else {
+                    $label.removeClass('bg-primary text-white border-primary')
+                          .addClass('bg-white text-gray-700 border-gray-300');
+                    console.log('SimpleFilters: Applied unselected styles');
+                }
+
+                console.log('SimpleFilters: Size checkbox toggled:', $checkbox.val(), 'to', newState);
+            });
+
+            console.log('SimpleFilters: Events bound successfully');
         },
 
-        // Open filter drawer
-        openDrawer: function(e) {
-            if (e) e.preventDefault();
-            console.log('Opening filter drawer');
-            console.log('Backdrop element:', $('#filter-backdrop').length);
-            console.log('Drawer element:', $('#filter-drawer').length);
+        // Apply filters function
+        applyFilters: function() {
+            console.log('SimpleFilters: Collecting filter data...');
 
-            $('#filter-backdrop').removeClass('hidden').addClass('show');
-            $('#filter-drawer').addClass('open');
-            $('body').addClass('overflow-hidden');
+            var filters = {};
+            var url = new URL(window.location.href);
 
-            // Initialize price slider when drawer opens
-            setTimeout(function() {
-                EShopFilters.initPriceSlider();
-            }, 20);
+            // Price filters
+            var minPrice = $('#min-price').val();
+            var maxPrice = $('#max-price').val();
+            if (minPrice) {
+                url.searchParams.set('min_price', minPrice);
+                filters.min_price = minPrice;
+            } else {
+                url.searchParams.delete('min_price');
+            }
+            if (maxPrice) {
+                url.searchParams.set('max_price', maxPrice);
+                filters.max_price = maxPrice;
+            } else {
+                url.searchParams.delete('max_price');
+            }
+
+            // Category filters
+            var selectedCategories = [];
+            $('input[name="product_cat[]"]:checked').each(function() {
+                selectedCategories.push($(this).val());
+            });
+            if (selectedCategories.length > 0) {
+                url.searchParams.set('product_cat', selectedCategories.join(','));
+                filters.product_cat = selectedCategories;
+            } else {
+                url.searchParams.delete('product_cat');
+            }
+
+            // On sale filter
+            if ($('input[name="on_sale"]:checked').length > 0) {
+                url.searchParams.set('on_sale', '1');
+                filters.on_sale = '1';
+            } else {
+                url.searchParams.delete('on_sale');
+            }
+
+            // Your custom attribute filters
+            var yourAttributes = ['pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection'];
+
+            yourAttributes.forEach(function(attribute) {
+                var selectedValues = [];
+                $('input[name="' + attribute + '[]"]:checked').each(function() {
+                    selectedValues.push($(this).val());
+                });
+
+                if (selectedValues.length > 0) {
+                    url.searchParams.set(attribute, selectedValues.join(','));
+                    filters[attribute] = selectedValues;
+                } else {
+                    url.searchParams.delete(attribute);
+                }
+            });
+
+            console.log('SimpleFilters: Collected filters:', filters);
+
+            // Close the drawer
+            this.closeDrawer();
+
+            // Redirect to filtered URL
+            console.log('SimpleFilters: Redirecting to:', url.toString());
+            window.location.href = url.toString();
         },
 
-        // Close filter drawer
-        closeDrawer: function(e) {
-            if (e) e.preventDefault();
-            console.log('Closing filter drawer');
+        // Clear all filters
+        clearFilters: function() {
+            console.log('SimpleFilters: Clearing all filters');
+
+            // Clear form inputs
+            $('#min-price, #max-price').val('');
+            $('input[name="product_cat[]"], input[name="on_sale"], input[name="pa_box[]"], input[name="pa_color[]"], input[name="pa_pick-pattern[]"], input[name="pa_select-size[]"], input[name="pa_size-selection[]"]').prop('checked', false);
+
+            // Reset visual states for size grids
+            $('.size-label').removeClass('bg-primary text-white border-primary')
+                           .addClass('bg-white text-gray-700 border-gray-300');
+
+            // Reset price slider
+            var sliderEl = document.getElementById('price-slider');
+            if (sliderEl && sliderEl.noUiSlider) {
+                var minRange = parseInt(sliderEl.dataset.min) || 0;
+                var maxRange = parseInt(sliderEl.dataset.max) || 1000;
+                sliderEl.noUiSlider.set([minRange, maxRange]);
+            }
+
+            // Redirect to clean URL
+            var url = new URL(window.location.href);
+            url.searchParams.delete('min_price');
+            url.searchParams.delete('max_price');
+            url.searchParams.delete('product_cat');
+            url.searchParams.delete('on_sale');
+            url.searchParams.delete('pa_box');
+            url.searchParams.delete('pa_color');
+            url.searchParams.delete('pa_pick-pattern');
+            url.searchParams.delete('pa_select-size');
+            url.searchParams.delete('pa_size-selection');
+
+            console.log('SimpleFilters: Redirecting to clean URL:', url.toString());
+            window.location.href = url.toString();
+        },
+
+        // Close drawer function
+        closeDrawer: function() {
             $('#filter-backdrop').removeClass('show').addClass('hidden');
             $('#filter-drawer').removeClass('open');
             $('body').removeClass('overflow-hidden');
         },
 
-        // Apply filters and close drawer
-        applyFiltersAndClose: function() {
-            EShopFilters.closeDrawer();
-            EShopFilters.applyFilters();
-        },
-
-        // Handle keyboard events
-        handleKeyboard: function(e) {
-            if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
-                EShopFilters.closeDrawer();
-            }
-        },
-
-        // Handle quick filter buttons
-        handleQuickFilter: function() {
-            var $btn = $(this);
-            var filterType = $btn.data('filter');
-
-            // Toggle active state
-            $btn.toggleClass('active');
-
-            if (filterType === 'price') {
-                var minPrice = $btn.data('min');
-                var maxPrice = $btn.data('max');
-
-                if ($btn.hasClass('active')) {
-                    // Remove other active price filters
-                    $('.quick-filter-btn[data-filter="price"]').not($btn).removeClass('active');
-
-                    // Set price inputs in modal
-                    $('#min-price').val(minPrice || '');
-                    $('#max-price').val(maxPrice || '');
-                } else {
-                    // Clear price inputs
-                    $('#min-price, #max-price').val('');
-                }
-            } else if (filterType === 'on_sale') {
-                var checkbox = $('input[name="on_sale"]');
-                checkbox.prop('checked', $btn.hasClass('active'));
-            } else if (filterType === 'stock_status') {
-                var value = $btn.data('value');
-                var checkbox = $('input[name="stock_status[]"][value="' + value + '"]');
-                checkbox.prop('checked', $btn.hasClass('active'));
-            }
-
-            // Apply filters immediately
-            EShopFilters.applyFilters();
-        },
-
-        // Handle pagination clicks
-        handlePagination: function(e) {
-            // Allow normal navigation instead of AJAX loading
-            // This will make pagination work the standard way
-            return true;
-        },
-
-        // Initialize price range slider
+        // Initialize price slider
         initPriceSlider: function() {
             var sliderEl = document.getElementById('price-slider');
-            if (!sliderEl || sliderEl.__inited || typeof noUiSlider === 'undefined') return;
-            
-            var minInput = document.getElementById('min-price');
-            var maxInput = document.getElementById('max-price');
-            if (!minInput || !maxInput) return;
-            
-            // Get min/max from input attributes (set by PHP from actual product prices)
-            var minRange = parseFloat(minInput.getAttribute('min')) || 0;
-            var maxRange = parseFloat(maxInput.getAttribute('max')) || 1000;
-            
-            var minStart = parseFloat(minInput.value) || minRange;
-            var maxStart = parseFloat(maxInput.value) || maxRange;
-            var start = [minStart, maxStart];
-            
+            if (!sliderEl || typeof noUiSlider === 'undefined') {
+                console.log('SimpleFilters: Price slider element or noUiSlider not found');
+                return;
+            }
+
+            // Prevent double initialization
+            if (sliderEl.noUiSlider) {
+                console.log('SimpleFilters: Price slider already initialized');
+                return;
+            }
+
+            var minRange = parseInt(sliderEl.dataset.min) || 0;
+            var maxRange = parseInt(sliderEl.dataset.max) || 1000;
+            var currentMin = parseInt(sliderEl.dataset.currentMin) || minRange;
+            var currentMax = parseInt(sliderEl.dataset.currentMax) || maxRange;
+
+            console.log('SimpleFilters: Initializing price slider', {
+                min: minRange,
+                max: maxRange,
+                currentMin: currentMin,
+                currentMax: currentMax
+            });
+
             noUiSlider.create(sliderEl, {
-                start: start,
+                start: [currentMin, currentMax],
                 connect: true,
-                range: { min: minRange, max: maxRange },
+                range: {
+                    'min': minRange,
+                    'max': maxRange
+                },
                 step: 1,
+                format: {
+                    to: function(value) {
+                        return Math.round(value);
+                    },
+                    from: function(value) {
+                        return Number(value);
+                    }
+                }
             });
-            
-            sliderEl.__inited = true;
 
-            // Store defaults on the inputs for comparison when collecting filters
-            minInput.setAttribute('data-default', String(minRange));
-            maxInput.setAttribute('data-default', String(maxRange));
+            // Update price display and hidden inputs when slider changes
+            sliderEl.noUiSlider.on('update', function(values) {
+                var minVal = Math.round(values[0]);
+                var maxVal = Math.round(values[1]);
 
-            // Only update inputs when the slider is set by user interaction,
-            // not on every update/initialization
-            sliderEl.noUiSlider.on('set', function(values) {
-                var v0 = Math.round(values[0]);
-                var v1 = Math.round(values[1]);
-                minInput.value = v0;
-                maxInput.value = v1;
+                // Update price display
+                $('.price-min').text('$' + minVal);
+                $('.price-max').text('$' + maxVal);
+
+                // Update hidden inputs
+                $('#min-price').val(minVal);
+                $('#max-price').val(maxVal);
             });
+
+            console.log('SimpleFilters: Price slider initialized successfully');
         },
 
-        // Apply filters via standard navigation (non-AJAX)
-        applyFilters: function(page = 1) {
-            var filters = EShopFilters.collectFilters();
-            var orderby = $('.woocommerce-ordering select').val() || 'menu_order';
-            
-            // Add page to filters
-            if (page > 1) {
-                filters.paged = page;
-            }
-            
-            // Add orderby to filters
-            if (orderby !== 'menu_order') {
-                filters.orderby = orderby;
-            }
-            
-            // Build URL with filter parameters
-            var baseUrl = window.location.pathname;
-            var queryString = $.param(filters);
-            var newUrl = baseUrl + (queryString ? '?' + queryString : '');
-            
-            // Navigate to the new page with filters
-            window.location.href = newUrl;
-        },
+        // Populate filters from URL parameters
+        populateFiltersFromURL: function() {
+            console.log('SimpleFilters: Populating filters from URL...');
 
-        // Collect all active filters
-        collectFilters: function() {
-            var filters = {};
+            var url = new URL(window.location.href);
 
             // Price filters
-            var $minEl = $('#min-price');
-            var $maxEl = $('#max-price');
-            var minPrice = $minEl.val();
-            var maxPrice = $maxEl.val();
-            var minAttr = parseFloat($minEl.attr('min')) || 0;
-            var maxAttr = parseFloat($maxEl.attr('max')) || 0;
-            var minDefault = parseFloat($minEl.data('default')) || minAttr;
-            var maxDefault = parseFloat($maxEl.data('default')) || maxAttr;
-
-            // Only send price if different from defaults and non-empty
-            if (minPrice !== '' && parseFloat(minPrice) !== minDefault) {
-                filters.min_price = minPrice;
+            var minPrice = url.searchParams.get('min_price');
+            var maxPrice = url.searchParams.get('max_price');
+            if (minPrice) {
+                $('#min-price').val(minPrice);
             }
-            if (maxPrice !== '' && parseFloat(maxPrice) !== maxDefault) {
-                filters.max_price = maxPrice;
+            if (maxPrice) {
+                $('#max-price').val(maxPrice);
             }
 
-            // Category filters - convert to comma-separated string
-            var categories = [];
-            $('input[name="product_cat[]"]:checked').each(function() {
-                categories.push($(this).val());
-            });
-            if (categories.length) filters.product_cat = categories.join(',');
-
-            // Attribute filters - convert to comma-separated strings
-            $('.attribute-filter').each(function() {
-                var attribute = $(this).data('attribute');
-                var taxonomy = 'pa_' + attribute;
-                var values = [];
-
-                $(this).find('input:checked').each(function() {
-                    values.push($(this).val());
-                });
-
-                if (values.length) {
-                    filters[taxonomy] = values.join(',');
-                }
-            });
-
-            // Stock status - convert to comma-separated string
-            var stockStatus = [];
-            $('input[name="stock_status[]"]:checked').each(function() {
-                stockStatus.push($(this).val());
-            });
-            if (stockStatus.length) filters.stock_status = stockStatus.join(',');
-
-            // On sale
-            if ($('input[name="on_sale"]:checked').length) {
-                filters.on_sale = 1;
-            }
-
-            return filters;
-        },
-
-        // Update active filters display
-        updateActiveFilters: function(filters) {
-            var $activeFilters = $('.active-filters');
-            var $activeFiltersList = $('.active-filters-list');
-            var $activeFiltersBar = $('.active-filters-bar');
-            var $clearButton = $('.clear-filters');
-
-            $activeFiltersList.empty();
-
-            var hasFilters = false;
-
-            // Price filter
-            if (filters.min_price || filters.max_price) {
-                hasFilters = true;
-                var priceText = 'Price: ';
-                if (filters.min_price && filters.max_price) {
-                    priceText += '$' + filters.min_price + ' - $' + filters.max_price;
-                } else if (filters.min_price) {
-                    priceText += 'From $' + filters.min_price;
-                } else {
-                    priceText += 'Up to $' + filters.max_price;
-                }
-
-                $activeFiltersList.append(
-                    '<div class="active-filter flex items-center justify-between bg-gray-100 px-3 py-1 text-sm">' +
-                    '<span>' + priceText + '</span>' +
-                    '<button class="remove-filter ml-2 text-gray-400 hover:text-red-500" data-filter="price">' +
-                    '<i class="fas fa-times text-xs"></i>' +
-                    '</button>' +
-                    '</div>'
-                );
-            }
-
-            // Category filters - handle comma-separated string
-            if (filters.product_cat) {
-                hasFilters = true;
-                var categories = filters.product_cat.split(',');
+            // Category filters
+            var productCat = url.searchParams.get('product_cat');
+            if (productCat) {
+                var categories = productCat.split(',');
                 categories.forEach(function(cat) {
-                    var catName = $('input[value="' + cat + '"]').siblings('span').first().text();
-                    $activeFiltersList.append(
-                        '<div class="active-filter flex items-center justify-between bg-gray-100 px-3 py-1 text-sm">' +
-                        '<span>' + catName + '</span>' +
-                        '<button class="remove-filter ml-2 text-gray-400 hover:text-red-500" data-filter="product_cat" data-value="' + cat + '">' +
-                        '<i class="fas fa-times text-xs"></i>' +
-                        '</button>' +
-                        '</div>'
-                    );
+                    $('input[name="product_cat[]"][value="' + cat + '"]').prop('checked', true);
                 });
             }
 
-            // Show/hide active filters section
-            if (hasFilters) {
-                $activeFilters.show();
-                $activeFiltersBar.show();
-                $clearButton.show();
-            } else {
-                $activeFilters.hide();
-                $activeFiltersBar.hide();
-                $clearButton.hide();
+            // On sale filter
+            var onSale = url.searchParams.get('on_sale');
+            if (onSale === '1') {
+                $('input[name="on_sale"]').prop('checked', true);
             }
 
-            // Update quick filter button states
-            EShopFilters.updateQuickFilterStates(filters);
-        },
+            // Your custom attribute filters
+            var yourAttributes = ['pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection'];
 
-        // Update quick filter button states
-        updateQuickFilterStates: function(filters) {
-            // Reset all quick filter buttons
-            $('.quick-filter-btn').removeClass('active');
+            yourAttributes.forEach(function(attribute) {
+                var attrValue = url.searchParams.get(attribute);
+                if (attrValue) {
+                    var values = attrValue.split(',');
+                    values.forEach(function(value) {
+                        var $checkbox = $('input[name="' + attribute + '[]"][value="' + value + '"]');
+                        $checkbox.prop('checked', true);
 
-            // Update price filter buttons
-            if (filters.min_price || filters.max_price) {
-                var minPrice = parseInt(filters.min_price) || 0;
-                var maxPrice = parseInt(filters.max_price) || 999999;
+                        // Update visual state for size grids
+                        var $label = $checkbox.siblings('.size-label');
+                        if ($label.length > 0) {
+                            $label.removeClass('bg-white text-gray-700 border-gray-300')
+                                  .addClass('bg-primary text-white border-primary');
+                        }
+                    });
+                }
+            });
 
-                $('.quick-filter-btn[data-filter="price"]').each(function() {
-                    var btnMin = parseInt($(this).data('min')) || 0;
-                    var btnMax = parseInt($(this).data('max')) || 999999;
-
-                    if (btnMin === minPrice && btnMax === maxPrice) {
-                        $(this).addClass('active');
-                    }
-                });
-            }
-
-            // Update on sale filter
-            if (filters.on_sale) {
-                $('.quick-filter-btn[data-filter="on_sale"]').addClass('active');
-            }
-
-            // Update stock status filter - handle comma-separated string
-            if (filters.stock_status && filters.stock_status.includes('instock')) {
-                $('.quick-filter-btn[data-filter="stock_status"][data-value="instock"]').addClass('active');
-            }
-        },
-
-        // Clear all filters
-        clearAllFilters: function() {
-            $('#filter-drawer input[type="checkbox"]').prop('checked', false);
-            $('#min-price, #max-price').val('');
-
-            // Reset price slider back to full range if present
-            var sliderEl = document.getElementById('price-slider');
-            var minInput = document.getElementById('min-price');
-            var maxInput = document.getElementById('max-price');
-            if (sliderEl && sliderEl.noUiSlider && minInput && maxInput) {
-                var minDefault = parseFloat(minInput.getAttribute('data-default')) || parseFloat(minInput.getAttribute('min')) || 0;
-                var maxDefault = parseFloat(maxInput.getAttribute('data-default')) || parseFloat(maxInput.getAttribute('max')) || 0;
-                sliderEl.noUiSlider.set([minDefault, maxDefault]);
-            }
-            $('.active-filters').hide();
-            $('.active-filters-bar').hide();
-            $('.clear-filters').hide();
-            $('.quick-filter-btn').removeClass('active');
-            EShopFilters.applyFilters();
-        },
-
-        // Remove individual filter
-        removeFilter: function() {
-            var filterType = $(this).data('filter');
-            var filterValue = $(this).data('value');
-
-            if (filterType === 'price') {
-                $('#min-price, #max-price').val('');
-            } else if (filterType === 'product_cat') {
-                $('input[name="product_cat[]"][value="' + filterValue + '"]').prop('checked', false);
-            } else if (filterType === 'stock_status') {
-                $('input[name="stock_status[]"][value="' + filterValue + '"]').prop('checked', false);
-            }
-
-            EShopFilters.applyFilters();
-        },
-
-        // Helper function to get URL parameter
-        getParameterByName: function(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[[\]]/g, '\\$&');
-            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-            var results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+            console.log('SimpleFilters: Filters populated from URL');
         }
     };
-
-    // WordPress-compatible initialization
+    
+    // Initialize when document is ready
     $(document).ready(function() {
-        console.log('EShopFilters: Document ready, checking for shop layout...');
-
-        // Check if we're on a shop page
-        if ($('.shop-layout').length > 0 || $('body').hasClass('woocommerce-shop') || $('body').hasClass('woocommerce-archive')) {
-            console.log('EShopFilters: Shop page detected, initializing...');
-
-            // Small delay to ensure all elements are loaded
+        console.log('SimpleFilters: Document ready');
+        
+        // Check if we're on the right page
+        if ($('.shop-layout').length > 0 || $('body').hasClass('woocommerce')) {
+            console.log('SimpleFilters: Shop page detected');
+            
+            // Wait a bit for elements to be ready
             setTimeout(function() {
-                if (typeof window.EShopFilters !== 'undefined') {
-                    window.EShopFilters.init();
+                console.log('SimpleFilters: Checking elements...');
+                console.log('- Filter button:', $('#open-filters').length);
+                console.log('- Filter drawer:', $('#filter-drawer').length);
+                console.log('- Filter backdrop:', $('#filter-backdrop').length);
+                
+                if ($('#open-filters').length > 0) {
+                    window.SimpleFilters.init();
                 } else {
-                    console.error('EShopFilters: Object not available');
+                    console.warn('SimpleFilters: Filter button not found');
                 }
-            }, 100);
+            }, 200);
         } else {
-            console.log('EShopFilters: Not a shop page, skipping initialization');
+            console.log('SimpleFilters: Not a shop page');
         }
     });
-
+    
 })(jQuery);

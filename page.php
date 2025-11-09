@@ -1,6 +1,6 @@
 <?php get_header(); ?>
 
-<main class="main-content">
+<main class="main-content <?php echo (function_exists('is_woocommerce') && is_woocommerce()) ? 'woocommerce-page' : ''; ?>">
     <?php if (is_front_page()) : ?>
         <?php get_template_part('template-parts/front/hero'); ?>
     <?php endif; ?>
