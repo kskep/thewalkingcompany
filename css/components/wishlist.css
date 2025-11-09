@@ -31,18 +31,24 @@
 .product-card .add-to-wishlist {
   width: 32px;
   height: 32px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
+  background: transparent;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: none;
   opacity: 0;
   transition: all 0.3s ease;
 }
 
 .product-card:hover .add-to-wishlist {
   opacity: 1;
+}
+
+.twc-card__wishlist.add-to-wishlist {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 /* Wishlist Button on Single Product */
@@ -178,6 +184,9 @@
   .add-to-wishlist {
     background: rgba(31, 41, 55, 0.9);
     color: #f3f4f6;
+  }
+  .twc-card__wishlist.add-to-wishlist {
+    background: transparent;
   }
   
   .modern-action-btn.add-to-wishlist {

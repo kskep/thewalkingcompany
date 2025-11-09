@@ -1,9 +1,8 @@
 <?php
 /**
- * Single Product Template - Magazine Style
+ * Single Product Template - Redesigned & Unified
  *
- * Magazine-style single product with editorial layout.
- * Features custom gallery navigation, enhanced typography, and modern design.
+ * A clean, modern, and semantic template for the single product page.
  *
  * @package E-Shop Theme
  */
@@ -12,93 +11,91 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' ); ?>
 
-<!-- ESHOP DEBUG: single-product template loaded -->
-<!-- Main Product Container -->
-<div id="product-<?php the_ID(); ?>" class="product">
-    <div class="magazine-container">
-
-        <!-- Magazine Header -->
-        <div class="magazine-header">
-            <h1 class="magazine-title"><?php echo esc_html(get_bloginfo('name')); ?></h1>
-            <p class="magazine-subtitle"><?php echo esc_html(get_bloginfo('description')); ?></p>
-        </div>
-
-        <!-- Editorial Layout -->
-        <div class="editorial-layout">
+<div id="product-<?php the_ID(); ?>" <?php wc_product_class( 'single-product-layout', $product ); ?>>
+    <div class="grid-boundary">
+        <main class="product-main-container">
 
             <!-- Left Column: Product Gallery -->
-            <div class="editorial-content">
+            <div class="product-gallery-column">
                 <?php
                 /**
-                 * Custom Product Gallery Component
-                 * Replaces default WooCommerce gallery with our custom implementation
+                 * Hook: woocommerce_before_single_product_summary.
+                 *
+                 * @hooked woocommerce_show_product_sale_flash - 10 (Removed by theme)
+                 * @hooked eshop_custom_single_product_badges - 10 (Custom)
+                 * @hooked woocommerce_show_product_images - 20 (Removed by theme)
+                 * @hooked eshop_show_custom_product_gallery - 20 (Custom)
                  */
-                get_template_part('template-parts/components/product-gallery');
+                do_action( 'woocommerce_before_single_product_summary' );
                 ?>
             </div>
 
-            <!-- Right Column: Product Details -->
-            <div class="product-details">
+            <!-- Right Column: Product Details & Actions -->
+            <div class="product-details-column">
+                <div class="product-details-wrapper">
 
-                <!-- Product Header -->
-                <div class="product-header">
-                    <?php
-                    // Title
-                    woocommerce_template_single_title();
+                    <!-- Breadcrumbs -->
+                    <div class="product-breadcrumb">
+                        <?php woocommerce_breadcrumb(); ?>
+                    </div>
 
-                    // Rating (if enabled)
-                    woocommerce_template_single_rating();
+                    <!-- Header: Title, Price, Rating -->
+                    <header class="product-header">
+                        <?php
+                        /**
+                         * Hook: woocommerce_single_product_summary.
+                         *
+                         * @hooked woocommerce_template_single_title - 5
+                         * @hooked woocommerce_template_single_rating - 10 (Removed by theme)
+                         * @hooked woocommerce_template_single_price - 10
+                         * @hooked woocommerce_template_single_excerpt - 20
+                         * @hooked woocommerce_template_single_add_to_cart - 30 (Moved)
+                         * @hooked woocommerce_template_single_meta - 40
+                         * @hooked woocommerce_template_single_sharing - 50
+                         */
+                        woocommerce_template_single_title();
+                        woocommerce_template_single_price();
+                        ?>
+                    </header>
 
-                    // Price
-                    woocommerce_template_single_price();
-
-                    // Stock Status
-                    global $product;
-                    if ($product->is_in_stock()) {
-                        echo '<div class="stock in-stock">';
-                        echo '<i class="fas fa-check-circle"></i>';
-                        echo '<span>' . esc_html__('In Stock - Ships Today', 'eshop-theme') . '</span>';
-                        echo '</div>';
-                    }
-                    ?>
-                </div>
-
-                <!-- Product Actions -->
-                <div class="product-actions">
-                    <div class="size-selection-container">
+                    <!-- Short Description -->
+                    <div class="product-description">
+                        <?php woocommerce_template_single_excerpt(); ?>
+                    </div>
+                    
+                    <!-- Variations & Add to Cart Form -->
+                    <div class="product-cart-section">
                         <?php woocommerce_template_single_add_to_cart(); ?>
                     </div>
-                </div>
+                    
+                    <!-- Product Meta -->
+                    <div class="product-meta-section">
+                        <?php woocommerce_template_single_meta(); ?>
+                    </div>
+                    
+                    <!-- Trust Badges -->
+                    <?php get_template_part('template-parts/components/trust-badges'); ?>
 
-                <!-- Trust Badges -->
-                <?php get_template_part('template-parts/components/trust-badges'); ?>
-
-                <!-- Product Accordions -->
-                <?php get_template_part('template-parts/components/product-accordions'); ?>
-
-                <!-- Product Meta Information -->
-                <div class="product-meta">
-                    <?php woocommerce_template_single_meta(); ?>
                 </div>
             </div>
-        </div>
+        </main>
+    </div>
 
-        <!-- Related Products & Upsells -->
-        <?php
-        /**
-         * Hook: woocommerce_after_single_product_summary.
-         *
-         * @hooked woocommerce_upsell_display - 15
-         * @hooked eshop_output_related_products_from_categories - 20 (Custom)
-         */
-        do_action('woocommerce_after_single_product_summary');
-        ?>
+    <!-- Tabs & Related Products Section -->
+    <div class="product-additional-info">
+        <div class="grid-boundary">
+            <?php
+            /**
+             * Hook: woocommerce_after_single_product_summary.
+             *
+             * @hooked woocommerce_output_product_data_tabs - 10
+             * @hooked woocommerce_upsell_display - 15
+             * @hooked eshop_output_related_products_from_categories - 20 (Custom)
+             */
+            do_action( 'woocommerce_after_single_product_summary' );
+            ?>
+        </div>
     </div>
 </div>
 
-<!-- Sticky Add to Cart (Mobile) -->
-<?php // get_template_part('template-parts/components/sticky-atc'); ?>
-
-<?php get_footer( 'shop' );
-
-/* Omit closing PHP tag at the end of PHP files */
+<?php get_footer( 'shop' ); ?>

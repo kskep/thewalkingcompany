@@ -53,10 +53,16 @@
                         <!-- Wishlist -->
                         <?php if (class_exists('WooCommerce')) : ?>
                         <div class="wishlist-wrapper relative">
+                            <?php
+                            $wishlist_count        = eshop_get_wishlist_count();
+                            $wishlist_count_label  = eshop_get_wishlist_count_display();
+                            $wishlist_products     = eshop_get_wishlist_products();
+                            $wishlist_has_items    = !empty($wishlist_products);
+                            ?>
                             <button class="wishlist-toggle p-2 text-dark hover:text-primary transition-colors duration-200 relative" aria-label="Wishlist">
                                 <i class="far fa-heart icon"></i>
-                                <span class="wishlist-count absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center <?php echo eshop_get_wishlist_count() > 0 ? '' : 'hidden'; ?>">
-                                    <?php echo eshop_get_wishlist_count(); ?>
+                                <span class="wishlist-count absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center <?php echo $wishlist_count > 0 ? '' : 'hidden'; ?>">
+                                    <?php echo esc_html($wishlist_count_label); ?>
                                 </span>
                             </button>
                             
@@ -65,40 +71,13 @@
                                 <div class="p-4">
                                     <h3 class="text-lg font-semibold mb-3 text-dark"><?php _e('Wishlist', 'eshop-theme'); ?></h3>
                                     <div class="wishlist-items">
-                                        <?php
-                                        $wishlist_products = eshop_get_wishlist_products();
-                                        if (!empty($wishlist_products)) :
-                                            foreach ($wishlist_products as $product_id) :
-                                                $product = wc_get_product($product_id);
-                                                if ($product) :
-                                        ?>
-                                            <div class="wishlist-item flex items-center space-x-3 py-2 border-b border-gray-100 last:border-b-0">
-                                                <div class="w-12 h-12 flex-shrink-0">
-                                                    <?php echo $product->get_image(array(48, 48)); ?>
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <h4 class="text-sm font-medium text-dark truncate"><?php echo $product->get_name(); ?></h4>
-                                                    <p class="text-sm text-primary font-semibold"><?php echo $product->get_price_html(); ?></p>
-                                                </div>
-                                                <button class="remove-from-wishlist text-gray-400 hover:text-red-500 transition-colors" data-product-id="<?php echo $product_id; ?>">
-                                                    <i class="fas fa-times text-xs"></i>
-                                                </button>
-                                            </div>
-                                        <?php
-                                                endif;
-                                            endforeach;
-                                        else :
-                                        ?>
-                                            <p class="text-gray-500 text-center py-4"><?php _e('Your wishlist is empty', 'eshop-theme'); ?></p>
-                                        <?php endif; ?>
+                                        <?php echo eshop_get_wishlist_dropdown_items_html(); ?>
                                     </div>
-                                    <?php if (!empty($wishlist_products)) : ?>
-                                        <div class="mt-4 pt-3 border-t border-gray-200">
-                                            <a href="<?php echo home_url('/wishlist'); ?>" class="block w-full text-center bg-primary text-white py-2 hover:bg-primary-dark transition-colors duration-200">
-                                                <?php _e('View All', 'eshop-theme'); ?>
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
+                                    <div class="wishlist-view-all mt-4 pt-3 border-t border-gray-200 <?php echo $wishlist_has_items ? '' : 'hidden'; ?>">
+                                        <a href="<?php echo esc_url(home_url('/wishlist')); ?>" class="block w-full text-center bg-primary text-white py-2 hover:bg-primary-dark transition-colors duration-200">
+                                            <?php _e('View All', 'eshop-theme'); ?>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

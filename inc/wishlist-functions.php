@@ -70,7 +70,8 @@ function eshop_add_to_wishlist() {
             'message' => __('Product not found', 'thewalkingtheme')
         ));
     }
-    
+    $product_name_plain = wp_strip_all_tags($product->get_name());
+
     if (!isset($_SESSION['eshop_wishlist'])) {
         $_SESSION['eshop_wishlist'] = array();
     }
@@ -81,7 +82,7 @@ function eshop_add_to_wishlist() {
     if (!in_array($product_id, $_SESSION['eshop_wishlist'])) {
         $_SESSION['eshop_wishlist'][] = $product_id;
         $action = 'added';
-        $message = sprintf(__('%s added to wishlist', 'thewalkingtheme'), $product->get_name());
+        $message = sprintf(__('%s added to wishlist', 'thewalkingtheme'), $product_name_plain);
         
         // Save to user meta if logged in
         if (is_user_logged_in()) {
@@ -91,7 +92,7 @@ function eshop_add_to_wishlist() {
     } else {
         $_SESSION['eshop_wishlist'] = array_diff($_SESSION['eshop_wishlist'], array($product_id));
         $action = 'removed';
-        $message = sprintf(__('%s removed from wishlist', 'thewalkingtheme'), $product->get_name());
+        $message = sprintf(__('%s removed from wishlist', 'thewalkingtheme'), $product_name_plain);
         
         // Update user meta if logged in
         if (is_user_logged_in()) {
@@ -99,14 +100,38 @@ function eshop_add_to_wishlist() {
             update_user_meta($user_id, 'eshop_wishlist', $_SESSION['eshop_wishlist']);
         }
     }
-    
+
+    // Normalize wishlist array indices to avoid gaps after removals
+    $_SESSION['eshop_wishlist'] = array_values(array_unique($_SESSION['eshop_wishlist']));
+
+    if (is_user_logged_in()) {
+        update_user_meta(get_current_user_id(), 'eshop_wishlist', $_SESSION['eshop_wishlist']);
+    }
+
+    $wishlist_count      = count($_SESSION['eshop_wishlist']);
+    $is_in_wishlist      = ($action === 'added');
+    $product_name        = $product_name_plain;
+    $button_text         = $is_in_wishlist ? __('Saved', 'thewalkingtheme') : __('Save', 'thewalkingtheme');
+    $aria_label          = $is_in_wishlist
+        ? sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product_name)
+        : sprintf(__('Add %s to wishlist', 'thewalkingtheme'), $product_name);
+    $dropdown_html       = eshop_get_wishlist_dropdown_items_html();
+    $notification_type   = $is_in_wishlist ? 'success' : 'info';
+
     wp_send_json_success(array(
-        'action' => $action,
-        'message' => $message,
-        'count' => count($_SESSION['eshop_wishlist']),
-        'product_id' => $product_id,
-        'product_name' => $product->get_name(),
-        'is_in_wishlist' => $action === 'added'
+        'action'            => $action,
+        'message'           => $message,
+        'notification_type' => $notification_type,
+        'count'             => $wishlist_count,
+        'count_label'       => eshop_get_wishlist_count_display(),
+        'product_id'        => $product_id,
+        'product_name'      => $product_name,
+        'is_in_wishlist'    => $is_in_wishlist,
+        'button_text'       => $button_text,
+        'aria_label'        => $aria_label,
+        'icon'              => $is_in_wishlist ? 'favorite' : 'favorite_border',
+        'dropdown_html'     => $dropdown_html,
+        'has_items'         => $wishlist_count > 0,
     ));
 }
 add_action('wp_ajax_add_to_wishlist', 'eshop_add_to_wishlist');
@@ -140,6 +165,51 @@ function eshop_get_wishlist_products() {
         return array();
     }
     return $_SESSION['eshop_wishlist'];
+}
+
+/**
+ * Render wishlist dropdown items markup
+ */
+function eshop_get_wishlist_dropdown_items_html() {
+    $wishlist_products = eshop_get_wishlist_products();
+
+    ob_start();
+
+    if (!empty($wishlist_products)) {
+        foreach ($wishlist_products as $product_id) {
+            $product = wc_get_product($product_id);
+            if (!$product) {
+                continue;
+            }
+
+            $product_name = wp_strip_all_tags($product->get_name());
+            $product_price = $product->get_price_html();
+            ?>
+            <div class="wishlist-item flex items-center space-x-3 py-2 border-b border-gray-100 last:border-b-0">
+                <div class="w-12 h-12 flex-shrink-0">
+                    <?php echo wp_kses_post($product->get_image(array(48, 48))); ?>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-medium text-dark truncate">
+                        <a href="<?php echo esc_url(get_permalink($product_id)); ?>" class="hover:text-primary transition-colors">
+                            <?php echo esc_html($product_name); ?>
+                        </a>
+                    </h4>
+                    <p class="text-sm text-primary font-semibold"><?php echo wp_kses_post($product_price); ?></p>
+                </div>
+                <button class="remove-from-wishlist text-gray-400 hover:text-red-500 transition-colors" data-product-id="<?php echo esc_attr($product_id); ?>" aria-label="<?php echo esc_attr(sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product_name)); ?>">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            <?php
+        }
+    } else {
+        ?>
+        <p class="text-gray-500 text-center py-4"><?php esc_html_e('Your wishlist is empty', 'thewalkingtheme'); ?></p>
+        <?php
+    }
+
+    return ob_get_clean();
 }
 
 /**
@@ -192,6 +262,15 @@ function eshop_wishlist_button_enhanced($product_id = null, $show_text = true, $
         <?php endif; ?>
     </button>
     <?php
+}
+
+if (!function_exists('eshop_wishlist_button')) {
+    /**
+     * Legacy shim for previous wishlist button helper
+     */
+    function eshop_wishlist_button($product_id = null) {
+        eshop_wishlist_button_enhanced($product_id, false, 'add-to-wishlist');
+    }
 }
 
 /**

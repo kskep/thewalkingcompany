@@ -13,10 +13,17 @@ if (!$product || !$product->is_visible()) {
     return;
 }
 
-$product_id   = $product->get_id();
+$product_id    = $product->get_id();
 $main_image_id = $product->get_image_id();
 $gallery_ids   = $product->get_gallery_image_ids();
 $image_count   = ($main_image_id ? 1 : 0) + count($gallery_ids);
+$product_name_plain = wp_strip_all_tags($product->get_name());
+$is_in_wishlist = function_exists('eshop_is_in_wishlist') ? eshop_is_in_wishlist($product_id) : false;
+$wishlist_classes = 'twc-card__wishlist add-to-wishlist' . ($is_in_wishlist ? ' in-wishlist' : '');
+$wishlist_label   = $is_in_wishlist
+  ? sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product_name_plain)
+  : sprintf(__('Add %s to wishlist', 'thewalkingtheme'), $product_name_plain);
+$wishlist_icon    = $is_in_wishlist ? 'favorite' : 'favorite_border';
 
 // Helper: get image HTML (cover) - use large high-quality size
 $image_html = '';
@@ -169,8 +176,8 @@ $is_low_stock = $product->is_in_stock() && $stock_quantity !== null && $stock_qu
       </div>
     </div>
 
-    <button class="twc-card__wishlist add-to-wishlist" data-product-id="<?php echo esc_attr($product_id); ?>" title="<?php esc_attr_e('Add to Wishlist', 'thewalkingtheme'); ?>" aria-label="<?php esc_attr_e('Add to wishlist', 'thewalkingtheme'); ?>">
-      <span class="material-icons">favorite_border</span>
+  <button class="<?php echo esc_attr($wishlist_classes); ?>" data-product-id="<?php echo esc_attr($product_id); ?>" data-product-name="<?php echo esc_attr($product_name_plain); ?>" title="<?php echo esc_attr($wishlist_label); ?>" aria-label="<?php echo esc_attr($wishlist_label); ?>">
+      <span class="material-icons"><?php echo esc_html($wishlist_icon); ?></span>
     </button>
   </div>
 </article>

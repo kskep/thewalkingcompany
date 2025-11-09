@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="el" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Product Test - Magazine Style</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables - Updated Colors and Fonts */
+        :root {
+            --primary-pink: #EE81B3;
+            --primary-pink-dark: #d946a0;
+            --ink: #2F2A26;
+            --ink-soft: #4b5563;
+            --price-red: #E11900;
+            --paper: #ffffff;
+            --text-lighter: #888;
+            --border-light: #e5e7eb;
+            --border-lighter: #f3f4f6;
+            --rule: #e5e7eb;
+            --max-width: 1630px;
+            --font-heading: 'Roboto Condensed', sans-serif;
+            --font-body: 'Crimson Text', serif;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--ink);
+            background-color: #fafafa;
+        }
+
+        /* Magazine-style layout */
+        .magazine-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Editorial grid layout */
+        .editorial-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding: 3rem 0;
+            align-items: start;
+        }
+
+        /* Magazine header */
+        .magazine-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 2px solid var(--primary-pink);
+        }
+
+        .magazine-title {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+
+        .magazine-subtitle {
+            font-size: 1.25rem;
+            color: var(--ink-soft);
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        /* Left column - Editorial content */
+        .editorial-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-width: 0;
+            width: 100%;
+        }
+
+        /* Product Gallery - Magazine Style */
+        .product-gallery {
+            position: relative;
+            background: var(--paper);
+            border: 1px solid var(--border-light);
+            outline: none;
+        }
+
+        .product-gallery__main {
+            position: relative;
+            background: #F8F7F5;
+            aspect-ratio: 4/5;
+        }
+
+        .product-gallery__main-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .product-gallery__main-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-gallery__main-image-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Custom magazine-style navigation arrows */
+        .product-gallery__nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-light);
+            color: var(--ink);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .product-gallery__nav:hover {
+            background: var(--primary-pink);
+            color: var(--paper);
+        }
+
+        .product-gallery__nav--prev {
+            left: 1rem;
+        }
+
+        .product-gallery__nav--next {
+            right: 1rem;
+        }
+
+        /* Sale badge - Magazine style */
+        .onsale {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary-pink);
+            color: var(--paper);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 5;
+        }
+
+        /* Thumbnails - Editorial layout */
+        .product-gallery__thumbnails {
+            padding: 1rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--paper);
+        }
+
+        .product-gallery__thumbnails-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .product-gallery__thumbnails-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-gallery__thumbnail {
+            width: 80px;
+            height: 80px;
+            border: 2px solid transparent;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .product-gallery__thumbnail.is-active {
+            border-color: var(--primary-pink);
+        }
+
+        .product-gallery__thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Image Counter */
+        .product-gallery__counter {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--paper);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Right column - Product details */
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        /* Product Header - Magazine typography */
+        .product-header {
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 2rem;
+        }
+
+        .product_title {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--ink);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Star Rating - Magazine style */
+        .woocommerce-product-rating {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .star-rating {
+            overflow: hidden;
+            position: relative;
+            height: 1.25em;
+            line-height: 1;
+            font-size: 1.125em;
+            width: 6em;
+            font-family: 'star';
+        }
+
+        .star-rating:before {
+            content: "★★★★★";
+            float: left;
+            top: 0;
+            left: 0;
+            position: absolute;
+            color: var(--border-light);
+        }
+
+        .star-rating span {
+            overflow: hidden;
+            float: left;
+            top: 0;
+            left: 0;
+            position: absolute;
+            padding-top: 1.5em;
+        }
+
+        .star-rating span:before {
+            content: "★★★★★";
+            top: 0;
+            position: absolute;
+            left: 0;
+            color: var(--primary-pink);
+        }
+
+        .rating-text {
+            font-size: 0.875rem;
+            color: var(--ink-soft);
+            font-weight: 500;
+        }
+
+        /* Pricing - Magazine layout */
+        .product-pricing-container .price {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-pink);
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-pricing-container .price .original-price {
+            font-size: 1.5rem;
+            color: var(--ink-soft);
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        /* Stock Status */
+        .stock {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2rem;
+        }
+
+        .stock.in-stock {
+            color: #059669;
+            background-color: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+
+        /* Product Actions - Magazine style */
+        .product-actions {
+            background-color: #f9fafb;
+            padding: 2rem;
+            border: 1px solid var(--border-light);
+        }
+
+        /* Size Selection */
+        .size-selection-container {
+            margin-bottom: 2rem;
+        }
+
+        .variation-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--ink);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .size-options-single {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .size-option-single {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 3rem;
+            height: 3rem;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #ffffff;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .size-option-single:hover {
+            background-color: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .size-option-single.selected {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        /* Purchase Actions */
+        .purchase-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: stretch;
+            margin-bottom: 2rem;
+        }
+
+        .single_add_to_cart_button {
+            flex: 1;
+            background-color: var(--primary-pink);
+            color: var(--paper);
+            border: none;
+            padding: 1.5rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-heading);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .single_add_to_cart_button:hover {
+            background-color: var(--primary-pink-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Wishlist Button */
+        .add-to-wishlist {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: auto;
+            border: 1px solid var(--border-light);
+            background: var(--paper);
+            color: var(--ink-soft);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-to-wishlist i {
+            font-size: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .add-to-wishlist:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+            background: #FDF2F8;
+        }
+
+        .add-to-wishlist:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Trust Badges */
+        .trust-badges {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-lighter);
+            background: var(--paper);
+            margin-top: 2rem;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--ink-soft);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .trust-badge i {
+            color: var(--primary-pink);
+        }
+
+        /* Product Accordions */
+        .product-accordions-container {
+            margin-top: 2rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .product-accordion {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .product-accordion:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: #f9fafb;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--ink);
+            font-family: var(--font-heading);
+            transition: all 0.2s ease;
+        }
+
+        .accordion-header:hover {
+            background: #f3f4f6;
+            color: var(--primary-pink);
+        }
+
+        .accordion-header[aria-expanded="true"] {
+            background: var(--primary-pink);
+            color: var(--paper);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .accordion-header[aria-expanded="true"] .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-panel {
+            padding: 0;
+            color: var(--ink-soft);
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease;
+            background: var(--paper);
+        }
+
+        .accordion-panel[aria-hidden="false"] {
+            max-height: 500px;
+        }
+
+        .accordion-content {
+            padding: 1.5rem;
+            font-family: var(--font-body);
+            line-height: 1.7;
+        }
+
+        /* Product Meta */
+        .product-meta {
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem;
+            font-size: 0.875rem;
+            color: var(--ink-soft);
+        }
+
+        .product-meta > span {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-meta > span:last-child {
+            margin-bottom: 0;
+        }
+
+        .product-meta a {
+            color: var(--primary-pink);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .product-meta a:hover {
+            color: var(--primary-pink-dark);
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .editorial-layout {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .magazine-title {
+                font-size: 2.5rem;
+            }
+
+            .product_title {
+                font-size: 2.5rem;
+            }
+
+            .product-pricing-container .price {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .magazine-title {
+                font-size: 2rem;
+            }
+
+            .product_title {
+                font-size: 2rem;
+            }
+
+            .product-pricing-container .price {
+                font-size: 1.75rem;
+            }
+
+            .product-actions {
+                padding: 1.5rem;
+            }
+
+            .purchase-actions {
+                flex-direction: column;
+            }
+
+            .add-to-wishlist {
+                width: 100%;
+                height: 3.5rem;
+            }
+
+            .trust-badges {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .magazine-title {
+                font-size: 1.75rem;
+            }
+
+            .product_title {
+                font-size: 1.75rem;
+            }
+
+            .product-pricing-container .price {
+                font-size: 1.5rem;
+            }
+
+            .single_add_to_cart_button {
+                padding: 1.25rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .editorial-layout {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Product Container -->
+    <div id="product-123" class="product">
+        <div class="magazine-container">
+
+            <!-- Magazine Header -->
+            <div class="magazine-header">
+                <h1 class="magazine-title">THE WALKING COMPANY</h1>
+                <p class="magazine-subtitle">Premium Fashion Magazine</p>
+            </div>
+
+            <!-- Editorial Layout -->
+            <div class="editorial-layout">
+
+                <!-- Left Column: Product Gallery -->
+                <div class="editorial-content">
+                    <div class="product-gallery has-thumbnails" data-product-id="123">
+                        
+                        <!-- Sale Badge -->
+                        <span class="onsale" aria-label="On sale">Sale</span>
+                        
+                        <!-- Main Image Container -->
+                        <div class="product-gallery__main">
+                            <div class="product-gallery__main-image-wrapper">
+                                <div class="product-gallery__main-image">
+                                    <img src="https://picsum.photos/seed/product1/800/1000.jpg"
+                                         alt="Product Image"
+                                         title="Product Title"
+                                         class="product-gallery__main-image-img"
+                                         loading="eager"
+                                         decoding="async"
+                                         width="800"
+                                         height="1000">
+                                </div>
+                            </div>
+
+                            <!-- Custom Magazine Navigation Arrows -->
+                            <button class="product-gallery__nav product-gallery__nav--prev" aria-label="Previous image">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="product-gallery__nav product-gallery__nav--next" aria-label="Next image">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+
+                            <!-- Image Counter -->
+                            <div class="product-gallery__counter" aria-live="polite">
+                                <span class="product-gallery__counter-current">1</span>
+                                <span class="product-gallery__counter-separator">/</span>
+                                <span class="product-gallery__counter-total">4</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Thumbnail Gallery -->
+                        <div class="product-gallery__thumbnails">
+                            <div class="product-gallery__thumbnails-wrapper">
+                                <div class="product-gallery__thumbnail is-active" data-index="0">
+                                    <img src="https://picsum.photos/seed/product1/80/80.jpg" alt="Product thumbnail 1" loading="lazy" decoding="async">
+                                </div>
+                                <div class="product-gallery__thumbnail" data-index="1">
+                                    <img src="https://picsum.photos/seed/product2/80/80.jpg" alt="Product thumbnail 2" loading="lazy" decoding="async">
+                                </div>
+                                <div class="product-gallery__thumbnail" data-index="2">
+                                    <img src="https://picsum.photos/seed/product3/80/80.jpg" alt="Product thumbnail 3" loading="lazy" decoding="async">
+                                </div>
+                                <div class="product-gallery__thumbnail" data-index="3">
+                                    <img src="https://picsum.photos/seed/product4/80/80.jpg" alt="Product thumbnail 4" loading="lazy" decoding="async">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Product Details -->
+                <div class="product-details">
+
+                    <!-- Product Header -->
+                    <div class="product-header">
+                        <!-- Title -->
+                        <h1 class="product_title">PREMIUM FASHION JACKET</h1>
+
+                        <!-- Rating -->
+                        <div class="woocommerce-product-rating">
+                            <div class="star-rating">
+                                <span style="width:80%"></span>
+                            </div>
+                            <span class="rating-text">4.0 out of 5</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="product-pricing-container">
+                            <div class="price">
+                                <span class="current-price">€89.99</span>
+                                <span class="original-price">€129.99</span>
+                            </div>
+                        </div>
+
+                        <!-- Stock Status -->
+                        <div class="stock in-stock">
+                            <i class="fas fa-check-circle"></i>
+                            <span>In Stock - Ships Today</span>
+                        </div>
+                    </div>
+
+                    <!-- Product Actions -->
+                    <div class="product-actions">
+                        <div class="size-selection-container">
+                            <div class="variation-wrapper">
+                                <div class="variation-label">Size: <span class="selected-value">Select Size</span></div>
+                                <div class="size-options-single">
+                                    <button class="size-option-single" data-value="XS">XS</button>
+                                    <button class="size-option-single" data-value="S">S</button>
+                                    <button class="size-option-single selected" data-value="M">M</button>
+                                    <button class="size-option-single" data-value="L">L</button>
+                                    <button class="size-option-single" data-value="XL">XL</button>
+                                    <button class="size-option-single out-of-stock" data-value="XXL">XXL</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="purchase-actions">
+                            <button type="submit" class="single_add_to_cart_button">
+                                <span class="btn-text">ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ</span>
+                            </button>
+                            
+                            <button type="button" class="add-to-wishlist">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <i class="fas fa-shipping-fast"></i>
+                            <span>Free Shipping</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-undo"></i>
+                            <span>Easy Returns</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure Payment</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-headset"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+
+                    <!-- Product Accordions -->
+                    <div class="product-accordions-container">
+                        <div class="product-accordion">
+                            <button class="accordion-header" aria-expanded="false">
+                                <span>Περιγραφή</span>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </button>
+                            <div class="accordion-panel" aria-hidden="true">
+                                <div class="accordion-content">
+                                    <p>Experience ultimate style and comfort with our premium fashion jacket. Crafted from high-quality materials, this jacket features a modern design that complements any outfit.</p>
+                                    <ul>
+                                        <li>Premium fabric construction</li>
+                                        <li>Modern tailored fit</li>
+                                        <li>Multiple color options</li>
+                                        <li>Machine washable</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-accordion">
+                            <button class="accordion-header" aria-expanded="false">
+                                <span>Λεπτομέρειες</span>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </button>
+                            <div class="accordion-panel" aria-hidden="true">
+                                <div class="accordion-content">
+                                    <ul>
+                                        <li>Material: 80% Cotton, 20% Polyester</li>
+                                        <li>Care: Machine wash cold</li>
+                                        <li>Origin: Made in Greece</li>
+                                        <li>Season: All seasons</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-accordion">
+                            <button class="accordion-header" aria-expanded="false">
+                                <span>Οδηγίες Πλυσίματος</span>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </button>
+                            <div class="accordion-panel" aria-hidden="true">
+                                <div class="accordion-content">
+                                    <p>For best results, machine wash in cold water with similar colors. Tumble dry on low heat or hang to dry. Iron on medium heat if needed.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Meta Information -->
+                    <div class="product-meta">
+                        <span class="sku_wrapper">SKU: <span>JKT-001</span></span>
+                        <span class="posted_in">Category: <a href="#">Jackets</a>, <a href="#">Fashion</a></span>
+                        <span class="tagged_as">Tags: <a href="#">Premium</a>, <a href="#">Modern</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gallery functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const gallery = document.querySelector('.product-gallery');
+            if (!gallery) return;
+
+            const thumbnails = gallery.querySelectorAll('.product-gallery__thumbnail');
+            const mainImage = gallery.querySelector('.product-gallery__main-image-img');
+            const counterCurrent = gallery.querySelector('.product-gallery__counter-current');
+            const prevBtn = gallery.querySelector('.product-gallery__nav--prev');
+            const nextBtn = gallery.querySelector('.product-gallery__nav--next');
+            
+            let currentIndex = 0;
+            const totalImages = thumbnails.length;
+
+            // Image URLs for demo
+            const imageUrls = [
+                'https://picsum.photos/seed/product1/800/1000.jpg',
+                'https://picsum.photos/seed/product2/800/1000.jpg',
+                'https://picsum.photos/seed/product3/800/1000.jpg',
+                'https://picsum.photos/seed/product4/800/1000.jpg'
+            ];
+
+            function updateGallery(index) {
+                // Update main image
+                mainImage.src = imageUrls[index];
+                
+                // Update thumbnails
+                thumbnails.forEach((thumb, i) => {
+                    thumb.classList.toggle('is-active', i === index);
+                });
+                
+                // Update counter
+                if (counterCurrent) {
+                    counterCurrent.textContent = index + 1;
+                }
+                
+                currentIndex = index;
+            }
+
+            // Thumbnail clicks
+            thumbnails.forEach((thumb, index) => {
+                thumb.addEventListener('click', () => updateGallery(index));
+            });
+
+            // Navigation buttons
+            prevBtn?.addEventListener('click', () => {
+                const newIndex = currentIndex > 0 ? currentIndex - 1 : totalImages - 1;
+                updateGallery(newIndex);
+            });
+
+            nextBtn?.addEventListener('click', () => {
+                const newIndex = currentIndex < totalImages - 1 ? currentIndex + 1 : 0;
+                updateGallery(newIndex);
+            });
+
+            // Size selection
+            const sizeOptions = document.querySelectorAll('.size-option-single:not(.out-of-stock)');
+            const selectedValue = document.querySelector('.selected-value');
+            
+            sizeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    sizeOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    if (selectedValue) {
+                        selectedValue.textContent = this.textContent;
+                    }
+                });
+            });
+
+            // Accordion functionality
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    const panel = this.nextElementSibling;
+                    
+                    // Close all other accordions
+                    accordionHeaders.forEach(otherHeader => {
+                        if (otherHeader !== this) {
+                            otherHeader.setAttribute('aria-expanded', 'false');
+                            otherHeader.nextElementSibling.setAttribute('aria-hidden', 'true');
+                        }
+                    });
+                    
+                    // Toggle current accordion
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    panel.setAttribute('aria-hidden', isExpanded);
+                });
+            });
+
+            // Add to cart button
+            const addToCartBtn = document.querySelector('.single_add_to_cart_button');
+            addToCartBtn?.addEventListener('click', function() {
+                const originalText = this.querySelector('.btn-text').textContent;
+                this.querySelector('.btn-text').textContent = 'ΠΡΟΣΤΕΘΗΚΕ!';
+                this.style.backgroundColor = '#059669';
+                
+                setTimeout(() => {
+                    this.querySelector('.btn-text').textContent = originalText;
+                    this.style.backgroundColor = '';
+                }, 2000);
+            });
+
+            // Wishlist button
+            const wishlistBtn = document.querySelector('.add-to-wishlist');
+            wishlistBtn?.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    this.style.color = 'var(--primary-pink)';
+                    this.style.background = '#FDF2F8';
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    this.style.color = '';
+                    this.style.background = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
