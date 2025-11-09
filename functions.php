@@ -732,30 +732,3 @@ function handle_newsletter_signup() {
 }
 add_action('admin_post_newsletter_signup', 'handle_newsletter_signup');
 add_action('admin_post_nopriv_newsletter_signup', 'handle_newsletter_signup');
-
-/**
- * Transform size labels from full names to abbreviations
- * Per SINGLE_PRODUCT_PLAN.txt specification
- *
- * @param string $size_label The original size label
- * @return string The abbreviated size label
- */
-function eshop_transform_size_label( $size_label ) {
-    $size_map = array(
-        'XSmall/Small'  => 'XS/S',
-        'One Size'      => 'OS',
-        'XSmall'        => 'XS',
-        'Small'         => 'S',
-        'Medium'        => 'M',
-        'Large'         => 'L',
-        'XLarge'        => 'XL',
-        'XXLarge'       => 'XXL',
-        'XXXLarge'      => 'XXXL',
-        'Small/Medium'  => 'S/M',
-        'Medium/Large'  => 'M/L',
-        'Large/XLarge'  => 'L/XL',
-    );
-    
-    // Return mapped value if exists, otherwise return original
-    return isset( $size_map[ $size_label ] ) ? $size_map[ $size_label ] : $size_label;
-}
