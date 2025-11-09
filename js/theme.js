@@ -15,12 +15,30 @@
             $(this).find('i').toggleClass('fa-bars fa-times');
         });
 
-        // Mobile Dropdown Toggle
+        // Mobile Dropdown Toggle - Enhanced to allow parent link navigation
         $('.mobile-menu .menu-item-has-children > a').on('click', function(e) {
-            e.preventDefault();
             var $parent = $(this).parent();
-            $parent.toggleClass('open');
+            var $submenu = $parent.find('.sub-menu');
+            var isOpen = $parent.hasClass('open');
+            
+            // Close other submenus
             $parent.siblings('.menu-item-has-children').removeClass('open');
+            
+            if (!isOpen) {
+                // Open this submenu
+                $parent.addClass('open');
+                $submenu.slideDown(200);
+                
+                // Prevent default only when opening submenu
+                e.preventDefault();
+            } else {
+                // Close this submenu
+                $parent.removeClass('open');
+                $submenu.slideUp(200);
+                
+                // Allow default navigation when closing (user wants to navigate to parent)
+                // Don't prevent default here
+            }
         });
 
 

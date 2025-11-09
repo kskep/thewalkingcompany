@@ -15,6 +15,26 @@
   border: none;
   margin-bottom: 0;
   width: 100%;
+  max-width: 100%;
+}
+
+/* Guard against flex/grid parents miscalculating swiper width */
+.product-gallery,
+.product-gallery__main,
+.product-gallery__main-image-wrapper,
+.product-gallery__thumbnails {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.product-gallery__main-image-wrapper .swiper-wrapper {
+  min-width: 0;
+  width: 100%;
+}
+
+.product-gallery__main-image-wrapper .swiper-slide {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Sale Badge */

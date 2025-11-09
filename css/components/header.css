@@ -185,7 +185,9 @@
 }
 
 .mobile-menu a {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 12px 0;
   color: #2F2A26;
   text-decoration: none;
@@ -206,6 +208,29 @@
   border-bottom: none;
 }
 
+/* Add icon indicator for menu items with children */
+.mobile-menu .menu-item-has-children > a {
+  position: relative;
+  padding-right: 30px;
+}
+
+.mobile-menu .menu-item-has-children > a::after {
+  content: '\f078'; /* FontAwesome chevron-down icon */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--primary-pink);
+  transition: transform 0.2s ease;
+}
+
+.mobile-menu .menu-item-has-children.open > a::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
 /* Mobile Utility Menu Items */
 .mobile-utility-menu {
   margin-top: 0;
@@ -217,6 +242,15 @@
   letter-spacing: 0.25px;
   border-radius: 8px;
   margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #2F2A26;
+  transition: color 0.2s ease;
+}
+
+.mobile-utility-item:hover {
+  color: var(--primary-pink);
 }
 
 .mobile-utility-item i {
@@ -280,6 +314,11 @@
   letter-spacing: 0.25px;
   padding: 8px 0;
   border-bottom: 1px solid #e5e7eb;
+  justify-content: flex-start; /* Override the space-between from parent */
+}
+
+.mobile-menu .sub-menu a::after {
+  display: none; /* Hide chevron on submenu items */
 }
 
 .mobile-menu .sub-menu li:last-child a {
