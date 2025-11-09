@@ -149,8 +149,8 @@
 
 /* Responsive adjustments */
 @media (max-width: 1023px) {
-  .mega-menu-container {
-    display: none !important;
+  .main-navigation .mega-menu-container {
+    display: none;
   }
 }
 
@@ -162,7 +162,7 @@
 }
 
 /* Ensure mega menu stays open when hovering over it */
-.mega-menu-container:hover {
-  opacity: 1 !important;
-  visibility: visible !important;
+.main-navigation .mega-menu-container:hover {
+  opacity: 1;
+  visibility: visible;
 }

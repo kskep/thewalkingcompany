@@ -79,10 +79,9 @@
 }
 
 /* Restore intended layout for the cart badge when a global `.visible` utility
-   (which sets display:block !important) exists in the project. The badge
-   needs flexbox to center the number, so force it back to flex here. */
-.cart-count-badge.visible {
-  display: flex !important;
+   exists in the project. The badge needs flexbox to center the number. */
+.flying-cart .cart-count-badge.visible {
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -592,11 +591,11 @@ body.woocommerce-checkout .flying-cart {
 }
 
 /* Add to Cart Button States */
-.add-to-cart-simple.added-to-cart,
-.single_add_to_cart_button.added-to-cart {
-  background: #10b981 !important;
-  border-color: #10b981 !important;
-  color: #ffffff !important;
+.flying-cart .add-to-cart-simple.added-to-cart,
+.woocommerce .single_add_to_cart_button.added-to-cart {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
   transform: scale(1.05);
 }
 

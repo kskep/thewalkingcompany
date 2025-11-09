@@ -400,7 +400,7 @@
   .header-actions .wishlist-toggle,
   .header-actions .account-toggle,
   .header-actions .minicart-toggle {
-    padding: 10px !important;
+    padding: 10px;
     min-width: 44px;
     min-height: 44px;
   }
@@ -412,7 +412,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px !important;
+    padding: 10px;
   }
   
   .mobile-menu-toggle i {
@@ -450,7 +450,7 @@
 
 /* Hide search form when search button is disabled */
 #search-form {
-  display: none !important;
+  display: none;
 }
 
 /* Mobile Language Switcher Styling */

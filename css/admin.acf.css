@@ -58,9 +58,9 @@ body.wp-admin .acf-input select {
 body.wp-admin .acf-input input:focus,
 body.wp-admin .acf-input textarea:focus,
 body.wp-admin .acf-input select:focus {
-  outline: none !important;
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 1px #2563eb !important;
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
 }
 
 /* Condensed instructions inline */

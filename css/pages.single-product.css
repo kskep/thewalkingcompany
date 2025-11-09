@@ -20,8 +20,8 @@
 }
 
 /* Magazine aesthetic - no border radius or shadows */
-.no-radius { border-radius: 0 !important; }
-.no-shadow { box-shadow: none !important; }
+.no-radius { border-radius: 0; }
+.no-shadow { box-shadow: none; }
 
 /* Single Product Layout - 2025 Magazine Standards */
 .single-product-layout {
@@ -272,8 +272,8 @@
   overflow: hidden;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: var(--border-radius-none) !important; /* No border radius */
-  box-shadow: var(--shadow-none) !important; /* No shadows */
+  border-radius: var(--border-radius-none); /* No border radius */
+  box-shadow: var(--shadow-none); /* No shadows */
   width: 100%;
 }
 
@@ -294,7 +294,7 @@
 
 .single_add_to_cart_button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-none) !important; /* No shadows even on hover */
+  box-shadow: var(--shadow-none); /* No shadows even on hover */
 }
 
 .single_add_to_cart_button:active {
@@ -305,7 +305,7 @@
   background: var(--text-light);
   cursor: not-allowed;
   transform: none;
-  box-shadow: var(--shadow-none) !important; /* No shadows */
+  box-shadow: var(--shadow-none); /* No shadows */
 }
 
 .single_add_to_cart_button:disabled::before {
@@ -652,23 +652,23 @@
 }
 
 .badge-sale {
-  background-color: #dc2626 !important;
+  background-color: #dc2626;
 }
 
 .badge-out-of-stock {
-  background-color: #6b7280 !important;
+  background-color: #6b7280;
 }
 
 .badge-new {
-  background-color: #16a34a !important;
+  background-color: #16a34a;
 }
 
 .badge-hot {
-  background-color: #ea580c !important;
+  background-color: #ea580c;
 }
 
 .badge-low-stock {
-  background-color: #f59e0b !important;
+  background-color: #f59e0b;
 }
 
 /* Responsive Design - Mobile First Approach */
@@ -819,9 +819,9 @@
 /* Accessibility & Motion Preferences */
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
   }
   
   .single_add_to_cart_button:hover {
@@ -907,7 +907,7 @@
 }
 
 .color-swatch.active {
-  border-color: var(--primary-pink) !important;
+  border-color: var(--primary-pink);
   transform: scale(1.1);
   box-shadow: var(--shadow-md);
 }
@@ -1150,7 +1150,7 @@
 }
 
 .add-to-wishlist.in-wishlist i {
-  color: #dc2626 !important;
+  color: #dc2626;
 }
 
 .wishlist-feedback {

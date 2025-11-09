@@ -86,13 +86,3 @@ foreach ($variants as $variant) {
     </div>
     
 </div>
-
-<script>
-// Initialize color variant selector when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    const colorVariants = document.querySelector('.product-color-variants');
-    if (colorVariants && typeof EshopColorVariants !== 'undefined') {
-        new EshopColorVariants(colorVariants);
-    }
-});
-</script>

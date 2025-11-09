@@ -31,17 +31,17 @@
   width: 100%; height: 100%; object-fit: cover; /* fill the image area */
   background: transparent;
   display: block;
-  transition: none !important; /* ensure no fade/zoom from external CSS */
+  transition: none; /* ensure no fade/zoom from external CSS */
 }
 /* Prevent any hover fade/zoom from inherited styles */
-.twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
+.twc-card:hover .twc-card__image img { opacity: 1; transform: none; }
 .twc-card__image .swiper { width: 100%; height: 100%; overflow: hidden; }
 .twc-card__image .swiper-wrapper { height: 100%; }
 .twc-card__image .swiper-slide { height: 100%; }
 .related-products-section .product-slider,
 .related-products-section .product-slider .swiper-wrapper,
 .related-products-section .product-slider .swiper-slide {
-  width: 100% !important;
+  width: 100%;
   max-width: 100%;
 }
 .twc-card__image .swiper-button-prev,
@@ -68,16 +68,16 @@
   color: #fff;
 }
 /* Hide Swiper's built-in pagination bullets since we use custom dots */
-.twc-card__image .swiper-pagination { display: none !important; }
+.twc-card__image .swiper-pagination { display: none; }
 
 /* Safety: if Swiper core CSS hasn't applied width rules yet */
 .twc-card__image .swiper-android .swiper-slide,
 .twc-card__image .swiper-ios .swiper-slide,
-.twc-card__image .swiper-wrapper .swiper-slide { width: 100% !important; }
+.twc-card__image .swiper-wrapper .swiper-slide { width: 100%; }
 
 /* Ensure grid items don't overflow container due to long content or slider sizing */
 .twc-card { min-width: 0; }
-.twc-card:hover .twc-card__image img { opacity: 1 !important; transform: none !important; }
+.twc-card:hover .twc-card__image img { opacity: 1; transform: none; }
 
 .twc-card__badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 2; }
 .twc-badge {
@@ -175,7 +175,7 @@
 .twc-card__price .price { color: var(--ink); font-weight: 700; }
 .twc-card__price ins { text-decoration: none; color: var(--price-red); }
 .twc-card__price del { opacity: 0.5; }
-.twc-card__wishlist { appearance: none; background: transparent !important; border: 0; padding: 2px; align-self: start; cursor: pointer; }
+.twc-card__wishlist { appearance: none; background: transparent; border: 0; padding: 2px; align-self: start; cursor: pointer; }
 .twc-card__wishlist .material-icons { color: #666; font-size: 22px; }
 .twc-card__wishlist:hover .material-icons { color: var(--price-red); }
 
@@ -183,6 +183,6 @@
 .twc-card .product-image img,
 .twc-card__image img,
 .twc-card:hover .twc-card__image img {
-  opacity: 1 !important;
-  transform: none !important;
+  opacity: 1;
+  transform: none;
 }

@@ -608,7 +608,7 @@ body.modal-open {
 
 /* Hidden utility */
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 /* Focus Management Enhancements */
@@ -643,7 +643,7 @@ body.modal-open {
 @media print {
   .auth-modal,
   .modal-backdrop {
-    display: none !important;
+    display: none;
   }
 }
 

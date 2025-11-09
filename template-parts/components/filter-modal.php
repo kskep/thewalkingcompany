@@ -38,248 +38,40 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
         if (is_active_sidebar('shop-filters')) {
             dynamic_sidebar('shop-filters');
         } else {
-            // Load real filter components
+            // Load modular filter components using the same pattern as filters.php
+            
+            // Price Filter
+            get_template_part('template-parts/components/filters/price-filter');
+            
+            // Category Filter
+            get_template_part('template-parts/components/filters/category-filter');
 
-            // Price Filter with Slider
-            global $wpdb;
-            $min_price_range = 0;
-            $max_price_range = 1000;
+            // Attributes: dynamically include all registered product attributes that have available terms
+            if (function_exists('wc_get_attribute_taxonomies')) {
+                $attribute_taxonomies = wc_get_attribute_taxonomies();
+                if (!empty($attribute_taxonomies)) {
+                    foreach ($attribute_taxonomies as $attr) {
+                        // $attr is stdClass with properties attribute_name, attribute_label, etc.
+                        $taxonomy = 'pa_' . $attr->attribute_name;
 
-            // Get actual price range from products
-            $prices = $wpdb->get_row("
-                SELECT MIN(CAST(meta_value AS DECIMAL(10,2))) as min_price,
-                       MAX(CAST(meta_value AS DECIMAL(10,2))) as max_price
-                FROM {$wpdb->postmeta} pm
-                INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
-                WHERE pm.meta_key = '_price'
-                AND p.post_type = 'product'
-                AND p.post_status = 'publish'
-                AND pm.meta_value != ''
-            ");
+                        // Optionally skip attributes you never want to show
+                        $skip = apply_filters('eshop_filters_skip_attribute', false, $taxonomy, $attr);
+                        if ($skip) { continue; }
 
-            if ($prices && $prices->max_price > 0) {
-                $min_price_range = floor($prices->min_price);
-                $max_price_range = ceil($prices->max_price);
-            }
-
-            $current_min = isset($_GET['min_price']) ? floatval($_GET['min_price']) : $min_price_range;
-            $current_max = isset($_GET['max_price']) ? floatval($_GET['max_price']) : $max_price_range;
-
-            echo '<div class="filter-section mb-6">';
-            echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Price Range', 'eshop-theme') . '</h4>';
-            echo '<div class="price-filter">';
-
-            // Price display
-            echo '<div class="price-display flex justify-between items-center mb-4">';
-            echo '<span class="price-min text-sm font-medium text-gray-700">' . wc_price($current_min) . '</span>';
-            echo '<span class="price-max text-sm font-medium text-gray-700">' . wc_price($current_max) . '</span>';
-            echo '</div>';
-
-            // Price slider
-            echo '<div class="price-slider-container mb-4">';
-            echo '<div id="price-slider" class="price-slider" data-min="' . esc_attr($min_price_range) . '" data-max="' . esc_attr($max_price_range) . '" data-current-min="' . esc_attr($current_min) . '" data-current-max="' . esc_attr($current_max) . '"></div>';
-            echo '</div>';
-
-            // Hidden inputs for form submission
-            echo '<input type="hidden" id="min-price" value="' . esc_attr($current_min) . '">';
-            echo '<input type="hidden" id="max-price" value="' . esc_attr($current_max) . '">';
-
-            echo '</div>';
-            echo '</div>';
-
-            // Product Categories Filter - Get available categories from current query
-            $available_categories = eshop_get_available_categories();
-
-            if (!empty($available_categories)) {
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Categories', 'eshop-theme') . '</h4>';
-                echo '<div class="category-filter space-y-2 max-h-48 overflow-y-auto">';
-
-                foreach ($available_categories as $category) {
-                    $is_selected = isset($_GET['product_cat']) && in_array($category['slug'], (array)$_GET['product_cat']);
-                    echo '<label class="flex items-center justify-between space-x-2 cursor-pointer p-2 rounded">';
-                    echo '<div class="flex items-center space-x-2">';
-                    echo '<input type="checkbox" name="product_cat[]" value="' . esc_attr($category['slug']) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
-                    echo '<span class="text-sm text-gray-700">' . esc_html($category['name']) . '</span>';
-                    echo '</div>';
-                    echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($category['count']) . '</span>';
-                    echo '</label>';
-                }
-
-                echo '</div>';
-                echo '</div>';
-            }
-
-            // On Sale Filter
-            $on_sale_selected = isset($_GET['on_sale']) && $_GET['on_sale'] === '1';
-            $sale_count = count(wc_get_product_ids_on_sale());
-
-            if ($sale_count > 0) {
-                echo '<div class="filter-section mb-6">';
-                echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html__('Special Offers', 'eshop-theme') . '</h4>';
-                echo '<div class="sale-filter space-y-2">';
-                echo '<label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">';
-                echo '<div class="flex items-center space-x-2">';
-                echo '<input type="checkbox" name="on_sale" value="1" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($on_sale_selected, true, false) . '>';
-                echo '<span class="text-sm text-gray-700 group-hover:text-gray-900">' . esc_html__('On Sale', 'eshop-theme') . '</span>';
-                echo '<i class="fas fa-tag text-red-500 text-xs" title="' . esc_attr__('Sale Items', 'eshop-theme') . '"></i>';
-                echo '</div>';
-                echo '<span class="text-xs text-gray-400 bg-red-100 text-red-600 px-2 py-1 rounded-full font-medium">' . esc_html($sale_count) . '</span>';
-                echo '</label>';
-                echo '</div>';
-                echo '</div>';
-            }
-
-            // Debug: Show available product attributes
-            echo '<!-- DEBUG: Available Product Attributes -->';
-            $all_attributes = wc_get_attribute_taxonomies();
-            if (!empty($all_attributes)) {
-                echo '<!-- Available attributes: ';
-                foreach ($all_attributes as $attr) {
-                    echo $attr->attribute_name . ' (pa_' . $attr->attribute_name . '), ';
-                }
-                echo '-->';
-            } else {
-                echo '<!-- No product attributes found in WooCommerce -->';
-            }
-
-            // Function to shorten size names
-            function shorten_size_name($name) {
-                $size_map = array(
-                    'Extra Small' => 'XS',
-                    'Small' => 'S',
-                    'Medium' => 'M',
-                    'Large' => 'L',
-                    'Extra Large' => 'XL',
-                    'XXL' => 'XXL',
-                    'XXXL' => 'XXXL',
-                    'One Size' => 'OS',
-                    'XSmall' => 'XS',
-                    'XLarge' => 'XL',
-                    'XXLarge' => 'XXL',
-                    'XXXLarge' => 'XXXL',
-                    'Small/Medium' => 'S/M',
-                    'Medium/Large' => 'M/L',
-                    'Large/XLarge' => 'L/XL',
-                    'Small/Medi' => 'S/M',
-                    'Medium/Lar' => 'M/L'
-                );
-
-                // Check if we have a direct mapping
-                if (isset($size_map[$name])) {
-                    return $size_map[$name];
-                }
-
-                // Try to extract size from longer strings
-                foreach ($size_map as $long => $short) {
-                    if (stripos($name, $long) !== false) {
-                        return $short;
+                        // Render attribute filter; component will early-return if there are no terms in current context
+                        get_template_part('template-parts/components/filters/attribute-filter', null, array(
+                            'taxonomy' => $taxonomy,
+                            'label'    => $attr->attribute_label,
+                        ));
                     }
                 }
-
-                // If no mapping found, try to abbreviate automatically
-                if (strlen($name) > 6) {
-                    // Take first letter of each word
-                    $words = explode(' ', $name);
-                    if (count($words) > 1) {
-                        return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
-                    }
-                    // Or just take first 4 characters
-                    return strtoupper(substr($name, 0, 4));
-                }
-
-                return $name;
             }
 
-            // Your Custom Attributes
-            $your_attributes = array(
-                'pa_box' => array(
-                    'label' => 'Box',
-                    'type' => 'checkbox'
-                ),
-                'pa_color' => array(
-                    'label' => 'Color',
-                    'type' => 'checkbox'
-                ),
-                'pa_pick-pattern' => array(
-                    'label' => 'Pick Pattern',
-                    'type' => 'checkbox'
-                ),
-                'pa_select-size' => array(
-                    'label' => 'Select Size',
-                    'type' => 'size_grid'
-                ),
-                'pa_size-selection' => array(
-                    'label' => 'Size Selection',
-                    'type' => 'size_grid'
-                )
-            );
-
-            foreach ($your_attributes as $taxonomy => $attr_config) {
-                // Get available terms from current query results
-                $available_terms = eshop_get_available_attribute_terms($taxonomy);
-
-                echo '<!-- DEBUG: ' . $taxonomy . ' available terms from current query: ' . count($available_terms) . ' -->';
-
-                if (!empty($available_terms)) {
-                    $selected_values = isset($_GET[$taxonomy]) ? (array)$_GET[$taxonomy] : array();
-
-                    echo '<div class="filter-section mb-6">';
-                    echo '<h4 class="filter-title text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-100">' . esc_html($attr_config['label']) . '</h4>';
-
-                    if ($attr_config['type'] === 'size_grid') {
-                        // Size grid layout for size attributes
-                        echo '<div class="size-filter">';
-                        echo '<div class="size-grid">';
-
-                        foreach ($available_terms as $term) {
-                            $is_selected = in_array($term['slug'], $selected_values);
-                            $selected_class = $is_selected ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300';
-                            $short_name = shorten_size_name($term['name']);
-
-                            echo '<label class="size-option cursor-pointer">';
-                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term['slug']) . '" class="hidden"' . checked($is_selected, true, false) . '>';
-                            echo '<span class="size-label border transition-all duration-200 ' . $selected_class . '" title="' . esc_attr($term['name']) . '">';
-                            echo esc_html($short_name);
-                            echo '</span>';
-                            echo '</label>';
-                        }
-
-                        echo '</div>';
-                        echo '</div>';
-                    } else {
-                        // Regular checkbox layout for other attributes
-                        echo '<div class="attribute-filter space-y-2 max-h-48 overflow-y-auto">';
-
-                        foreach ($available_terms as $term) {
-                            $is_selected = in_array($term['slug'], $selected_values);
-
-                            echo '<label class="flex items-center justify-between space-x-2 cursor-pointer p-2 rounded">';
-                            echo '<div class="flex items-center space-x-2">';
-                            echo '<input type="checkbox" name="' . esc_attr($taxonomy) . '[]" value="' . esc_attr($term['slug']) . '" class="text-primary focus:ring-primary border-gray-300 rounded"' . checked($is_selected, true, false) . '>';
-
-                            // Special handling for color attribute
-                            if ($taxonomy === 'pa_color') {
-                                $color_value = isset($term['color']) ? $term['color'] : '';
-                                if ($color_value) {
-                                    echo '<span class="w-4 h-4 rounded-full border border-gray-300 inline-block" style="background-color: ' . esc_attr($color_value) . ';" title="' . esc_attr($term['name']) . '"></span>';
-                                }
-                            }
-
-                            echo '<span class="text-sm text-gray-700">' . esc_html($term['name']) . '</span>';
-                            echo '</div>';
-                            echo '<span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">' . esc_html($term['count']) . '</span>';
-                            echo '</label>';
-                        }
-
-                        echo '</div>';
-                    }
-
-                    echo '</div>';
-                }
-            }
-
-
+            // Sale Filter
+            get_template_part('template-parts/components/filters/sale-filter');
+            
+            // Stock Filter
+            get_template_part('template-parts/components/filters/stock-filter');
         }
         ?>
     </div>
@@ -296,142 +88,8 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
     </div>
 </div>
 
-<!-- Filter Modal CSS -->
-<style>
-#filter-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 40;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-#filter-backdrop.show {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-#filter-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: 400px;
-    background: white;
-    z-index: 50;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-}
-
-#filter-drawer.open {
-    transform: translateX(0) !important;
-}
-
-body.overflow-hidden {
-    overflow: hidden !important;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* Remove hover backgrounds as requested */
-
-/* Price Slider Styles */
-.price-slider {
-    height: 6px;
-    background: #e5e7eb;
-    border-radius: 3px;
-    position: relative;
-    margin: 10px 0;
-}
-
-.price-slider .noUi-connect {
-    background: #ee81b3;
-}
-
-.price-slider .noUi-handle {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #ee81b3;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-
-.price-slider .noUi-handle:before,
-.price-slider .noUi-handle:after {
-    display: none;
-}
-
-/* Size Filter Styles */
-.size-option input:checked + .size-label,
-.size-label.bg-primary {
-    background-color: #ee81b3 !important;
-    color: white !important;
-    border-color: #ee81b3 !important;
-}
-
-.size-label.bg-white {
-    background-color: white !important;
-    color: #374151 !important;
-    border-color: #d1d5db !important;
-}
-
-.size-label {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.size-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    gap: 8px;
-}
-
-/* Color Swatch Styles */
-.color-filter .color-swatch {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 50%;
-    border: 1px solid #d1d5db;
-    display: inline-block;
-    position: relative;
-}
-
-/* Button hover effects */
-.apply-price-filter:hover,
-#apply-filters:hover {
-    background-color: #d946a0 !important;
-}
-
-#close-filters:hover {
-    color: #6b7280 !important;
-}
-
-#clear-filters:hover {
-    color: #374151 !important;
-}
-</style>
-
 <!-- Active Filters Bar -->
-<div class="active-filters-bar bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-4 mb-6" style="display: none;">
+<div class="active-filters-bar bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-4 mb-6 hidden">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
             <span class="text-sm font-semibold text-gray-700 uppercase tracking-wide">

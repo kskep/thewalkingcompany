@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) { exit; }
 // Preferred: explicit taxonomy/label via args
 $taxonomy = isset($args['taxonomy']) ? sanitize_text_field($args['taxonomy']) : '';
 $attribute_label = isset($args['label']) ? $args['label'] : '';
+$attribute_type = isset($args['type']) ? $args['type'] : 'checkbox';
 $data_attribute = '';
 
 if (!$taxonomy) {
@@ -64,57 +65,88 @@ if (isset($_GET[$taxonomy]) && !empty($_GET[$taxonomy])) {
         <?php echo esc_html($attribute_label); ?>
     </h4>
 
-    <div class="attribute-terms space-y-2">
-        <?php foreach ($terms as $term) :
-            $slug = isset($term->slug) ? $term->slug : '';
-            $is_checked = in_array($slug, $selected_values, true);
-            $product_count = isset($term->count) ? intval($term->count) : 0;
+    <?php if ($attribute_type === 'size_grid') : ?>
+        <!-- Size grid layout for size attributes -->
+        <div class="size-filter">
+            <div class="size-grid">
+                <?php foreach ($terms as $term) :
+                    $slug = isset($term->slug) ? $term->slug : '';
+                    $is_checked = in_array($slug, $selected_values, true);
+                    $selected_class = $is_checked ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300';
+                    $term_name = isset($term->name) ? $term->name : '';
+                    
+                    // Transform size label if function exists
+                    $short_name = function_exists('twc_transform_size_label') ? twc_transform_size_label($term_name) : $term_name;
+                ?>
+                    <label class="size-option cursor-pointer">
+                        <input
+                            type="checkbox"
+                            name="<?php echo esc_attr($taxonomy); ?>[]"
+                            value="<?php echo esc_attr($slug); ?>"
+                            class="hidden"
+                            <?php checked($is_checked); ?>
+                        >
+                        <span class="size-label border transition-all duration-200 <?php echo esc_attr($selected_class); ?>" title="<?php echo esc_attr($term_name); ?>">
+                            <?php echo esc_html($short_name); ?>
+                        </span>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php else : ?>
+        <!-- Regular checkbox layout for other attributes -->
+        <div class="attribute-terms space-y-2">
+            <?php foreach ($terms as $term) :
+                $slug = isset($term->slug) ? $term->slug : '';
+                $is_checked = in_array($slug, $selected_values, true);
+                $product_count = isset($term->count) ? intval($term->count) : 0;
 
-            // Support color meta from helper; else from term meta
-            $color_value = isset($term->color) ? $term->color : '';
-            if (!$color_value && isset($term->term_id)) {
-                $meta = get_term_meta($term->term_id);
-                $color_value = isset($meta['color'][0]) ? $meta['color'][0] : '';
-                $image_id = isset($meta['image'][0]) ? $meta['image'][0] : '';
-            } else {
-                $image_id = '';
-            }
-        ?>
-            <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">
-                <div class="flex items-center space-x-2">
-                    <input
-                        type="checkbox"
-                        name="<?php echo esc_attr($taxonomy); ?>[]"
-                        value="<?php echo esc_attr($slug); ?>"
-                        class="text-primary focus:ring-primary border-gray-300 rounded"
-                        <?php checked($is_checked); ?>
-                    >
+                // Support color meta from helper; else from term meta
+                $color_value = isset($term->color) ? $term->color : '';
+                if (!$color_value && isset($term->term_id)) {
+                    $meta = get_term_meta($term->term_id);
+                    $color_value = isset($meta['color'][0]) ? $meta['color'][0] : '';
+                    $image_id = isset($meta['image'][0]) ? $meta['image'][0] : '';
+                } else {
+                    $image_id = '';
+                }
+            ?>
+                <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group">
+                    <div class="flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            name="<?php echo esc_attr($taxonomy); ?>[]"
+                            value="<?php echo esc_attr($slug); ?>"
+                            class="text-primary focus:ring-primary border-gray-300 rounded"
+                            <?php checked($is_checked); ?>
+                        >
 
-                    <?php if ($color_value) : ?>
-                        <span
-                            class="w-4 h-4 rounded-full border border-gray-300 inline-block"
-                            style="background-color: <?php echo esc_attr($color_value); ?>"
-                            title="<?php echo esc_attr(isset($term->name) ? $term->name : ''); ?>"
-                        ></span>
-                    <?php elseif (!empty($image_id)) : ?>
-                        <?php $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
-                        if ($image_url) : ?>
-                            <img
-                                src="<?php echo esc_url($image_url); ?>"
-                                alt="<?php echo esc_attr(isset($term->name) ? $term->name : ''); ?>"
-                                class="w-6 h-6 object-cover rounded border border-gray-300"
-                            >
+                        <?php if ($color_value) : ?>
+                            <span
+                                class="w-4 h-4 rounded-full border border-gray-300 inline-block"
+                                style="background-color: <?php echo esc_attr($color_value); ?>"
+                                title="<?php echo esc_attr(isset($term->name) ? $term->name : ''); ?>"
+                            ></span>
+                        <?php elseif (!empty($image_id)) : ?>
+                            <?php $image_url = wp_get_attachment_image_url($image_id, 'thumbnail');
+                            if ($image_url) : ?>
+                                <img
+                                    src="<?php echo esc_url($image_url); ?>"
+                                    alt="<?php echo esc_attr(isset($term->name) ? $term->name : ''); ?>"
+                                    class="w-6 h-6 object-cover rounded border border-gray-300"
+                                >
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
 
-                    <span class="text-sm text-gray-700 group-hover:text-gray-900">
-                        <?php echo esc_html(isset($term->name) ? $term->name : ''); ?>
+                        <span class="text-sm text-gray-700 group-hover:text-gray-900">
+                            <?php echo esc_html(isset($term->name) ? $term->name : ''); ?>
+                        </span>
+                    </div>
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                        <?php echo esc_html((string)$product_count); ?>
                     </span>
-                </div>
-                <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
-                    <?php echo esc_html((string)$product_count); ?>
-                </span>
-            </label>
-        <?php endforeach; ?>
-    </div>
+                </label>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </div>

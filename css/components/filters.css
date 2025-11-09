@@ -32,7 +32,7 @@
 #filter-backdrop.hidden,
 .filter-section .hidden,
 .active-filters-bar .hidden {
-    display: none !important;
+    display: none;
 }
 
 /* Filter Sections */
@@ -128,22 +128,22 @@
 
 /* Make category items more compact */
 .category-filter label {
-    padding: 1px 8px !important;
+    padding: 1px 8px;
     margin-bottom: 1px;
 }
 
 .category-filter .text-sm {
-    font-size: 0.75rem !important;
+    font-size: 0.75rem;
 }
 
 .category-filter .text-xs {
-    font-size: 0.65rem !important;
-    padding: 1px 4px !important;
+    font-size: 0.65rem;
+    padding: 1px 4px;
 }
 
 .category-filter input[type="checkbox"] {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
 }
 
 .category-item .subcategories {
@@ -262,32 +262,32 @@
 
 /* Make attribute items more compact */
 .attribute-filter label {
-    padding: 1px 8px !important;
+    padding: 1px 8px;
     margin-bottom: 1px;
 }
 
 .attribute-filter .text-sm {
-    font-size: 0.75rem !important;
+    font-size: 0.75rem;
 }
 
 .attribute-filter .text-xs {
-    font-size: 0.65rem !important;
-    padding: 1px 4px !important;
+    font-size: 0.65rem;
+    padding: 1px 4px;
 }
 
 .attribute-filter input[type="checkbox"] {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
 }
 
 .attribute-filter .w-4 {
-    width: 12px !important;
-    height: 12px !important;
+    width: 12px;
+    height: 12px;
 }
 
 .attribute-filter .w-6 {
-    width: 14px !important;
-    height: 14px !important;
+    width: 14px;
+    height: 14px;
 }
 
 /* Color swatches */
@@ -438,4 +438,62 @@
         background: #000;
         border-color: #fff;
     }
+}
+
+
+/* Size Filter Styles */
+.size-option input:checked + .size-label,
+.size-label.bg-primary {
+    background-color: #ee81b3;
+    color: white;
+    border-color: #ee81b3;
+}
+
+.size-label.bg-white {
+    background-color: white;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.size-label {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.size-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 8px;
+}
+
+/* Color Swatch Styles */
+.color-filter .color-swatch {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    display: inline-block;
+    position: relative;
+}
+
+/* Button hover effects */
+.apply-price-filter:hover,
+#apply-filters:hover {
+    background-color: #d946a0;
+}
+
+#close-filters:hover {
+    color: #6b7280;
+}
+
+#clear-filters:hover {
+    color: #374151;
 }

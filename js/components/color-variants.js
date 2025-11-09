@@ -496,3 +496,13 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // Make available globally
 window.EshopColorVariants = EshopColorVariants;
+
+/**
+ * Initialize color variant selector when DOM is ready
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    const colorVariants = document.querySelector('.product-color-variants');
+    if (colorVariants && typeof EshopColorVariants !== 'undefined') {
+        new EshopColorVariants(colorVariants);
+    }
+});
