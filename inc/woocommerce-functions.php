@@ -995,7 +995,7 @@ function eshop_output_related_products_from_categories() {
                     <?php _e('You May Also Like', 'thewalkingtheme'); ?>
                 </h2>
 
-                <ul class="products-grid related-products-grid">
+                <ul class="products-grid related-products-grid" id="related-products-grid">
                     <?php
                     while ($related_query->have_posts()) {
                         $related_query->the_post();
@@ -1005,14 +1005,11 @@ function eshop_output_related_products_from_categories() {
                             continue;
                         }
 
-                        // Ensure WooCommerce helpers receive the correct product context
-                        $product = $related_product;
-                        if (function_exists('wc_setup_product_data')) {
-                            wc_setup_product_data(get_post());
-                        }
+                        // Set global product for template
+                        $GLOBALS['product'] = $related_product;
 
-                        // Reuse standard product card markup
-                        wc_get_template_part('content', 'product');
+                        // Use our custom product card component
+                        get_template_part('template-parts/components/product-card');
                     }
                     ?>
                 </ul>
