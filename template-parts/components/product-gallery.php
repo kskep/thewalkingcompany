@@ -31,6 +31,14 @@ if ($product instanceof WC_Product_Variation) {
 }
 
 if (!$product instanceof WC_Product) {
+    $queried_id = get_the_ID() ?: get_queried_object_id();
+    if ($queried_id) {
+        $product = wc_get_product($queried_id);
+    }
+}
+
+if (!$product instanceof WC_Product) {
+    echo '<div class="product-gallery product-gallery--unavailable"><img src="' . esc_url(wc_placeholder_img_src('full')) . '" alt="' . esc_attr__('Product image placeholder', 'eshop-theme') . '"></div>';
     return;
 }
 

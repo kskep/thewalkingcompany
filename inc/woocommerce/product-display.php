@@ -113,6 +113,13 @@ function eshop_get_product_badges($product) {
     }
 
     if (!$product instanceof WC_Product) {
+        $queried_id = get_the_ID() ?: get_queried_object_id();
+        if ($queried_id) {
+            $product = wc_get_product($queried_id);
+        }
+    }
+
+    if (!$product instanceof WC_Product) {
         return array();
     }
 
