@@ -967,25 +967,33 @@ function eshop_output_related_products_from_categories() {
         'post_type' => 'product',
         'posts_per_page' => 8, // Get 8 products for 2 rows of 4
         'post__not_in' => array($product_id),
-        'tax_query' => array(
+        'orderby' => 'rand'
+    );
+    
+    // Add category filter if we have categories
+    if (!empty($all_category_ids)) {
+        $args['tax_query'] = array(
             array(
                 'taxonomy' => 'product_cat',
                 'field' => 'term_id',
                 'terms' => $all_category_ids,
                 'operator' => 'IN'
             )
-        ),
-        'meta_query' => array(
-            array(
-                'key' => '_stock_status',
-                'value' => 'instock',
-                'compare' => '='
-            )
-        ),
-        'orderby' => 'rand'
-    );
+        );
+    }
     
     $related_query = new WP_Query($args);
+    
+    // Fallback: if no products found in same category, get any products
+    if (!$related_query->have_posts()) {
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => 8,
+            'post__not_in' => array($product_id),
+            'orderby' => 'rand'
+        );
+        $related_query = new WP_Query($args);
+    }
     
     if ($related_query->have_posts()) {
         ?>

@@ -404,6 +404,9 @@ function eshop_custom_product_gallery() {
 
     // Add our custom gallery component
     add_action('woocommerce_before_single_product_summary', 'eshop_show_custom_product_gallery', 20);
+    
+    // Remove breadcrumbs from single product pages
+    remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20);
 }
 add_action('init', 'eshop_custom_product_gallery');
 
