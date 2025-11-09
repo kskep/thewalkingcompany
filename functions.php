@@ -122,10 +122,10 @@ function eshop_theme_scripts() {
         wp_enqueue_script('eshop-size-selection', get_template_directory_uri() . '/js/components/size-selection.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('size-transformation', get_template_directory_uri() . '/js/components/size-transformation.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
 
-        // Magazine Style Sticky ATC JS
-        $sticky_atc_magazine_js_path = get_template_directory() . '/js/components/sticky-atc-magazine.js';
-        $sticky_atc_magazine_js_ver = file_exists($sticky_atc_magazine_js_path) ? filemtime($sticky_atc_magazine_js_path) : '1.0.0';
-        wp_enqueue_script('eshop-sticky-atc-magazine', get_template_directory_uri() . '/js/components/sticky-atc-magazine.js', array('jquery'), $sticky_atc_magazine_js_ver, true);
+        // Magazine Style Sticky ATC JS - DISABLED
+        // $sticky_atc_magazine_js_path = get_template_directory() . '/js/components/sticky-atc-magazine.js';
+        // $sticky_atc_magazine_js_ver = file_exists($sticky_atc_magazine_js_path) ? filemtime($sticky_atc_magazine_js_path) : '1.0.0';
+        // wp_enqueue_script('eshop-sticky-atc-magazine', get_template_directory_uri() . '/js/components/sticky-atc-magazine.js', array('jquery'), $sticky_atc_magazine_js_ver, true);
     }
 
     // External CSS

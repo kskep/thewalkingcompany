@@ -793,82 +793,17 @@
     list-style: none;
 }
 
+/* Ensure related products use the same card styling as archive */
+.related-products-section .twc-card {
+    background: #fff;
+    border: 1px solid var(--border-light);
+}
+
 .related-products-section .twc-card {
     background: #fff;
 }
 
-/* Sticky Add to Cart */
-.sticky-atc {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255,255,255,0.96);
-    border-top: 1px solid var(--border-light);
-    backdrop-filter: saturate(150%) blur(8px);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    z-index: 50;
-    transform: translateY(100%);
-    transition: transform 0.4s ease;
-}
-
-/* Only show sticky bar on mobile */
-@media (max-width: 768px) {
-    .sticky-atc.is-visible {
-        transform: translateY(0);
-    }
-}
-
-.sticky-atc__content {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.sticky-atc__title {
-    font-weight: 700;
-    font-size: 1rem;
-    font-family: var(--font-heading);
-    margin-bottom: 0.25rem;
-}
-
-.sticky-atc__meta {
-    color: var(--ink-soft);
-    font-size: 0.875rem;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-/* Style for selection text in sticky bar */
-.sticky-atc__selection {
-    font-weight: 600;
-    color: var(--ink);
-}
-
-.sticky-atc__button {
-    background: var(--primary-pink);
-    color: var(--paper);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.875rem;
-    font-family: var(--font-heading);
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.sticky-atc__button:hover {
-    background: var(--primary-pink-dark);
-    transform: translateY(-1px);
-}
+/* Sticky Add to Cart - REMOVED */
 
 /* Responsive Design */
 @media (max-width: 1024px) {
@@ -946,16 +881,7 @@
         font-size: 1rem; /* Adjusted */
     }
 
-    .sticky-atc__content {
-        padding: 0.75rem 1rem;
-        flex-wrap: wrap;
-    }
-    .sticky-atc__button {
-        width: 100%;
-        margin-top: 0.5rem;
-        text-align: center;
-        padding: 1rem;
-    }
+    /* Sticky ATC styles removed */
 }
 
 /* Animations */
