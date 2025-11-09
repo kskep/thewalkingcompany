@@ -241,6 +241,16 @@
             }
         }
 
+        function eshopUpdateCartFragments(fragments) {
+            if (!fragments) {
+                return;
+            }
+
+            $.each(fragments, function(selector, html) {
+                $(selector).replaceWith(html);
+            });
+        }
+
         function eshopSyncWishlistButtons(productId, data) {
             if (!productId) {
                 return;
@@ -395,15 +405,52 @@
         });
 
         // Remove from cart in minicart dropdown
-        $(document).on('click', '.remove-from-cart', function(e) {
+        $(document).on('click', '.minicart-dropdown .remove-from-cart', function(e) {
             e.preventDefault();
             var $button = $(this);
-            var removeUrl = $button.attr('href');
+            if ($button.hasClass('loading')) {
+                return;
+            }
 
-            $.get(removeUrl, function() {
-                // Trigger cart update
-                $(document.body).trigger('wc_fragment_refresh');
-                EShopTheme.showNotification('Product removed from cart!', 'success');
+            var cartItemKey = $button.data('cart-item-key');
+
+            if (!cartItemKey) {
+                // Fallback to default behavior if key missing
+                window.location.href = $button.attr('href');
+                return;
+            }
+
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'remove_cart_item',
+                    cart_item_key: cartItemKey,
+                    nonce: eshop_ajax.nonce
+                },
+                beforeSend: function() {
+                    $button.addClass('loading');
+                    $button.attr('aria-disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        eshopUpdateCartFragments(response.data.fragments);
+                        $(document.body).trigger('removed_from_cart', [response.data.fragments || {}, response.data.cart_hash || null, $button]);
+                        $(document.body).trigger('wc_fragment_refresh');
+                        eshopNotify(response.data.message || 'Product removed from cart!', 'success');
+                    } else {
+                        var errorMessage = response.data && response.data.message ? response.data.message : 'Unable to remove item. Please try again.';
+                        eshopNotify(errorMessage, 'error');
+                    }
+                },
+                error: function() {
+                    eshopNotify('Unable to remove item. Please try again.', 'error');
+                },
+                complete: function() {
+                    $button.removeClass('loading');
+                    $button.removeAttr('aria-disabled');
+                }
             });
         });
 

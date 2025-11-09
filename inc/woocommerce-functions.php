@@ -159,7 +159,8 @@ function eshop_remove_cart_item_ajax() {
 
         wp_send_json_success(array(
             'message' => __('Item removed from cart', 'eshop-theme'),
-            'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array())
+            'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array()),
+            'cart_hash' => apply_filters('woocommerce_add_to_cart_hash', WC()->cart->get_cart_hash())
         ));
     } else {
         wp_send_json_error(array(
