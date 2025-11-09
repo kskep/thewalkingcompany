@@ -79,17 +79,18 @@ get_header( 'shop' ); ?>
             </div>
         </div>
 
-        <?php
-        /**
-         * Hook: woocommerce_after_single_product_summary.
-         *
-         * @hooked woocommerce_output_product_data_tabs - 10 (This is now handled by our accordions)
-         * @hooked woocommerce_upsell_display - 15
-         * @hooked eshop_output_related_products_from_categories - 20 (This will now correctly display related products)
-         */
-        do_action( 'woocommerce_after_single_product_summary' );
-        ?>
     </div>
 </div>
+
+<?php
+/**
+ * Hook: woocommerce_after_single_product_summary.
+ *
+ * @hooked woocommerce_output_product_data_tabs - 10 (This is now handled by our accordions)
+ * @hooked woocommerce_upsell_display - 15
+ * @hooked eshop_output_related_products_from_categories - 20 (This will now correctly display related products)
+ */
+do_action( 'woocommerce_after_single_product_summary' );
+?>
 
 <?php get_footer( 'shop' ); ?>
