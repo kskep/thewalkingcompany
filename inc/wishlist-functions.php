@@ -11,13 +11,39 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Get wishlist from session safely
+ * 
+ * @return array The wishlist product IDs
+ */
+function eshop_get_session_wishlist() {
+    if (session_id() && isset($_SESSION['eshop_wishlist']) && is_array($_SESSION['eshop_wishlist'])) {
+        return $_SESSION['eshop_wishlist'];
+    }
+    return array();
+}
+
+/**
+ * Set wishlist in session safely
+ * 
+ * @param array $wishlist The wishlist product IDs
+ */
+function eshop_set_session_wishlist($wishlist) {
+    if (session_id() && is_array($wishlist)) {
+        $_SESSION['eshop_wishlist'] = array_values(array_unique($wishlist));
+    }
+}
+
+/**
  * Initialize wishlist session
  */
 function eshop_init_wishlist() {
-    if (!session_id()) {
+    // Only start session if headers haven't been sent and session isn't already active
+    if (!session_id() && !headers_sent()) {
         session_start();
     }
-    if (!isset($_SESSION['eshop_wishlist'])) {
+    
+    // Initialize wishlist array in session if not set
+    if (session_id() && !isset($_SESSION['eshop_wishlist'])) {
         $_SESSION['eshop_wishlist'] = array();
     }
     
@@ -26,7 +52,8 @@ function eshop_init_wishlist() {
         eshop_sync_wishlist_with_user_meta();
     }
 }
-add_action('init', 'eshop_init_wishlist');
+// Use plugins_loaded instead of init to start earlier, before most plugins send headers
+add_action('plugins_loaded', 'eshop_init_wishlist', 1);
 
 /**
  * Sync session wishlist with user meta for logged-in users
