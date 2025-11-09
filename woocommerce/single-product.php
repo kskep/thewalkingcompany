@@ -17,11 +17,7 @@ get_header( 'shop' ); ?>
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class( '', $product ); ?>>
     <div class="magazine-container">
 
-        <!-- Magazine Header -->
-        <header class="magazine-header">
-            <h2 class="magazine-title"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></h2>
-            <p class="magazine-subtitle"><?php echo esc_html( get_bloginfo( 'description' ) ); ?></p>
-        </header>
+       
 
         <!-- Editorial Layout -->
         <div class="editorial-layout">
