@@ -19,7 +19,7 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
 <div id="filter-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
 
 <!-- Off-Canvas Filter Drawer -->
-<div id="filter-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="filter-drawer-title">
+<div id="filter-drawer" data-position="right" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="filter-drawer-title">
 
     <!-- Drawer Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
@@ -85,29 +85,5 @@ if (!class_exists('WooCommerce') || !(is_shop() || is_product_category() || is_p
         <button id="apply-filters" class="px-6 py-2 bg-primary text-white text-sm font-medium uppercase tracking-wide hover:bg-primary-dark transition-colors">
             <?php _e('Apply Filters', 'eshop-theme'); ?>
         </button>
-    </div>
-</div>
-
-<!-- Active Filters Bar -->
-<div class="active-filters-bar bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-4 mb-6 hidden">
-    <div class="flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                <?php _e('Active Filters:', 'eshop-theme'); ?>
-            </span>
-            <div class="active-filters-list flex flex-wrap gap-2"></div>
-        </div>
-        <button class="clear-all-filters text-sm text-red-600 hover:text-red-800 font-semibold uppercase tracking-wide transition-colors">
-            <i class="fas fa-times mr-1"></i>
-            <?php _e('Clear All', 'eshop-theme'); ?>
-        </button>
-    </div>
-</div>
-
-<!-- Loading Overlay -->
-<div class="products-loading hidden absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-    <div class="flex items-center space-x-2">
-        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-        <span class="text-sm text-gray-600"><?php _e('Loading...', 'eshop-theme'); ?></span>
     </div>
 </div>

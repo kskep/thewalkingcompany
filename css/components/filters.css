@@ -6,9 +6,17 @@
 /* Filter Drawer */
 #filter-drawer {
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-    transform: translateX(-100%); /* hidden by default (no Tailwind) */
     transition: transform 0.25s ease;
     overflow: hidden; /* Prevent double scrollbars */
+}
+
+#filter-drawer:not([data-position="right"]) {
+    transform: translateX(-100%);
+}
+
+#filter-drawer[data-position="right"] {
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
 }
 
 #filter-drawer.open {
