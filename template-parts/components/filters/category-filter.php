@@ -181,48 +181,46 @@ echo '<!-- Category Debug: Rendering ' . count($available_categories) . ' catego
 
     <div class="category-filter space-y-1">
         <?php
-        // Recursive function to render category hierarchy
-        function render_category_hierarchy($categories, $selected_ids, $selected_slugs, $level = 0) {
+        // Recursive closure to render category hierarchy
+        $render_category_hierarchy = function ($categories, $selected_ids, $selected_slugs, $level = 0) use (&$render_category_hierarchy) {
             foreach ($categories as $cat) {
-                $is_checked = in_array((int)$cat['term_id'], $selected_ids, true) || in_array($cat['slug'], $selected_slugs, true);
+                $is_checked = in_array((int) $cat['term_id'], $selected_ids, true) || in_array($cat['slug'], $selected_slugs, true);
                 $indent_class = $level > 0 ? 'ml-' . ($level * 4) : '';
                 $text_size = $level === 0 ? 'text-sm' : 'text-xs';
                 $font_weight = $level === 0 ? 'font-medium' : 'font-normal';
-                
-                // Add icon for parent categories with children
+
                 $has_children = !empty($cat['children']);
-                $icon = $has_children ? '<i class="fas fa-chevron-right text-xs text-gray-400 mr-1"></i>' : '<span class="inline-block w-3 mr-1"></span>';
-                
+                $icon_html = $has_children
+                    ? '<i class="fas fa-chevron-right text-xs text-gray-400 mr-1"></i>'
+                    : '<span class="inline-block w-3 mr-1"></span>';
                 ?>
                 <label class="flex items-center justify-between space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded group <?php echo esc_attr($indent_class); ?>">
                     <div class="flex items-center space-x-2">
                         <input
                             type="checkbox"
                             name="product_cat[]"
-                            value="<?php echo esc_attr((int)$cat['term_id']); ?>"
+                            value="<?php echo esc_attr((int) $cat['term_id']); ?>"
                             class="text-primary focus:ring-primary border-gray-300 rounded"
                             <?php checked($is_checked); ?>
                         >
-                        <?php echo $icon; ?>
+                        <?php echo wp_kses_post($icon_html); ?>
                         <span class="<?php echo esc_attr($text_size . ' ' . $font_weight); ?> text-gray-700 group-hover:text-gray-900">
                             <?php echo esc_html($cat['name']); ?>
                         </span>
                     </div>
                     <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
-                        <?php echo isset($cat['count']) ? esc_html((string)$cat['count']) : ''; ?>
+                        <?php echo isset($cat['count']) ? esc_html((string) $cat['count']) : ''; ?>
                     </span>
                 </label>
                 <?php
-                
-                // Render children if they exist
                 if ($has_children) {
-                    render_category_hierarchy($cat['children'], $selected_ids, $selected_slugs, $level + 1);
+                    $render_category_hierarchy($cat['children'], $selected_ids, $selected_slugs, $level + 1);
                 }
             }
-        }
-        
+        };
+
         // Render the hierarchy
-        render_category_hierarchy($available_categories, $selected_ids, $selected_slugs);
+        $render_category_hierarchy($available_categories, $selected_ids, $selected_slugs);
         ?>
     </div>
 </div>
