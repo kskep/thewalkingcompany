@@ -23,6 +23,97 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --max-width: 1400px;
+}
+
+/* Magazine Container & Layout */
+.magazine-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.editorial-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  padding: 3rem 0;
+  align-items: start;
+}
+
+.editorial-content {
+  position: relative;
+}
+
+.product-details {
+  position: sticky;
+  top: 2rem;
+  max-width: 600px;
+}
+
+/* Magazine Header */
+.magazine-header {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem 0 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.magazine-title {
+  font-family: var(--font-primary);
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.magazine-subtitle {
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* Responsive Magazine Layout */
+@media (max-width: 1024px) {
+  .editorial-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+  
+  .product-details {
+    position: static;
+  }
+  
+  .magazine-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .magazine-container {
+    padding: 0 1rem;
+  }
+  
+  .editorial-layout {
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+  }
+  
+  .magazine-header {
+    padding: 1rem 0;
+  }
+  
+  .magazine-title {
+    font-size: 1.75rem;
+  }
 }
 
 /* Magazine aesthetic - no border radius or shadows */
@@ -445,6 +536,100 @@
 
 .stock-info-row.out-of-stock .stock-indicator {
   background: #ef4444;
+}
+
+/* Product Accordions - Elegant Magazine Style */
+.product-accordions-container {
+  margin: 2rem 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.product-accordion {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  text-align: left;
+  transition: var(--transition-fast);
+}
+
+.accordion-header:hover {
+  color: var(--primary-pink);
+}
+
+.accordion-icon {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: transform var(--transition-base);
+}
+
+.accordion-header[aria-expanded="true"] .accordion-icon {
+  transform: rotate(180deg);
+}
+
+.accordion-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-base) ease-out;
+}
+
+.accordion-panel[aria-hidden="false"] {
+  max-height: 500px;
+  transition: max-height var(--transition-base) ease-in;
+}
+
+.accordion-content {
+  padding-bottom: 1.5rem;
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.accordion-content p {
+  margin-bottom: 0.75rem;
+}
+
+.accordion-content p:last-child {
+  margin-bottom: 0;
+}
+
+.accordion-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0 0;
+}
+
+.accordion-content li {
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.accordion-content li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary-pink-light);
+  font-weight: bold;
+}
+
+.accordion-content strong {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Product Meta Section - Modern Design */

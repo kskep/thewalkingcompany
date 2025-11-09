@@ -321,28 +321,28 @@ add_filter('woocommerce_product_tabs', 'eshop_remove_additional_information_tab'
 
 /**
  * Add Wishlist next to Add to Cart across product types
- * We open a small wrapper before the ATC button and close after, injecting the wishlist button.
+ * DISABLED - Now handled directly in add-to-cart templates for better control
  */
-function eshop_purchase_actions_open() {
-    if (!function_exists('is_product') || !is_product()) { return; }
-    echo '<div class="purchase-actions">';
-}
-add_action('woocommerce_before_add_to_cart_button', 'eshop_purchase_actions_open', 5);
+// function eshop_purchase_actions_open() {
+//     if (!function_exists('is_product') || !is_product()) { return; }
+//     echo '<div class="purchase-actions">';
+// }
+// add_action('woocommerce_before_add_to_cart_button', 'eshop_purchase_actions_open', 5);
 
-function eshop_purchase_actions_wishlist_button() {
-    if (!function_exists('is_product') || !is_product()) { return; }
-    if (function_exists('eshop_wishlist_button_enhanced')) {
-        // Use enhanced wishlist button with our classes
-        eshop_wishlist_button_enhanced(null, true, 'add-to-wishlist');
-    }
-}
-add_action('woocommerce_after_add_to_cart_button', 'eshop_purchase_actions_wishlist_button', 10);
+// function eshop_purchase_actions_wishlist_button() {
+//     if (!function_exists('is_product') || !is_product()) { return; }
+//     if (function_exists('eshop_wishlist_button_enhanced')) {
+//         // Use enhanced wishlist button with our classes
+//         eshop_wishlist_button_enhanced(null, true, 'add-to-wishlist');
+//     }
+// }
+// add_action('woocommerce_after_add_to_cart_button', 'eshop_purchase_actions_wishlist_button', 10);
 
-function eshop_purchase_actions_close() {
-    if (!function_exists('is_product') || !is_product()) { return; }
-    echo '</div>';
-}
-add_action('woocommerce_after_add_to_cart_button', 'eshop_purchase_actions_close', 1000);
+// function eshop_purchase_actions_close() {
+//     if (!function_exists('is_product') || !is_product()) { return; }
+//     echo '</div>';
+// }
+// add_action('woocommerce_after_add_to_cart_button', 'eshop_purchase_actions_close', 1000);
 
 /**
  * Override WooCommerce image sizes for better quality
