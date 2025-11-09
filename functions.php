@@ -734,13 +734,3 @@ add_action('admin_post_newsletter_signup', 'handle_newsletter_signup');
 add_action('admin_post_nopriv_newsletter_signup', 'handle_newsletter_signup');
 
 
-/**
- * Start the PHP session on the 'init' hook.
- * This is the standard and most reliable way to handle sessions in WordPress.
- */
-function my_theme_start_session_on_init() {
-    if ( ! session_id() ) {
-        session_start();
-    }
-}
-add_action('init', 'my_theme_start_session_on_init');
