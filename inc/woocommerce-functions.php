@@ -706,20 +706,48 @@ function eshop_require_instock_products_in_catalog($meta_query, $query) {
         return $meta_query;
     }
 
-    $bypass_stock_filter = false;
-    if (is_object($query)) {
-        if (method_exists($query, 'get')) {
-            $bypass_stock_filter = $query->get('eshop_bypass_stock_filter');
-        } elseif (isset($query->query_vars['eshop_bypass_stock_filter'])) {
-            $bypass_stock_filter = $query->query_vars['eshop_bypass_stock_filter'];
+    $resolve_query_var = static function ($source, $key) {
+        if (!is_object($source)) {
+            return null;
         }
-    }
 
+        if (method_exists($source, 'get')) {
+            $value = $source->get($key);
+            if (null !== $value) {
+                return $value;
+            }
+        }
+
+        if (method_exists($source, 'get_main_query')) {
+            $main_query = $source->get_main_query();
+            if ($main_query instanceof WP_Query) {
+                if (method_exists($main_query, 'get')) {
+                    $value = $main_query->get($key);
+                    if (null !== $value) {
+                        return $value;
+                    }
+                }
+            }
+        }
+
+        if ($source instanceof WP_Query) {
+            $vars = $source->query_vars;
+        } elseif (method_exists($source, 'get_main_query')) {
+            $main_query = $source->get_main_query();
+            $vars = ($main_query instanceof WP_Query) ? $main_query->query_vars : array();
+        } else {
+            $vars = array();
+        }
+
+        return (is_array($vars) && array_key_exists($key, $vars)) ? $vars[$key] : null;
+    };
+
+    $bypass_stock_filter = $resolve_query_var($query, 'eshop_bypass_stock_filter');
     if (!empty($bypass_stock_filter)) {
         return $meta_query;
     }
 
-    $post_types = $query->get('post_type');
+    $post_types = $resolve_query_var($query, 'post_type');
     if (empty($post_types)) {
         $post_types = array('product');
     }
