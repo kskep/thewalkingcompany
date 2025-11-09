@@ -121,6 +121,11 @@ function eshop_theme_scripts() {
         wp_enqueue_script('eshop-color-variants', get_template_directory_uri() . '/js/components/color-variants.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('eshop-size-selection', get_template_directory_uri() . '/js/components/size-selection.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         wp_enqueue_script('size-transformation', get_template_directory_uri() . '/js/components/size-transformation.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        
+        // Single Product Enhancements (Wishlist & Stock Updates)
+        $sp_enhancements_js_path = get_template_directory() . '/js/components/single-product-enhancements.js';
+        $sp_enhancements_js_ver = file_exists($sp_enhancements_js_path) ? filemtime($sp_enhancements_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-single-product-enhancements', get_template_directory_uri() . '/js/components/single-product-enhancements.js', array('jquery', 'eshop-theme-script'), $sp_enhancements_js_ver, true);
     }
 
     // External CSS

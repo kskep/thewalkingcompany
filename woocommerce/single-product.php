@@ -38,19 +38,12 @@ get_header( 'shop' ); ?>
             <!-- Right Column: Product Details -->
             <div class="product-details">
 
-                <!-- Product Header: Title, Rating, Price, Stock -->
+                <!-- Product Header: Title, Rating, Price -->
                 <section class="product-header">
                     <?php
                     woocommerce_template_single_title();
                     woocommerce_template_single_rating();
                     woocommerce_template_single_price();
-
-                    // Custom Stock Status
-                    if ( $product->is_in_stock() ) {
-                        echo '<div class="stock in-stock"><i class="fas fa-check-circle"></i><span>' . esc_html__( 'In Stock - Ships Today', 'eshop-theme' ) . '</span></div>';
-                    } else {
-                        echo '<div class="stock out-of-stock"><i class="fas fa-times-circle"></i><span>' . esc_html__( 'Out of Stock', 'eshop-theme' ) . '</span></div>';
-                    }
                     ?>
                 </section>
 

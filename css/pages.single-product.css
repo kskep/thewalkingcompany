@@ -5,18 +5,24 @@
   --primary-pink: #EE81B3;
   --primary-pink-light: #F2A1C7;
   --primary-pink-dark: #E55A9F;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --text-light: #9ca3af;
-  --border-light: #e5e7eb;
-  --border-medium: #d1d5db;
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --text-light: #a0aec0;
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e0;
   --background-white: #ffffff;
-  --background-light: #f9fafb;
+  --background-light: #f7fafc;
+  --background-cream: #fefaf6;
   --shadow-none: none; /* Magazine aesthetic - no shadows */
   --border-radius-none: 0; /* Magazine aesthetic - no border radius */
   --transition-base: all 0.3s ease;
   --transition-fast: all 0.2s ease;
   --font-primary: "Roboto", sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
 /* Magazine aesthetic - no border radius or shadows */
@@ -63,9 +69,17 @@
   }
 }
 
-/* Product Header Section */
-.product-header {
+/* Product Actions Section - Elegant Container */
+.product-actions {
   margin-bottom: 2rem;
+  padding: 1.75rem 0;
+}
+
+/* Product Header Section - Elegant Spacing */
+.product-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .product-breadcrumb {
@@ -80,71 +94,79 @@
   letter-spacing: 0.1em;
 }
 
-/* Product Title - Modern Typography */
+/* Product Title - Soft, Elegant Typography with Roboto */
 .product_title,
 .entry-title {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
+  font-family: var(--font-primary);
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: var(--font-weight-light);
   color: var(--text-primary);
-  margin-bottom: 1rem;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
+  margin-bottom: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
-/* Product Rating - Enhanced Design */
+/* Product Rating - Soft Elegant Design */
 .woocommerce-product-rating {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
+  gap: 0.625rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border-light);
 }
 
 .star-rating {
-  color: #fbbf24;
-  font-size: 1rem;
+  color: #f6ad55;
+  font-size: 0.875rem;
+  opacity: 0.9;
 }
 
 .woocommerce-review-link {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-family: var(--font-primary);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-normal);
   transition: var(--transition-fast);
 }
 
 .woocommerce-review-link:hover {
   color: var(--primary-pink);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
-/* Price Section - Modern Design */
+/* Price Section - Soft Elegant Design */
 .product-price-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 .price {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
+  font-family: var(--font-primary);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: var(--font-weight-light);
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: baseline;
   gap: 1rem;
   flex-wrap: wrap;
+  letter-spacing: -0.02em;
 }
 
 .price del {
   color: var(--text-light);
-  font-weight: 500;
-  font-size: 0.875em;
+  font-weight: var(--font-weight-light);
+  font-size: 0.75em;
   text-decoration: line-through;
+  opacity: 0.6;
 }
 
 .price ins {
   text-decoration: none;
   color: var(--primary-pink);
+  font-weight: var(--font-weight-normal);
 }
 
 .price .amount {
@@ -167,15 +189,17 @@
   border-radius: var(--border-radius-none); /* No border radius */
 }
 
-/* Product Description */
+/* Product Description - Soft Reading Experience */
 .product-description {
   margin-bottom: 2rem;
 }
 
 .woocommerce-product-details__short-description {
   color: var(--text-secondary);
-  line-height: 1.7;
-  font-size: 1rem;
+  line-height: 1.75;
+  font-family: var(--font-primary);
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-normal);
   margin: 0;
 }
 
@@ -187,37 +211,48 @@
   margin-bottom: 0;
 }
 
-/* Add to Cart Section - 2025 Standards */
+/* Add to Cart Section - Elegant Magazine Style */
 .product-cart-section {
   margin-bottom: 2rem;
 }
 
 .cart {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-/* Quantity Selector - Modern Design */
+/* Cart Actions Container - Horizontal Layout */
+.cart-actions-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+/* Quantity Selector - Minimalist Elegant Design */
 .cart .quantity {
-  margin-right: 1rem;
-  margin-bottom: 1rem;
   display: inline-flex;
-  align-items: center;
-  border: 2px solid var(--border-light);
-  background: var(--background-white);
+  align-items: stretch;
+  border: 1px solid var(--border-light);
+  background: var(--background-cream);
   transition: var(--transition-fast);
+  flex-shrink: 0;
+  height: 3.5rem;
 }
 
 .cart .quantity:focus-within {
-  border-color: var(--primary-pink);
-  box-shadow: 0 0 0 3px rgba(238, 129, 179, 0.1);
+  border-color: var(--primary-pink-light);
+  background: var(--background-white);
 }
 
 .cart .quantity input {
-  width: 4rem;
-  padding: 0.875rem 0.5rem;
+  width: 3.5rem;
+  padding: 0;
   border: none;
   text-align: center;
-  font-weight: 600;
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-normal);
   font-size: 1rem;
   background: transparent;
   color: var(--text-primary);
@@ -227,89 +262,145 @@
   outline: none;
 }
 
-/* Quantity Buttons */
+/* Quantity Buttons - Soft Minimalist */
 .quantity-button {
   width: 2.5rem;
-  height: 2.5rem;
   border: none;
-  background: var(--background-light);
+  background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition-fast);
-  font-weight: 600;
+  font-weight: var(--font-weight-light);
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 .quantity-button:hover {
-  background: var(--primary-pink);
+  background: var(--primary-pink-light);
   color: white;
 }
 
 .quantity-button:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
-/* Add to Cart Button - Premium Design (Magazine Style) */
+/* Add to Cart Button - Soft & Elegant */
 .single_add_to_cart_button,
 .single_add_to_cart_button.button {
-  background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-pink-dark) 100%);
+  background: var(--text-primary);
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  font-weight: 600;
-  font-size: 1rem;
+  padding: 0 2rem;
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-normal);
+  font-size: 0.9375rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 3.5rem;
+  gap: 0.625rem;
+  height: 3.5rem;
+  flex: 1;
   transition: var(--transition-base);
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: var(--border-radius-none); /* No border radius */
-  box-shadow: var(--shadow-none); /* No shadows */
-  width: 100%;
+  letter-spacing: 0.125em;
+  border-radius: var(--border-radius-none);
+  box-shadow: var(--shadow-none);
 }
 
 .single_add_to_cart_button::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: var(--transition-base);
+  inset: 0;
+  background: var(--primary-pink);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
 .single_add_to_cart_button:hover::before {
-  left: 100%;
+  opacity: 1;
+}
+
+.single_add_to_cart_button span {
+  position: relative;
+  z-index: 1;
 }
 
 .single_add_to_cart_button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-none); /* No shadows even on hover */
+  transform: none;
+  box-shadow: var(--shadow-none);
 }
 
 .single_add_to_cart_button:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .single_add_to_cart_button:disabled {
-  background: var(--text-light);
+  background: var(--border-medium);
   cursor: not-allowed;
   transform: none;
-  box-shadow: var(--shadow-none); /* No shadows */
 }
 
 .single_add_to_cart_button:disabled::before {
   display: none;
+}
+
+/* Wishlist Button - Elegant Icon Button */
+.wishlist-action-btn {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-light);
+  background: var(--background-cream);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.wishlist-action-btn svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  transition: var(--transition-fast);
+}
+
+.wishlist-action-btn:hover {
+  border-color: var(--primary-pink);
+  background: var(--background-white);
+  color: var(--primary-pink);
+}
+
+.wishlist-action-btn.in-wishlist {
+  border-color: var(--primary-pink);
+  background: var(--primary-pink-light);
+  color: white;
+}
+
+.wishlist-action-btn.in-wishlist svg {
+  fill: white;
+}
+
+.wishlist-action-btn.loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.wishlist-action-btn.loading svg {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.95); }
 }
 
 /* Loading State */
@@ -319,18 +410,41 @@
 
 .single_add_to_cart_button.loading::after {
   content: '';
+  position: absolute;
   width: 1rem;
   height: 1rem;
   border: 2px solid transparent;
   border-top: 2px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-left: 0.5rem;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Stock Status Info - Below Actions */
+.stock-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-primary);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-secondary);
+  padding-top: 0.5rem;
+}
+
+.stock-info-row .stock-indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.stock-info-row.out-of-stock .stock-indicator {
+  background: #ef4444;
 }
 
 /* Product Meta Section - Modern Design */
@@ -690,34 +804,38 @@
   
   .product_title,
   .entry-title {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
+    font-size: 1.625rem;
+    margin-bottom: 0.875rem;
   }
   
   .price {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
   
-  /* Cart Section Mobile */
-  .cart .quantity {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 1rem;
-    justify-content: center;
+  .product-header {
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
   
-  .cart .quantity input {
-    width: 5rem;
+  /* Cart Section Mobile */
+  .cart-actions-wrapper {
+    flex-wrap: wrap;
+  }
+  
+  .cart .quantity {
+    flex: 0 0 auto;
   }
   
   .single_add_to_cart_button {
-    width: 100%;
-    justify-content: center;
-    padding: 1.25rem 2rem;
-    font-size: 1.1rem;
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+  
+  .wishlist-action-btn {
+    order: -1;
   }
   
   /* Actions Mobile */
