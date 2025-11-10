@@ -79,9 +79,24 @@ function eshop_theme_scripts() {
         // Product Card component CSS (no dependency on old shop CSS)
         wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime(get_template_directory() . '/css/components/product-card.css'));
 
+        // Product Archive Filters CSS (matching concept design)
+        $product_archive_filters_css_path = get_template_directory() . '/css/components/product-archive-filters.css';
+        $product_archive_filters_css_ver = file_exists($product_archive_filters_css_path) ? filemtime($product_archive_filters_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-product-archive-filters', get_template_directory_uri() . '/css/components/product-archive-filters.css', array('eshop-theme-style'), $product_archive_filters_css_ver);
+
+        // Cards Grid CSS (newly created for concept design)
+        $cards_grid_css_path = get_template_directory() . '/css/components/cards-grid.css';
+        $cards_grid_css_ver = file_exists($cards_grid_css_path) ? filemtime($cards_grid_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-cards-grid', get_template_directory_uri() . '/css/components/cards-grid.css', array('eshop-theme-style'), $cards_grid_css_ver);
+
         // Price slider (noUiSlider) for filters
         wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');
         wp_enqueue_script('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js', array(), '15.7.1', true);
+
+        // Product Archive Filters JavaScript
+        $product_archive_filters_js_path = get_template_directory() . '/js/components/product-archive-filters.js';
+        $product_archive_filters_js_ver = file_exists($product_archive_filters_js_path) ? filemtime($product_archive_filters_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-product-archive-filters', get_template_directory_uri() . '/js/components/product-archive-filters.js', array('jquery', 'eshop-theme-script'), $product_archive_filters_js_ver, true);
     }
 
     if (is_product()) {
@@ -169,6 +184,11 @@ function eshop_theme_scripts() {
         wp_enqueue_script('eshop-filters', get_template_directory_uri() . $filters_js_rel, array('jquery', 'nouislider', 'eshop-theme-script'), $filters_js_ver, true);
         // Enqueue size transformation script on shop/archive pages
         wp_enqueue_script('size-transformation', get_template_directory_uri() . '/js/components/size-transformation.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        
+        // Product Card Interactive Features (newly created for concept design)
+        $product_card_js_path = get_template_directory() . '/js/components/product-card.js';
+        $product_card_js_ver = file_exists($product_card_js_path) ? filemtime($product_card_js_path) : '1.0.0';
+        wp_enqueue_script('eshop-product-card', get_template_directory_uri() . '/js/components/product-card.js', array('jquery', 'eshop-theme-script'), $product_card_js_ver, true);
     }
 
     // Also load on shop pages specifically

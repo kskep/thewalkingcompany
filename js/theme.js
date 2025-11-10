@@ -90,15 +90,15 @@
             }
         });
 
-        // Product Card Hover Effects (for WooCommerce)
-        $('.product-card, .post-card').hover(
-            function() {
-                $(this).addClass('transform scale-105');
-            },
-            function() {
-                $(this).removeClass('transform scale-105');
-            }
-        );
+        // Product Card Hover Effects (for WooCommerce) - REMOVED scaling effect
+        // $('.product-card, .post-card').hover(
+        //     function() {
+        //         $(this).addClass('transform scale-105');
+        //     },
+        //     function() {
+        //         $(this).removeClass('transform scale-105');
+        //     }
+        // );
 
         // Newsletter Form Submission
         $('.newsletter-form').on('submit', function(e) {

@@ -144,6 +144,55 @@ add_action('wp_ajax_add_to_wishlist', 'eshop_add_to_wishlist');
 add_action('wp_ajax_nopriv_add_to_wishlist', 'eshop_add_to_wishlist');
 
 /**
+ * AJAX handler to remove product from wishlist
+ */
+add_action('wp_ajax_remove_from_wishlist', 'eshop_remove_from_wishlist_ajax');
+add_action('wp_ajax_nopriv_remove_from_wishlist', 'eshop_remove_from_wishlist_ajax');
+
+/**
+ * Handle AJAX remove from wishlist request
+ */
+function eshop_remove_from_wishlist_ajax() {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'eshop_ajax_nonce')) {
+        wp_send_json_error('Invalid security token');
+        return;
+    }
+
+    $product_id = intval($_POST['product_id']);
+    
+    if (!$product_id) {
+        wp_send_json_error('Invalid product ID');
+        return;
+    }
+
+    // Check if product exists
+    $product = wc_get_product($product_id);
+    if (!$product || !$product->exists()) {
+        wp_send_json_error('Product not found');
+        return;
+    }
+
+    // Remove from wishlist
+    $removed = eshop_remove_from_wishlist($product_id);
+    
+    if ($removed) {
+        // Get updated count and info
+        $wishlist_count = eshop_get_wishlist_count();
+        
+        wp_send_json_success(array(
+            'message' => sprintf(__('Removed "%s" from wishlist', 'thewalkingtheme'), $product->get_name()),
+            'count' => $wishlist_count,
+            'count_label' => eshop_get_wishlist_count_display(),
+            'product_id' => $product_id,
+            'is_in_wishlist' => false
+        ));
+    } else {
+        wp_send_json_error('Product was not in wishlist');
+    }
+}
+
+/**
  * Get wishlist count
  */
 function eshop_get_wishlist_count() {
