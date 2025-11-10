@@ -1,16 +1,10 @@
+/* Import shared variables */
+@import 'shared-variables.css';
+
 /* Product Archive Filters - Matching Concept Design */
-/* Use the same color variables as the concept */
 
 :root {
-  --pink: #ee81b3;
-  --pink-dark: #d25c8f;
-  --ink: #1f1f23;
-  --body: #3d3d47;
-  --muted: #6d6c75;
-  --line: #e6dce2;
-  --tile: #f4eef2;
-  --tag: #ede2e8;
-  --radius: 6px;
+  /* Use variables from shared-variables.css */
 }
 
 /* Toolbar Structure */

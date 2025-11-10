@@ -1,0 +1,17 @@
+/* Shared CSS Variables for Product Archive Components */
+/* Unified color system matching the concept design */
+
+:root {
+  /* Color System */
+  --pink: #ee81b3;
+  --pink-dark: #d25c8f;
+  --ink: #1f1f23;
+  --body: #3d3d47;
+  --muted: #6d6c75;
+  --line: #e6dce2;
+  --tile: #f4eef2;
+  --tag: #ede2e8;
+  
+  /* Layout Constants */
+  --radius: 6px;
+}
