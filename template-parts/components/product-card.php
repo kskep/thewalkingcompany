@@ -15,11 +15,12 @@ $is_on_sale = $product->is_on_sale();
 $is_variable = $product->is_type('variable');
 $date_created = get_the_date('c', $product_id);
 
-// Get product colors from WooCommerce attributes (fallback if no ACF)
+// Get product colors from WooCommerce attributes when available (fallback if no ACF)
 $product_colors = array();
-$color_attribute = wc_get_attribute_taxonomy('pa_color');
-if ($color_attribute && taxonomy_exists('pa_color')) {
-    $color_terms = wp_get_post_terms($product_id, 'pa_color');
+$color_attribute_taxonomy = 'pa_color';
+
+if ( taxonomy_exists( $color_attribute_taxonomy ) && function_exists( 'wp_get_post_terms' ) ) {
+    $color_terms = wp_get_post_terms($product_id, $color_attribute_taxonomy);
     foreach ($color_terms as $term) {
         $color_data = get_term_meta($term->term_id, 'pa_color_color', true);
         if (!$color_data) {
