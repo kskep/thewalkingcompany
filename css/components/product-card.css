@@ -136,22 +136,44 @@
   stroke: white;
 }
 
+/* Active state - product is in wishlist */
+.wishlist-button.active,
 .wishlist-button.in-wishlist,
+.add-to-wishlist.active,
 .add-to-wishlist.in-wishlist {
   background: var(--pink) !important;
   color: white !important;
   border-color: var(--pink) !important;
 }
 
+.wishlist-button.active svg,
 .wishlist-button.in-wishlist svg,
+.add-to-wishlist.active svg,
 .add-to-wishlist.in-wishlist svg {
   fill: white;
   stroke: white;
 }
 
-.wishlist-button.loading {
+/* Loading state */
+.wishlist-button.loading,
+.add-to-wishlist.loading {
   opacity: 0.6;
   cursor: wait;
+  pointer-events: none;
+}
+
+.wishlist-button.loading svg,
+.add-to-wishlist.loading svg {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Size Overlay */

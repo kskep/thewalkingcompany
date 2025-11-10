@@ -237,6 +237,12 @@
             wishlistBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                
+                // Prevent multiple simultaneous clicks
+                if (wishlistBtn.classList.contains('loading')) {
+                    return;
+                }
+                
                 this.toggleWishlist(wishlistBtn);
             });
 
@@ -254,12 +260,12 @@
          */
         async toggleWishlist(button) {
             const productId = this.productId;
-            const isInWishlist = button.classList.contains('active');
 
             try {
                 // Show loading state
                 button.classList.add('loading');
                 button.setAttribute('aria-busy', 'true');
+                button.style.pointerEvents = 'none';
 
                 const response = await this.ajaxRequest({
                     action: 'add_to_wishlist',
@@ -268,15 +274,22 @@
                 });
 
                 if (response.success) {
-                    // Toggle visual state
-                    button.classList.toggle('active');
+                    const newIsInWishlist = response.data.is_in_wishlist;
+                    
+                    // Update button state based on server response
                     button.classList.remove('loading');
                     button.setAttribute('aria-busy', 'false');
+                    button.style.pointerEvents = '';
+                    
+                    if (newIsInWishlist) {
+                        button.classList.add('active', 'in-wishlist');
+                    } else {
+                        button.classList.remove('active', 'in-wishlist');
+                    }
 
                     // Update SVG fill based on state
                     const svg = button.querySelector('svg');
                     if (svg) {
-                        const newIsInWishlist = response.data.is_in_wishlist;
                         svg.setAttribute('fill', newIsInWishlist ? 'currentColor' : 'none');
                     }
 
@@ -338,6 +351,7 @@
                 console.error('Wishlist toggle failed:', error);
                 button.classList.remove('loading');
                 button.setAttribute('aria-busy', 'false');
+                button.style.pointerEvents = '';
                 this.showFeedback('Error updating wishlist', 'error');
             }
         }
