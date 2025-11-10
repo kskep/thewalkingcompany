@@ -3,217 +3,6 @@
  * Styles for the modular filter system
  */
 
-/* Archive Toolbar */
-.archive-toolbar {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--ink-soft, #e5e7eb);
-}
-
-.archive-toolbar__top {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.archive-toolbar__breadcrumbs {
-    flex: 1 1 auto;
-    min-width: 220px;
-}
-
-.archive-toolbar__controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1.25rem;
-}
-
-.archive-toolbar__filters-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1.1rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid var(--ink-soft, #e5e7eb);
-    border-radius: var(--radius-xs, 999px);
-    background-color: transparent;
-    color: var(--ink, #111827);
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.archive-toolbar__filters-btn:hover,
-.archive-toolbar__filters-btn:focus {
-    background-color: var(--ink-soft, #f3f4f6);
-    border-color: var(--ink-soft, #e5e7eb);
-}
-
-.archive-toolbar__filters-btn .material-icons {
-    font-size: 1.1rem;
-}
-
-.archive-toolbar__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 180px;
-}
-
-.archive-toolbar__subtitle {
-    font-size: 0.85rem;
-    color: var(--ink-soft, #6b7280);
-    margin: 0;
-}
-
-.archive-toolbar__result-count {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink, #111827);
-}
-
-.archive-toolbar__ordering .woocommerce-ordering select {
-    padding: 0.55rem 2.25rem 0.55rem 0.85rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-radius: var(--radius-xs, 999px);
-    border: 1px solid var(--ink-soft, #e5e7eb);
-    background-color: #fff;
-    appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
-                      linear-gradient(135deg, currentColor 50%, transparent 50%);
-    background-position: calc(100% - 14px) calc(1rem), calc(100% - 10px) calc(1rem);
-    background-size: 4px 4px;
-    background-repeat: no-repeat;
-}
-
-.archive-toolbar__active {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-s, 12px);
-    background-color: var(--sand-50, #f7f3f0);
-}
-
-.archive-toolbar__active-label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft, #6b7280);
-}
-
-.archive-toolbar__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.archive-toolbar__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.75rem;
-    border-radius: var(--radius-xs, 999px);
-    background-color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--ink, #111827);
-    box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
-}
-
-.archive-toolbar__chip-remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.1rem;
-    height: 1.1rem;
-    border-radius: 50%;
-    background-color: var(--ink-soft, #e5e7eb);
-    color: var(--ink, #111827);
-    font-size: 0.85rem;
-    font-weight: 700;
-    line-height: 1;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.archive-toolbar__chip-remove:hover,
-.archive-toolbar__chip-remove:focus {
-    background-color: var(--ink, #111827);
-    color: #fff;
-}
-
-.archive-toolbar__clear {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink, #111827);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s ease;
-}
-
-.archive-toolbar__clear:hover,
-.archive-toolbar__clear:focus {
-    border-color: currentColor;
-}
-
-@media (max-width: 960px) {
-    .archive-toolbar__controls {
-        justify-content: flex-start;
-    }
-
-    .archive-toolbar__meta {
-        order: 1;
-    }
-
-    .archive-toolbar__ordering {
-        order: 2;
-        width: 100%;
-    }
-}
-
-@media (max-width: 640px) {
-    .archive-toolbar {
-        padding: 1rem 0 1.5rem;
-    }
-
-    .archive-toolbar__top {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .archive-toolbar__controls {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-    }
-
-    .archive-toolbar__filters-btn {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .archive-toolbar__ordering {
-        width: 100%;
-    }
-}
-
 /* Filter Drawer */
 #filter-drawer {
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
@@ -249,7 +38,8 @@
 /* Utility when filter templates toggle .hidden class - scoped to filter components only */
 #filter-drawer .hidden,
 #filter-backdrop.hidden,
-.filter-section .hidden {
+.filter-section .hidden,
+.active-filters-bar .hidden {
     display: none;
 }
 
@@ -529,6 +319,51 @@
 
 .attribute-filter input:checked + .color-swatch::after {
     border-color: var(--primary-pink, #ee81b3);
+}
+
+/* Active Filters Bar */
+.active-filters-bar {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.active-filter {
+    animation: fadeIn 0.2s ease-out;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.active-filter:hover {
+    background-color: #e5e7eb;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.active-filter .remove-filter {
+    transition: color 0.2s ease;
+}
+
+.active-filter .remove-filter:hover {
+    color: #ef4444;
 }
 
 /* Loading States */

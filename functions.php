@@ -36,8 +36,8 @@ function eshop_theme_scripts() {
     // Enqueue main stylesheet
     wp_enqueue_style('eshop-theme-style', get_stylesheet_uri(), array(), '1.0.0');
 
-        // Editorial type system
-        wp_enqueue_style('eshop-typefaces', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap', array(), null);
+    // Google Fonts - Roboto Condensed for modern editorial look
+    wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap', array(), null);
 
     // Ensure Tailwind utilities are available without relying on @import in style.css (some hosts block remote @import)
     wp_enqueue_style('tailwind-cdn', 'https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css', array(), '2.2.19');
@@ -133,6 +133,8 @@ function eshop_theme_scripts() {
         wp_enqueue_script('eshop-single-product-enhancements', get_template_directory_uri() . '/js/components/single-product-enhancements.js', array('jquery', 'eshop-theme-script'), $sp_enhancements_js_ver, true);
     }
 
+    // External CSS
+    wp_enqueue_style('google-fonts-ibm-open', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap', array(), null);
     wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons', array(), null);
     wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
     wp_enqueue_style('feather-icons', 'https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.css', array(), '4.29.0');

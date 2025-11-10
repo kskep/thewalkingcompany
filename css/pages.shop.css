@@ -398,33 +398,64 @@ body.tax-product_tag {
   color: var(--primary-pink);
 }
 
-/* Active Filters - Magazine Toolbar */
-.archive-toolbar__active {
-  background: var(--paper, #ffffff);
-  border: 1px solid var(--rule, #e5e7eb);
+/* Active Filters Bar - Edgy Design */
+.active-filters-bar {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 0;
   box-shadow: none;
+  width: 100%;
+  padding: 16px 20px;
 }
 
-.archive-toolbar__chip {
-  background: var(--primary-pink, #ee81b3);
-  color: #fff;
-  border: 1px solid transparent;
-  letter-spacing: 0.08em;
+.active-filters-list .active-filter {
+  background: var(--primary-pink);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border: 2px solid var(--primary-pink);
 }
 
-.archive-toolbar__chip-remove {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+.active-filters-list .active-filter:hover {
+  background: var(--primary-pink-dark);
+  border-color: var(--primary-pink-dark);
+  transform: none;
 }
 
-.archive-toolbar__chip-remove:hover,
-.archive-toolbar__chip-remove:focus {
-  background-color: rgba(255, 255, 255, 0.5);
-  color: #111827;
+.active-filters-list .active-filter .remove-filter {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.archive-toolbar__clear {
-  color: var(--ink, #111827);
+.active-filters-list .active-filter .remove-filter:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.clear-all-filters {
+  padding: 6px 12px;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.clear-all-filters:hover {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* Quick Filters */
