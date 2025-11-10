@@ -71,23 +71,18 @@ function eshop_theme_scripts() {
 
     // -- START MODIFICATION --
     if (is_shop() || is_product_category() || is_product_tag()) {
-        // New reworked archive page CSS
-        $archive_reworked_css_path = get_template_directory() . '/css/pages/archive-reworked.css';
-        $archive_reworked_css_ver = file_exists($archive_reworked_css_path) ? filemtime($archive_reworked_css_path) : '1.0.0';
-        wp_enqueue_style('eshop-archive-reworked', get_template_directory_uri() . '/css/pages/archive-reworked.css', array('eshop-theme-style'), $archive_reworked_css_ver);
-
         // Product Card component CSS (no dependency on old shop CSS)
         wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime(get_template_directory() . '/css/components/product-card.css'));
 
-        // Product Archive Filters CSS (matching concept design)
-        $product_archive_filters_css_path = get_template_directory() . '/css/components/product-archive-filters.css';
-        $product_archive_filters_css_ver = file_exists($product_archive_filters_css_path) ? filemtime($product_archive_filters_css_path) : '1.0.0';
-        wp_enqueue_style('eshop-product-archive-filters', get_template_directory_uri() . '/css/components/product-archive-filters.css', array('eshop-theme-style'), $product_archive_filters_css_ver);
-
-        // Cards Grid CSS (newly created for concept design)
+        // Cards Grid CSS (concept design grid layout)
         $cards_grid_css_path = get_template_directory() . '/css/components/cards-grid.css';
         $cards_grid_css_ver = file_exists($cards_grid_css_path) ? filemtime($cards_grid_css_path) : '1.0.0';
         wp_enqueue_style('eshop-cards-grid', get_template_directory_uri() . '/css/components/cards-grid.css', array('eshop-theme-style'), $cards_grid_css_ver);
+
+        // Product Archive Filters CSS (matching concept design toolbar)
+        $product_archive_filters_css_path = get_template_directory() . '/css/components/product-archive-filters.css';
+        $product_archive_filters_css_ver = file_exists($product_archive_filters_css_path) ? filemtime($product_archive_filters_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-product-archive-filters', get_template_directory_uri() . '/css/components/product-archive-filters.css', array('eshop-theme-style'), $product_archive_filters_css_ver);
 
         // Price slider (noUiSlider) for filters
         wp_enqueue_style('nouislider', 'https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css', array(), '15.7.1');

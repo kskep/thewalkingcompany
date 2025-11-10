@@ -7,7 +7,8 @@ get_header( 'shop' );
     <!-- Filter System - Now handled by product-archive-filters.php component -->
     <?php get_template_part('template-parts/components/product-archive-filters'); ?>
 
-    <section class="cards-grid">
+    <!-- Products wrapper - grid container applied by WooCommerce filters -->
+    <div class="products-wrapper">
         <?php
         if ( woocommerce_product_loop() ) {
             woocommerce_product_loop_start();
@@ -26,7 +27,7 @@ get_header( 'shop' );
             do_action( 'woocommerce_no_products_found' );
         }
         ?>
-    </section>
+    </div>
 </div>
 <?php
 get_footer( 'shop' );

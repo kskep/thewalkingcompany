@@ -15,7 +15,7 @@ $is_on_sale = $product->is_on_sale();
 $is_variable = $product->is_type('variable');
 $date_created = get_the_date('c', $product_id);
 
-// Get product colors from WooCommerce attributes when available (fallback if no ACF)
+// Get product colors from WooCommerce attributes
 $product_colors = array();
 $color_attribute_taxonomy = 'pa_color';
 
@@ -36,15 +36,9 @@ if ( taxonomy_exists( $color_attribute_taxonomy ) && function_exists( 'wp_get_po
     }
 }
 
-// If no colors found from attributes, use default colors
-if (empty($product_colors)) {
-    $product_colors = array(
-        array('name' => 'Pink', 'hex' => '#f8c5d8'),
-        array('name' => 'Rose', 'hex' => '#ee81b3'),
-        array('name' => 'Neutral', 'hex' => '#ffe6f0'),
-        array('name' => 'Dark', 'hex' => '#252536')
-    );
-}
+// NOTE: No default colors - each product should have its own unique colors
+// If no colors are found, the color row simply won't display
+// This preserves product diversity and prevents all products from looking identical
 
 // Get variation stock info
 $stock_info = array();
@@ -120,26 +114,19 @@ if ($is_variable) {
             }
             ?>
         </div>
+        <?php if (!empty($product_colors)) : ?>
         <div class="color-row">
-            <?php if (!empty($product_colors)) : ?>
-                <span>Palette</span>
-                <div class="color-dots" aria-hidden="true">
-                    <?php foreach ($product_colors as $color) : ?>
-                        <span class="color-dot"
-                              data-color="<?php echo esc_attr($color['name']); ?>"
-                              style="background: <?php echo esc_attr($color['hex']); ?>"
-                              title="<?php echo esc_attr($color['name']); ?>"></span>
-                    <?php endforeach; ?>
-                </div>
-            <?php else : ?>
-                <span>Colors Available</span>
-                <div class="color-dots" aria-hidden="true">
-                    <span class="color-dot" style="background: linear-gradient(135deg, #f8c5d8 0%, #ee81b3 100%);"></span>
-                    <span class="color-dot" style="background: #ffe6f0;"></span>
-                    <span class="color-dot" style="background: #252536;"></span>
-                </div>
-            <?php endif; ?>
+            <span>Palette</span>
+            <div class="color-dots" aria-hidden="true">
+                <?php foreach ($product_colors as $color) : ?>
+                    <span class="color-dot"
+                          data-color="<?php echo esc_attr($color['name']); ?>"
+                          style="background: <?php echo esc_attr($color['hex']); ?>"
+                          title="<?php echo esc_attr($color['name']); ?>"></span>
+                <?php endforeach; ?>
+            </div>
         </div>
+        <?php endif; ?>
         <div class="price-row">
             <?php
             echo $product->get_price_html();

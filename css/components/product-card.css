@@ -2,10 +2,7 @@
 @import 'shared-variables.css';
 
 /* Product Card Component - Concept Design Implementation */
-
-:root {
-  /* Use variables from shared-variables.css */
-}
+/* All CSS variables defined in shared-variables.css */
 
 .product-card {
   border: 1px solid var(--line);
@@ -187,6 +184,7 @@
   margin: 0;
   color: var(--ink);
   line-height: 1.3;
+  text-transform: capitalize;
 }
 
 .product-card__title a {
@@ -324,20 +322,4 @@
   outline-offset: 2px;
 }
 
-/* Legacy class support for backward compatibility */
-.twc-card {
-  /* Inherit all product-card styles */
-  @extend .product-card;
-}
-
-.twc-card__image {
-  @extend .product-card__media;
-}
-
-.twc-card__info {
-  @extend .product-card__info;
-}
-
-.twc-card__title {
-  @extend .product-card__title;
-}
+/* Legacy class support would require duplicating all styles or using a preprocessor like SASS */
