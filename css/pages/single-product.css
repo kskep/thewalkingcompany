@@ -23,7 +23,7 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --max-width: 1400px;
+  --max-width: 1630px;
 }
 
 /* Magazine Container & Layout */
@@ -221,7 +221,7 @@
   margin-bottom: 1.75rem;
 }
 
-.price {
+.product-header .price {
   font-family: var(--font-primary);
   font-size: clamp(1.75rem, 3vw, 2.25rem);
   font-weight: var(--font-weight-light);
@@ -234,7 +234,7 @@
   letter-spacing: -0.02em;
 }
 
-.price del {
+.product-header .price del {
   color: var(--text-light);
   font-weight: var(--font-weight-light);
   font-size: 0.75em;
@@ -242,13 +242,13 @@
   opacity: 0.6;
 }
 
-.price ins {
+.product-header .price ins {
   text-decoration: none;
   color: var(--primary-pink);
   font-weight: var(--font-weight-normal);
 }
 
-.price .amount {
+.product-header .price .amount {
   font-variant-numeric: tabular-nums;
 }
 
@@ -1033,7 +1033,7 @@
     margin-bottom: 0.875rem;
   }
   
-  .price {
+  .product-header .price {
     font-size: 1.375rem;
     flex-direction: column;
     align-items: flex-start;
@@ -1101,7 +1101,7 @@
     font-size: 2rem;
   }
   
-  .price {
+  .product-header .price {
     font-size: 1.75rem;
   }
   
@@ -1137,7 +1137,7 @@
     font-size: 2.25rem;
   }
   
-  .price {
+  .product-header .price {
     font-size: 2rem;
   }
 }
@@ -1620,7 +1620,7 @@
 .related-products-section {
   margin-top: 5rem;
   padding: 4rem 0;
-  background: var(--background-light);
+  
   border-top: 1px solid var(--border-light);
 }
 

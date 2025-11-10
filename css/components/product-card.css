@@ -21,6 +21,7 @@
   border-radius: 0; /* sharp corners per spec */
   cursor: default;
   transition: box-shadow 160ms ease;
+  font-family: var(--font-primary, "Roboto", sans-serif);
 }
 .twc-card:hover { cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
 
@@ -81,7 +82,7 @@
 
 .twc-card__badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 2; }
 .twc-badge {
-  font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: var(--font-primary, "Roboto", sans-serif);
   font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
   padding: 4px 6px; border-radius: 2px; line-height: 1; color: #000;
   border: 1px solid transparent;
@@ -104,7 +105,7 @@
 .twc-card:hover .twc-card__sizes { opacity: 1; pointer-events: auto; }
 .twc-card__sizes .size {
   border: 1px solid var(--line); background: transparent; color: var(--ink);
-  font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: var(--font-primary, "Roboto", sans-serif);
   font-weight: 700; font-size: 12px; line-height: 1; padding: 7px 10px; border-radius: 9999px;
   display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   cursor: pointer;
@@ -163,14 +164,14 @@
 /* Information area (bottom ~20%) */
 .twc-card__info { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 12px; }
 .twc-card__title {
-  margin: 0; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  margin: 0; font-family: var(--font-primary, "Roboto", sans-serif);
   font-weight: 600; font-size: 0.95rem; color: var(--ink);
 }
 .twc-card__title a { color: inherit; text-decoration: none; }
 .twc-card__title a:hover { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; }
-.twc-card__sku { margin-top: 2px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
-.twc-card__category { margin-top: 4px; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 0.75rem; color: var(--ink-soft); }
-.twc-card__price { margin-top: 6px; font-family: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-weight: 700; font-size: 1rem; }
+.twc-card__sku { margin-top: 2px; font-family: var(--font-primary, "Roboto", sans-serif); font-size: 0.75rem; color: var(--ink-soft); }
+.twc-card__category { margin-top: 4px; font-family: var(--font-primary, "Roboto", sans-serif); font-size: 0.75rem; color: var(--ink-soft); }
+.twc-card__price { margin-top: 6px; font-family: var(--font-primary, "Roboto", sans-serif); font-weight: 700; font-size: 1rem; }
 .twc-card__price { color: var(--ink); }
 .twc-card__price .price { color: var(--ink); font-weight: 700; }
 .twc-card__price ins { text-decoration: none; color: var(--price-red); }
