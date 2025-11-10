@@ -678,6 +678,112 @@ function eshop_get_available_categories() {
 
 
 /**
+ * Get color hex value from color name (fallback when ACF is not available)
+ */
+function eshop_get_color_from_name($color_name) {
+    // Convert color name to lowercase for comparison
+    $color_name = strtolower(trim($color_name));
+    
+    // Define color mapping
+    $color_map = array(
+        'white' => '#ffffff',
+        'black' => '#000000',
+        'red' => '#ff0000',
+        'blue' => '#0000ff',
+        'green' => '#008000',
+        'yellow' => '#ffff00',
+        'pink' => '#ffc0cb',
+        'rose' => '#ee81b3',
+        'coral' => '#ff7f50',
+        'orange' => '#ffa500',
+        'purple' => '#800080',
+        'gray' => '#808080',
+        'grey' => '#808080',
+        'brown' => '#a52a2a',
+        'beige' => '#f5f5dc',
+        'cream' => '#fffdd0',
+        'navy' => '#000080',
+        'dark blue' => '#000080',
+        'light blue' => '#add8e6',
+        'mint' => '#98fb98',
+        'lime' => '#00ff00',
+        'olive' => '#808000',
+        'maroon' => '#800000',
+        'violet' => '#ee82ee',
+        'indigo' => '#4b0082',
+        'turquoise' => '#40e0d0',
+        'aqua' => '#00ffff',
+        'cyan' => '#00ffff',
+        'magenta' => '#ff00ff',
+        'fuchsia' => '#ff00ff',
+        'silver' => '#c0c0c0',
+        'gold' => '#ffd700',
+        'khaki' => '#f0e68c',
+        'camel' => '#c19a6b',
+        'tan' => '#d2b48c',
+        'chocolate' => '#d2691e',
+        'sienna' => '#a0522d',
+        'salmon' => '#fa8072',
+        'crimson' => '#dc143c',
+        'scarlet' => '#ff2400',
+        'burgundy' => '#800020',
+        'wine' => '#722f37',
+        'plum' => '#dda0dd',
+        'lavender' => '#e6e6fa',
+        'mint green' => '#98fb98',
+        'forest green' => '#228b22',
+        'sea green' => '#2e8b57',
+        'emerald' => '#50c878',
+        'jade' => '#00a86b',
+        'teal' => '#008080',
+        'aquamarine' => '#7fffd4',
+        'sky blue' => '#87ceeb',
+        'steel blue' => '#4682b4',
+        'royal blue' => '#4169e1',
+        'light gray' => '#d3d3d3',
+        'dark gray' => '#a9a9a9',
+        'charcoal' => '#36454f',
+        'slate' => '#708090',
+        'ash' => '#b2beb5',
+        'ivory' => '#fffff0',
+        'pearl' => '#f8f6f0',
+        'apricot' => '#fbceb1',
+        'peach' => '#ffdab9',
+        'blush' => '#f1c0c8',
+        'dusty rose' => '#d1a0a0',
+        'antique white' => '#faebd7',
+        'linen' => '#faf0e6',
+        'old lace' => '#fdf5e6',
+        'eggshell' => '#f0ead6',
+        'parchment' => '#f1e9d2',
+        'sand' => '#c2b280',
+        'sepia' => '#704214',
+        'umber' => '#635147',
+        'taupe' => '#483c32',
+        'smoke' => '#75818d',
+        'stone' => '#928573',
+        'concrete' => '#a3a3a3',
+        'slate gray' => '#708090',
+        'dove gray' => '#6c6c6c'
+    );
+    
+    // Check if exact match exists
+    if (isset($color_map[$color_name])) {
+        return $color_map[$color_name];
+    }
+    
+    // Check for partial matches for composite colors
+    foreach ($color_map as $color_key => $hex_value) {
+        if (strpos($color_name, $color_key) !== false || strpos($color_key, $color_name) !== false) {
+            return $hex_value;
+        }
+    }
+    
+    // Default fallback color - a neutral pink/rose
+    return '#f8c5d8';
+}
+
+/**
  * Shop toolbar and Filters modal via hooks to ensure availability on all archive pages
  */
 function eshop_customize_shop_toolbar_hooks() {

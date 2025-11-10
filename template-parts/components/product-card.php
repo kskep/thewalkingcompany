@@ -15,8 +15,35 @@ $is_on_sale = $product->is_on_sale();
 $is_variable = $product->is_type('variable');
 $date_created = get_the_date('c', $product_id);
 
-// Get product colors (if using custom fields or attributes)
-$product_colors = get_field('product_colors', $product_id) ?: array();
+// Get product colors from WooCommerce attributes (fallback if no ACF)
+$product_colors = array();
+$color_attribute = wc_get_attribute_taxonomy('pa_color');
+if ($color_attribute && taxonomy_exists('pa_color')) {
+    $color_terms = wp_get_post_terms($product_id, 'pa_color');
+    foreach ($color_terms as $term) {
+        $color_data = get_term_meta($term->term_id, 'pa_color_color', true);
+        if (!$color_data) {
+            // Fallback color based on term name if no color data is set
+            $color_data = eshop_get_color_from_name($term->name);
+        }
+        if ($color_data) {
+            $product_colors[] = array(
+                'name' => $term->name,
+                'hex' => $color_data
+            );
+        }
+    }
+}
+
+// If no colors found from attributes, use default colors
+if (empty($product_colors)) {
+    $product_colors = array(
+        array('name' => 'Pink', 'hex' => '#f8c5d8'),
+        array('name' => 'Rose', 'hex' => '#ee81b3'),
+        array('name' => 'Neutral', 'hex' => '#ffe6f0'),
+        array('name' => 'Dark', 'hex' => '#252536')
+    );
+}
 
 // Get variation stock info
 $stock_info = array();
