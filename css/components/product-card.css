@@ -91,45 +91,62 @@
 }
 
 /* Wishlist Button */
-.wishlist-button {
+.wishlist-button,
+.add-to-wishlist {
   position: absolute;
   top: 18px;
   right: 18px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--pink);
-  border: 1px solid rgba(238, 129, 179, 0.4);
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: var(--pink) !important;
+  border: 1px solid rgba(238, 129, 179, 0.4) !important;
   font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
-.wishlist-button svg {
+.wishlist-button svg,
+.add-to-wishlist svg {
+  width: 20px;
+  height: 20px;
+  display: block;
   transition: all 0.2s ease;
+  stroke: var(--pink);
 }
 
-.wishlist-button:hover {
-  background: var(--pink);
-  color: white;
-  border-color: var(--pink);
+.wishlist-button:hover,
+.add-to-wishlist:hover {
+  background: var(--pink) !important;
+  color: white !important;
+  border-color: var(--pink) !important;
 }
 
-.wishlist-button.in-wishlist {
-  background: var(--pink);
-  color: white;
-  border-color: var(--pink);
+.wishlist-button:hover svg,
+.add-to-wishlist:hover svg {
+  stroke: white;
 }
 
-.wishlist-button.in-wishlist svg {
+.wishlist-button.in-wishlist,
+.add-to-wishlist.in-wishlist {
+  background: var(--pink) !important;
+  color: white !important;
+  border-color: var(--pink) !important;
+}
+
+.wishlist-button.in-wishlist svg,
+.add-to-wishlist.in-wishlist svg {
   fill: white;
+  stroke: white;
 }
 
 .wishlist-button.loading {

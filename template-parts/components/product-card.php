@@ -47,14 +47,14 @@ if ($is_variable) {
     $variations = $product->get_available_variations();
     foreach ($variations as $variation) {
         $attributes = $variation['attributes'];
-        $stock_quantity = $variation['stock_quantity'];
+        $stock_quantity = isset($variation['stock_quantity']) ? $variation['stock_quantity'] : null;
         $size = isset($attributes['attribute_pa_size']) ? $attributes['attribute_pa_size'] : 
                 (isset($attributes['attribute_pa_select-size']) ? $attributes['attribute_pa_select-size'] : '');
         if ($size) {
             $has_size_variations = true;
             $stock_info[$size] = array(
                 'stock' => $stock_quantity,
-                'status' => $stock_quantity > 5 ? 'available' : ($stock_quantity > 0 ? 'low' : 'out')
+                'status' => ($stock_quantity === null || $stock_quantity > 5) ? 'available' : ($stock_quantity > 0 ? 'low' : 'out')
             );
         }
     }
@@ -96,8 +96,9 @@ if ($is_variable) {
         <button class="wishlist-button add-to-wishlist"
                 type="button"
                 aria-label="Add to wishlist"
-                data-product-id="<?php echo esc_attr($product_id); ?>">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                data-product-id="<?php echo esc_attr($product_id); ?>"
+                style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);border:1px solid rgba(238,129,179,0.4);z-index:10;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ee81b3" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
         </button>
