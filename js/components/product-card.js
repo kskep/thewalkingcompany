@@ -359,28 +359,12 @@
 
         /**
          * Add dynamic badges (new, sale, etc.)
+         * DISABLED - Badges are now rendered server-side in product-card.php to avoid duplicates
          */
         addDynamicBadges(badgeStack) {
-            // Remove existing dynamic badges
-            const existingDynamic = badgeStack.querySelectorAll('.badge.dynamic');
-            existingDynamic.forEach(badge => badge.remove());
-
-            // Add "New" badge for recently added products
-            if (this.isNewProduct()) {
-                const newBadge = document.createElement('span');
-                newBadge.className = 'badge dynamic';
-                newBadge.textContent = 'New';
-                badgeStack.appendChild(newBadge);
-            }
-
-            // Add sale percentage badge
-            const saleInfo = this.getSaleInfo();
-            if (saleInfo.percentage) {
-                const saleBadge = document.createElement('span');
-                saleBadge.className = 'badge badge--sale dynamic';
-                saleBadge.textContent = `${saleInfo.percentage}% Off`;
-                badgeStack.appendChild(saleBadge);
-            }
+            // Badges are now handled by PHP template to prevent duplication
+            // All badge logic is in template-parts/components/product-card.php
+            return;
         }
 
         /**
