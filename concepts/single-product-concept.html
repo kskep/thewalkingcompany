@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Suede High-Top — Concept Product Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pink: #ee81b3;
+      --pink-dark: #d25c8f;
+      --ink: #1f1f23;
+      --body: #3d3d47;
+      --muted: #6d6c75;
+      --pane-soft: #f9f4f7;
+      --pane-mid: #f4eef2;
+      --pane-line: #e6dce2;
+      --radius: 4px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: #fff;
+      color: var(--body);
+      line-height: 1.6;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      background: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--pink);
+      outline-offset: 2px;
+    }
+
+    .page-shell {
+      max-width: 1630px;
+      margin: 0 auto;
+      padding: 72px 64px 120px;
+      display: grid;
+      gap: 96px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 60%) minmax(0, 40%);
+      gap: 72px;
+      align-items: start;
+    }
+
+    .gallery-card {
+      border: 1px solid var(--pane-line);
+      background: var(--pane-mid);
+      padding: 32px;
+      display: grid;
+      gap: 28px;
+      border-radius: var(--radius);
+    }
+
+    .badge-stack {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--pink-dark);
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--pink);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--pink);
+    }
+
+    .badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      display: inline-block;
+    }
+
+    .main-image {
+      border: 1px solid var(--pane-line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .thumb-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .thumb {
+      border: 1px solid var(--pane-line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+    }
+
+    .thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(238, 129, 179, 0.18);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .thumb.active::after,
+    .thumb:hover::after {
+      opacity: 1;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .details-panel {
+      display: grid;
+      gap: 26px;
+    }
+
+    .collection-tag {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+    }
+
+    .product-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.8rem, 4vw, 3.4rem);
+      font-weight: 500;
+      margin: 0;
+      color: var(--ink);
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 48ch;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .price-row {
+      display: flex;
+      gap: 16px;
+      align-items: baseline;
+      font-size: 1.4rem;
+      color: var(--ink);
+    }
+
+    .price-row del {
+      font-size: 0.95rem;
+      color: rgba(31, 31, 35, 0.4);
+    }
+
+    .options-block {
+      display: grid;
+      gap: 32px;
+      border-top: 1px solid var(--pane-line);
+      padding-top: 32px;
+    }
+
+    .block-label {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .color-palette {
+      display: grid;
+      gap: 12px;
+    }
+
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 18px;
+      border: 1px solid var(--pane-line);
+      border-radius: var(--radius);
+      background: var(--pane-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      color: var(--muted);
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .swatch .tone {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .swatch-name {
+      flex: 1;
+    }
+
+    .swatch:hover {
+      border-color: var(--pink);
+    }
+
+    .swatch.selected {
+      border-color: var(--pink);
+      background: #fff;
+      color: var(--pink);
+    }
+
+    .size-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .size-tile {
+      min-width: 54px;
+      height: 48px;
+      border: 1px solid var(--pane-line);
+      border-radius: var(--radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      background: var(--pane-mid);
+      color: var(--ink);
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .size-tile:hover {
+      border-color: var(--pink);
+    }
+
+    .size-tile.selected {
+      border-color: var(--pink);
+      color: var(--pink);
+      background: #fff;
+    }
+
+    .size-tile.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .availability {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 18px;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .stock-badge {
+      padding: 6px 12px;
+      border: 1px solid var(--pink);
+      background: var(--pane-soft);
+      border-radius: var(--radius);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.65rem;
+      color: var(--pink);
+    }
+
+    .cta-row {
+      border-top: 1px solid var(--pane-line);
+      padding-top: 32px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .add-to-cart {
+      border: 1px solid var(--pink);
+      background: var(--pink);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      padding: 16px 36px;
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+    }
+
+    .add-to-cart:hover {
+      background: var(--pink-dark);
+      border-color: var(--pink-dark);
+    }
+
+    .wishlist {
+      border: 1px solid var(--pane-line);
+      background: #fff;
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      color: var(--pink);
+      font-size: 1rem;
+    }
+
+    .note-banner {
+      border: 1px solid var(--pink);
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--pink-dark);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--pane-soft);
+    }
+
+    .note-banner svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .detail-accordions {
+      display: grid;
+      gap: 16px;
+      border-top: 1px solid var(--pane-line);
+      padding-top: 32px;
+    }
+
+    .detail-accordion {
+      border: 1px solid var(--pane-line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .detail-accordion-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .detail-accordion-trigger .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .detail-accordion-trigger .icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .detail-accordion-trigger[aria-expanded="true"] .icon {
+      transform: rotate(180deg);
+    }
+
+    .detail-accordion-panel {
+      padding: 0 22px 22px;
+      border-top: 1px solid var(--pane-line);
+      display: grid;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .detail-accordion-panel[hidden] {
+      display: none;
+    }
+
+    @media (max-width: 1200px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .details-panel {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        padding: 48px 24px 96px;
+        gap: 72px;
+      }
+
+      .cta-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .wishlist {
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <section class="hero">
+      <article class="gallery-card">
+        <div class="badge-stack">
+          <span class="badge"><span class="dot"></span>Limited Drop</span>
+          <span class="badge"><span class="dot"></span>Editors' Pick</span>
+        </div>
+        <div class="main-image">
+          <img src="https://images.unsplash.com/photo-1616128897650-4eb33b4d51e9?auto=format&fit=crop&w=1200&q=80" alt="Nova Suede High-Top Sneaker" />
+        </div>
+        <div class="thumb-strip">
+          <div class="thumb active"><img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=400&q=80" alt="Sneaker angle" /></div>
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1588361861040-7423a00f6736?auto=format&fit=crop&w=400&q=80" alt="Sneaker detail" /></div>
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=400&q=80" alt="Sneaker lifestyle" /></div>
+          <div class="thumb"><img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?auto=format&fit=crop&w=400&q=80" alt="Sneaker laces" /></div>
+        </div>
+      </article>
+
+      <aside class="details-panel">
+        <span class="collection-tag">AW25 Capsule</span>
+        <h1 class="product-title">Nova Suede High-Top</h1>
+        <p class="subtitle">Tactile Italian suede meets floating airfoam technology in a silhouette built for light-footed city explorers.</p>
+
+        <div class="price-row">
+          <strong>€245</strong>
+          <del>€315</del>
+        </div>
+
+        <div class="options-block">
+          <div>
+            <span class="block-label">Color Story</span>
+            <div class="color-palette">
+              <button class="swatch selected" type="button">
+                <span class="tone" style="background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7) 0%, rgba(238, 129, 179, 0.95) 70%);"></span>
+                <span class="swatch-name">Blush Mirage</span>
+              </button>
+              <button class="swatch" type="button">
+                <span class="tone" style="background: radial-gradient(circle at 32% 32%, rgba(255, 255, 255, 0.65), rgba(255, 197, 213, 0.92));"></span>
+                <span class="swatch-name">Rosette Dawn</span>
+              </button>
+              <button class="swatch" type="button">
+                <span class="tone" style="background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.62), rgba(120, 140, 255, 0.92));"></span>
+                <span class="swatch-name">Celeste Fade</span>
+              </button>
+              <button class="swatch" type="button">
+                <span class="tone" style="background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.62), rgba(38, 38, 55, 0.9));"></span>
+                <span class="swatch-name">Midnight Veil</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <span class="block-label">Select Size</span>
+            <div class="size-grid">
+              <button class="size-tile">36</button>
+              <button class="size-tile">37</button>
+              <button class="size-tile selected">38</button>
+              <button class="size-tile">39</button>
+              <button class="size-tile">40</button>
+              <button class="size-tile disabled">41</button>
+            </div>
+            <div class="availability">
+              <span class="stock-badge">Limited</span>
+              <span class="stock-copy">Only 3 pairs left in EU 38</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button class="add-to-cart">Add to cart</button>
+          <button class="wishlist" aria-label="Add to wishlist">♡</button>
+        </div>
+
+        <div class="note-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg>
+          Ships within 48 hours from Athens with carbon-neutral delivery.
+        </div>
+
+        <div class="detail-accordions">
+          <div class="detail-accordion">
+            <button class="detail-accordion-trigger" type="button" aria-expanded="true">
+              <span>Shipping &amp; Returns</span>
+              <span class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </button>
+            <div class="detail-accordion-panel">
+              <p>Complimentary carbon-neutral delivery across Greece within 2 business days. EU orders arrive in 3–5 days.</p>
+              <p>We offer free exchanges within 30 days. Returns remain effortless—use the enclosed prepaid label or visit a Walking Company boutique.</p>
+            </div>
+          </div>
+
+          <div class="detail-accordion">
+            <button class="detail-accordion-trigger" type="button" aria-expanded="false">
+              <span>Payment Options</span>
+              <span class="icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </button>
+            <div class="detail-accordion-panel" hidden>
+              <p>Secure checkout supports Visa, Mastercard, Amex, and Apple Pay. Klarna instalments are available for purchases above €180.</p>
+              <p>Your card is only charged once the pair leaves our atelier.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const triggers = document.querySelectorAll('.detail-accordion-trigger');
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          const expanded = trigger.getAttribute('aria-expanded') === 'true';
+          const panel = trigger.nextElementSibling;
+
+          trigger.setAttribute('aria-expanded', String(!expanded));
+
+          if (panel) {
+            if (expanded) {
+              panel.setAttribute('hidden', '');
+            } else {
+              panel.removeAttribute('hidden');
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -2,17 +2,45 @@
 
 /* CSS Variables for consistent theming */
 :root {
-  --primary-pink: #EE81B3;
-  --primary-pink-dark: #d946a0;
-  --ink: #2F2A26;
-  --ink-soft: #6b7280;
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-heading: var(--font-serif);
+
+  /* Core palette */
+  --ink: #1f1f23;
+  --ink-soft: #6d6c75;
+  --ink-muted: #84818b;
+  --body-ink: #3d3d47;
   --paper: #ffffff;
-  --text-lighter: #9CA3AF;
-  --border-light: #e5e7eb;
+  --paper-warm: #f4eef2;
+  --tile-surface: #f4eef2;
+  --chip-surface: #ede2e8;
+  --line: #e6dce2;
+  --line-strong: #d7c9d0;
+
+  /* Accent palette */
+  --rose-400: #f2a1c7;
+  --rose-500: #ee81b3;
+  --rose-600: #d25c8f;
+
+  /* Semantic shortcuts (legacy mappings) */
+  --primary-pink: var(--rose-500);
+  --primary-pink-light: var(--rose-400);
+  --primary-pink-dark: var(--rose-600);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink-soft);
+  --text-light: var(--ink-muted);
+  --border-light: var(--line);
   --border-lighter: #f3f4f6;
-  --rule: #e5e7eb;
+  --rule: var(--line);
+
+  /* Layout */
   --max-width: 1630px;
-  --font-heading: 'Roboto Condensed', sans-serif;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --transition-base: 0.2s ease;
 }
 
 /* Full-bleed utility */

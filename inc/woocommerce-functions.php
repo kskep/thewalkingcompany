@@ -302,13 +302,127 @@ add_action('wp_enqueue_scripts', 'eshop_dequeue_woocommerce_styles', 100);
  * Single Product summary customizations: remove rating and move Add to Cart
  */
 function eshop_customize_single_product_summary_hooks() {
-    if (!function_exists('is_product') || !is_product()) { return; }
-    // Remove reviews/rating from summary
+    if (!function_exists('is_product') || !is_product()) {
+        return;
+    }
+
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_title', 5);
     remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10);
-    // Prevent duplicate Add to Cart in summary; we'll render it in our Product Actions block
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 10);
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
     remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 50);
+
+    add_action('woocommerce_single_product_summary', 'eshop_render_magazine_single_summary', 5);
 }
 add_action('wp', 'eshop_customize_single_product_summary_hooks');
+
+function eshop_render_magazine_single_summary() {
+    global $product;
+
+    if (!$product instanceof WC_Product) {
+        return;
+    }
+
+    $product_id       = $product->get_id();
+    $category_label   = '';
+    $short_description = trim($product->get_short_description());
+
+    $category_terms = wc_get_product_terms($product_id, 'product_cat', array(
+        'orderby' => 'parent',
+        'order'   => 'ASC',
+    ));
+
+    if (!empty($category_terms) && !is_wp_error($category_terms)) {
+        $primary_term = $category_terms[0];
+        // If term has parent, show parent > child for additional context.
+        if ($primary_term->parent) {
+            $parent = get_term($primary_term->parent, 'product_cat');
+            if ($parent && !is_wp_error($parent)) {
+                $category_label = sprintf('%s / %s', $parent->name, $primary_term->name);
+            } else {
+                $category_label = $primary_term->name;
+            }
+        } else {
+            $category_label = $primary_term->name;
+        }
+    }
+
+    $stock_html = wc_get_stock_html($product);
+
+    $color_terms = wc_get_product_terms($product_id, 'pa_color', array(
+        'fields' => 'all',
+    ));
+
+    echo '<div class="mag-summary" data-product-summary="magazine">';
+
+    echo '<div class="mag-summary__lead">';
+    if ($category_label) {
+        echo '<span class="mag-summary__collection">' . esc_html($category_label) . '</span>';
+    }
+
+    get_template_part('template-parts/components/product-title');
+
+    if (function_exists('woocommerce_template_single_rating')) {
+        echo '<div class="mag-summary__rating">';
+        woocommerce_template_single_rating();
+        echo '</div>';
+    }
+
+    echo '</div>';
+
+    echo '<div class="mag-summary__price">';
+    get_template_part('template-parts/components/product-pricing');
+    echo '</div>';
+
+    if ($short_description) {
+        echo '<div class="mag-summary__excerpt">' . wp_kses_post(wpautop($short_description)) . '</div>';
+    }
+
+    if (!empty($color_terms) && !is_wp_error($color_terms)) {
+        echo '<div class="mag-summary__palette">';
+        echo '<span class="mag-summary__palette-label">' . esc_html__('Palette', 'eshop-theme') . '</span>';
+        echo '<div class="mag-summary__palette-dots" aria-hidden="true">';
+        foreach ($color_terms as $term) {
+            $color_value = get_term_meta($term->term_id, 'color', true);
+            $style = $color_value ? 'background:' . esc_attr($color_value) . ';' : 'background:#d4d4d4;';
+            echo '<span class="mag-summary__palette-dot" title="' . esc_attr($term->name) . '" style="' . $style . '"></span>';
+        }
+        echo '</div>';
+        echo '</div>';
+    }
+
+    echo '<div class="mag-summary__purchase">';
+    echo '<div class="mag-summary__purchase-form">';
+    woocommerce_template_single_add_to_cart();
+    echo '</div>';
+
+    if (function_exists('eshop_wishlist_button_enhanced')) {
+        echo '<div class="mag-summary__wishlist">';
+        eshop_wishlist_button_enhanced($product_id, false, 'wishlist-action-btn');
+        echo '</div>';
+    }
+    echo '</div>';
+
+    if ($stock_html) {
+        echo '<div class="mag-summary__stock">' . wp_kses_post($stock_html) . '</div>';
+    }
+
+    echo '<div class="mag-summary__note">';
+    echo '<span>' . esc_html__('Ships within 48 hours from Athens with carbon-neutral delivery.', 'eshop-theme') . '</span>';
+    echo '</div>';
+
+    get_template_part('template-parts/components/trust-badges');
+
+    get_template_part('template-parts/components/product-accordions');
+
+    echo '<div class="mag-summary__meta">';
+    woocommerce_template_single_meta();
+    echo '</div>';
+
+    echo '</div>';
+}
 
 // Drop the Additional Information tab to clean up the product details area
 function eshop_remove_additional_information_tab($tabs) {

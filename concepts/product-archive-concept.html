@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Archive — Concept Grid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pink: #ee81b3;
+      --pink-dark: #d25c8f;
+      --ink: #1f1f23;
+      --body: #3d3d47;
+      --muted: #6d6c75;
+      --line: #e6dce2;
+      --tile: #f4eef2;
+      --tag: #ede2e8;
+      --radius: 6px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      color: var(--body);
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    button, select {
+      font-family: inherit;
+    }
+
+    .page-shell {
+      width: 100%;
+      margin: 0;
+      padding: 72px 64px 120px;
+      display: grid;
+      gap: 64px;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 24px;
+    }
+
+    .toolbar__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    .breadcrumb {
+      font-size: 0.75rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .result-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .sort-select {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      background: #fff;
+      color: var(--ink);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      background: var(--tag);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .reset-filters {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px 20px;
+      background: #fff;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 36px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .product-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--tile);
+      display: grid;
+      gap: 18px;
+      padding: 20px;
+    }
+
+    .product-card__media {
+      position: relative;
+      border-radius: calc(var(--radius) - 2px);
+      overflow: hidden;
+      background: #fff;
+      aspect-ratio: 3 / 4;
+    }
+
+    .product-card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-dot-row {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .media-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .media-dot.is-active {
+      background: var(--pink);
+    }
+
+    .badge-stack {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--pink);
+      border: 1px solid var(--pink);
+    }
+
+    .badge--sale {
+      color: #b93861;
+      border-color: #b93861;
+    }
+
+    .wishlist-button {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--pink);
+      border: 1px solid rgba(238, 129, 179, 0.3);
+      font-size: 1rem;
+    }
+
+    .size-overlay {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      border-top: 1px solid var(--line);
+    }
+
+    .product-card:hover .size-overlay {
+      transform: translateY(0);
+    }
+
+    .product-card.show-sizes .size-overlay {
+      transform: translateY(0);
+    }
+
+    .size-chip:focus-visible {
+      outline: 2px solid var(--pink);
+      outline-offset: 2px;
+    }
+
+    .size-chip {
+      min-width: 44px;
+      padding: 8px 0;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .size-chip.is-low {
+      border-color: var(--pink);
+      color: var(--pink);
+    }
+
+    .size-chip.is-out {
+      border-style: dashed;
+      color: rgba(109, 108, 117, 0.5);
+    }
+
+    .product-card__info {
+      display: grid;
+      gap: 14px;
+    }
+
+    .product-card__title {
+      font-family: "Playfair Display", serif;
+      font-size: 1.45rem;
+      font-weight: 500;
+      margin: 0;
+      color: var(--ink);
+    }
+
+    .product-card__sku {
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .category-line {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .color-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .color-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .price-row {
+      display: flex;
+      gap: 12px;
+      font-size: 1.1rem;
+      color: var(--ink);
+      align-items: baseline;
+    }
+
+    .price-row del {
+      color: rgba(31, 31, 35, 0.38);
+      font-size: 0.9rem;
+    }
+
+    .stock-flag {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--pink);
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .add-to-cart {
+      border: 1px solid var(--pink);
+      color: #fff;
+      background: var(--pink);
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1200px) {
+      .cards-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        padding: 48px 24px 96px;
+      }
+
+      .toolbar__top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .result-meta {
+        flex-wrap: wrap;
+      }
+
+      .cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <section class="toolbar">
+      <div class="toolbar__top">
+        <span class="breadcrumb">Home / Footwear / Sneakers</span>
+        <div class="result-meta">
+          <span>36 styles curated for city explorers</span>
+          <span>|</span>
+          <span>Showing 1 – 12</span>
+          <label>
+            <select class="sort-select" aria-label="Sort products">
+              <option selected>Sort — Featured</option>
+              <option>Sort — Newest</option>
+              <option>Sort — Price (Low)</option>
+              <option>Sort — Price (High)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="active-filters">
+        <span class="filter-chip">Season: AW25</span>
+        <span class="filter-chip">Size: 38</span>
+        <span class="filter-chip">Material: Suede</span>
+        <button class="reset-filters" type="button">Clear Filters</button>
+      </div>
+    </section>
+
+    <section class="cards-grid">
+      <article class="product-card">
+        <div class="product-card__media">
+          <img src="https://images.unsplash.com/photo-1616128897650-4eb33b4d51e9?auto=format&fit=crop&w=1200&q=80" alt="Nova Suede High-Top" />
+          <div class="badge-stack">
+            <span class="badge">New</span>
+            <span class="badge badge--sale">20% Off</span>
+          </div>
+          <button class="wishlist-button" type="button" aria-label="Add Nova Suede High-Top to wishlist">♡</button>
+          <div class="media-dot-row" aria-hidden="true">
+            <span class="media-dot is-active"></span>
+            <span class="media-dot"></span>
+            <span class="media-dot"></span>
+          </div>
+          <div class="size-overlay" aria-hidden="true">
+            <span class="size-chip">36</span>
+            <span class="size-chip">37</span>
+            <span class="size-chip is-low">38</span>
+            <span class="size-chip">39</span>
+            <span class="size-chip">40</span>
+            <span class="size-chip is-out">41</span>
+          </div>
+        </div>
+        <div class="product-card__info">
+          <h2 class="product-card__title">Nova Suede High-Top</h2>
+          <span class="product-card__sku">SKU: AT-NSH-021</span>
+          <div class="category-line">Sneakers &gt; High Top</div>
+          <div class="color-row">
+            Palette
+            <span class="color-dots" aria-hidden="true">
+              <span class="color-dot" style="background: linear-gradient(135deg, #f8c5d8 0%, #ee81b3 100%);"></span>
+              <span class="color-dot" style="background: #ffe6f0;"></span>
+              <span class="color-dot" style="background: #252536;"></span>
+            </span>
+          </div>
+          <div class="price-row">
+            <strong>€245</strong>
+            <del>€305</del>
+            <span class="stock-flag">Low stock</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="add-to-cart" type="button">Add to cart</button>
+        </div>
+      </article>
+
+      <article class="product-card">
+        <div class="product-card__media">
+          <img src="https://images.unsplash.com/photo-1611242320536-6554f6d9d8dc?auto=format&fit=crop&w=1200&q=80" alt="Equinox Runner" />
+          <div class="badge-stack">
+            <span class="badge">New</span>
+          </div>
+          <button class="wishlist-button" type="button" aria-label="Add Equinox Runner to wishlist">♡</button>
+          <div class="media-dot-row" aria-hidden="true">
+            <span class="media-dot is-active"></span>
+            <span class="media-dot"></span>
+          </div>
+          <div class="size-overlay" aria-hidden="true">
+            <span class="size-chip">35</span>
+            <span class="size-chip">36</span>
+            <span class="size-chip">37</span>
+            <span class="size-chip">38</span>
+            <span class="size-chip">39</span>
+          </div>
+        </div>
+        <div class="product-card__info">
+          <h2 class="product-card__title">Equinox Runner</h2>
+          <span class="product-card__sku">SKU: AT-EQR-104</span>
+          <div class="category-line">Sneakers &gt; Performance</div>
+          <div class="color-row">
+            Palette
+            <span class="color-dots" aria-hidden="true">
+              <span class="color-dot" style="background: #111217;"></span>
+              <span class="color-dot" style="background: #f3f3f5;"></span>
+              <span class="color-dot" style="background: #9ec5ff;"></span>
+            </span>
+          </div>
+          <div class="price-row">
+            <strong>€210</strong>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="add-to-cart" type="button">Add to cart</button>
+        </div>
+      </article>
+
+      <article class="product-card">
+        <div class="product-card__media">
+          <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80" alt="Atlas Trek Boot" />
+          <div class="badge-stack">
+            <span class="badge">Limited</span>
+          </div>
+          <button class="wishlist-button" type="button" aria-label="Add Atlas Trek Boot to wishlist">♡</button>
+          <div class="media-dot-row" aria-hidden="true">
+            <span class="media-dot is-active"></span>
+            <span class="media-dot"></span>
+            <span class="media-dot"></span>
+            <span class="media-dot"></span>
+          </div>
+          <div class="size-overlay" aria-hidden="true">
+            <span class="size-chip">37</span>
+            <span class="size-chip">38</span>
+            <span class="size-chip">39</span>
+            <span class="size-chip is-low">40</span>
+            <span class="size-chip is-out">41</span>
+          </div>
+        </div>
+        <div class="product-card__info">
+          <h2 class="product-card__title">Atlas Trek Boot</h2>
+          <span class="product-card__sku">SKU: AT-ATB-302</span>
+          <div class="category-line">Boots &gt; Hiking</div>
+          <div class="color-row">
+            Palette
+            <span class="color-dots" aria-hidden="true">
+              <span class="color-dot" style="background: #4b4d3e;"></span>
+              <span class="color-dot" style="background: #7c5a43;"></span>
+              <span class="color-dot" style="background: #d9c4a9;"></span>
+            </span>
+          </div>
+          <div class="price-row">
+            <strong>€285</strong>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="add-to-cart" type="button">Add to cart</button>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const cards = document.querySelectorAll('.product-card');
+      cards.forEach(function (card) {
+        const sizes = card.querySelectorAll('.size-chip');
+        sizes.forEach(function (chip) {
+          chip.addEventListener('focus', function () {
+            card.classList.add('show-sizes');
+          });
+          chip.addEventListener('blur', function () {
+            card.classList.remove('show-sizes');
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
