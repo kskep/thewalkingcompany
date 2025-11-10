@@ -154,7 +154,7 @@ add_action('wp_ajax_nopriv_remove_from_wishlist', 'eshop_remove_from_wishlist_aj
  */
 function eshop_remove_from_wishlist_ajax() {
     // Verify nonce for security
-    if (!wp_verify_nonce($_POST['nonce'], 'eshop_ajax_nonce')) {
+    if (!wp_verify_nonce($_POST['nonce'], 'eshop_nonce')) {
         wp_send_json_error('Invalid security token');
         return;
     }

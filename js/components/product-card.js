@@ -223,7 +223,7 @@
         }
 
         /**
-         * Setup wishlist functionality
+         * Setup wishlist functionality - now uses existing theme.js system
          */
         setupWishlist() {
             if (!this.wishlistEnabled) return;
@@ -231,178 +231,27 @@
             const wishlistBtn = this.card.querySelector('.wishlist-button');
             if (!wishlistBtn) return;
 
-            // Set initial state
+            // Set initial state based on existing PHP-rendered state
             this.updateWishlistButtonState(wishlistBtn);
 
-            wishlistBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Prevent multiple simultaneous clicks
-                if (wishlistBtn.classList.contains('loading')) {
-                    return;
-                }
-                
-                this.toggleWishlist(wishlistBtn);
-            });
-
-            // Add keyboard support
+            // Add keyboard support for accessibility
             wishlistBtn.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    this.toggleWishlist(wishlistBtn);
+                    // Let the existing theme.js system handle the click
+                    wishlistBtn.click();
                 }
             });
         }
 
         /**
-         * Toggle wishlist state
-         */
-        async toggleWishlist(button) {
-            const productId = this.productId;
-
-            try {
-                // Show loading state
-                button.classList.add('loading');
-                button.setAttribute('aria-busy', 'true');
-                button.style.pointerEvents = 'none';
-
-                const response = await this.ajaxRequest({
-                    action: 'add_to_wishlist',
-                    product_id: productId,
-                    nonce: window.eshop_ajax?.nonce || ''
-                });
-
-                if (response.success) {
-                    const newIsInWishlist = response.data.is_in_wishlist;
-                    
-                    // Update button state based on server response
-                    button.classList.remove('loading');
-                    button.setAttribute('aria-busy', 'false');
-                    button.style.pointerEvents = '';
-                    
-                    if (newIsInWishlist) {
-                        button.classList.add('active', 'in-wishlist');
-                    } else {
-                        button.classList.remove('active', 'in-wishlist');
-                    }
-
-                    // Update SVG fill based on state
-                    const svg = button.querySelector('svg');
-                    if (svg) {
-                        svg.setAttribute('fill', newIsInWishlist ? 'currentColor' : 'none');
-                    }
-
-                    // Update aria label from response
-                    if (response.data.aria_label) {
-                        button.setAttribute('aria-label', response.data.aria_label);
-                    }
-
-                    // Update header wishlist count
-                    if (typeof response.data.count !== 'undefined') {
-                        const countElement = document.querySelector('.wishlist-count');
-                        if (countElement) {
-                            if (response.data.count > 0) {
-                                countElement.textContent = response.data.count_label || response.data.count;
-                                countElement.classList.remove('hidden');
-                            } else {
-                                countElement.classList.add('hidden');
-                            }
-                        }
-                    }
-
-                    // Update header wishlist dropdown
-                    if (response.data.dropdown_html) {
-                        const wishlistItems = document.querySelector('.wishlist-items');
-                        if (wishlistItems) {
-                            wishlistItems.innerHTML = response.data.dropdown_html;
-                        }
-                    }
-
-                    // Update "View All" button visibility
-                    if (response.data.has_items !== undefined) {
-                        const viewAllBtn = document.querySelector('.wishlist-view-all');
-                        if (viewAllBtn) {
-                            if (response.data.has_items) {
-                                viewAllBtn.classList.remove('hidden');
-                            } else {
-                                viewAllBtn.classList.add('hidden');
-                            }
-                        }
-                    }
-
-                    // Show feedback
-                    if (response.data.message) {
-                        this.showFeedback(response.data.message);
-                    }
-
-                    // Sync all wishlist buttons for this product across the page
-                    this.syncWishlistButtons(productId, response.data);
-
-                    this.fireEvent('wishlistToggled', { 
-                        productId, 
-                        isInWishlist: response.data.is_in_wishlist,
-                        count: response.data.count
-                    });
-                } else {
-                    throw new Error(response.data?.message || 'Request failed');
-                }
-            } catch (error) {
-                console.error('Wishlist toggle failed:', error);
-                button.classList.remove('loading');
-                button.setAttribute('aria-busy', 'false');
-                button.style.pointerEvents = '';
-                this.showFeedback('Error updating wishlist', 'error');
-            }
-        }
-
-        /**
-         * Sync all wishlist buttons for a product
-         */
-        syncWishlistButtons(productId, data) {
-            const allButtons = document.querySelectorAll(`.add-to-wishlist[data-product-id="${productId}"]`);
-            allButtons.forEach(btn => {
-                // Skip the button that was just clicked (already updated)
-                if (btn === this.card.querySelector('.wishlist-button')) return;
-
-                // Update class state
-                if (data.is_in_wishlist) {
-                    btn.classList.add('active', 'in-wishlist');
-                } else {
-                    btn.classList.remove('active', 'in-wishlist');
-                }
-
-                // Update SVG fill
-                const svg = btn.querySelector('svg');
-                if (svg) {
-                    svg.setAttribute('fill', data.is_in_wishlist ? 'currentColor' : 'none');
-                }
-
-                // Update aria label
-                if (data.aria_label) {
-                    btn.setAttribute('aria-label', data.aria_label);
-                    btn.setAttribute('title', data.aria_label);
-                }
-
-                // Update button text if present
-                const textEl = btn.querySelector('.wishlist-text');
-                if (textEl && data.button_text) {
-                    textEl.textContent = data.button_text;
-                }
-            });
-        }
-
-        /**
-         * Update wishlist button state
+         * Wishlist functionality is now handled by theme.js
+         * This function just keeps the initial state consistent
          */
         updateWishlistButtonState(button) {
-            // This would typically check if product is already in wishlist
-            // For now, we'll use a data attribute or class
-            const isInWishlist = button.classList.contains('active') || 
-                               button.dataset.inWishlist === 'true';
-            
-            button.classList.toggle('active', isInWishlist);
-            button.setAttribute('aria-label', isInWishlist ? 'Remove from wishlist' : 'Add to wishlist');
+            // Button state is already set correctly by PHP template
+            // No additional JavaScript initialization needed
+            return;
         }
 
         /**

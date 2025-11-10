@@ -101,8 +101,10 @@ if ($is_variable) {
         ?>
         <button class="wishlist-button add-to-wishlist <?php echo esc_attr($wishlist_class); ?>"
                 type="button"
+                title="<?php echo esc_attr($wishlist_aria_label); ?>"
                 aria-label="<?php echo esc_attr($wishlist_aria_label); ?>"
                 data-product-id="<?php echo esc_attr($product_id); ?>"
+                data-product-name="<?php echo esc_attr($product->get_name()); ?>"
                 style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);border:1px solid rgba(238,129,179,0.4);z-index:10;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="<?php echo esc_attr($wishlist_fill); ?>" stroke="#ee81b3" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>

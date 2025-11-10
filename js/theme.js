@@ -358,6 +358,8 @@
                 },
                 beforeSend: function() {
                     $button.addClass('loading');
+                    $button.attr('aria-busy', 'true');
+                    $button.css('pointer-events', 'none');
                 },
                 success: function(response) {
                     eshopHandleWishlistResponse(response);
@@ -367,6 +369,8 @@
                 },
                 complete: function() {
                     $button.removeClass('loading');
+                    $button.attr('aria-busy', 'false');
+                    $button.css('pointer-events', '');
                 }
             });
         });
@@ -391,6 +395,8 @@
                 },
                 beforeSend: function() {
                     $button.addClass('loading');
+                    $button.attr('aria-busy', 'true');
+                    $button.css('pointer-events', 'none');
                 },
                 success: function(response) {
                     eshopHandleWishlistResponse(response);
@@ -400,6 +406,8 @@
                 },
                 complete: function() {
                     $button.removeClass('loading');
+                    $button.attr('aria-busy', 'false');
+                    $button.css('pointer-events', '');
                 }
             });
         });
