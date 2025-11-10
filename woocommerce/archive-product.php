@@ -1,46 +1,45 @@
 <?php
-/**
- * Product Archive – Magazine Layout (based on demo markup)
- */
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
-get_header('shop'); ?>
-
-<div class="shop-layout demo-container">
-    <div class="shop-inner">
-        <?php
-        // Toolbar + Active Filters + Off-canvas drawer
-        get_template_part('template-parts/components/filters');
-        ?>
-
-        <div class="products-wrapper">
-            <?php if (woocommerce_product_loop()) : ?>
-
-                <?php woocommerce_product_loop_start(); ?>
-
-                <?php while (have_posts()) : the_post();
-                    do_action('woocommerce_shop_loop');
-                    wc_get_template_part('content', 'product');
-                endwhile; ?>
-
-                <?php woocommerce_product_loop_end(); ?>
-
-            <?php else : ?>
-                <div class="no-products-found text-center py-12">
-                    <div class="mb-6"><i class="fas fa-search text-6xl text-gray-300"></i></div>
-                    <h3 class="text-2xl font-semibold text-gray-900 mb-4"><?php _e('No products found', 'eshop-theme'); ?></h3>
-                    <p class="text-gray-600 mb-6"><?php _e('Try adjusting your filters or search terms', 'eshop-theme'); ?></p>
-                    <button class="clear-filters bg-primary text-white px-6 py-3 hover:bg-primary-dark transition-colors"><?php _e('Clear Filters', 'eshop-theme'); ?></button>
-                </div>
-            <?php endif; ?>
+get_header( 'shop' );
+?>
+<div class="page-shell">
+    <section class="toolbar">
+        <div class="toolbar__top">
+            <div class="breadcrumb">
+                <?php woocommerce_breadcrumb(); ?>
+            </div>
+            <div class="result-meta">
+                <?php woocommerce_result_count(); ?>
+                <label>
+                    <?php woocommerce_catalog_ordering(); ?>
+                </label>
+            </div>
         </div>
 
-        <?php // Pagination moved below products wrapper to mirror demo layout
-        do_action('woocommerce_after_shop_loop'); ?>
+        <div class="active-filters">
+            <!-- Active filters can be dynamically populated here -->
+        </div>
+    </section>
 
-    </div>
-    <!-- Pagination now rendered below products to mirror demo layout. -->
+    <?php
+    if ( woocommerce_product_loop() ) {
+        woocommerce_product_loop_start();
+
+        if ( wc_get_loop_prop( 'total' ) ) {
+            while ( have_posts() ) {
+                the_post();
+                do_action( 'woocommerce_shop_loop' );
+                wc_get_template_part( 'content', 'product' );
+            }
+        }
+
+        woocommerce_product_loop_end();
+        do_action( 'woocommerce_after_shop_loop' );
+    } else {
+        do_action( 'woocommerce_no_products_found' );
+    }
+    ?>
 </div>
-
-<?php do_action('woocommerce_after_main_content'); ?>
-<?php get_footer('shop'); ?>
+<?php
+get_footer( 'shop' );

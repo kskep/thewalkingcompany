@@ -16,6 +16,5 @@ if (empty($product) || !$product->is_visible()) {
 
 // Wrap component in <li class="product"> to match UL grid semantics
 ?>
-<li <?php wc_product_class('product', $product); ?>>
+ <?php wc_product_class('product', $product); ?>>
   <?php get_template_part('template-parts/components/product-card'); ?>
-</li>

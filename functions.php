@@ -69,11 +69,12 @@ function eshop_theme_scripts() {
     $filters_css_ver = file_exists($filters_css_path) ? filemtime($filters_css_path) : '1.0.0';
     wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), $filters_css_ver);
 
+    // -- START MODIFICATION --
     if (is_shop() || is_product_category() || is_product_tag()) {
-        // New archive page CSS
-        $archive_css_path = get_template_directory() . '/css/pages.archive-magazine.css';
-        $archive_css_ver = file_exists($archive_css_path) ? filemtime($archive_css_path) : '1.0.0';
-        wp_enqueue_style('eshop-archive-magazine', get_template_directory_uri() . '/css/pages.archive-magazine.css', array('eshop-theme-style'), $archive_css_ver);
+        // New reworked archive page CSS
+        $archive_reworked_css_path = get_template_directory() . '/css/pages/archive-reworked.css';
+        $archive_reworked_css_ver = file_exists($archive_reworked_css_path) ? filemtime($archive_reworked_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-archive-reworked', get_template_directory_uri() . '/css/pages/archive-reworked.css', array('eshop-theme-style'), $archive_reworked_css_ver);
 
         // Product Card component CSS (no dependency on old shop CSS)
         wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime(get_template_directory() . '/css/components/product-card.css'));
@@ -90,7 +91,7 @@ function eshop_theme_scripts() {
             wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime($product_card_css_path));
         }
 
-        // Consolidated Single Product CSS
+    // Updated Single Product CSS
         $single_product_css_path = get_template_directory() . '/css/pages/single-product.css';
         $single_product_css_ver = file_exists($single_product_css_path) ? filemtime($single_product_css_path) : '1.0.0';
         wp_enqueue_style('eshop-single-product', get_template_directory_uri() . '/css/pages/single-product.css', array('eshop-theme-style'), $single_product_css_ver);
@@ -132,6 +133,7 @@ function eshop_theme_scripts() {
         $sp_enhancements_js_ver = file_exists($sp_enhancements_js_path) ? filemtime($sp_enhancements_js_path) : '1.0.0';
         wp_enqueue_script('eshop-single-product-enhancements', get_template_directory_uri() . '/js/components/single-product-enhancements.js', array('jquery', 'eshop-theme-script'), $sp_enhancements_js_ver, true);
     }
+    // -- END MODIFICATION --
 
     // External CSS
     wp_enqueue_style('google-fonts-ibm-open', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap', array(), null);
