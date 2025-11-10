@@ -76,11 +76,11 @@ if ($is_variable) {
                 <?php
                 $regular_price = $product->get_regular_price();
                 $sale_price = $product->get_sale_price();
-                if ($regular_price && $sale_price) {
+                if ($regular_price && $sale_price && $regular_price > $sale_price) {
                     $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
-                    echo '<span class="badge badge--sale">' . $percentage . '% Off</span>';
-                } else {
-                    echo apply_filters( 'woocommerce_sale_flash', '<span class="badge badge--sale">' . esc_html__( 'Sale!', 'woocommerce' ) . '</span>', $post, $product );
+                    if ($percentage > 0) {
+                        echo '<span class="badge badge--sale">' . $percentage . '% Off</span>';
+                    }
                 }
                 ?>
             <?php endif; ?>

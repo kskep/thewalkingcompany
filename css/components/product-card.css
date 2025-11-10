@@ -101,13 +101,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   color: var(--pink);
-  border: 1px solid rgba(238, 129, 179, 0.3);
-  font-size: 1.2rem;
+  border: 1px solid rgba(238, 129, 179, 0.4);
+  font-size: 1.4rem;
+  line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .wishlist-button:hover {

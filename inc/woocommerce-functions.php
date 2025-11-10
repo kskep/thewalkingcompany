@@ -298,6 +298,9 @@ function eshop_dequeue_woocommerce_styles() {
 }
 add_action('wp_enqueue_scripts', 'eshop_dequeue_woocommerce_styles', 100);
 
+// Remove default WooCommerce sale flash (we handle it in product-card.php)
+add_filter('woocommerce_sale_flash', '__return_empty_string', 10, 3);
+
 /**
  * Single Product summary customizations: remove rating and move Add to Cart
  */
