@@ -12,10 +12,15 @@ if (!defined('ABSPATH')) {
 
 /**
  * Get wishlist from session safely
- * 
+ *
  * @return array The wishlist product IDs
  */
 function eshop_get_session_wishlist() {
+    // Start session if not already started
+    if (!session_id()) {
+        session_start();
+    }
+    
     if (session_id() && isset($_SESSION['eshop_wishlist']) && is_array($_SESSION['eshop_wishlist'])) {
         return $_SESSION['eshop_wishlist'];
     }
@@ -78,6 +83,11 @@ function eshop_add_to_wishlist() {
     }
     $product_name_plain = wp_strip_all_tags($product->get_name());
 
+    // Ensure session is started
+    if (!session_id()) {
+        session_start();
+    }
+    
     if (!isset($_SESSION['eshop_wishlist'])) {
         $_SESSION['eshop_wishlist'] = array();
     }
@@ -153,6 +163,11 @@ add_action('wp_ajax_nopriv_remove_from_wishlist', 'eshop_remove_from_wishlist_aj
  * Handle AJAX remove from wishlist request
  */
 function eshop_remove_from_wishlist_ajax() {
+    // Ensure session is started
+    if (!session_id()) {
+        session_start();
+    }
+    
     // Verify nonce for security
     if (!wp_verify_nonce($_POST['nonce'], 'eshop_nonce')) {
         wp_send_json_error('Invalid security token');
@@ -196,6 +211,11 @@ function eshop_remove_from_wishlist_ajax() {
  * Get wishlist count
  */
 function eshop_get_wishlist_count() {
+    // Ensure session is started
+    if (!session_id()) {
+        session_start();
+    }
+    
     if (!isset($_SESSION['eshop_wishlist'])) {
         return 0;
     }
@@ -206,6 +226,11 @@ function eshop_get_wishlist_count() {
  * Check if product is in wishlist
  */
 function eshop_is_in_wishlist($product_id) {
+    // Ensure session is started
+    if (!session_id()) {
+        session_start();
+    }
+    
     if (!isset($_SESSION['eshop_wishlist'])) {
         return false;
     }
@@ -216,6 +241,11 @@ function eshop_is_in_wishlist($product_id) {
  * Get wishlist products
  */
 function eshop_get_wishlist_products() {
+    // Ensure session is started
+    if (!session_id()) {
+        session_start();
+    }
+    
     if (!isset($_SESSION['eshop_wishlist']) || empty($_SESSION['eshop_wishlist'])) {
         return array();
     }
@@ -343,6 +373,11 @@ function eshop_get_wishlist_count_display() {
  * Remove product from wishlist (helper function)
  */
 function eshop_remove_from_wishlist($product_id) {
+    // Ensure session is started
+    if (!session_id()) {
+        session_start();
+    }
+    
     if (!isset($_SESSION['eshop_wishlist'])) {
         return false;
     }

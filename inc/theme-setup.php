@@ -10,6 +10,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Start session for wishlist functionality
+if (!session_id()) {
+    add_action('init', 'eshop_start_session', 1);
+}
+
+function eshop_start_session() {
+    if (!session_id()) {
+        session_start();
+    }
+}
+
 /**
  * Theme Setup
  */
