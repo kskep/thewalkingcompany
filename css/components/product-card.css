@@ -112,6 +112,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.wishlist-button svg {
+  transition: all 0.2s ease;
+}
+
 .wishlist-button:hover {
   background: var(--pink);
   color: white;
@@ -122,6 +126,10 @@
   background: var(--pink);
   color: white;
   border-color: var(--pink);
+}
+
+.wishlist-button.in-wishlist svg {
+  fill: white;
 }
 
 .wishlist-button.loading {
