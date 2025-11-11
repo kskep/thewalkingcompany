@@ -238,6 +238,7 @@
   list-style: none; 
   margin: 0; 
   padding: 0 0 0 0; 
+  display: block !important; /* Prevent any inherited flex/columns */
 }
 .category-tree .subcategory-list.level-0 { 
   padding-left: 0; 
@@ -248,14 +249,17 @@
   border-left: none; /* remove tall divider; simpler indentation */
   margin: 6px 0 6px 8px;
 }
+/* Use CSS Grid so the child branch always drops below the header row */
 .category-item { 
-  display: flex; 
-  align-items: flex-start; 
-  gap: 6px; 
+  display: grid; 
+  grid-template-columns: 24px 1fr; 
+  align-items: start; 
+  column-gap: 6px; 
+  row-gap: 6px; 
   padding: 4px 0; 
 }
 .category-item .filter-option { 
-  flex: 1; 
+  grid-column: 2; 
   display: flex; 
   align-items: center; 
   gap: 8px; 
@@ -265,6 +269,7 @@
   flex-shrink: 0; 
 }
 .category-toggle { 
+  grid-column: 1; 
   background: none; 
   border: 0; 
   cursor: pointer; 
@@ -282,6 +287,7 @@
   background: var(--line); 
 }
 .toggle-spacer { 
+  grid-column: 1; 
   width: 24px; 
   height: 24px; 
   display: inline-block; 
@@ -315,8 +321,23 @@
 .category-toggle[aria-expanded="true"] .toggle-icon:after { 
   transform: translateX(-50%) scaleY(0); 
 }
+.subcategory-branch { 
+  grid-column: 1 / -1; 
+  display: block; 
+  width: 100%;
+}
+.subcategory-branch > .subcategory-list { 
+  display: block !important; 
+}
 .subcategory-branch[hidden], .subcategory-list[hidden] { 
   display: none !important; 
+}
+.subcategory-branch:not([hidden]) { 
+  animation: catExpand 0.25s ease-out; 
+}
+@keyframes catExpand { 
+  from { opacity: 0; transform: translateY(-4px); } 
+  to { opacity: 1; transform: translateY(0); } 
 }
 .category-item .filter-option-label { 
   display: inline-flex; 
