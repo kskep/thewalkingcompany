@@ -313,7 +313,8 @@ function eshop_handle_custom_filters($query) {
                         'taxonomy' => 'product_cat',
                         'field' => $all_numeric ? 'term_id' : 'slug',
                         'terms' => $terms,
-                        'operator' => 'IN'
+                        'operator' => 'IN',
+                        'include_children' => true
                     )
                 )
             ));

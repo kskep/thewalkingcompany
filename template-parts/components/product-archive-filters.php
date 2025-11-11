@@ -332,7 +332,31 @@ $sort_options = [
                             if (!empty($top_level) && !is_wp_error($top_level)):
                                 echo '<div class="category-tree">';
 
-                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_term) {
+                                // Helper: aggregated count = term's own count + all descendants' counts
+                                $aggregate_count = function($term_id) {
+                                    $sum = 0;
+                                    $self = get_term($term_id, 'product_cat');
+                                    if ($self && !is_wp_error($self)) {
+                                        $sum += (int) $self->count;
+                                    }
+                                    $descendant_ids = get_terms(array(
+                                        'taxonomy' => 'product_cat',
+                                        'child_of' => $term_id,
+                                        'hide_empty' => true,
+                                        'fields' => 'ids',
+                                    ));
+                                    if (!empty($descendant_ids) && !is_wp_error($descendant_ids)) {
+                                        foreach ($descendant_ids as $did) {
+                                            $t = get_term((int)$did, 'product_cat');
+                                            if ($t && !is_wp_error($t)) {
+                                                $sum += (int) $t->count;
+                                            }
+                                        }
+                                    }
+                                    return $sum;
+                                };
+
+                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_term, $aggregate_count) {
                                     $parent_id = ($parent_term instanceof WP_Term) ? $parent_term->term_id : (int) $parent_term;
                                     $children = get_terms(array(
                                         'taxonomy' => 'product_cat',
@@ -390,9 +414,10 @@ $sort_options = [
                                         } else {
                                             echo '<span class="toggle-spacer"></span>';
                                         }
+                                        $display_count = (int) $aggregate_count($term->term_id);
                                         echo '<label class="filter-option category-option">';
                                         echo '<input type="radio" name="category" value="' . esc_attr($term->slug) . '" ' . checked($is_selected, true, false) . ' />';
-                                        echo '<span class="filter-option-label">' . esc_html($term->name) . ' <span class="filter-option-count">(' . (int) $term->count . ')</span></span>';
+                                        echo '<span class="filter-option-label">' . esc_html($term->name) . ' <span class="filter-option-count">(' . $display_count . ')</span></span>';
                                         echo '</label>';
                                         if ($has_kids) {
                                             echo '<div id="cat-children-' . (int) $term->term_id . '" class="subcategory-branch"' . ($is_open ? '' : ' hidden') . '>';
@@ -425,9 +450,10 @@ $sort_options = [
                                                     } else {
                                                         echo '<span class="toggle-spacer"></span>';
                                                     }
+                                                    $child_count = (int) $aggregate_count($child->term_id);
                                                     echo '<label class="filter-option category-option">';
                                                     echo '<input type="radio" name="category" value="' . esc_attr($child->slug) . '" ' . checked($child_selected, true, false) . ' />';
-                                                    echo '<span class="filter-option-label">' . esc_html($child->name) . ' <span class="filter-option-count">(' . (int) $child->count . ')</span></span>';
+                                                    echo '<span class="filter-option-label">' . esc_html($child->name) . ' <span class="filter-option-count">(' . $child_count . ')</span></span>';
                                                     echo '</label>';
                                                     if ($child_has_children) {
                                                         echo '<div id="cat-children-' . (int) $child->term_id . '" class="subcategory-branch"' . ($child_open ? '' : ' hidden') . '>';

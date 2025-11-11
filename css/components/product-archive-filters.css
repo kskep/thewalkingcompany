@@ -245,8 +245,8 @@
 }
 .category-tree .subcategory-list:not(.level-0) { 
   padding-left: 18px; 
-  border-left: 1px solid var(--line);
-  margin: 6px 0;
+  border-left: none; /* remove tall divider; simpler indentation */
+  margin: 6px 0 6px 8px;
 }
 .category-item { 
   display: flex; 
