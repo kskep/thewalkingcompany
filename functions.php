@@ -104,6 +104,13 @@ function eshop_theme_scripts() {
             wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime($product_card_css_path));
         }
 
+        // Ensure related/upsell sections use the same grid as archives
+        $cards_grid_css_path = get_template_directory() . '/css/components/cards-grid.css';
+        if (file_exists($cards_grid_css_path)) {
+            // Use a unique handle to avoid duplicate registration conflicts
+            wp_enqueue_style('eshop-cards-grid', get_template_directory_uri() . '/css/components/cards-grid.css', array('eshop-theme-style'), filemtime($cards_grid_css_path));
+        }
+
     // Updated Single Product CSS
         $single_product_css_path = get_template_directory() . '/css/pages/single-product.css';
         $single_product_css_ver = file_exists($single_product_css_path) ? filemtime($single_product_css_path) : '1.0.0';
@@ -149,6 +156,13 @@ function eshop_theme_scripts() {
         // Single product swatches handler for concept design
         $sp_swatches_js_ver = file_exists(get_template_directory() . '/js/components/single-product-swatches.js') ? filemtime(get_template_directory() . '/js/components/single-product-swatches.js') : '1.0.0';
         wp_enqueue_script('eshop-single-product-swatches', get_template_directory_uri() . '/js/components/single-product-swatches.js', array('jquery', 'eshop-theme-script'), $sp_swatches_js_ver, true);
+
+        // Product Card interactions (media dots, overlays) for related/upsell cards
+        $product_card_js_path = get_template_directory() . '/js/components/product-card.js';
+        if (file_exists($product_card_js_path)) {
+            $product_card_js_ver = filemtime($product_card_js_path);
+            wp_enqueue_script('eshop-product-card', get_template_directory_uri() . '/js/components/product-card.js', array('jquery', 'eshop-theme-script'), $product_card_js_ver, true);
+        }
     }
     // -- END MODIFICATION --
 
