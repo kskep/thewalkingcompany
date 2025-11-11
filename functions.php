@@ -142,6 +142,10 @@ function eshop_theme_scripts() {
         $sp_enhancements_js_path = get_template_directory() . '/js/components/single-product-enhancements.js';
         $sp_enhancements_js_ver = file_exists($sp_enhancements_js_path) ? filemtime($sp_enhancements_js_path) : '1.0.0';
         wp_enqueue_script('eshop-single-product-enhancements', get_template_directory_uri() . '/js/components/single-product-enhancements.js', array('jquery', 'eshop-theme-script'), $sp_enhancements_js_ver, true);
+        
+        // Single product swatches handler for concept design
+        $sp_swatches_js_ver = file_exists(get_template_directory() . '/js/components/single-product-swatches.js') ? filemtime(get_template_directory() . '/js/components/single-product-swatches.js') : '1.0.0';
+        wp_enqueue_script('eshop-single-product-swatches', get_template_directory_uri() . '/js/components/single-product-swatches.js', array('jquery', 'eshop-theme-script'), $sp_swatches_js_ver, true);
     }
     // -- END MODIFICATION --
 

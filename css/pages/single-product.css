@@ -1,3 +1,6 @@
+/* Import Google Fonts for concept design */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
   --pink: #ee81b3;
   --pink-dark: #d25c8f;
@@ -106,21 +109,29 @@ button:focus-visible {
   background: #fff;
 }
 
+.main-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .thumb-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
-.thumb {
+/* Simplified gallery styling */
+.product-gallery-simple .thumb {
   border: 1px solid var(--pane-line);
   border-radius: var(--radius);
   overflow: hidden;
   position: relative;
   background: #fff;
+  cursor: pointer;
 }
 
-.thumb::after {
+.product-gallery-simple .thumb::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -129,15 +140,29 @@ button:focus-visible {
   transition: opacity 0.2s ease;
 }
 
-.thumb.active::after,
-.thumb:hover::after {
+.product-gallery-simple .thumb.active::after,
+.product-gallery-simple .thumb:hover::after {
   opacity: 1;
 }
 
-.thumb img {
+.product-gallery-simple .thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  aspect-ratio: 1;
+}
+
+.product-gallery-simple .main-image {
+  border: 1px solid var(--pane-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+}
+
+.product-gallery-simple .main-image img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .details-panel {
@@ -177,6 +202,10 @@ button:focus-visible {
   color: var(--ink);
 }
 
+.price-row .price {
+  font-weight: 600;
+}
+
 .price-row del {
   font-size: 0.95rem;
   color: rgba(31, 31, 35, 0.4);
@@ -187,6 +216,23 @@ button:focus-visible {
   gap: 32px;
   border-top: 1px solid var(--pane-line);
   padding-top: 32px;
+}
+
+/* WooCommerce variable product form styling */
+.woocommerce-variation-add-to-cart,
+.variations_form {
+  display: grid;
+  gap: 32px;
+}
+
+.variation-selects {
+  display: grid;
+  gap: 32px;
+}
+
+.variation-select {
+  display: grid;
+  gap: 16px;
 }
 
 .block-label {
@@ -216,6 +262,7 @@ button:focus-visible {
   font-size: 0.8rem;
   color: var(--muted);
   transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
 }
 
 .swatch .tone {
@@ -259,6 +306,7 @@ button:focus-visible {
   background: var(--pane-mid);
   color: var(--ink);
   transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  cursor: pointer;
 }
 
 .size-tile:hover {
@@ -271,10 +319,34 @@ button:focus-visible {
   background: #fff;
 }
 
-.size-tile.disabled {
+.size-tile.disabled,
+.size-tile:disabled {
   opacity: 0.35;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* WooCommerce select styling */
+.select2-container {
+  width: 100% !important;
+}
+
+.variations select {
+  width: 100%;
+  padding: 12px 18px;
+  border: 1px solid var(--pane-line);
+  border-radius: var(--radius);
+  background: var(--pane-mid);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.reset_variations {
+  font-size: 0.7rem;
+  color: var(--pink);
+  text-decoration: underline;
 }
 
 .availability {
@@ -307,20 +379,28 @@ button:focus-visible {
   flex-wrap: wrap;
 }
 
-.add-to-cart {
-  border: 1px solid var(--pink);
-  background: var(--pink);
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  padding: 16px 36px;
-  border-radius: var(--radius);
-  font-size: 0.8rem;
+.single_add_to_cart_button {
+  border: 1px solid var(--pink) !important;
+  background: var(--pink) !important;
+  color: #fff !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.18em !important;
+  padding: 16px 36px !important;
+  border-radius: var(--radius) !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.add-to-cart:hover {
-  background: var(--pink-dark);
-  border-color: var(--pink-dark);
+.single_add_to_cart_button:hover {
+  background: var(--pink-dark) !important;
+  border-color: var(--pink-dark) !important;
+}
+
+.single_add_to_cart_button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .wishlist {
@@ -333,6 +413,13 @@ button:focus-visible {
   place-items: center;
   color: var(--pink);
   font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wishlist:hover {
+  border-color: var(--pink);
+  background: var(--pane-soft);
 }
 
 .note-banner {
@@ -377,6 +464,9 @@ button:focus-visible {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .detail-accordion-trigger .icon {
@@ -432,5 +522,15 @@ button:focus-visible {
 
   .wishlist {
     align-self: center;
+  }
+
+  .size-grid {
+    gap: 8px;
+  }
+
+  .size-tile {
+    min-width: 48px;
+    height: 44px;
+    font-size: 0.75rem;
   }
 }

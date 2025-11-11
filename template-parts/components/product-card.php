@@ -44,17 +44,56 @@ if ( taxonomy_exists( $color_attribute_taxonomy ) && function_exists( 'wp_get_po
 $stock_info = array();
 $has_size_variations = false;
 if ($is_variable) {
-    $variations = $product->get_available_variations();
-    foreach ($variations as $variation) {
-        $attributes = $variation['attributes'];
-        $stock_quantity = isset($variation['stock_quantity']) ? $variation['stock_quantity'] : null;
-        $size = isset($attributes['attribute_pa_size']) ? $attributes['attribute_pa_size'] : 
-                (isset($attributes['attribute_pa_select-size']) ? $attributes['attribute_pa_select-size'] : '');
-        if ($size) {
-            $has_size_variations = true;
+    $variation_ids = $product->get_children();
+    $priority = array('out' => 0, 'low' => 1, 'available' => 2);
+
+    foreach ($variation_ids as $variation_id) {
+        $variation = wc_get_product($variation_id);
+        if (!$variation) {
+            continue;
+        }
+
+        // Support both pa_size and pa_select-size
+        $size = $variation->get_attribute('pa_size');
+        if (!$size) {
+            $size = $variation->get_attribute('pa_select-size');
+        }
+        if (!$size) {
+            continue;
+        }
+
+        $has_size_variations = true;
+
+        $qty = $variation->get_stock_quantity();
+        $in_stock = $variation->is_in_stock();
+
+        if (!$in_stock) {
+            $status = 'out';
+        } else {
+            if ($qty === null) {
+                $status = 'available';
+            } elseif ($qty <= 0) {
+                $status = 'out';
+            } elseif ($qty > 5) {
+                $status = 'available';
+            } else {
+                $status = 'low';
+            }
+        }
+
+        // If multiple variations share same size (e.g., colors), keep the best status
+        if (isset($stock_info[$size])) {
+            $current = $stock_info[$size]['status'];
+            if ($priority[$status] > $priority[$current]) {
+                $stock_info[$size] = array(
+                    'stock' => $qty,
+                    'status' => $status,
+                );
+            }
+        } else {
             $stock_info[$size] = array(
-                'stock' => $stock_quantity,
-                'status' => ($stock_quantity === null || $stock_quantity > 5) ? 'available' : ($stock_quantity > 0 ? 'low' : 'out')
+                'stock' => $qty,
+                'status' => $status,
             );
         }
     }
@@ -131,8 +170,16 @@ if ($is_variable) {
                 } elseif ($info['status'] === 'out') {
                     $size_class .= ' is-out';
                 }
+                $label = strtoupper($size);
+                if ($info['status'] === 'low' && is_numeric($info['stock'])) {
+                    $label .= ' (' . intval($info['stock']) . ')';
+                } elseif ($info['status'] === 'out') {
+                    $label .= ' (0)';
+                }
             ?>
-                <span class="<?php echo esc_attr($size_class); ?>"><?php echo esc_html(strtoupper($size)); ?></span>
+                <span class="<?php echo esc_attr($size_class); ?>" title="<?php echo esc_attr($info['status'] === 'out' ? 'Out of stock' : ($info['status'] === 'low' ? 'Low stock' : 'In stock')); ?>">
+                    <?php echo esc_html($label); ?>
+                </span>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>

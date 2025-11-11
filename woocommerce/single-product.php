@@ -40,8 +40,8 @@ if ( ! is_product() ) {
             </div>
             <div class="main-image">
                 <?php
-                // Use the custom product image template which has better error handling
-                get_template_part( 'woocommerce/single-product/product-image' );
+                // Use the simplified gallery component that matches the concept design
+                get_template_part( 'template-parts/components/product-gallery-simple' );
                 ?>
             </div>
             <div class="thumb-strip">
@@ -87,12 +87,66 @@ if ( ! is_product() ) {
                     <?php
                     // Product variations (colors, sizes, etc.)
                     if ( $product->is_type('variable') ) {
+                        // Display variable product attributes in concept design style
+                        $attributes = $product->get_variation_attributes();
+                        if ( !empty($attributes) ) {
+                            echo '<div class="variation-selects">';
+                            foreach ( $attributes as $attribute_name => $attribute ) {
+                                $attribute_id = wc_attribute_taxonomy_id_by_name( $attribute_name );
+                                $attribute_label = wc_attribute_label( str_replace( 'attribute_', '', $attribute_name ), $product );
+                                
+                                echo '<div class="variation-select">';
+                                echo '<span class="block-label">' . esc_html( $attribute_label ) . '</span>';
+                                
+                                // Get terms for this attribute
+                                $terms = wp_get_post_terms( $product->get_id(), str_replace( 'attribute_', '', $attribute_name ) );
+                                if ( $terms && !is_wp_error( $terms ) ) {
+                                    if ( strpos( $attribute_name, 'color' ) !== false || strpos( $attribute_name, 'colour' ) !== false ) {
+                                        // Color swatches
+                                        echo '<div class="color-palette">';
+                                        foreach ( $terms as $term ) {
+                                            $color_code = get_term_meta( $term->term_id, 'color_code', true );
+                                            echo '<button class="swatch" type="button" data-attribute="' . esc_attr( $attribute_name ) . '" data-value="' . esc_attr( $term->slug ) . '">';
+                                            if ( $color_code ) {
+                                                echo '<span class="tone" style="background: ' . esc_attr( $color_code ) . ';"></span>';
+                                            }
+                                            echo '<span class="swatch-name">' . esc_html( $term->name ) . '</span>';
+                                            echo '</button>';
+                                        }
+                                        echo '</div>';
+                                    } else {
+                                        // Size or other select
+                                        echo '<div class="size-grid">';
+                                        foreach ( $terms as $term ) {
+                                            echo '<button class="size-tile" type="button" data-attribute="' . esc_attr( $attribute_name ) . '" data-value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</button>';
+                                        }
+                                        echo '</div>';
+                                    }
+                                }
+                                echo '</div>';
+                            }
+                            echo '</div>';
+                        }
+                        
+                        // Stock availability for variable products
+                        if ( $product->get_manage_stock() ) {
+                            echo '<div class="availability">';
+                            echo '<span class="stock-badge">In Stock</span>';
+                            echo '<span class="stock-copy">Available in multiple sizes</span>';
+                            echo '</div>';
+                        }
+                        
+                        // Add to cart button for variable products
+                        echo '<div class="variable-add-to-cart">';
                         woocommerce_single_variation_add_to_cart_button();
+                        echo '</div>';
                     }
                     
                     // Simple product add to cart
                     if ( $product->is_type('simple') ) {
+                        echo '<div class="simple-add-to-cart">';
                         woocommerce_simple_add_to_cart();
+                        echo '</div>';
                     }
                     ?>
                 </div>
