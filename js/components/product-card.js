@@ -234,12 +234,6 @@
             // Set initial state based on existing PHP-rendered state
             this.updateWishlistButtonState(wishlistBtn);
 
-            // Prevent card click navigation when pressing the wishlist button
-            wishlistBtn.addEventListener('click', (e) => {
-                // Theme-level handler will do the AJAX; we just stop bubbling to card
-                e.stopPropagation();
-            });
-
             // Add keyboard support for accessibility
             wishlistBtn.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {

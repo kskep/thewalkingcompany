@@ -17,9 +17,11 @@
   font-family: "Inter", sans-serif;
 }
 
+/* Remove lifting hover effect per request (keep subtle shadow optional) */
 .product-card:hover {
-  box-shadow: 0 8px 24px rgba(31, 31, 35, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 31, 35, 0.08);
+  /* No translate transform to avoid visual jump */
+  transform: none;
 }
 
 /* Product Media Section */
