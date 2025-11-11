@@ -308,18 +308,22 @@ $sort_options = [
                     switch ($section_key) {
                         case 'category':
                             // Hierarchical category tree: always show top-level categories; expand to children on demand
-                            // Determine selected category slug and term (for pre-opening)
-                            $selected_cat_slug = '';
+                            // Determine selected category slugs (support multi-select via comma separated 'product_cat')
+                            $selected_cat_slugs = array();
                             if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
                                 $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
-                                $selected_cat_slug = explode(',', $raw)[0];
+                                $selected_cat_slugs = array_filter(array_map('trim', explode(',', $raw)));
                             } elseif (function_exists('is_product_category') && (is_product_category() || is_product_tag())) {
                                 $current_cat = get_queried_object();
                                 if ($current_cat && !is_wp_error($current_cat) && isset($current_cat->slug)) {
-                                    $selected_cat_slug = $current_cat->slug;
+                                    $selected_cat_slugs = array($current_cat->slug);
                                 }
                             }
-                            $selected_term = $selected_cat_slug ? get_term_by('slug', $selected_cat_slug, 'product_cat') : null;
+                            $selected_terms = array();
+                            foreach ($selected_cat_slugs as $slug) {
+                                $t = get_term_by('slug', $slug, 'product_cat');
+                                if ($t && !is_wp_error($t)) $selected_terms[] = $t;
+                            }
 
                             // Fetch all top-level categories regardless of empty state
                             $top_level = get_terms(array(
@@ -356,7 +360,7 @@ $sort_options = [
                                     return $sum;
                                 };
 
-                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_term, $aggregate_count) {
+                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_terms, $aggregate_count) {
                                     $parent_id = ($parent_term instanceof WP_Term) ? $parent_term->term_id : (int) $parent_term;
                                     $children = get_terms(array(
                                         'taxonomy' => 'product_cat',
@@ -402,8 +406,14 @@ $sort_options = [
                                             'number' => 1,
                                         ));
                                         $has_kids = !empty($term_has_children) && !is_wp_error($term_has_children);
-                                        $is_selected = ($selected_term && $term->term_id === $selected_term->term_id);
-                                        $is_ancestor = ($selected_term && term_is_ancestor_of($term->term_id, $selected_term->term_id, 'product_cat'));
+                                        $is_selected = false;
+                                        $is_ancestor = false;
+                                        if (!empty($selected_terms)) {
+                                            foreach ($selected_terms as $sel) {
+                                                if ($term->term_id === $sel->term_id) { $is_selected = true; }
+                                                if (term_is_ancestor_of($term->term_id, $sel->term_id, 'product_cat')) { $is_ancestor = true; }
+                                            }
+                                        }
                                         $is_open = $has_kids && ($is_selected || $is_ancestor);
 
                                         echo '<li class="category-item">';
@@ -416,7 +426,7 @@ $sort_options = [
                                         }
                                         $display_count = (int) $aggregate_count($term->term_id);
                                         echo '<label class="filter-option category-option">';
-                                        echo '<input type="radio" name="category" value="' . esc_attr($term->slug) . '" ' . checked($is_selected, true, false) . ' />';
+                                        echo '<input type="checkbox" name="category" value="' . esc_attr($term->slug) . '" ' . checked($is_selected, true, false) . ' />';
                                         echo '<span class="filter-option-label">' . esc_html($term->name) . ' <span class="filter-option-count">(' . $display_count . ')</span></span>';
                                         echo '</label>';
                                         if ($has_kids) {
@@ -438,8 +448,13 @@ $sort_options = [
                                                         'number' => 1,
                                                     ));
                                                     $child_has_children = !empty($child_has_kids) && !is_wp_error($child_has_kids);
-                                                    $child_selected = ($selected_term && $child->term_id === $selected_term->term_id);
-                                                    $child_ancestor = ($selected_term && term_is_ancestor_of($child->term_id, $selected_term->term_id, 'product_cat'));
+                                                    $child_selected = false; $child_ancestor = false;
+                                                    if (!empty($selected_terms)) {
+                                                        foreach ($selected_terms as $sel) {
+                                                            if ($child->term_id === $sel->term_id) { $child_selected = true; }
+                                                            if (term_is_ancestor_of($child->term_id, $sel->term_id, 'product_cat')) { $child_ancestor = true; }
+                                                        }
+                                                    }
                                                     $child_open = $child_has_children && ($child_selected || $child_ancestor);
 
                                                     echo '<li class="category-item">';
@@ -452,7 +467,7 @@ $sort_options = [
                                                     }
                                                     $child_count = (int) $aggregate_count($child->term_id);
                                                     echo '<label class="filter-option category-option">';
-                                                    echo '<input type="radio" name="category" value="' . esc_attr($child->slug) . '" ' . checked($child_selected, true, false) . ' />';
+                                                    echo '<input type="checkbox" name="category" value="' . esc_attr($child->slug) . '" ' . checked($child_selected, true, false) . ' />';
                                                     echo '<span class="filter-option-label">' . esc_html($child->name) . ' <span class="filter-option-count">(' . $child_count . ')</span></span>';
                                                     echo '</label>';
                                                     if ($child_has_children) {

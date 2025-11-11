@@ -70,10 +70,10 @@
             }
         });
 
-        // Category (single slug): support comma-delimited list (take first)
+        // Categories: support comma-delimited list (multi-select)
         if (urlParams.has('product_cat')) {
             const rawCat = urlParams.get('product_cat');
-            filterState.categories = rawCat ? [rawCat.split(',')[0]] : [];
+            filterState.categories = rawCat ? rawCat.split(',').map(v=>v.trim()).filter(Boolean) : [];
         }
     }
 
@@ -235,8 +235,12 @@
         } else if (name === 'stock_status') {
             filterState.inStock = checked;
         } else if (name === 'category') {
-            // Radio button for category
-            filterState.categories = checked ? [value] : [];
+            // Multi-select categories via checkboxes
+            if (checked) {
+                if (!filterState.categories.includes(value)) filterState.categories.push(value);
+            } else {
+                filterState.categories = filterState.categories.filter(v => v !== value);
+            }
         } else if (name.startsWith('pa_')) {
             // Product attribute
             if (!filterState.attributes[name]) {
@@ -307,7 +311,7 @@
         if (filterState.price.max) currentURL.searchParams.set('max_price', filterState.price.max);
         if (filterState.sale) currentURL.searchParams.set('on_sale', '1');
         if (filterState.inStock) currentURL.searchParams.set('stock_status', 'instock');
-        if (filterState.categories.length) currentURL.searchParams.set('product_cat', filterState.categories[0]);
+    if (filterState.categories.length) currentURL.searchParams.set('product_cat', filterState.categories.join(','));
 
         // Attribute filters: write as comma-delimited list (Woo parsing expects this format)
         Object.entries(filterState.attributes).forEach(([taxonomy, values]) => {
@@ -418,10 +422,10 @@
             }
         });
         
-        // Update radio buttons
-        const radioButtons = filterModalContent?.querySelectorAll('input[type="radio"][name="category"]');
-        radioButtons?.forEach(radio => {
-            radio.checked = filterState.categories.includes(radio.value);
+        // Update category checkboxes
+        const catBoxes = filterModalContent?.querySelectorAll('input[type="checkbox"][name="category"]');
+        catBoxes?.forEach(cb => {
+            cb.checked = filterState.categories.includes(cb.value);
         });
     }
 

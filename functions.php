@@ -305,19 +305,17 @@ function eshop_handle_custom_filters($query) {
             $tokens = array_filter(array_map('trim', explode(',', $raw)));
             $all_numeric = !empty($tokens) && count(array_filter($tokens, 'is_numeric')) === count($tokens);
             $terms = $all_numeric ? array_map('intval', $tokens) : array_map('sanitize_text_field', $tokens);
-
-            $query->set('tax_query', array_merge(
-                $query->get('tax_query', array()),
-                array(
-                    array(
-                        'taxonomy' => 'product_cat',
-                        'field' => $all_numeric ? 'term_id' : 'slug',
-                        'terms' => $terms,
-                        'operator' => 'IN',
-                        'include_children' => true
-                    )
-                )
-            ));
+            // Support multi-select: build OR relation for product_cat then AND with other taxonomies later
+            $cat_clause = array(
+                'taxonomy' => 'product_cat',
+                'field' => $all_numeric ? 'term_id' : 'slug',
+                'terms' => $terms,
+                'operator' => 'IN',
+                'include_children' => true
+            );
+            $tax_query = $query->get('tax_query', array());
+            $tax_query[] = $cat_clause;
+            $query->set('tax_query', $tax_query);
         }
 
         // On sale filter
@@ -342,7 +340,10 @@ function eshop_handle_custom_filters($query) {
         }
 
         if (!empty($tax_query)) {
-            $tax_query['relation'] = 'AND';
+            // If multiple clauses present, ensure relation AND
+            if (!isset($tax_query['relation'])) {
+                $tax_query['relation'] = 'AND';
+            }
             $query->set('tax_query', $tax_query);
         }
     }
