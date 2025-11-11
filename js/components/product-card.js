@@ -234,6 +234,12 @@
             // Set initial state based on existing PHP-rendered state
             this.updateWishlistButtonState(wishlistBtn);
 
+            // Prevent card click navigation when pressing the wishlist button
+            wishlistBtn.addEventListener('click', (e) => {
+                // Theme-level handler will do the AJAX; we just stop bubbling to card
+                e.stopPropagation();
+            });
+
             // Add keyboard support for accessibility
             wishlistBtn.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -355,8 +361,8 @@
 
             // Card click to go to product page
             this.card.addEventListener('click', (e) => {
-                // Don't trigger if clicking interactive elements (except wishlist-button to let theme.js handle it)
-                if (e.target.closest('.size-chip, .media-dot, .add-to-cart')) {
+                // Don't trigger if clicking interactive elements (including wishlist button)
+                if (e.target.closest('.size-chip, .media-dot, .add-to-cart, .add-to-wishlist, .wishlist-button')) {
                     return;
                 }
                 

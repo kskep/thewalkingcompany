@@ -357,6 +357,8 @@
         // Wishlist functionality
         $(document).on('click', '.add-to-wishlist', function(e) {
             e.preventDefault();
+            // Prevent bubbling to product-card click handlers that navigate to PDP
+            e.stopPropagation();
             var $button = $(this);
             if ($button.hasClass('loading')) {
                 return;

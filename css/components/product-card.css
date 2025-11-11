@@ -113,6 +113,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   opacity: 1 !important;
   visibility: visible !important;
+  /* Ensure this intercepts clicks over the media link */
+  pointer-events: auto;
 }
 
 .wishlist-button svg,
