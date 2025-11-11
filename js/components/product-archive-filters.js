@@ -145,6 +145,25 @@
                 closeFilterModal();
             }
         });
+
+        // Category expand/collapse delegation
+        document.addEventListener('click', function(e) {
+            const toggle = e.target.closest('.category-toggle');
+            if (!toggle) return;
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            const controls = toggle.getAttribute('aria-controls');
+            if (controls) {
+                const branch = document.getElementById(controls);
+                if (branch) {
+                    if (expanded) {
+                        branch.setAttribute('hidden', '');
+                    } else {
+                        branch.removeAttribute('hidden');
+                    }
+                }
+            }
+        });
         
         // Active filters event delegation
         document.addEventListener('click', function(e) {

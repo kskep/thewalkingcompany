@@ -229,6 +229,121 @@
   padding: 24px;
 }
 
+/* Hierarchical Category Tree */
+.category-tree { 
+  display: block;
+  margin: 4px 0 8px;
+}
+.category-tree ul { 
+  list-style: none; 
+  margin: 0; 
+  padding: 0 0 0 0; 
+}
+.category-tree .subcategory-list.level-0 { 
+  padding-left: 0; 
+  margin-bottom: 4px;
+}
+.category-tree .subcategory-list:not(.level-0) { 
+  padding-left: 18px; 
+  border-left: 1px solid var(--line);
+  margin: 6px 0;
+}
+.category-item { 
+  display: flex; 
+  align-items: flex-start; 
+  gap: 6px; 
+  padding: 4px 0; 
+}
+.category-item .filter-option { 
+  flex: 1; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  cursor: pointer; 
+}
+.category-option input[type="radio"] { 
+  flex-shrink: 0; 
+}
+.category-toggle { 
+  background: none; 
+  border: 0; 
+  cursor: pointer; 
+  padding: 4px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 24px; 
+  height: 24px; 
+  margin-top: 2px; 
+  border-radius: 4px; 
+  transition: background 0.15s ease; 
+}
+.category-toggle:hover { 
+  background: var(--line); 
+}
+.toggle-spacer { 
+  width: 24px; 
+  height: 24px; 
+  display: inline-block; 
+}
+.toggle-icon { 
+  position: relative; 
+  width: 12px; 
+  height: 12px; 
+}
+.toggle-icon:before, .toggle-icon:after { 
+  content: ''; 
+  position: absolute; 
+  background: var(--ink); 
+  border-radius: 1px; 
+  transition: transform 0.25s ease; 
+}
+.toggle-icon:before { 
+  width: 12px; 
+  height: 2px; 
+  top: 50%; 
+  left: 0; 
+  transform: translateY(-50%); 
+}
+.toggle-icon:after { 
+  width: 2px; 
+  height: 12px; 
+  left: 50%; 
+  top: 0; 
+  transform: translateX(-50%); 
+}
+.category-toggle[aria-expanded="true"] .toggle-icon:after { 
+  transform: translateX(-50%) scaleY(0); 
+}
+.subcategory-branch[hidden], .subcategory-list[hidden] { 
+  display: none !important; 
+}
+.category-item .filter-option-label { 
+  display: inline-flex; 
+  align-items: baseline; 
+  gap: 6px; 
+}
+.category-item .filter-option-count { 
+  font-size: 0.7rem; 
+  color: var(--muted); 
+}
+.category-item input[type="radio"]:checked + .filter-option-label { 
+  font-weight: 600; 
+  color: var(--ink); 
+}
+@media (max-width: 768px) { 
+  .category-tree .subcategory-list:not(.level-0) { 
+    padding-left: 14px; 
+  }
+  .category-item { 
+    gap: 4px; 
+  }
+  .category-toggle { 
+    width: 22px; 
+    height: 22px; 
+  }
+}
+
 .filter-section {
   margin-bottom: 32px;
 }

@@ -307,35 +307,87 @@ $sort_options = [
                     // Render appropriate filter section
                     switch ($section_key) {
                         case 'category':
-                            // Use context-aware categories
-                            $categories = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
-                            if (!empty($categories)):
+                            // Build a hierarchical, context-aware category tree with expand/collapse
+                            $available = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
+                            if (!empty($available)):
+                                // Map helpers -> ids/slugs/counts
+                                $available_ids = array();
+                                $by_id = array();
+                                foreach ($available as $row) {
+                                    // $row is array(term_id, name, slug, count) per helper
+                                    if (is_array($row)) {
+                                        $available_ids[] = (int) $row['term_id'];
+                                        $by_id[(int) $row['term_id']] = $row;
+                                    } elseif ($row instanceof WP_Term) {
+                                        $available_ids[] = (int) $row->term_id;
+                                        $by_id[(int) $row->term_id] = array(
+                                            'term_id' => (int) $row->term_id,
+                                            'name' => $row->name,
+                                            'slug' => $row->slug,
+                                            'count' => (int) $row->count,
+                                        );
+                                    }
+                                }
+
+                                // Get full term objects to access parents
+                                $terms = get_terms(array(
+                                    'taxonomy' => 'product_cat',
+                                    'include'  => $available_ids,
+                                    'hide_empty' => true,
+                                ));
+
+                                // Build adjacency by parent
+                                $children = array();
+                                foreach ($terms as $t) {
+                                    $p = (int) $t->parent;
+                                    if (!isset($children[$p])) $children[$p] = array();
+                                    $children[$p][] = $t;
+                                }
+
+                                // Determine selected category slug for pre-open and checked state
                                 $selected_cat_slug = '';
                                 if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
-                                    // Take the first value if comma-separated
                                     $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
                                     $selected_cat_slug = explode(',', $raw)[0];
                                 } elseif (!empty($current_cat) && isset($current_cat->slug)) {
                                     $selected_cat_slug = $current_cat->slug;
                                 }
-                                foreach ($categories as $category):
-                                    // $category may be array from helper or WP_Term fallback
-                                    $cat_slug = is_array($category) ? $category['slug'] : $category->slug;
-                                    $cat_name = is_array($category) ? $category['name'] : $category->name;
-                                    $cat_count = is_array($category) ? intval($category['count']) : intval($category->count);
-                            ?>
-                                <label class="filter-option">
-                                    <input type="radio" 
-                                           name="category" 
-                                           value="<?php echo esc_attr($cat_slug); ?>"
-                                           <?php checked($selected_cat_slug, $cat_slug); ?>>
-                                    <span class="filter-option-label">
-                                        <?php echo esc_html($cat_name); ?>
-                                        <span class="filter-option-count">(<?php echo $cat_count; ?>)</span>
-                                    </span>
-                                </label>
-                            <?php 
-                                endforeach;
+
+                                // Recursive renderer
+                                $render_tree = function($parent_id, $level) use (&$render_tree, $children, $by_id, $selected_cat_slug) {
+                                    if (empty($children[$parent_id])) return;
+                                    echo '<ul class="subcategory-list level-' . (int) $level . '"' . ($level > 0 ? ' hidden' : '') . '>'; // hidden by default for nested
+                                    foreach ($children[$parent_id] as $term) {
+                                        $info = isset($by_id[$term->term_id]) ? $by_id[$term->term_id] : null;
+                                        if (!$info) continue;
+                                        $has_kids = !empty($children[$term->term_id]);
+                                        $is_open = $has_kids && ($term->slug === $selected_cat_slug);
+                                        echo '<li class="category-item">';
+                                        if ($has_kids) {
+                                            echo '<button type="button" class="category-toggle" aria-expanded="' . ($is_open ? 'true' : 'false') . '" aria-controls="cat-children-' . (int) $term->term_id . '">';
+                                            echo '<span class="toggle-icon" aria-hidden="true"></span>';
+                                            echo '</button>';
+                                        } else {
+                                            echo '<span class="toggle-spacer"></span>';
+                                        }
+                                        echo '<label class="filter-option category-option">';
+                                        echo '<input type="radio" name="category" value="' . esc_attr($info['slug']) . '" ' . checked($selected_cat_slug, $info['slug'], false) . ' />';
+                                        echo '<span class="filter-option-label">' . esc_html($info['name']) . ' <span class="filter-option-count">(' . (int) $info['count'] . ')</span></span>';
+                                        echo '</label>';
+                                        if ($has_kids) {
+                                            echo '<div id="cat-children-' . (int) $term->term_id . '" class="subcategory-branch"' . ($is_open ? '' : ' hidden') . '>';
+                                            $render_tree($term->term_id, $level + 1);
+                                            echo '</div>';
+                                        }
+                                        echo '</li>';
+                                    }
+                                    echo '</ul>';
+                                };
+
+                                echo '<div class="category-tree">';
+                                // Start from parent 0 (top-level) only
+                                $render_tree(0, 0);
+                                echo '</div>';
                             endif;
                             break;
 
