@@ -342,12 +342,26 @@
      * Clear all filters
      */
     function clearAllFilters() {
-        const currentURL = new URL(window.location);
-        
-        // Get base URL without query parameters
+        // If we're in a taxonomy archive (subcategory etc.), redirect to main shop page.
+        const shopPage = window.eshop_ajax && window.eshop_ajax.shop_url ? window.eshop_ajax.shop_url : null;
+        const body = document.body;
+        const inTaxArchive = body.classList.contains('tax-product_cat') || body.classList.contains('tax-product_tag');
+
+        if (inTaxArchive && shopPage) {
+            window.location.href = shopPage;
+            return;
+        }
+
+        const currentURL = new URL(window.location.href);
+        // Remove known filter params
+        ['min_price','max_price','on_sale','stock_status','product_cat'].forEach(p=>currentURL.searchParams.delete(p));
+        // Remove all attribute params (pa_*) including array-style
+        [...currentURL.searchParams.keys()].forEach(key => {
+            if (key.startsWith('pa_')) currentURL.searchParams.delete(key);
+        });
+        // Also remove array-style taxonomy params
+        // Build a clean URL without query
         const baseURL = currentURL.origin + currentURL.pathname;
-        
-        // Navigate to clean URL
         window.location.href = baseURL;
     }
 

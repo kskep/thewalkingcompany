@@ -225,6 +225,7 @@ function eshop_theme_scripts() {
         'nonce' => wp_create_nonce('eshop_nonce'),
         'context_taxonomy' => $context_taxonomy,
         'context_terms' => $context_terms,
+        'shop_url' => function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop/')
     ));
     
     // Add custom script for related products initialization

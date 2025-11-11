@@ -451,6 +451,11 @@
   }
 }
 
+/* Ensure desktop filter toggle is visible */
+#filter-toggle-desktop {
+  display: inline-flex;
+}
+
 @media (max-width: 480px) {
   .filter-modal {
     max-width: 100%;
