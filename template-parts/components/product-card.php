@@ -177,11 +177,6 @@ if ($is_variable) {
                 // Transform size label for display (e.g., XSmall -> XS)
                 $display_size = function_exists('eshop_transform_size_label') ? eshop_transform_size_label($size) : $size;
                 $label = strtoupper($display_size);
-                if ($info['status'] === 'low' && is_numeric($info['stock'])) {
-                    $label .= ' (' . intval($info['stock']) . ')';
-                } elseif ($info['status'] === 'out') {
-                    $label .= ' (0)';
-                }
             ?>
                 <span class="<?php echo esc_attr($size_class); ?>" title="<?php echo esc_attr($info['status'] === 'out' ? 'Out of stock' : ($info['status'] === 'low' ? 'Low stock' : 'In stock')); ?>">
                     <?php echo esc_html($label); ?>

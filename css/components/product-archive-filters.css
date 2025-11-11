@@ -3,9 +3,7 @@
 
 /* Product Archive Filters - Matching Concept Design */
 
-:root {
-  /* Use variables from shared-variables.css */
-}
+/* Variables are defined in shared-variables.css */
 
 /* Toolbar Structure */
 .toolbar {
@@ -158,11 +156,13 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   opacity: 0;
+  pointer-events: none; /* Prevent blocking clicks when hidden */
   transition: opacity 0.3s ease;
 }
 
 .filter-modal-overlay.active {
   opacity: 1;
+  pointer-events: auto; /* Enable interaction when shown */
 }
 
 .filter-modal {
