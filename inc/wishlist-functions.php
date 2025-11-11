@@ -1,6 +1,8 @@
 <?php
 /**
  * Enhanced Wishlist Functionality - 2025 Standards
+ * Storage: Cookies for guests, user meta for logged-in users.
+ * Avoids native PHP sessions to align with WordPress & caching best practices.
  * 
  * @package thewalkingtheme
  */
@@ -10,62 +12,70 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Get wishlist from session safely
- *
- * @return array The wishlist product IDs
- */
-function eshop_get_session_wishlist() {
-    // Start session if not already started
-    if (!session_id()) {
-        session_start();
-    }
-    
-    if (session_id() && isset($_SESSION['eshop_wishlist']) && is_array($_SESSION['eshop_wishlist'])) {
-        return $_SESSION['eshop_wishlist'];
-    }
-    return array();
+// Configuration for cookie-based wishlist storage
+// Guest wishlist storage removed; only logged-in users can save.
+// Define constants for clarity of intent if needed later.
+if (!defined('ESHOP_WISHLIST_ENABLED_FOR_GUESTS')) {
+    define('ESHOP_WISHLIST_ENABLED_FOR_GUESTS', false);
 }
 
 /**
- * Set wishlist in session safely
- * 
- * @param array $wishlist The wishlist product IDs
+ * Read wishlist from cookie (guest users)
  */
-function eshop_set_session_wishlist($wishlist) {
-    if (session_id() && is_array($wishlist)) {
-        $_SESSION['eshop_wishlist'] = array_values(array_unique($wishlist));
+// Legacy cookie reader (now returns empty because guests cannot store wishlist)
+function eshop_get_cookie_wishlist() { return array(); }
+
+/**
+ * Persist wishlist to cookie (guest users)
+ */
+function eshop_set_cookie_wishlist($wishlist) { /* no-op for guests */ }
+
+/**
+ * Public storage getters/setters
+ */
+function eshop_get_wishlist() {
+    if (!is_user_logged_in()) {
+        return array();
     }
+    $user_ids = get_user_meta(get_current_user_id(), 'eshop_wishlist', true);
+    if (!is_array($user_ids)) {
+        $user_ids = array();
+    }
+    return array_values(array_unique(array_map('absint', $user_ids)));
+}
+
+function eshop_set_wishlist($wishlist) {
+    if (!is_user_logged_in()) {
+        return; // guests cannot persist
+    }
+    $wishlist = is_array($wishlist) ? $wishlist : array();
+    $wishlist = array_values(array_unique(array_map('absint', $wishlist)));
+    $wishlist = array_filter($wishlist);
+    update_user_meta(get_current_user_id(), 'eshop_wishlist', $wishlist);
 }
 
 
 /**
  * Sync session wishlist with user meta for logged-in users
  */
-function eshop_sync_wishlist_with_user_meta() {
-    $user_id = get_current_user_id();
-    if (!$user_id) return;
-    
-    $user_wishlist = get_user_meta($user_id, 'eshop_wishlist', true);
-    if (!is_array($user_wishlist)) {
-        $user_wishlist = array();
-    }
-    
-    // Merge session wishlist with user's saved wishlist
-    if (isset($_SESSION['eshop_wishlist']) && is_array($_SESSION['eshop_wishlist'])) {
-        $merged_wishlist = array_unique(array_merge($user_wishlist, $_SESSION['eshop_wishlist']));
-        update_user_meta($user_id, 'eshop_wishlist', $merged_wishlist);
-        $_SESSION['eshop_wishlist'] = $merged_wishlist;
-    } else {
-        $_SESSION['eshop_wishlist'] = $user_wishlist;
-    }
-}
+function eshop_sync_wishlist_with_user_meta() { /* no-op now */ }
+
+// Also merge immediately at login
+// Login merge removed (no guest storage)
 
 /**
  * Enhanced Add to wishlist AJAX handler
  */
 function eshop_add_to_wishlist() {
     check_ajax_referer('eshop_nonce', 'nonce');
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error(array(
+            'requires_auth' => true,
+            'message' => __('Please create an account or log in to use wishlist.', 'thewalkingtheme'),
+            'redirect' => wc_get_page_permalink('myaccount'),
+        ));
+    }
     
     $product_id = intval($_POST['product_id']);
     if (!$product_id) {
@@ -83,48 +93,24 @@ function eshop_add_to_wishlist() {
     }
     $product_name_plain = wp_strip_all_tags($product->get_name());
 
-    // Ensure session is started
-    if (!session_id()) {
-        session_start();
-    }
-    
-    if (!isset($_SESSION['eshop_wishlist'])) {
-        $_SESSION['eshop_wishlist'] = array();
-    }
-    
+    $current = eshop_get_wishlist();
     $action = '';
     $message = '';
-    
-    if (!in_array($product_id, $_SESSION['eshop_wishlist'])) {
-        $_SESSION['eshop_wishlist'][] = $product_id;
+
+    if (!in_array($product_id, $current)) {
+        $current[] = $product_id;
         $action = 'added';
         $message = sprintf(__('%s added to wishlist', 'thewalkingtheme'), $product_name_plain);
-        
-        // Save to user meta if logged in
-        if (is_user_logged_in()) {
-            $user_id = get_current_user_id();
-            update_user_meta($user_id, 'eshop_wishlist', $_SESSION['eshop_wishlist']);
-        }
     } else {
-        $_SESSION['eshop_wishlist'] = array_diff($_SESSION['eshop_wishlist'], array($product_id));
+        $current = array_diff($current, array($product_id));
         $action = 'removed';
         $message = sprintf(__('%s removed from wishlist', 'thewalkingtheme'), $product_name_plain);
-        
-        // Update user meta if logged in
-        if (is_user_logged_in()) {
-            $user_id = get_current_user_id();
-            update_user_meta($user_id, 'eshop_wishlist', $_SESSION['eshop_wishlist']);
-        }
     }
 
-    // Normalize wishlist array indices to avoid gaps after removals
-    $_SESSION['eshop_wishlist'] = array_values(array_unique($_SESSION['eshop_wishlist']));
+    // Persist changes
+    eshop_set_wishlist($current);
 
-    if (is_user_logged_in()) {
-        update_user_meta(get_current_user_id(), 'eshop_wishlist', $_SESSION['eshop_wishlist']);
-    }
-
-    $wishlist_count      = count($_SESSION['eshop_wishlist']);
+    $wishlist_count      = count($current);
     $is_in_wishlist      = ($action === 'added');
     $product_name        = $product_name_plain;
     $button_text         = $is_in_wishlist ? __('Saved', 'thewalkingtheme') : __('Save', 'thewalkingtheme');
@@ -163,15 +149,18 @@ add_action('wp_ajax_nopriv_remove_from_wishlist', 'eshop_remove_from_wishlist_aj
  * Handle AJAX remove from wishlist request
  */
 function eshop_remove_from_wishlist_ajax() {
-    // Ensure session is started
-    if (!session_id()) {
-        session_start();
-    }
-    
     // Verify nonce for security
     if (!wp_verify_nonce($_POST['nonce'], 'eshop_nonce')) {
         wp_send_json_error('Invalid security token');
         return;
+    }
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error(array(
+            'requires_auth' => true,
+            'message' => __('You must be logged in to modify wishlist.', 'thewalkingtheme'),
+            'redirect' => wc_get_page_permalink('myaccount'),
+        ));
     }
 
     $product_id = intval($_POST['product_id']);
@@ -211,45 +200,24 @@ function eshop_remove_from_wishlist_ajax() {
  * Get wishlist count
  */
 function eshop_get_wishlist_count() {
-    // Ensure session is started
-    if (!session_id()) {
-        session_start();
-    }
-    
-    if (!isset($_SESSION['eshop_wishlist'])) {
-        return 0;
-    }
-    return count($_SESSION['eshop_wishlist']);
+    return count(eshop_get_wishlist());
 }
 
 /**
  * Check if product is in wishlist
  */
 function eshop_is_in_wishlist($product_id) {
-    // Ensure session is started
-    if (!session_id()) {
-        session_start();
-    }
-    
-    if (!isset($_SESSION['eshop_wishlist'])) {
-        return false;
-    }
-    return in_array($product_id, $_SESSION['eshop_wishlist']);
+    $product_id = absint($product_id);
+    if (!$product_id) return false;
+    $list = eshop_get_wishlist();
+    return in_array($product_id, $list, true);
 }
 
 /**
  * Get wishlist products
  */
 function eshop_get_wishlist_products() {
-    // Ensure session is started
-    if (!session_id()) {
-        session_start();
-    }
-    
-    if (!isset($_SESSION['eshop_wishlist']) || empty($_SESSION['eshop_wishlist'])) {
-        return array();
-    }
-    return $_SESSION['eshop_wishlist'];
+    return eshop_get_wishlist();
 }
 
 /**
@@ -310,7 +278,7 @@ function eshop_wishlist_button_enhanced($product_id = null, $show_text = true, $
     $product = wc_get_product($product_id);
     if (!$product) return;
     
-    $is_in_wishlist = eshop_is_in_wishlist($product_id);
+    $is_in_wishlist = is_user_logged_in() ? eshop_is_in_wishlist($product_id) : false;
     $default_class = 'add-to-wishlist modern-action-btn';
     $classes = $default_class . ' ' . $button_class;
     
@@ -318,18 +286,23 @@ function eshop_wishlist_button_enhanced($product_id = null, $show_text = true, $
         $classes .= ' active in-wishlist';
     }
     
-    $button_text = $is_in_wishlist 
-        ? __('Saved', 'thewalkingtheme') 
-        : __('Save', 'thewalkingtheme');
+    $button_text = !is_user_logged_in()
+        ? __('Save', 'thewalkingtheme')
+        : ($is_in_wishlist ? __('Saved', 'thewalkingtheme') : __('Save', 'thewalkingtheme'));
     
-    $aria_label = $is_in_wishlist 
-        ? sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product->get_name())
-        : sprintf(__('Add %s to wishlist', 'thewalkingtheme'), $product->get_name());
+    if (!is_user_logged_in()) {
+        $aria_label = sprintf(__('Log in to save %s to wishlist', 'thewalkingtheme'), $product->get_name());
+    } else {
+        $aria_label = $is_in_wishlist 
+            ? sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product->get_name())
+            : sprintf(__('Add %s to wishlist', 'thewalkingtheme'), $product->get_name());
+    }
     
     ?>
     <button class="<?php echo esc_attr($classes); ?>" 
             data-product-id="<?php echo esc_attr($product_id); ?>"
             data-product-name="<?php echo esc_attr($product->get_name()); ?>"
+        <?php if (!is_user_logged_in()) : ?>data-requires-auth="true"<?php endif; ?>
             aria-label="<?php echo esc_attr($aria_label); ?>"
             title="<?php echo esc_attr($aria_label); ?>">
         <svg class="w-5 h-5" 
@@ -373,36 +346,23 @@ function eshop_get_wishlist_count_display() {
  * Remove product from wishlist (helper function)
  */
 function eshop_remove_from_wishlist($product_id) {
-    // Ensure session is started
-    if (!session_id()) {
-        session_start();
-    }
-    
-    if (!isset($_SESSION['eshop_wishlist'])) {
+    $product_id = absint($product_id);
+    if (!$product_id) return false;
+    $list = eshop_get_wishlist();
+    if (!in_array($product_id, $list, true)) {
         return false;
     }
-    
-    if (in_array($product_id, $_SESSION['eshop_wishlist'])) {
-        $_SESSION['eshop_wishlist'] = array_diff($_SESSION['eshop_wishlist'], array($product_id));
-        
-        // Update user meta if logged in
-        if (is_user_logged_in()) {
-            $user_id = get_current_user_id();
-            update_user_meta($user_id, 'eshop_wishlist', $_SESSION['eshop_wishlist']);
-        }
-        
-        return true;
-    }
-    
-    return false;
+    $list = array_values(array_diff($list, array($product_id)));
+    eshop_set_wishlist($list);
+    return true;
 }
 
 /**
  * Clear entire wishlist
  */
 function eshop_clear_wishlist() {
-    $_SESSION['eshop_wishlist'] = array();
-    
+    // Clear cookie
+    eshop_set_cookie_wishlist(array());
     // Clear user meta if logged in
     if (is_user_logged_in()) {
         $user_id = get_current_user_id();

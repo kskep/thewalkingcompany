@@ -80,6 +80,15 @@ if ($is_variable) {
                     $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
                     if ($percentage > 0) {
                         echo '<span class="badge badge--sale">' . $percentage . '% Off</span>';
+        $is_in_wishlist = is_user_logged_in() ? eshop_is_in_wishlist($product_id) : false;
+        $wishlist_class = $is_in_wishlist ? 'active in-wishlist' : '';
+        // Guests see a prompt instead of wishlist toggle intent
+        if (!is_user_logged_in()) {
+            $wishlist_aria_label = __('Log in to save to wishlist', 'thewalkingtheme');
+        } else {
+            $wishlist_aria_label = $is_in_wishlist ? __('Remove from wishlist', 'thewalkingtheme') : __('Add to wishlist', 'thewalkingtheme');
+        }
+        $wishlist_fill = $is_in_wishlist ? 'currentColor' : 'none';
                     }
                 }
                 ?>

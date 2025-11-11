@@ -1048,4 +1048,17 @@ function eshop_output_related_products_from_categories() {
     }
     $product = $original_product;
 }
+/**
+ * Ensure product context is properly set for single product pages
+ * This function fixes the fatal error when $product is not properly initialized
+ */
+function eshop_ensure_product_context() {
+    if (is_product() && !isset($GLOBALS['product'])) {
+        $product_id = get_the_ID();
+        if ($product_id && get_post_type($product_id) === 'product') {
+            $GLOBALS['product'] = wc_get_product($product_id);
+        }
+    }
+}
+add_action('wp', 'eshop_ensure_product_context');
 add_action('woocommerce_after_single_product_summary', 'eshop_output_related_products_from_categories', 20);

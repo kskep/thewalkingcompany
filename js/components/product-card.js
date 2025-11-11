@@ -355,8 +355,8 @@
 
             // Card click to go to product page
             this.card.addEventListener('click', (e) => {
-                // Don't trigger if clicking interactive elements
-                if (e.target.closest('.wishlist-button, .size-chip, .media-dot, .add-to-cart')) {
+                // Don't trigger if clicking interactive elements (except wishlist-button to let theme.js handle it)
+                if (e.target.closest('.size-chip, .media-dot, .add-to-cart')) {
                     return;
                 }
                 

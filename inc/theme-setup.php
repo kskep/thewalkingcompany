@@ -10,14 +10,44 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Start session for wishlist functionality
-if (!session_id()) {
-    add_action('init', 'eshop_start_session', 1);
-}
-
-function eshop_start_session() {
-    if (!session_id()) {
-        session_start();
+// Start session for wishlist functionality (frontend only)
+// We hook as early as possible on 'init' (priority 0) and perform multiple guards to
+// avoid "headers already sent" warnings. This prevents session_start from running
+// after output begins (common if a plugin echoes early).
+if (!function_exists('eshop_maybe_start_session')) {
+    add_action('init', 'eshop_maybe_start_session', 0);
+    function eshop_maybe_start_session() {
+        // Already active? bail.
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            return;
+        }
+        // Skip in CLI, cron, or if headers already sent (would trigger warning).
+        if ((defined('WP_CLI') && WP_CLI) || (defined('DOING_CRON') && DOING_CRON)) {
+            return;
+        }
+        if (headers_sent()) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('eshop-theme: headers already sent before session_start; skipping session initialization.');
+            }
+            return;
+        }
+        // Avoid starting a session in the admin unless it's an AJAX request that needs it.
+        if (is_admin() && !(defined('DOING_AJAX') && DOING_AJAX)) {
+            return;
+        }
+        // Secure/httponly cookie params.
+        $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+        try {
+            @session_start([
+                'cookie_secure' => $secure,
+                'cookie_httponly' => true,
+                'cookie_samesite' => 'Lax',
+            ]);
+        } catch (Throwable $e) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('eshop-theme: session_start failed: ' . $e->getMessage());
+            }
+        }
     }
 }
 

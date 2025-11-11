@@ -330,6 +330,22 @@
                 return;
             }
 
+            // If server indicates auth required, prompt login/register or redirect
+            if (!response.success && response.data && response.data.requires_auth) {
+                var redirectUrl = response.data.redirect || (window.location.origin + '/my-account/');
+                // Prefer opening modal if available
+                if (window.authModal && typeof window.authModal.openRegister === 'function') {
+                    // Close any open dropdowns to prevent overlay conflicts
+                    $('.wishlist-dropdown, .account-dropdown').addClass('hidden');
+                    window.authModal.openRegister();
+                } else {
+                    // Append redirect_to so user returns to current page
+                    var sep = redirectUrl.indexOf('?') === -1 ? '?' : '&';
+                    window.location.href = redirectUrl + sep + 'redirect_to=' + encodeURIComponent(window.location.href);
+                }
+                return;
+            }
+
             if (response.success && response.data) {
                 eshopRefreshWishlistUI(response.data);
                 eshopNotify(response.data.message, response.data.notification_type || 'success');
@@ -343,6 +359,20 @@
             e.preventDefault();
             var $button = $(this);
             if ($button.hasClass('loading')) {
+                return;
+            }
+
+            // If the button indicates auth is required, open modal or redirect immediately
+            if ($button.data('requires-auth')) {
+                // Close any dropdowns
+                $('.wishlist-dropdown, .account-dropdown').addClass('hidden');
+                if (window.authModal && typeof window.authModal.openRegister === 'function') {
+                    window.authModal.openRegister();
+                } else {
+                    var myAccountUrl = (typeof eshop_ajax !== 'undefined' && eshop_ajax.myaccount_url) ? eshop_ajax.myaccount_url : (window.location.origin + '/my-account/');
+                    var sep = myAccountUrl.indexOf('?') === -1 ? '?' : '&';
+                    window.location.href = myAccountUrl + sep + 'redirect_to=' + encodeURIComponent(window.location.href);
+                }
                 return;
             }
 
@@ -389,7 +419,7 @@
                 url: eshop_ajax.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'add_to_wishlist',
+                    action: 'remove_from_wishlist',
                     product_id: productId,
                     nonce: eshop_ajax.nonce
                 },
