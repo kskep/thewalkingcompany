@@ -49,23 +49,32 @@
      */
     function parseURLParameters() {
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // Price parameters
+
         filterState.price.min = urlParams.get('min_price') || '';
         filterState.price.max = urlParams.get('max_price') || '';
-        
-        // Sale parameter
         filterState.sale = urlParams.get('on_sale') === '1';
-        
-        // Stock parameter
         filterState.inStock = urlParams.get('stock_status') === 'instock';
-        
-        // Attribute parameters
+
         const attributeTaxonomies = getAttributeTaxonomies();
         attributeTaxonomies.forEach(taxonomy => {
-            const values = urlParams.getAll(taxonomy + '[]');
-            filterState.attributes[taxonomy] = values;
+            let collected = [];
+            // Support array-style (taxonomy[]) and comma-delimited (taxonomy="a,b") formats
+            const arrayValues = urlParams.getAll(taxonomy + '[]');
+            if (arrayValues && arrayValues.length) {
+                collected = arrayValues.map(v => v.trim()).filter(Boolean);
+            } else if (urlParams.has(taxonomy)) {
+                collected = urlParams.get(taxonomy).split(',').map(v => v.trim()).filter(Boolean);
+            }
+            if (collected.length) {
+                filterState.attributes[taxonomy] = collected;
+            }
         });
+
+        // Category (single slug): support comma-delimited list (take first)
+        if (urlParams.has('product_cat')) {
+            const rawCat = urlParams.get('product_cat');
+            filterState.categories = rawCat ? [rawCat.split(',')[0]] : [];
+        }
     }
 
     /**
@@ -261,48 +270,28 @@
      */
     function applyFilters() {
         const currentURL = new URL(window.location);
-        
-        // Clear existing filter parameters
-        const paramsToKeep = ['orderby', 'order']; // Keep sorting parameters
-        
-        // Remove all filter-related parameters
-        for (const [key] of currentURL.searchParams.entries()) {
-            if (!paramsToKeep.includes(key) && !key.startsWith('paged')) {
+
+        // Preserve non-filter params (orderby, order) and clear others
+        const preserve = ['orderby', 'order'];
+        [...currentURL.searchParams.keys()].forEach(key => {
+            if (!preserve.includes(key)) {
                 currentURL.searchParams.delete(key);
             }
-        }
-        
-        // Add price filters
-        if (filterState.price.min) {
-            currentURL.searchParams.set('min_price', filterState.price.min);
-        }
-        if (filterState.price.max) {
-            currentURL.searchParams.set('max_price', filterState.price.max);
-        }
-        
-        // Add sale filter
-        if (filterState.sale) {
-            currentURL.searchParams.set('on_sale', '1');
-        }
-        
-        // Add stock filter
-        if (filterState.inStock) {
-            currentURL.searchParams.set('stock_status', 'instock');
-        }
-        
-        // Add category filter
-        if (filterState.categories.length > 0) {
-            currentURL.searchParams.set('product_cat', filterState.categories[0]);
-        }
-        
-        // Add attribute filters
-        Object.entries(filterState.attributes).forEach(([taxonomy, values]) => {
-            values.forEach(value => {
-                currentURL.searchParams.append(taxonomy + '[]', value);
-            });
         });
-        
-        // Navigate to new URL
+
+        if (filterState.price.min) currentURL.searchParams.set('min_price', filterState.price.min);
+        if (filterState.price.max) currentURL.searchParams.set('max_price', filterState.price.max);
+        if (filterState.sale) currentURL.searchParams.set('on_sale', '1');
+        if (filterState.inStock) currentURL.searchParams.set('stock_status', 'instock');
+        if (filterState.categories.length) currentURL.searchParams.set('product_cat', filterState.categories[0]);
+
+        // Attribute filters: write as comma-delimited list (Woo parsing expects this format)
+        Object.entries(filterState.attributes).forEach(([taxonomy, values]) => {
+            if (values.length) {
+                currentURL.searchParams.set(taxonomy, values.join(','));
+            }
+        });
+
         window.location.href = currentURL.toString();
     }
 
@@ -311,32 +300,37 @@
      */
     function removeFilter(param) {
         const currentURL = new URL(window.location);
-        
-        // Parse the parameter to determine what to remove
-        if (param.startsWith('cat-')) {
-            // Remove category filter
-            const catId = param.replace('cat-', '');
-            currentURL.searchParams.delete('product_cat');
-        } else if (param === 'price') {
-            // Remove price filters
+
+        if (param === 'price') {
             currentURL.searchParams.delete('min_price');
             currentURL.searchParams.delete('max_price');
         } else if (param === 'on_sale') {
-            // Remove sale filter
             currentURL.searchParams.delete('on_sale');
+        } else if (param.startsWith('cat-')) {
+            currentURL.searchParams.delete('product_cat');
         } else if (param.startsWith('pa_')) {
-            // Remove attribute filter
             const [taxonomy, value] = param.split('-');
-            // Remove specific attribute value (would need to handle array values)
-            const values = currentURL.searchParams.getAll(taxonomy + '[]');
-            const newValues = values.filter(v => v !== value);
-            currentURL.searchParams.delete(taxonomy + '[]');
-            newValues.forEach(v => {
-                currentURL.searchParams.append(taxonomy + '[]', v);
-            });
+            if (currentURL.searchParams.has(taxonomy)) {
+                const raw = currentURL.searchParams.get(taxonomy);
+                let list = raw.split(',').map(v => v.trim()).filter(Boolean);
+                list = list.filter(v => v !== value);
+                currentURL.searchParams.delete(taxonomy);
+                if (list.length) {
+                    currentURL.searchParams.set(taxonomy, list.join(','));
+                }
+            } else {
+                // Fallback array-style removal
+                const all = currentURL.searchParams.getAll(taxonomy + '[]');
+                const remaining = all.filter(v => v !== value);
+                currentURL.searchParams.delete(taxonomy + '[]');
+                if (remaining.length) {
+                    remaining.forEach(v => currentURL.searchParams.append(taxonomy + '[]', v));
+                }
+            }
+        } else if (param === 'stock_status') {
+            currentURL.searchParams.delete('stock_status');
         }
-        
-        // Navigate to updated URL
+
         window.location.href = currentURL.toString();
     }
 
@@ -374,13 +368,14 @@
         checkboxes?.forEach(checkbox => {
             const name = checkbox.name;
             const value = checkbox.value;
-            
             if (name === 'on_sale') {
                 checkbox.checked = filterState.sale;
             } else if (name === 'stock_status') {
                 checkbox.checked = filterState.inStock;
             } else if (filterState.attributes[name]) {
                 checkbox.checked = filterState.attributes[name].includes(value);
+            } else {
+                checkbox.checked = false;
             }
         });
         

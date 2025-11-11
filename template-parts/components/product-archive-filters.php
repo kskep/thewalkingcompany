@@ -66,20 +66,26 @@ if ($current_cat && !is_wp_error($current_cat) && isset($current_cat->name)) {
     ];
 }
 
-// Attribute filters
+// Attribute filters (support comma-delimited or array formats)
 $attribute_taxonomies = wc_get_attribute_taxonomies();
 if ($attribute_taxonomies) {
     foreach ($attribute_taxonomies as $taxonomy) {
         $attr_name = 'pa_' . $taxonomy->attribute_name;
-        if (isset($_GET[$attr_name]) && is_array($_GET[$attr_name])) {
-            foreach ($_GET[$attr_name] as $term_slug) {
-                $term = get_term_by('slug', $term_slug, $attr_name);
-                if ($term && !is_wp_error($term)) {
-                    $current_filters[] = [
-                        'label' => $taxonomy->attribute_label . ': ' . $term->name,
-                        'param' => $attr_name . '-' . $term_slug
-                    ];
-                }
+        $values = array();
+        if (isset($_GET[$attr_name])) {
+            if (is_array($_GET[$attr_name])) {
+                $values = array_map('sanitize_text_field', (array) $_GET[$attr_name]);
+            } else {
+                $values = array_filter(array_map('trim', explode(',', sanitize_text_field($_GET[$attr_name]))));
+            }
+        }
+        foreach ($values as $term_slug) {
+            $term = get_term_by('slug', $term_slug, $attr_name);
+            if ($term && !is_wp_error($term)) {
+                $current_filters[] = [
+                    'label' => $taxonomy->attribute_label . ': ' . $term->name,
+                    'param' => $attr_name . '-' . $term_slug
+                ];
             }
         }
     }
@@ -289,22 +295,31 @@ $sort_options = [
                     // Render appropriate filter section
                     switch ($section_key) {
                         case 'category':
-                            $categories = get_terms([
-                                'taxonomy' => 'product_cat',
-                                'hide_empty' => true,
-                            ]);
-                            if (!empty($categories) && !is_wp_error($categories)):
-                                $current_cat_id = $current_cat->term_id ?? 0;
+                            // Use context-aware categories
+                            $categories = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
+                            if (!empty($categories)):
+                                $selected_cat_slug = '';
+                                if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
+                                    // Take the first value if comma-separated
+                                    $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
+                                    $selected_cat_slug = explode(',', $raw)[0];
+                                } elseif (!empty($current_cat) && isset($current_cat->slug)) {
+                                    $selected_cat_slug = $current_cat->slug;
+                                }
                                 foreach ($categories as $category):
+                                    // $category may be array from helper or WP_Term fallback
+                                    $cat_slug = is_array($category) ? $category['slug'] : $category->slug;
+                                    $cat_name = is_array($category) ? $category['name'] : $category->name;
+                                    $cat_count = is_array($category) ? intval($category['count']) : intval($category->count);
                             ?>
                                 <label class="filter-option">
                                     <input type="radio" 
                                            name="category" 
-                                           value="<?php echo esc_attr($category->slug); ?>"
-                                           <?php checked($current_cat_id, $category->term_id); ?>>
+                                           value="<?php echo esc_attr($cat_slug); ?>"
+                                           <?php checked($selected_cat_slug, $cat_slug); ?>>
                                     <span class="filter-option-label">
-                                        <?php echo esc_html($category->name); ?>
-                                        <span class="filter-option-count">(<?php echo $category->count; ?>)</span>
+                                        <?php echo esc_html($cat_name); ?>
+                                        <span class="filter-option-count">(<?php echo $cat_count; ?>)</span>
                                     </span>
                                 </label>
                             <?php 
@@ -348,25 +363,35 @@ $sort_options = [
                         case 'attributes':
                             foreach ($attribute_taxonomies as $taxonomy):
                                 $attr_name = 'pa_' . $taxonomy->attribute_name;
-                                $terms = get_terms([
-                                    'taxonomy' => $attr_name,
-                                    'hide_empty' => true,
-                                ]);
-                                if (!empty($terms) && !is_wp_error($terms)):
+                                $terms = function_exists('eshop_get_available_attribute_terms') ? eshop_get_available_attribute_terms($attr_name) : array();
+                                if (!empty($terms)):
                             ?>
                                 <div class="filter-subsection">
                                     <h4 class="filter-subsection-title">
                                         <?php echo esc_html($taxonomy->attribute_label); ?>
                                     </h4>
-                                    <?php foreach ($terms as $term): ?>
+                                    <?php foreach ($terms as $term): 
+                                        $term_slug = is_array($term) ? $term['slug'] : $term->slug;
+                                        $term_name = is_array($term) ? $term['name'] : $term->name;
+                                        $term_count = is_array($term) ? intval($term['count']) : intval($term->count);
+                                        $is_checked = false;
+                                        if (isset($_GET[$attr_name])) {
+                                            if (is_array($_GET[$attr_name])) {
+                                                $is_checked = in_array($term_slug, array_map('sanitize_text_field', (array) $_GET[$attr_name]), true);
+                                            } else {
+                                                $vals = array_filter(array_map('trim', explode(',', sanitize_text_field($_GET[$attr_name]))));
+                                                $is_checked = in_array($term_slug, $vals, true);
+                                            }
+                                        }
+                                    ?>
                                         <label class="filter-option">
                                             <input type="checkbox" 
                                                    name="<?php echo esc_attr($attr_name); ?>[]"
-                                                   value="<?php echo esc_attr($term->slug); ?>"
-                                                   <?php checked(in_array($term->slug, $_GET[$attr_name] ?? [])); ?>>
+                                                   value="<?php echo esc_attr($term_slug); ?>"
+                                                   <?php checked($is_checked); ?>>
                                             <span class="filter-option-label">
-                                                <?php echo esc_html($term->name); ?>
-                                                <span class="filter-option-count">(<?php echo $term->count; ?>)</span>
+                                                <?php echo esc_html($term_name); ?>
+                                                <span class="filter-option-count">(<?php echo $term_count; ?>)</span>
                                             </span>
                                         </label>
                                     <?php endforeach; ?>

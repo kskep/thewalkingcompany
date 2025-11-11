@@ -64,10 +64,13 @@ function eshop_theme_scripts() {
         wp_enqueue_style('eshop-cart-checkout', get_template_directory_uri() . '/css/pages.cart-checkout.css', array('eshop-theme-style'), '1.0.0');
     }
 
-    // Load filter CSS (cache-busted)
-    $filters_css_path = get_template_directory() . '/css/components/filters.css';
-    $filters_css_ver = file_exists($filters_css_path) ? filemtime($filters_css_path) : '1.0.0';
-    wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), $filters_css_ver);
+    // Load legacy filter CSS only if enabled via filter (default off)
+    $enable_legacy_filters = apply_filters('eshop_enable_legacy_filters', false);
+    if ($enable_legacy_filters) {
+        $filters_css_path = get_template_directory() . '/css/components/filters.css';
+        $filters_css_ver = file_exists($filters_css_path) ? filemtime($filters_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-filters', get_template_directory_uri() . '/css/components/filters.css', array('eshop-theme-style'), $filters_css_ver);
+    }
 
     // -- START MODIFICATION --
     if (is_shop() || is_product_category() || is_product_tag()) {
@@ -177,10 +180,13 @@ function eshop_theme_scripts() {
 
     // Filter component JavaScript (full version)
     if (is_shop() || is_product_category() || is_product_tag()) {
-        $filters_js_rel = '/js/components/filters.js';
-        $filters_js_file = get_template_directory() . $filters_js_rel;
-        $filters_js_ver = file_exists($filters_js_file) ? filemtime($filters_js_file) : '1.0.0';
-        wp_enqueue_script('eshop-filters', get_template_directory_uri() . $filters_js_rel, array('jquery', 'nouislider', 'eshop-theme-script'), $filters_js_ver, true);
+        // Enqueue legacy filters JS only if enabled via filter (default off)
+        if ($enable_legacy_filters) {
+            $filters_js_rel = '/js/components/filters.js';
+            $filters_js_file = get_template_directory() . $filters_js_rel;
+            $filters_js_ver = file_exists($filters_js_file) ? filemtime($filters_js_file) : '1.0.0';
+            wp_enqueue_script('eshop-filters', get_template_directory_uri() . $filters_js_rel, array('jquery', 'nouislider', 'eshop-theme-script'), $filters_js_ver, true);
+        }
         // Enqueue size transformation script on shop/archive pages
         wp_enqueue_script('size-transformation', get_template_directory_uri() . '/js/components/size-transformation.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
         
@@ -462,6 +468,10 @@ function eshop_show_custom_product_gallery() {
  * Include filter modal on WooCommerce archive pages
  */
 function eshop_include_filter_modal() {
+    // Render legacy filter drawer only if explicitly enabled via filter
+    if (!apply_filters('eshop_enable_legacy_filters', false)) {
+        return;
+    }
     if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_product_tag())) {
         get_template_part('template-parts/components/filter-modal');
     }
