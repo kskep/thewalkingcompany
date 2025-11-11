@@ -83,11 +83,10 @@
     function getAttributeTaxonomies() {
         const taxonomies = [];
         const checkboxes = filterModalContent?.querySelectorAll('input[type="checkbox"][name^="pa_"]') || [];
-        checkboxes.forEach(checkbox => {
-            const taxonomy = checkbox.name;
-            if (!taxonomies.includes(taxonomy)) {
-                taxonomies.push(taxonomy);
-            }
+        checkboxes.forEach(cb => {
+            const raw = cb.name; // e.g. pa_color[]
+            const base = raw.replace(/\[\]$/, '');
+            if (!taxonomies.includes(base)) taxonomies.push(base);
         });
         return taxonomies;
     }
@@ -97,9 +96,9 @@
      */
     function setupEventListeners() {
         // Modal controls
-        if (filterToggle) {
-            filterToggle.addEventListener('click', openFilterModal);
-        }
+        if (filterToggle) filterToggle.addEventListener('click', openFilterModal);
+        const filterToggleDesktop = document.getElementById('filter-toggle-desktop');
+        if (filterToggleDesktop) filterToggleDesktop.addEventListener('click', openFilterModal);
         
         if (filterModalClose) {
             filterModalClose.addEventListener('click', closeFilterModal);
@@ -149,21 +148,26 @@
         
         // Active filters event delegation
         document.addEventListener('click', function(e) {
-            // Remove individual filter chip
-            if (e.target.classList.contains('filter-chip')) {
+            // Remove individual filter chip (use closest to handle inner spans)
+            const chip = e.target.closest('.filter-chip');
+            if (chip) {
                 e.preventDefault();
-                const param = e.target.dataset.param;
-                if (param) {
-                    removeFilter(param);
-                }
+                const param = chip.dataset.param;
+                if (param) removeFilter(param);
+                return;
             }
-            
-            // Clear all filters button
-            if (e.target.id === 'clear-all-filters') {
+
+            // Clear all filters button (handle clicks on inner elements)
+            const clearBtn = e.target.closest('#clear-all-filters');
+            if (clearBtn) {
                 e.preventDefault();
                 clearAllFilters();
             }
         });
+
+        // Direct listener as well if the button exists
+        const clearAll = document.getElementById('clear-all-filters');
+        if (clearAll) clearAll.addEventListener('click', function(e){ e.preventDefault(); clearAllFilters(); });
         
         // Handle browser back/forward
         window.addEventListener('popstate', function() {
@@ -364,16 +368,17 @@
         }
         
         // Update checkboxes
-        const checkboxes = filterModalContent?.querySelectorAll('input[type="checkbox"]');
+        const checkboxes = filterModalContent?.querySelectorAll('input[type="checkbox"][name^="pa_"], input[type="checkbox"][name="on_sale"], input[type="checkbox"][name="stock_status"]');
         checkboxes?.forEach(checkbox => {
-            const name = checkbox.name;
+            const rawName = checkbox.name;
+            const baseName = rawName.replace(/\[\]$/, '');
             const value = checkbox.value;
-            if (name === 'on_sale') {
+            if (rawName === 'on_sale') {
                 checkbox.checked = filterState.sale;
-            } else if (name === 'stock_status') {
+            } else if (rawName === 'stock_status') {
                 checkbox.checked = filterState.inStock;
-            } else if (filterState.attributes[name]) {
-                checkbox.checked = filterState.attributes[name].includes(value);
+            } else if (filterState.attributes[baseName]) {
+                checkbox.checked = filterState.attributes[baseName].includes(value);
             } else {
                 checkbox.checked = false;
             }

@@ -57,13 +57,15 @@ if (isset($_GET['stock_status']) && $_GET['stock_status'] === 'instock') {
     ];
 }
 
-// Category filter
-$current_cat = get_queried_object();
-if ($current_cat && !is_wp_error($current_cat) && isset($current_cat->name)) {
-    $current_filters[] = [
-        'label' => $current_cat->name,
-        'param' => 'cat-' . $current_cat->term_id
-    ];
+// Category chip only on taxonomy archives (not on shop root)
+if (function_exists('is_product_category') && (is_product_category() || is_product_tag())) {
+    $current_cat = get_queried_object();
+    if ($current_cat && !is_wp_error($current_cat) && isset($current_cat->name)) {
+        $current_filters[] = [
+            'label' => $current_cat->name,
+            'param' => 'cat-' . $current_cat->term_id
+        ];
+    }
 }
 
 // Attribute filters (support comma-delimited or array formats)
@@ -219,6 +221,16 @@ $sort_options = [
                     <?php endforeach; ?>
                 </select>
             </div>
+
+            <!-- Desktop Filter Toggle Button -->
+            <button type="button"
+                    id="filter-toggle-desktop"
+                    class="filter-toggle"
+                    aria-controls="filter-modal"
+                    aria-expanded="false">
+                <span class="filter-toggle-icon" aria-hidden="true">⚙</span>
+                <span class="filter-toggle-text"><?php _e('Filters', 'your-textdomain'); ?></span>
+            </button>
         </div>
     </div>
 
