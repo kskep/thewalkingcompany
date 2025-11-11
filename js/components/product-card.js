@@ -135,14 +135,11 @@
             if (!media) return;
 
             let sizeOverlay = media.querySelector('.size-overlay');
+            // Respect server-rendered overlay if present; do not generate placeholder sizes
+            // If no overlay exists, skip creating dummy content as this UI is informational only
             if (!sizeOverlay) {
-                sizeOverlay = document.createElement('div');
-                sizeOverlay.className = 'size-overlay';
-                media.appendChild(sizeOverlay);
+                return;
             }
-
-            // Generate size chips based on product data
-            this.generateSizeChips(sizeOverlay);
 
             // Setup touch interaction for mobile
             let touchStartY = 0;
@@ -166,61 +163,7 @@
             });
         }
 
-        /**
-         * Generate size chips with stock status
-         */
-        generateSizeChips(container) {
-            // This would typically fetch from product data
-            // For now, using sample data structure
-            const sizes = [
-                { size: '36', stock: 5, status: 'available' },
-                { size: '37', stock: 3, status: 'available' },
-                { size: '38', stock: 1, status: 'low' },
-                { size: '39', stock: 0, status: 'out' },
-                { size: '40', stock: 2, status: 'available' }
-            ];
-
-            container.innerHTML = '';
-
-            sizes.forEach(({ size, stock, status }) => {
-                const chip = document.createElement('button');
-                chip.className = `size-chip ${status === 'low' ? 'is-low' : ''} ${status === 'out' ? 'is-out' : ''}`;
-                chip.textContent = size;
-                chip.disabled = status === 'out';
-                
-                if (status === 'low') {
-                    chip.setAttribute('data-tooltip', 'Only ' + stock + ' left');
-                } else if (status === 'out') {
-                    chip.setAttribute('data-tooltip', 'Out of stock');
-                }
-
-                chip.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (status !== 'out') {
-                        this.selectSize(size);
-                    }
-                });
-
-                container.appendChild(chip);
-            });
-        }
-
-        /**
-         * Handle size selection
-         */
-        selectSize(size) {
-            // Remove active state from all chips
-            const chips = this.card.querySelectorAll('.size-chip');
-            chips.forEach(chip => chip.classList.remove('active'));
-
-            // Add active state to selected chip
-            const selectedChip = Array.from(chips).find(chip => chip.textContent === size);
-            if (selectedChip) {
-                selectedChip.classList.add('active');
-            }
-
-            this.fireEvent('sizeSelected', { size, productId: this.productId });
-        }
+        // No size selection functionality is needed for the informational overlay
 
         /**
          * Setup wishlist functionality - now uses existing theme.js system

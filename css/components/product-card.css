@@ -214,18 +214,14 @@
   text-align: center;
   color: var(--ink);
   background: #fff;
-  cursor: pointer;
+  cursor: default; /* informational only */
   transition: all 0.2s ease;
+  position: relative; /* for low-stock icon */
 }
 
-.size-chip:focus-visible {
-  outline: 2px solid var(--pink);
-  outline-offset: 2px;
-}
-
-.size-chip:hover {
-  border-color: var(--pink);
-}
+/* Remove interactive focus/hover selection styling */
+.size-chip:focus-visible { outline: none; }
+.size-chip:hover { border-color: var(--line); }
 
 .size-chip.is-low {
   border-color: var(--pink);
@@ -236,6 +232,23 @@
   border-style: dashed;
   color: rgba(109, 108, 117, 0.5);
   cursor: not-allowed;
+}
+
+/* Low stock indicator icon */
+.size-chip.is-low::after {
+  content: '!';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  font-size: 11px;
+  color: #fff;
+  background: var(--pink);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 
 /* Product Information Section */
