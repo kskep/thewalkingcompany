@@ -3,11 +3,29 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' );
 
-// Ensure we have the global product object set
-if ( ! is_product() ) {
+// Robust product object initialization following WooCommerce best practices
+$product = null;
+
+// First, try to get the global product object if it exists
+if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
+    $product = $GLOBALS['product'];
+} else {
+    // If global is not valid, initialize it properly
     $product_id = get_the_ID();
-    if ( $product_id && get_post_type( $product_id ) === 'product' ) {
-        $GLOBALS['product'] = wc_get_product( $product_id );
+    
+    // Validate we have a proper product ID and post type
+    if ( $product_id && is_numeric($product_id) && get_post_type($product_id) === 'product' ) {
+        $product = wc_get_product($product_id);
+        
+        // Validate the product object was created successfully
+        if ( is_a($product, 'WC_Product') ) {
+            $GLOBALS['product'] = $product;
+        } else {
+            error_log('ERROR: wc_get_product() failed for ID ' . $product_id . '. Returned: ' . print_r($product, true));
+            $product = null;
+        }
+    } else {
+        error_log('ERROR: Invalid product context. ID: ' . $product_id . ', Post type: ' . get_post_type($product_id));
     }
 } ?>
 
@@ -19,14 +37,19 @@ if ( ! is_product() ) {
                 // Display product badges (sale, featured, etc.)
                 $badges = array();
                 
-                // Check if product is on sale
-                if ( isset($GLOBALS['product']) && $GLOBALS['product']->is_on_sale() ) {
-                    $badges[] = array( 'text' => 'Limited Drop', 'type' => 'sale' );
-                }
-                
-                // Check if product is featured
-                if ( isset($GLOBALS['product']) && $GLOBALS['product']->is_featured() ) {
-                    $badges[] = array( 'text' => 'Editors\' Pick', 'type' => 'featured' );
+                // Only proceed with badge logic if we have a valid product object
+                if ( $product && is_a($product, 'WC_Product') ) {
+                    // Check if product is on sale
+                    if ( $product->is_on_sale() ) {
+                        $badges[] = array( 'text' => 'Limited Drop', 'type' => 'sale' );
+                    }
+                    
+                    // Check if product is featured
+                    if ( $product->is_featured() ) {
+                        $badges[] = array( 'text' => 'Editors\' Pick', 'type' => 'featured' );
+                    }
+                } else {
+                    error_log('WARNING: Cannot display product badges - invalid product object');
                 }
                 
                 // Add more badge logic as needed
@@ -50,12 +73,7 @@ if ( ! is_product() ) {
         </article>
 
         <aside class="details-panel">
-            <?php
-            // Get the product for our custom rendering
-            $product = isset($GLOBALS['product']) ? $GLOBALS['product'] : null;
-            
-            if ( $product ) :
-            ?>
+            <?php if ( $product && is_a($product, 'WC_Product') ) : ?>
                 <!-- Collection Tag -->
                 <span class="collection-tag">
                     <?php
@@ -200,6 +218,10 @@ if ( ! is_product() ) {
                             <p>Your card is only charged once the pair leaves our atelier.</p>
                         </div>
                     </div>
+                </div>
+            <?php else : ?>
+                <div class="error-message">
+                    <p><?php _e('Product information is currently unavailable. Please try again later.', 'eshop-theme'); ?></p>
                 </div>
             <?php endif; ?>
         </aside>

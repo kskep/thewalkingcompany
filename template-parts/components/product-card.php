@@ -58,6 +58,10 @@ if ($is_variable) {
         if (!$size) {
             $size = $variation->get_attribute('pa_select-size');
         }
+        // Also support alternate size taxonomy used in this theme
+        if (!$size) {
+            $size = $variation->get_attribute('pa_size-selection');
+        }
         if (!$size) {
             continue;
         }
@@ -170,7 +174,9 @@ if ($is_variable) {
                 } elseif ($info['status'] === 'out') {
                     $size_class .= ' is-out';
                 }
-                $label = strtoupper($size);
+                // Transform size label for display (e.g., XSmall -> XS)
+                $display_size = function_exists('eshop_transform_size_label') ? eshop_transform_size_label($size) : $size;
+                $label = strtoupper($display_size);
                 if ($info['status'] === 'low' && is_numeric($info['stock'])) {
                     $label .= ' (' . intval($info['stock']) . ')';
                 } elseif ($info['status'] === 'out') {
