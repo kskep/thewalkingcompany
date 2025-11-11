@@ -307,61 +307,81 @@ $sort_options = [
                     // Render appropriate filter section
                     switch ($section_key) {
                         case 'category':
-                            // Build a hierarchical, context-aware category tree with expand/collapse
-                            $available = function_exists('eshop_get_available_categories') ? eshop_get_available_categories() : array();
-                            if (!empty($available)):
-                                // Map helpers -> ids/slugs/counts
-                                $available_ids = array();
-                                $by_id = array();
-                                foreach ($available as $row) {
-                                    // $row is array(term_id, name, slug, count) per helper
-                                    if (is_array($row)) {
-                                        $available_ids[] = (int) $row['term_id'];
-                                        $by_id[(int) $row['term_id']] = $row;
-                                    } elseif ($row instanceof WP_Term) {
-                                        $available_ids[] = (int) $row->term_id;
-                                        $by_id[(int) $row->term_id] = array(
-                                            'term_id' => (int) $row->term_id,
-                                            'name' => $row->name,
-                                            'slug' => $row->slug,
-                                            'count' => (int) $row->count,
-                                        );
-                                    }
-                                }
-
-                                // Get full term objects to access parents
-                                $terms = get_terms(array(
-                                    'taxonomy' => 'product_cat',
-                                    'include'  => $available_ids,
-                                    'hide_empty' => true,
-                                ));
-
-                                // Build adjacency by parent
-                                $children = array();
-                                foreach ($terms as $t) {
-                                    $p = (int) $t->parent;
-                                    if (!isset($children[$p])) $children[$p] = array();
-                                    $children[$p][] = $t;
-                                }
-
-                                // Determine selected category slug for pre-open and checked state
-                                $selected_cat_slug = '';
-                                if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
-                                    $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
-                                    $selected_cat_slug = explode(',', $raw)[0];
-                                } elseif (!empty($current_cat) && isset($current_cat->slug)) {
+                            // Hierarchical category tree: always show top-level categories; expand to children on demand
+                            // Determine selected category slug and term (for pre-opening)
+                            $selected_cat_slug = '';
+                            if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
+                                $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
+                                $selected_cat_slug = explode(',', $raw)[0];
+                            } elseif (function_exists('is_product_category') && (is_product_category() || is_product_tag())) {
+                                $current_cat = get_queried_object();
+                                if ($current_cat && !is_wp_error($current_cat) && isset($current_cat->slug)) {
                                     $selected_cat_slug = $current_cat->slug;
                                 }
+                            }
+                            $selected_term = $selected_cat_slug ? get_term_by('slug', $selected_cat_slug, 'product_cat') : null;
 
-                                // Recursive renderer
-                                $render_tree = function($parent_id, $level) use (&$render_tree, $children, $by_id, $selected_cat_slug) {
-                                    if (empty($children[$parent_id])) return;
-                                    echo '<ul class="subcategory-list level-' . (int) $level . '"' . ($level > 0 ? ' hidden' : '') . '>'; // hidden by default for nested
-                                    foreach ($children[$parent_id] as $term) {
-                                        $info = isset($by_id[$term->term_id]) ? $by_id[$term->term_id] : null;
-                                        if (!$info) continue;
-                                        $has_kids = !empty($children[$term->term_id]);
-                                        $is_open = $has_kids && ($term->slug === $selected_cat_slug);
+                            // Fetch all top-level categories regardless of empty state
+                            $top_level = get_terms(array(
+                                'taxonomy' => 'product_cat',
+                                'parent' => 0,
+                                'hide_empty' => false,
+                                'orderby' => 'menu_order',
+                                'order' => 'ASC',
+                            ));
+                            if (!empty($top_level) && !is_wp_error($top_level)):
+                                echo '<div class="category-tree">';
+
+                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_term) {
+                                    $parent_id = ($parent_term instanceof WP_Term) ? $parent_term->term_id : (int) $parent_term;
+                                    $children = get_terms(array(
+                                        'taxonomy' => 'product_cat',
+                                        'parent' => $parent_id,
+                                        'hide_empty' => true,
+                                        'orderby' => 'menu_order',
+                                        'order' => 'ASC',
+                                    ));
+
+                                    // UL wrapper for this level
+                                    echo '<ul class="subcategory-list level-' . (int) $level . '">';
+
+                                    // If called with a parent term (level >= 0), render that parent item first when level > 0
+                                    if ($parent_term instanceof WP_Term && $level > 0) {
+                                        // Already rendered by parent; skip duplicating at level > 0
+                                    }
+
+                                    // For top-level call, iterate through top-level terms as children of 0
+                                    if (is_array($children) && empty($children) && $level === 0) {
+                                        // No explicit children under 0 via hide_empty=true + parent=0, but we still need to render top-level
+                                        // This branch won't normally hit; kept for safety.
+                                    }
+
+                                    // For level 0 we want to display passed $parent_term array ($top_level) like children
+                                    if ($level === 0 && is_array($parent_term)) {
+                                        $items = $parent_term;
+                                    } else {
+                                        $items = get_terms(array(
+                                            'taxonomy' => 'product_cat',
+                                            'parent' => $parent_id,
+                                            'hide_empty' => false,
+                                            'orderby' => 'menu_order',
+                                            'order' => 'ASC',
+                                        ));
+                                    }
+
+                                    foreach ($items as $term) {
+                                        if (!($term instanceof WP_Term)) continue;
+                                        $term_has_children = get_terms(array(
+                                            'taxonomy' => 'product_cat',
+                                            'parent' => $term->term_id,
+                                            'hide_empty' => true,
+                                            'number' => 1,
+                                        ));
+                                        $has_kids = !empty($term_has_children) && !is_wp_error($term_has_children);
+                                        $is_selected = ($selected_term && $term->term_id === $selected_term->term_id);
+                                        $is_ancestor = ($selected_term && term_is_ancestor_of($term->term_id, $selected_term->term_id, 'product_cat'));
+                                        $is_open = $has_kids && ($is_selected || $is_ancestor);
+
                                         echo '<li class="category-item">';
                                         if ($has_kids) {
                                             echo '<button type="button" class="category-toggle" aria-expanded="' . ($is_open ? 'true' : 'false') . '" aria-controls="cat-children-' . (int) $term->term_id . '">';
@@ -371,22 +391,64 @@ $sort_options = [
                                             echo '<span class="toggle-spacer"></span>';
                                         }
                                         echo '<label class="filter-option category-option">';
-                                        echo '<input type="radio" name="category" value="' . esc_attr($info['slug']) . '" ' . checked($selected_cat_slug, $info['slug'], false) . ' />';
-                                        echo '<span class="filter-option-label">' . esc_html($info['name']) . ' <span class="filter-option-count">(' . (int) $info['count'] . ')</span></span>';
+                                        echo '<input type="radio" name="category" value="' . esc_attr($term->slug) . '" ' . checked($is_selected, true, false) . ' />';
+                                        echo '<span class="filter-option-label">' . esc_html($term->name) . ' <span class="filter-option-count">(' . (int) $term->count . ')</span></span>';
                                         echo '</label>';
                                         if ($has_kids) {
                                             echo '<div id="cat-children-' . (int) $term->term_id . '" class="subcategory-branch"' . ($is_open ? '' : ' hidden') . '>';
-                                            $render_tree($term->term_id, $level + 1);
+                                            // Render children list
+                                            $grand_children = get_terms(array(
+                                                'taxonomy' => 'product_cat',
+                                                'parent' => $term->term_id,
+                                                'hide_empty' => false,
+                                                'orderby' => 'name',
+                                            ));
+                                            if (!empty($grand_children) && !is_wp_error($grand_children)) {
+                                                echo '<ul class="subcategory-list level-' . (int) ($level + 1) . '">';
+                                                foreach ($grand_children as $child) {
+                                                    $child_has_kids = get_terms(array(
+                                                        'taxonomy' => 'product_cat',
+                                                        'parent' => $child->term_id,
+                                                        'hide_empty' => true,
+                                                        'number' => 1,
+                                                    ));
+                                                    $child_has_children = !empty($child_has_kids) && !is_wp_error($child_has_kids);
+                                                    $child_selected = ($selected_term && $child->term_id === $selected_term->term_id);
+                                                    $child_ancestor = ($selected_term && term_is_ancestor_of($child->term_id, $selected_term->term_id, 'product_cat'));
+                                                    $child_open = $child_has_children && ($child_selected || $child_ancestor);
+
+                                                    echo '<li class="category-item">';
+                                                    if ($child_has_children) {
+                                                        echo '<button type="button" class="category-toggle" aria-expanded="' . ($child_open ? 'true' : 'false') . '" aria-controls="cat-children-' . (int) $child->term_id . '">';
+                                                        echo '<span class="toggle-icon" aria-hidden="true"></span>';
+                                                        echo '</button>';
+                                                    } else {
+                                                        echo '<span class="toggle-spacer"></span>';
+                                                    }
+                                                    echo '<label class="filter-option category-option">';
+                                                    echo '<input type="radio" name="category" value="' . esc_attr($child->slug) . '" ' . checked($child_selected, true, false) . ' />';
+                                                    echo '<span class="filter-option-label">' . esc_html($child->name) . ' <span class="filter-option-count">(' . (int) $child->count . ')</span></span>';
+                                                    echo '</label>';
+                                                    if ($child_has_children) {
+                                                        echo '<div id="cat-children-' . (int) $child->term_id . '" class="subcategory-branch"' . ($child_open ? '' : ' hidden') . '>';
+                                                        // Deep levels
+                                                        $render_branch($child, $level + 2);
+                                                        echo '</div>';
+                                                    }
+                                                    echo '</li>';
+                                                }
+                                                echo '</ul>';
+                                            }
                                             echo '</div>';
                                         }
                                         echo '</li>';
                                     }
+
                                     echo '</ul>';
                                 };
 
-                                echo '<div class="category-tree">';
-                                // Start from parent 0 (top-level) only
-                                $render_tree(0, 0);
+                                // Render initial tree (level 0 uses array of top-level terms)
+                                $render_branch($top_level, 0);
                                 echo '</div>';
                             endif;
                             break;

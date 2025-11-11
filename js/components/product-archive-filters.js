@@ -146,22 +146,23 @@
             }
         });
 
-        // Category expand/collapse delegation
+        // Category expand/collapse delegation (improved for hierarchical tree)
         document.addEventListener('click', function(e) {
             const toggle = e.target.closest('.category-toggle');
             if (!toggle) return;
             const expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
             const controls = toggle.getAttribute('aria-controls');
-            if (controls) {
-                const branch = document.getElementById(controls);
-                if (branch) {
-                    if (expanded) {
-                        branch.setAttribute('hidden', '');
-                    } else {
-                        branch.removeAttribute('hidden');
-                    }
-                }
+            if (!controls) return;
+            const branch = document.getElementById(controls);
+            if (!branch) return;
+            if (expanded) {
+                toggle.setAttribute('aria-expanded', 'false');
+                branch.classList.add('is-collapsed');
+                branch.setAttribute('hidden', '');
+            } else {
+                toggle.setAttribute('aria-expanded', 'true');
+                branch.classList.remove('is-collapsed');
+                branch.removeAttribute('hidden');
             }
         });
         
