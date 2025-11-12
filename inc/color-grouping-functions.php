@@ -440,7 +440,21 @@ add_action('wp_ajax_nopriv_get_color_variants', 'eshop_ajax_get_color_variants')
 function eshop_display_color_variants() {
     global $product;
     
+    // Prevent duplicate execution - only run once per page load
+    static $has_run = false;
+    if ($has_run) {
+        error_log('DEBUG: eshop_display_color_variants() already executed, skipping duplicate call');
+        return;
+    }
+    $has_run = true;
+    
+    // DEBUG: Log function call
+    error_log('DEBUG: eshop_display_color_variants() called for product ID: ' . ($product ? $product->get_id() : 'null'));
+    error_log('DEBUG: Current hook: ' . current_filter());
+    error_log('DEBUG: Backtrace: ' . wp_debug_backtrace_summary());
+    
     if (!$product) {
+        error_log('DEBUG: No product found, returning early');
         return;
     }
 
@@ -456,6 +470,7 @@ function eshop_display_color_variants() {
         $variation_attributes = $base_product->get_variation_attributes();
         foreach ($variation_attributes as $attribute_key => $values) {
             if (false !== strpos(strtolower((string) $attribute_key), 'color')) {
+                error_log('DEBUG: Product has color attribute, skipping color variants display');
                 return;
             }
         }
@@ -464,11 +479,15 @@ function eshop_display_color_variants() {
         $product_id = $product->get_id();
         $variants = eshop_get_product_color_group_variants($product_id);
     
+    error_log('DEBUG: Found ' . count($variants) . ' color variants for product ID: ' . $product_id);
+    
     // Only display if there are multiple variants
     if (count($variants) <= 1) {
+        error_log('DEBUG: Not enough variants to display, returning early');
         return;
     }
     
+    error_log('DEBUG: Loading color variants template');
     // Load the template part
     get_template_part('template-parts/components/color-variants', null, array(
         'variants' => $variants,

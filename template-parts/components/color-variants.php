@@ -12,6 +12,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// DEBUG: Log template loading
+error_log('DEBUG: color-variants.php template loaded for product ID: ' . ($current_id ?? 'unknown'));
+error_log('DEBUG: Variants count: ' . (isset($variants) ? count($variants) : 'not set'));
+
 // Get data from the template args
 $variants = $args['variants'] ?? array();
 $current_id = $args['current_id'] ?? 0;
@@ -19,10 +23,12 @@ $current_id = $args['current_id'] ?? 0;
 // Fallback: if no variants passed, try to get them from global product
 if (empty($variants) && !empty($current_id)) {
     $variants = eshop_get_product_color_group_variants($current_id);
+    error_log('DEBUG: Fallback - loaded ' . count($variants) . ' variants for product ID: ' . $current_id);
 }
 
 // Don't display if only one or no variants
 if (count($variants) <= 1) {
+    error_log('DEBUG: Not enough variants to display in template, returning early');
     return;
 }
 
