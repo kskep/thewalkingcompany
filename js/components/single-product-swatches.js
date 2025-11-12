@@ -86,15 +86,18 @@
         }
 
         bindQuantityEvents() {
+            if (!window.jQuery) {
+                return;
+            }
+
+            const $ = window.jQuery;
             // Initialize quantity controls
             this.initializeQuantityControls($(document));
 
             // Re-initialize when variation form updates
-            if (window.jQuery) {
-                $(document.body).on('updated_wc_div found_variation show_variation', () => {
-                    this.initializeQuantityControls($(document));
-                });
-            }
+            $(document.body).on('updated_wc_div found_variation show_variation', () => {
+                this.initializeQuantityControls($(document));
+            });
         }
 
         bindWishlistEvents() {
