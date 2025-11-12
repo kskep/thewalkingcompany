@@ -150,7 +150,7 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             }
                             echo '</div>';
                         }
-                        
+
                         // Stock availability for variable products
                         if ( $product->get_manage_stock() ) {
                             echo '<div class="availability">';
@@ -158,10 +158,22 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             echo '<span class="stock-copy">Available in multiple sizes</span>';
                             echo '</div>';
                         }
-                        
-                        // Add to cart button for variable products
+
+                        // Render full WooCommerce variation form so quantity and add-to-cart work as expected
                         echo '<div class="variable-add-to-cart">';
-                        woocommerce_single_variation_add_to_cart_button();
+                        ob_start();
+                        woocommerce_variable_add_to_cart();
+                        $variable_form_markup = ob_get_clean();
+
+                        if ( $variable_form_markup ) {
+                            $variable_form_markup = preg_replace(
+                                '/class="([^"]*variations_form[^"]*)"/i',
+                                'class="$1 eshop-variations-form"',
+                                $variable_form_markup,
+                                1
+                            );
+                            echo $variable_form_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                        }
                         echo '</div>';
                     }
                     
