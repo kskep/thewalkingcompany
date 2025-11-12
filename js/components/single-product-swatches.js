@@ -150,8 +150,9 @@
                     const shouldDisable = useWooConstraint ? wooDisabled : !fallbackAvailable;
 
                     elements.forEach((element) => {
-                        element.classList.toggle('disabled', shouldDisable);
-                        element.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
+                        // TEMPORARY: Disable auto-disabling to test if this is causing the visual issue
+                        // element.classList.toggle('disabled', shouldDisable);
+                        // element.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
 
                         if (shouldDisable && element.classList.contains('selected')) {
                             element.classList.remove('selected');

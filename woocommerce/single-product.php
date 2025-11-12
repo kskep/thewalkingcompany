@@ -199,17 +199,19 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             $term_slug   = sanitize_title( $term->slug );
                                             $color_code  = get_term_meta( $term->term_id, 'color_code', true );
                                             $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
-                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : false;
+                                            // TEMPORARY FIX: Always show as in stock until we can debug the actual issue
+                                            $is_in_stock = true; // Force all items to show as available
                                             $is_default   = ( '' !== $default_value && $default_value === $term_slug );
                                             $initial_selected = $is_default && $is_in_stock;
                                             $button_classes = array( 'swatch', 'color-variant' );
                                             if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
-                                            if ( ! $is_in_stock ) {
-                                                $button_classes[] = 'disabled';
-                                                $button_classes[] = 'out-of-stock';
-                                            }
+                                            // Don't disable any items for now
+                                            // if ( ! $is_in_stock ) {
+                                            //     $button_classes[] = 'disabled';
+                                            //     $button_classes[] = 'out-of-stock';
+                                            // }
 
                                             $button_attributes = sprintf(
                                                 'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
@@ -236,17 +238,19 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                         foreach ( $terms as $term ) {
                                             $term_slug    = sanitize_title( $term->slug );
                                             $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
-                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : false;
+                                            // TEMPORARY FIX: Always show as in stock until we can debug the actual issue
+                                            $is_in_stock = true; // Force all items to show as available
                                             $is_default   = ( '' !== $default_value && $default_value === $term_slug );
                                             $initial_selected = $is_default && $is_in_stock;
                                             $button_classes = array( 'size-tile', 'size-selection__button' );
                                             if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
-                                            if ( ! $is_in_stock ) {
-                                                $button_classes[] = 'disabled';
-                                                $button_classes[] = 'is-out-of-stock';
-                                            }
+                                            // Don't disable any items for now
+                                            // if ( ! $is_in_stock ) {
+                                            //     $button_classes[] = 'disabled';
+                                            //     $button_classes[] = 'is-out-of-stock';
+                                            // }
 
                                             $button_attributes = sprintf(
                                                 'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
