@@ -24,6 +24,17 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 	<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
 		<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'woocommerce' ) ) ); ?></p>
 	<?php else : ?>
+		<?php
+		// Debug: Add logging to see what's happening with available variations
+		if ( WP_DEBUG && WP_DEBUG_LOG ) {
+			error_log( 'WooCommerce Available Variations Debug: ' . print_r( array(
+				'product_id' => $product->get_id(),
+				'available_variations_count' => count( $available_variations ),
+				'available_variations' => $available_variations,
+				'product_type' => $product->get_type()
+			), true ) );
+		}
+		?>
 		
 		<!-- Custom Variations Display -->
 		<div class="variations custom-variations">

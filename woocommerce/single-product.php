@@ -114,6 +114,7 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                         $attributes = $product->get_variation_attributes();
                         $attribute_availability = array();
 
+                        // Use WooCommerce standard pattern for variable products
                         $variation_ids = $product->get_children();
                         if ( ! empty( $variation_ids ) ) {
                             foreach ( $variation_ids as $variation_id ) {
@@ -129,6 +130,17 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                 }
 
                                 $variation_in_stock = $variation->is_in_stock();
+                                
+                                // DEBUG: Add logging to understand what's happening with variations
+                                if ( WP_DEBUG && WP_DEBUG_LOG ) {
+                                    error_log( 'WooCommerce Variation Debug: ' . print_r( array(
+                                        'variation_id' => $variation_id,
+                                        'variation_in_stock' => $variation_in_stock,
+                                        'variation_attributes' => $variation_attributes,
+                                        'variation_stock_quantity' => $variation->get_stock_quantity(),
+                                        'variation_manage_stock' => $variation->get_manage_stock()
+                                    ), true ) );
+                                }
 
                                 foreach ( $variation_attributes as $variation_attribute_name => $variation_attribute_value ) {
                                     if ( '' === $variation_attribute_value ) {
