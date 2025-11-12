@@ -444,30 +444,25 @@ function eshop_display_color_variants() {
         return;
     }
 
-    if ($product->is_type('variable')) {
-        $variation_attributes = $product->get_variation_attributes();
+    $base_product = $product;
+    if (class_exists('WC_Product_Variation') && $product instanceof WC_Product_Variation) {
+        $parent_id = $product->get_parent_id();
+        if ($parent_id) {
+            $base_product = wc_get_product($parent_id);
+        }
+    }
+
+    if ($base_product && method_exists($base_product, 'is_type') && $base_product->is_type('variable')) {
+        $variation_attributes = $base_product->get_variation_attributes();
         foreach ($variation_attributes as $attribute_key => $values) {
-            $attribute_key = strtolower((string) $attribute_key);
-            if (false !== strpos($attribute_key, 'color')) {
+            if (false !== strpos(strtolower((string) $attribute_key), 'color')) {
                 return;
             }
         }
     }
     
-        $base_product = $product;
-        if (class_exists('WC_Product_Variation') && $product instanceof WC_Product_Variation) {
-            $parent_id = $product->get_parent_id();
-            if ($parent_id) {
-                $base_product = wc_get_product($parent_id);
-            }
-        }
-
-        if (class_exists('WC_Product') && $base_product instanceof WC_Product && $base_product->is_type('variable')) {
-            return;
-        }
-    
-    $product_id = $product->get_id();
-    $variants = eshop_get_product_color_group_variants($product_id);
+        $product_id = $product->get_id();
+        $variants = eshop_get_product_color_group_variants($product_id);
     
     // Only display if there are multiple variants
     if (count($variants) <= 1) {
