@@ -167,12 +167,13 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                     if ( ! isset( $attribute_availability[ $attribute_key ][ $attribute_value_slug ] ) ) {
                                         $attribute_availability[ $attribute_key ][ $attribute_value_slug ] = array(
                                             'has_variation' => true,
-                                            'in_stock'      => false,
+                                            'in_stock'      => true, // IMPROVED: Default to true for better UX
                                         );
                                     }
 
-                                    if ( $variation_in_stock ) {
-                                        $attribute_availability[ $attribute_key ][ $attribute_value_slug ]['in_stock'] = true;
+                                    // If this specific variation is out of stock, mark it as such
+                                    if ( ! $variation_in_stock ) {
+                                        $attribute_availability[ $attribute_key ][ $attribute_value_slug ]['in_stock'] = false;
                                     }
                                 }
                             }
@@ -199,19 +200,18 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             $term_slug   = sanitize_title( $term->slug );
                                             $color_code  = get_term_meta( $term->term_id, 'color_code', true );
                                             $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
-                                            // TEMPORARY FIX: Always show as in stock until we can debug the actual issue
-                                            $is_in_stock = true; // Force all items to show as available
+                                            // IMPROVED: Proper stock calculation logic
+                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : true; // Default to true for better UX
                                             $is_default   = ( '' !== $default_value && $default_value === $term_slug );
                                             $initial_selected = $is_default && $is_in_stock;
                                             $button_classes = array( 'swatch', 'color-variant' );
                                             if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
-                                            // Don't disable any items for now
-                                            // if ( ! $is_in_stock ) {
-                                            //     $button_classes[] = 'disabled';
-                                            //     $button_classes[] = 'out-of-stock';
-                                            // }
+                                            if ( ! $is_in_stock ) {
+                                                $button_classes[] = 'disabled';
+                                                $button_classes[] = 'out-of-stock';
+                                            }
 
                                             $button_attributes = sprintf(
                                                 'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
@@ -238,19 +238,18 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                         foreach ( $terms as $term ) {
                                             $term_slug    = sanitize_title( $term->slug );
                                             $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
-                                            // TEMPORARY FIX: Always show as in stock until we can debug the actual issue
-                                            $is_in_stock = true; // Force all items to show as available
+                                            // IMPROVED: Proper stock calculation logic
+                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : true; // Default to true for better UX
                                             $is_default   = ( '' !== $default_value && $default_value === $term_slug );
                                             $initial_selected = $is_default && $is_in_stock;
                                             $button_classes = array( 'size-tile', 'size-selection__button' );
                                             if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
-                                            // Don't disable any items for now
-                                            // if ( ! $is_in_stock ) {
-                                            //     $button_classes[] = 'disabled';
-                                            //     $button_classes[] = 'is-out-of-stock';
-                                            // }
+                                            if ( ! $is_in_stock ) {
+                                                $button_classes[] = 'disabled';
+                                                $button_classes[] = 'is-out-of-stock';
+                                            }
 
                                             $button_attributes = sprintf(
                                                 'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
@@ -310,8 +309,21 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             echo '</select>';
                         }
                         
-                        // Let WooCommerce handle the quantity and add to cart buttons
-                        do_action( 'woocommerce_single_variation' );
+                        // Add hidden product_id field
+                        echo '<input type="hidden" name="add-to-cart" value="' . esc_attr( $product->get_id() ) . '" />';
+                        
+                        // Add quantity field (WooCommerce will style this)
+                        echo '<div class="single_variation_wrap" style="display: none;">';
+                        echo '    <div class="woocommerce-variation single_variation" style="display: block;"></div>';
+                        echo '    <div class="woocommerce-variation-add-to-cart variations_button">';
+                        echo '        <div class="quantity">';
+                        echo '            <label class="screen-reader-text" for="quantity_' . esc_attr( $product->get_id() ) . '">' . esc_html__( 'Quantity', 'woocommerce' ) . '</label>';
+                        echo '            <input type="number" id="quantity_' . esc_attr( $product->get_id() ) . '" class="input-text qty text" name="quantity" value="1" min="1" max="999" step="1" inputmode="numeric" />';
+                        echo '        </div>';
+                        echo '        <button type="submit" class="single_add_to_cart_button button alt disabled wc-variation-selection-needed">' . esc_html__( 'Add to cart', 'woocommerce' ) . '</button>';
+                        echo '        <input type="hidden" name="variation_id" value="" />';
+                        echo '    </div>';
+                        echo '</div>';
                         
                         echo '</form>';
                         echo '</div>';

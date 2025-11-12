@@ -150,9 +150,10 @@
                     const shouldDisable = useWooConstraint ? wooDisabled : !fallbackAvailable;
 
                     elements.forEach((element) => {
-                        // TEMPORARY: Disable auto-disabling to test if this is causing the visual issue
-                        // element.classList.toggle('disabled', shouldDisable);
-                        // element.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
+                        // FIXED: Only disable if explicitly marked as out of stock, not based on default logic
+                        const isExplicitlyOutOfStock = element.dataset.inStock === 'false';
+                        element.classList.toggle('disabled', isExplicitlyOutOfStock);
+                        element.setAttribute('aria-disabled', isExplicitlyOutOfStock ? 'true' : 'false');
 
                         if (shouldDisable && element.classList.contains('selected')) {
                             element.classList.remove('selected');
