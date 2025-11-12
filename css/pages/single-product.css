@@ -388,16 +388,24 @@ button:focus-visible {
 }
 
 /* Cart/Wishlist actions within Woo add-to-cart templates */
-.cart-actions-wrapper { display: flex; gap: 12px; align-items: stretch; }
-.cart .quantity { display: inline-flex; align-items: center; border: 1px solid var(--pane-line); background: var(--pane-mid); height: 52px; }
-.cart .quantity input { width: 56px; text-align: center; border: 0; background: transparent; font-size: 0.95rem; }
+.cart-actions-wrapper { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+/* Quantity control */
+.cart .quantity { display: inline-flex; align-items: center; border: 1px solid var(--pane-line); background: var(--pane-mid); height: 44px; border-radius: var(--radius); }
+.cart .quantity input.qty { width: 56px; height: 100%; text-align: center; border: 0; background: transparent; font-size: 0.95rem; color: var(--ink); }
+/* Remove default number spinners */
+.cart .quantity input[type=number]::-webkit-outer-spin-button,
+.cart .quantity input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cart .quantity input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.cart .quantity .qty-btn { width: 36px; height: 100%; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); background: transparent; cursor: pointer; }
+.cart .quantity .qty-btn:hover { color: var(--pink); }
 
 .wishlist-action-btn {
-  width: 52px; height: 52px; display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center;
   border: 1px solid var(--pane-line); background: #fff; color: var(--pink); border-radius: var(--radius);
   transition: background .2s ease, border-color .2s ease, color .2s ease;
 }
 .wishlist-action-btn:hover { background: var(--pane-soft); border-color: var(--pink); }
+.wishlist-action-btn svg { width: 18px; height: 18px; }
 .wishlist-action-btn.in-wishlist { background: var(--pink); border-color: var(--pink); color: #fff; }
 .wishlist-action-btn.in-wishlist svg { fill: currentColor; }
 
@@ -411,7 +419,8 @@ button:focus-visible {
   color: #fff !important;
   text-transform: uppercase !important;
   letter-spacing: 0.18em !important;
-  padding: 16px 36px !important;
+  padding: 0 28px !important;
+  height: 44px !important;
   border-radius: var(--radius) !important;
   font-size: 0.8rem !important;
   font-weight: 600 !important;

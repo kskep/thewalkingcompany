@@ -7,6 +7,83 @@
 (function($) {
     'use strict';
 
+    // Quantity controls: inject +/- buttons and enforce min/max
+    function initializeQuantityControls($scope) {
+        var $containers = ($scope && $scope.length ? $scope : $(document)).find('.cart .quantity');
+
+        $containers.each(function() {
+            var $q = $(this);
+            if ($q.data('enhanced')) { return; }
+            var $input = $q.find('input.qty');
+            if ($input.length === 0) { return; }
+
+            // Insert buttons
+            var $minus = $('<button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">&minus;</button>');
+            var $plus = $('<button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">+</button>');
+
+            // If not already injected, prepend/append
+            if ($q.children('.qty-minus').length === 0) { $q.prepend($minus); }
+            if ($q.children('.qty-plus').length === 0) { $q.append($plus); }
+
+            function clamp(val, min, max, step) {
+                var n = parseFloat(val);
+                if (isNaN(n)) n = min || 1;
+                if (!isNaN(min)) n = Math.max(n, min);
+                if (!isNaN(max) && max > 0) n = Math.min(n, max);
+                if (!isNaN(step) && step > 0) {
+                    // Snap to nearest step
+                    var base = (!isNaN(min) ? min : 0);
+                    n = Math.round((n - base) / step) * step + base;
+                }
+                return n;
+            }
+
+            function readBounds() {
+                return {
+                    min: parseFloat($input.attr('min')) || 1,
+                    max: parseFloat($input.attr('max')) || null,
+                    step: parseFloat($input.attr('step')) || 1
+                };
+            }
+
+            $minus.on('click', function() {
+                var b = readBounds();
+                var curr = parseFloat($input.val()) || b.min;
+                var next = curr - b.step;
+                next = clamp(next, b.min, b.max, b.step);
+                $input.val(next).trigger('change');
+            });
+
+            $plus.on('click', function() {
+                var b = readBounds();
+                var curr = parseFloat($input.val()) || b.min;
+                var next = curr + b.step;
+                next = clamp(next, b.min, b.max, b.step);
+                $input.val(next).trigger('change');
+            });
+
+            $input.on('change input blur', function() {
+                var b = readBounds();
+                var curr = parseFloat($input.val());
+                var fixed = clamp(curr, b.min, b.max, b.step);
+                if (fixed !== curr) {
+                    $input.val(fixed);
+                }
+            });
+
+            $q.data('enhanced', true);
+        });
+    }
+
+    $(document).ready(function(){
+        initializeQuantityControls($(document));
+    });
+
+    // Re-init when variation form updates the add-to-cart area
+    $(document.body).on('updated_wc_div found_variation show_variation', function(){
+        initializeQuantityControls($(document));
+    });
+
     // Update stock info display for variations
     $(document).on('found_variation', function(event, variation) {
         var $stockInfo = $('.stock-info-row');
