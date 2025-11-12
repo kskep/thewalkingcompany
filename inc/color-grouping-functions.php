@@ -443,6 +443,16 @@ function eshop_display_color_variants() {
     if (!$product) {
         return;
     }
+
+    if ($product->is_type('variable')) {
+        $variation_attributes = $product->get_variation_attributes();
+        foreach ($variation_attributes as $attribute_key => $values) {
+            $attribute_key = strtolower((string) $attribute_key);
+            if (false !== strpos($attribute_key, 'color')) {
+                return;
+            }
+        }
+    }
     
     $product_id = $product->get_id();
     $variants = eshop_get_product_color_group_variants($product_id);

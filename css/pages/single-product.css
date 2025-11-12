@@ -209,25 +209,15 @@ button:focus-visible {
 .wc-short-description li { margin: 0.25rem 0; }
 
 .price-row {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: baseline;
   gap: 16px;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-size: clamp(1.6rem, 3vw, 2rem);
   font-weight: 600;
   color: var(--ink);
-  padding: 18px 28px;
-  background: var(--pane-soft);
-  border: 1px solid var(--pane-line);
-  border-radius: var(--radius);
-  box-shadow: 0 6px 18px rgba(31, 31, 35, 0.06);
 }
 
-.price-row .price {
-  display: inline-flex;
-  gap: 12px;
-  align-items: baseline;
-}
-
+.price-row .price,
 .price-row .woocommerce-Price-amount {
   font-family: "Playfair Display", serif;
 }
@@ -238,7 +228,7 @@ button:focus-visible {
 }
 
 .price-row del {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: rgba(31, 31, 35, 0.4);
 }
 
@@ -318,6 +308,7 @@ button:focus-visible {
 }
 
 /* Color palette container - styles moved to components/color-variants.css */
+
 .color-palette {
   display: grid;
   gap: 12px;

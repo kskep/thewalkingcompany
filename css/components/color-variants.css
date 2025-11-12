@@ -50,7 +50,6 @@
     border-color: var(--pink, #ee81b3);
     background: #fff;
     color: var(--pink, #ee81b3);
-    box-shadow: 0 0 0 1px var(--pink, #ee81b3);
 }
 
 .swatch.disabled,
