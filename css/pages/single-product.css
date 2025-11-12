@@ -184,7 +184,7 @@ button:focus-visible {
 }
 
 .product-title {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
   font-size: clamp(2.8rem, 4vw, 3.4rem);
   font-weight: 500;
   margin: 0;
@@ -219,7 +219,7 @@ button:focus-visible {
 
 .price-row .price,
 .price-row .woocommerce-Price-amount {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
 }
 
 .price-row ins {
@@ -597,7 +597,7 @@ button:focus-visible {
 /* Related products (archive-style grid on single page) */
 .related-products-section.magazine-related { margin-top: 72px; }
 .related-products-heading {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
   font-size: clamp(1.6rem, 2.6vw, 2rem);
   font-weight: 500;
   color: var(--ink);

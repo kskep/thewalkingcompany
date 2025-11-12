@@ -266,7 +266,7 @@ ul#products-grid {
 }
 
 .product-card__title {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
   font-size: 1.45rem;
   font-weight: 500;
   margin: 0;

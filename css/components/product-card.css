@@ -258,7 +258,7 @@
 }
 
 .product-card__title {
-  font-family: "Playfair Display", serif;
+  font-family: "Inter", sans-serif;
   font-size: 1.45rem;
   font-weight: 500;
   margin: 0;
@@ -348,6 +348,7 @@
 }
 
 .price-row .price {
+  font-family: "Inter", sans-serif;
   font-weight: 600;
   color: var(--ink);
 }

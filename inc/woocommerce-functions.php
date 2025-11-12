@@ -1047,120 +1047,34 @@ function eshop_output_related_products_from_categories() {
         if ($original_post && function_exists('wc_setup_product_data')) {
             wc_setup_product_data($original_post);
         }
-        
-        /**
-         * Debug function to log all functions hooked to woocommerce_short_description filter
-         */
-        function eshop_debug_short_description_filters() {
-            global $wp_filter;
-            
-            if (isset($wp_filter['woocommerce_short_description'])) {
-                error_log('DEBUG: Functions hooked to woocommerce_short_description:');
-                foreach ($wp_filter['woocommerce_short_description']->callbacks as $priority => $callbacks) {
-                    foreach ($callbacks as $callback) {
-                        if (is_array($callback['function'])) {
-                            $function_name = get_class($callback['function'][0]) . '::' . $callback['function'][1];
-                        } else {
-                            $function_name = $callback['function'];
-                        }
-                        error_log("DEBUG - Priority $priority: $function_name");
-                    }
-                }
-            }
-        }
-        
-        /**
-         * Debug function to trace short description modifications
-         */
-        function eshop_trace_short_description($description) {
-            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
-            $caller = 'unknown';
-            
-            foreach ($backtrace as $trace) {
-                if (isset($trace['function']) && $trace['function'] !== 'apply_filters' && $trace['function'] !== 'call_user_func_array') {
-                    if (isset($trace['class'])) {
-                        $caller = $trace['class'] . '::' . $trace['function'];
-                    } else {
-                        $caller = $trace['function'];
-                    }
-                    break;
-                }
-            }
-            
-            error_log("DEBUG: Short description modified by: $caller");
-            error_log("DEBUG: Description content: " . substr($description, 0, 200) . "...");
-            
-            return $description;
-        }
-        
-        /**
-         * Fix duplicate div elements in short description
-         */
-        function eshop_fix_duplicate_short_description_divs($description) {
-            // The filter was being applied multiple times, causing nested divs.
-            // The root cause is that the add_filter was inside a function that was called during rendering.
-            // By moving the add_filter to the top level, we ensure it's only added once.
-            // This function now simply wraps the description if it's not already wrapped.
-            
-            $wrapper_class = 'product_feautures_item_title features_title_place';
-
-            // Check if the description is already wrapped.
-            if (strpos(trim($description), '<div class="' . $wrapper_class . '">') === 0) {
-                return $description; // Already wrapped, do nothing.
-            }
-
-            // If there's content, wrap it.
-            if (!empty(trim($description))) {
-                return '<div class="' . $wrapper_class . '">' . $description . '</div>';
-            }
-            
-            return $description;
-        }
-        add_filter('woocommerce_short_description', 'eshop_fix_duplicate_short_description_divs', 10);
-        
-        // These debug filters can be enabled if you continue to have issues.
-        // add_action('wp_head', 'eshop_debug_short_description_filters');
-        // add_filter('woocommerce_short_description', 'eshop_trace_short_description', 9999);
-
     }
     $product = $original_product;
 }
 
 /**
- * Test function to verify duplicate div fix (can be called from admin for testing)
+ * Fix duplicate div elements in short description
  */
-function eshop_test_duplicate_div_fix() {
-    // Simulate the problematic HTML with duplicate divs
-    $test_html = '
-    <div class="product_feautures_item_title features_title_place">
-        <div class="product_feautures_item_title features_title_place">
-            <div class="product_feautures_item_title features_title_place">
-                <div class="col-2 char_title">
-                <div class="product_feautures_item_title features_title_place">
-                <div class="product_feautures_item_title features_title_place">
-                <div class="product_feautures_item_title features_title_place">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;"><strong>ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ</strong></span></p>
-                <ul>
-                <li><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Χρώμα: Μπορντό</span></li>
-                <li><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Ύψος τακουνιού: 11cm</span></li>
-                <li><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Φόρμα: Κανονική</span></li>
-                </ul>
-                </div>
-                </div>
-                </div>
-                </div>
-                </div>
-                </div>
-                </div>
-    ';
+function eshop_fix_duplicate_short_description_divs($description) {
+    // The filter was being applied multiple times, causing nested divs.
+    // The root cause is that the add_filter was inside a function that was called during rendering.
+    // This function now simply wraps the description if it's not already wrapped.
     
-    echo "Before fix:<br>";
-    echo htmlspecialchars($test_html);
-    echo "<br><br>After fix:<br>";
-    echo htmlspecialchars(eshop_fix_duplicate_short_description_divs($test_html));
+    $wrapper_class = 'product_feautures_item_title features_title_place';
+
+    // Check if the description is already wrapped.
+    if (strpos(trim($description), '<div class="' . $wrapper_class . '">') === 0) {
+        return $description; // Already wrapped, do nothing.
+    }
+
+    // If there's content, wrap it.
+    if (!empty(trim($description))) {
+        return '<div class="' . $wrapper_class . '">' . $description . '</div>';
+    }
+    
+    return $description;
 }
+add_filter('woocommerce_short_description', 'eshop_fix_duplicate_short_description_divs', 1);
+
 /**
  * Ensure product context is properly set for single product pages
  * This function fixes the fatal error when $product is not properly initialized
