@@ -454,6 +454,18 @@ function eshop_display_color_variants() {
         }
     }
     
+        $base_product = $product;
+        if (class_exists('WC_Product_Variation') && $product instanceof WC_Product_Variation) {
+            $parent_id = $product->get_parent_id();
+            if ($parent_id) {
+                $base_product = wc_get_product($parent_id);
+            }
+        }
+
+        if (class_exists('WC_Product') && $base_product instanceof WC_Product && $base_product->is_type('variable')) {
+            return;
+        }
+    
     $product_id = $product->get_id();
     $variants = eshop_get_product_color_group_variants($product_id);
     

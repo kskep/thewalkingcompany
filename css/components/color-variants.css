@@ -16,6 +16,7 @@
 .swatch {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 16px;
     padding: 12px 18px;
     border: 1px solid var(--pane-line, #e6dce2);
@@ -24,10 +25,13 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-size: 0.8rem;
+    font-weight: 500;
+    font-family: 'Roboto Condensed', sans-serif;
     color: var(--muted, #6d6c75);
     transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
     cursor: pointer;
     position: relative;
+    min-width: 220px;
 }
 
 .swatch .tone {
@@ -36,10 +40,13 @@
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.6);
     flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .swatch-name {
     flex: 1;
+    color: var(--muted, #6d6c75);
+    font-size: 0.82rem;
 }
 
 .swatch:hover:not(.disabled) {
@@ -49,6 +56,10 @@
 .swatch.selected {
     border-color: var(--pink, #ee81b3);
     background: #fff;
+    color: var(--pink, #ee81b3);
+}
+
+.swatch.selected .swatch-name {
     color: var(--pink, #ee81b3);
 }
 
@@ -143,6 +154,8 @@
     .swatch {
         padding: 10px 14px;
         font-size: 0.75rem;
+        min-width: 100%;
+        width: 100%;
     }
     
     .swatch .tone {
@@ -161,6 +174,7 @@
         padding: 8px 12px;
         font-size: 0.7rem;
         gap: 12px;
+        min-width: 100%;
     }
     
     .swatch .tone {
