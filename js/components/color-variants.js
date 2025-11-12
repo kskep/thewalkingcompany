@@ -40,7 +40,7 @@ class EshopColorVariants {
      * Setup variant data from DOM elements
      */
     setupVariants() {
-        const variantElements = this.container.querySelectorAll('.color-variant');
+        const variantElements = this.container.querySelectorAll('.swatch');
         
         this.variants = Array.from(variantElements).map(element => ({
             element: element,
@@ -154,6 +154,7 @@ class EshopColorVariants {
             return;
         }
 
+        // Navigate to the variant's product page
         window.location.href = variant.url;
     }
 
