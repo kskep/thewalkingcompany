@@ -92,7 +92,12 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                 
                 <!-- Product Subtitle/Description -->
                 <?php if ( $product->get_short_description() ) : ?>
-                    <p class="subtitle"><?php echo esc_html( $product->get_short_description() ); ?></p>
+                    <div class="subtitle wc-short-description">
+                        <?php
+                        // Render WooCommerce short description allowing expected HTML instead of escaping tags
+                        echo apply_filters( 'woocommerce_short_description', $product->get_short_description() );
+                        ?>
+                    </div>
                 <?php endif; ?>
 
                 <!-- Price Row -->
@@ -169,15 +174,9 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     ?>
                 </div>
 
-                <!-- CTA Row -->
-                <div class="cta-row">
-                    <?php woocommerce_template_single_add_to_cart(); ?>
-                    
-                    <!-- Wishlist Button -->
-                    <button class="wishlist" aria-label="Add to wishlist" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
-                        ♡
-                    </button>
-                </div>
+                <!-- CTA Row intentionally removed to prevent duplicate quantity/add-to-cart blocks.
+                     Wishlist buttons are included inside the add-to-cart templates
+                     (simple.php and variation-add-to-cart-button.php). -->
 
                 <!-- Note Banner -->
                 <div class="note-banner">

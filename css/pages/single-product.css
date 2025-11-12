@@ -194,6 +194,14 @@ button:focus-visible {
   color: var(--muted);
 }
 
+/* Allow rich short description markup */
+.wc-short-description {
+  color: var(--muted);
+}
+.wc-short-description p { margin: 0 0 0.75rem 0; }
+.wc-short-description ul { margin: 0.5rem 0 1rem 1.25rem; padding: 0; list-style: disc; }
+.wc-short-description li { margin: 0.25rem 0; }
+
 .price-row {
   display: flex;
   gap: 16px;
@@ -379,6 +387,24 @@ button:focus-visible {
   flex-wrap: wrap;
 }
 
+/* Cart/Wishlist actions within Woo add-to-cart templates */
+.cart-actions-wrapper { display: flex; gap: 12px; align-items: stretch; }
+.cart .quantity { display: inline-flex; align-items: center; border: 1px solid var(--pane-line); background: var(--pane-mid); height: 52px; }
+.cart .quantity input { width: 56px; text-align: center; border: 0; background: transparent; font-size: 0.95rem; }
+
+.wishlist-action-btn {
+  width: 52px; height: 52px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--pane-line); background: #fff; color: var(--pink); border-radius: var(--radius);
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.wishlist-action-btn:hover { background: var(--pane-soft); border-color: var(--pink); }
+.wishlist-action-btn.in-wishlist { background: var(--pink); border-color: var(--pink); color: #fff; }
+.wishlist-action-btn.in-wishlist svg { fill: currentColor; }
+
+.stock-info-row { display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: .85rem; }
+.stock-info-row .stock-indicator { width: 8px; height: 8px; border-radius: 999px; background: #10b981; }
+.stock-info-row.out-of-stock .stock-indicator { background: #ef4444; }
+
 .single_add_to_cart_button {
   border: 1px solid var(--pink) !important;
   background: var(--pink) !important;
@@ -533,4 +559,14 @@ button:focus-visible {
     height: 44px;
     font-size: 0.75rem;
   }
+}
+
+/* Related products (archive-style grid on single page) */
+.related-products-section.magazine-related { margin-top: 72px; }
+.related-products-heading {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 24px 0;
 }

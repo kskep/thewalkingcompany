@@ -147,7 +147,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 						<?php
 						if ( ! empty( $options ) ) {
 							if ( $product && taxonomy_exists( $attribute_name ) ) {
-								$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' ) );
+								$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) );
 								foreach ( $terms as $term ) {
 									if ( in_array( $term->slug, $options, true ) ) {
 										echo '<option value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</option>';
