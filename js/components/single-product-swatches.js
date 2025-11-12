@@ -15,68 +15,199 @@
         init() {
             this.bindSwatchEvents();
             this.bindSizeEvents();
+            this.bindVariationFormEvents();
+
+            // Delay initial sync to allow Woo scripts to hydrate the variation form.
+            window.requestAnimationFrame(() => {
+                this.initializeFromForms();
+            });
         }
 
         bindSwatchEvents() {
-            document.addEventListener('click', (e) => {
-                if (e.target.closest('.swatch')) {
-                    const swatch = e.target.closest('.swatch');
-                    const colorPalette = swatch.closest('.color-palette');
-                    
-                    // Remove selected class from all swatches in this palette
-                    colorPalette.querySelectorAll('.swatch').forEach(s => {
-                        s.classList.remove('selected');
-                    });
-                    
-                    // Add selected class to clicked swatch
-                    swatch.classList.add('selected');
-                    
-                    // Update the WooCommerce variation selection if available
-                    this.updateWooCommerceVariation(swatch);
+            document.addEventListener('click', (event) => {
+                const target = event.target.closest('.swatch');
+                if (!target || target.classList.contains('disabled')) {
+                    return;
                 }
+
+                this.selectInGroup(target, '.swatch');
+                this.updateWooCommerceVariation(target);
             });
         }
 
         bindSizeEvents() {
-            document.addEventListener('click', (e) => {
-                if (e.target.closest('.size-tile')) {
-                    const sizeTile = e.target.closest('.size-tile');
-                    const sizeGrid = sizeTile.closest('.size-grid');
-                    
-                    // Remove selected class from all size tiles in this grid
-                    sizeGrid.querySelectorAll('.size-tile').forEach(tile => {
-                        tile.classList.remove('selected');
-                    });
-                    
-                    // Add selected class to clicked size tile
-                    sizeTile.classList.add('selected');
-                    
-                    // Update the WooCommerce variation selection if available
-                    this.updateWooCommerceVariation(sizeTile);
+            document.addEventListener('click', (event) => {
+                const target = event.target.closest('.size-tile');
+                if (!target || target.classList.contains('disabled')) {
+                    return;
                 }
+
+                this.selectInGroup(target, '.size-tile');
+                this.updateWooCommerceVariation(target);
             });
         }
 
+        bindVariationFormEvents() {
+            if (!window.jQuery) {
+                return;
+            }
+
+            const $ = window.jQuery;
+
+            $(document).on('woocommerce_update_variation_values', '.variations_form', (event) => {
+                const form = event.currentTarget;
+                this.refreshSwatchStates(form);
+            });
+
+            $(document).on('found_variation', '.variations_form', (event) => {
+                const form = event.currentTarget;
+                this.syncSelectedSwatches(form);
+            });
+
+            $(document).on('reset_data', '.variations_form', (event) => {
+                const form = event.currentTarget;
+                this.resetSwatches(form);
+            });
+        }
+
+        initializeFromForms() {
+            document.querySelectorAll('.variations_form').forEach((form) => {
+                this.refreshSwatchStates(form);
+            });
+        }
+
+        selectInGroup(element, selector) {
+            const container = element.closest(selector === '.swatch' ? '.color-palette' : '.size-grid');
+            if (!container) {
+                return;
+            }
+
+            container.querySelectorAll(selector).forEach((node) => {
+                node.classList.remove('selected');
+                node.setAttribute('aria-pressed', 'false');
+            });
+
+            element.classList.add('selected');
+            element.setAttribute('aria-pressed', 'true');
+        }
+
         updateWooCommerceVariation(element) {
-            // Update WooCommerce variation select elements
             const attribute = element.dataset.attribute;
             const value = element.dataset.value;
-            
-            if (attribute && value) {
-                // Find the corresponding WooCommerce select element
-                const select = document.querySelector(`select[name="${attribute}"]`);
-                if (select) {
-                    select.value = value;
-                    
-                    // Trigger WooCommerce variation change event
-                    const event = new Event('change', { bubbles: true });
-                    select.dispatchEvent(event);
-                }
+
+            if (!attribute) {
+                return;
             }
+
+            const select = document.querySelector(`select[name="${attribute}"]`);
+            if (!select) {
+                return;
+            }
+
+            if (select.value !== value) {
+                select.value = value;
+            }
+
+            const changeEvent = new Event('change', { bubbles: true });
+            select.dispatchEvent(changeEvent);
+
+            if (select.form) {
+                this.syncSelectedSwatches(select.form);
+            }
+        }
+
+        refreshSwatchStates(form) {
+            if (!form) {
+                return;
+            }
+
+            const selects = form.querySelectorAll('select[name^="attribute_"]');
+            selects.forEach((select) => {
+                const attribute = select.name;
+                const options = Array.from(select.options).filter((option) => option.value !== '');
+
+                options.forEach((option) => {
+                    const value = option.value;
+                    const elements = this.queryAttributeElements(attribute, value);
+                    const shouldDisable = option.disabled || option.classList.contains('disabled');
+
+                    elements.forEach((element) => {
+                        element.classList.toggle('disabled', shouldDisable);
+                        element.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
+
+                        if (shouldDisable) {
+                            element.classList.remove('selected');
+                            element.setAttribute('aria-pressed', 'false');
+                        }
+                    });
+                });
+            });
+
+            this.syncSelectedSwatches(form);
+        }
+
+        syncSelectedSwatches(form) {
+            if (!form) {
+                return;
+            }
+
+            const selects = form.querySelectorAll('select[name^="attribute_"]');
+            selects.forEach((select) => {
+                const attribute = select.name;
+                const currentValue = select.value;
+                const options = this.queryAttributeElements(attribute);
+
+                options.forEach((element) => {
+                    const matches = element.dataset.value === currentValue && currentValue !== '';
+                    element.classList.toggle('selected', matches);
+                    element.setAttribute('aria-pressed', matches ? 'true' : 'false');
+
+                    if (!matches && !currentValue && element.dataset.default === 'true') {
+                        element.classList.add('selected');
+                        element.setAttribute('aria-pressed', 'true');
+                    }
+                });
+            });
+        }
+
+        resetSwatches(form) {
+            if (!form) {
+                return;
+            }
+
+            const selects = form.querySelectorAll('select[name^="attribute_"]');
+            selects.forEach((select) => {
+                const attribute = select.name;
+                const options = this.queryAttributeElements(attribute);
+
+                options.forEach((element) => {
+                    element.classList.remove('selected');
+                    element.setAttribute('aria-pressed', 'false');
+
+                    if (element.dataset.default === 'true') {
+                        element.classList.add('selected');
+                        element.setAttribute('aria-pressed', 'true');
+                    }
+                });
+            });
+        }
+
+        queryAttributeElements(attribute, value) {
+            const baseSelector = `[data-attribute="${attribute}"]`;
+
+            if (typeof value === 'undefined') {
+                return Array.from(document.querySelectorAll(baseSelector));
+            }
+
+            let escapedValue = value;
+            if (window.CSS && typeof window.CSS.escape === 'function') {
+                escapedValue = window.CSS.escape(value);
+            }
+
+            return Array.from(document.querySelectorAll(`${baseSelector}[data-value="${escapedValue}"]`));
         }
     }
 
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             new SingleProductSwatches();

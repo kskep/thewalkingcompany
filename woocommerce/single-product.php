@@ -150,7 +150,6 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                         if ( !empty($attributes) ) {
                             echo '<div class="variation-selects">';
                             foreach ( $attributes as $attribute_name => $attribute ) {
-                                $attribute_id = wc_attribute_taxonomy_id_by_name( $attribute_name );
                                 $attribute_label = wc_attribute_label( str_replace( 'attribute_', '', $attribute_name ), $product );
                                 $attribute_base = str_replace( 'attribute_', '', $attribute_name );
                                 
@@ -177,11 +176,12 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             }
 
                                             $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s"',
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s"',
                                                 esc_attr( implode( ' ', $button_classes ) ),
                                                 esc_attr( $attribute_name ),
                                                 esc_attr( $term->slug ),
                                                 $is_in_stock ? 'false' : 'true',
+                                                $is_default ? 'true' : 'false',
                                                 $is_default ? 'true' : 'false'
                                             );
 
@@ -209,11 +209,12 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             }
 
                                             $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s"',
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s"',
                                                 esc_attr( implode( ' ', $button_classes ) ),
                                                 esc_attr( $attribute_name ),
                                                 esc_attr( $term->slug ),
                                                 $is_in_stock ? 'false' : 'true',
+                                                $is_default ? 'true' : 'false',
                                                 $is_default ? 'true' : 'false'
                                             );
 
