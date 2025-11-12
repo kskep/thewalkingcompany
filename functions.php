@@ -380,36 +380,9 @@ function eshop_force_12_products_per_page($query) {
             $query->set('offset', $offset);
         }
         
-        // CRITICAL FIX: Exclude out-of-stock products at query level
-        // This ensures we get exactly 12 IN-STOCK products per page
-        $meta_query = $query->get('meta_query', array());
-        if (!is_array($meta_query)) {
-            $meta_query = array();
-        }
-        
-        // Check if stock status filter already exists
-        $has_stock_filter = false;
-        foreach ($meta_query as $clause) {
-            if (isset($clause['key']) && $clause['key'] === '_stock_status') {
-                $has_stock_filter = true;
-                break;
-            }
-        }
-        
-        // Only add stock filter if not already present
-        if (!$has_stock_filter) {
-            $meta_query[] = array(
-                'key' => '_stock_status',
-                'value' => 'instock',
-                'compare' => '='
-            );
-            
-            if (count($meta_query) > 1) {
-                $meta_query['relation'] = 'AND';
-            }
-            
-            $query->set('meta_query', $meta_query);
-        }
+        // REMOVED: Global stock filter was causing all products to show as out-of-stock
+        // Stock status should be handled by WooCommerce natively, not forced globally
+        // This prevents proper single product page functionality
     }
 }
 add_action('pre_get_posts', 'eshop_force_12_products_per_page', 999);

@@ -435,12 +435,8 @@ function eshop_filter_products() {
         'paged' => $paged,
         'orderby' => $orderby,
         'meta_query' => array(
-            // CRITICAL: Exclude out-of-stock products to ensure consistent count
-            array(
-                'key' => '_stock_status',
-                'value' => 'instock',
-                'compare' => '='
-            )
+            // REMOVED: Global stock filter was breaking single product page stock display
+            // Stock status should be handled by individual product queries and templates
         ),
         'tax_query' => array(),
     );
@@ -784,7 +780,9 @@ function eshop_require_instock_products_in_catalog($meta_query, $query) {
 
     return $meta_query;
 }
-add_filter('woocommerce_product_query_meta_query', 'eshop_require_instock_products_in_catalog', 20, 2);
+// DISABLED: This global filter was forcing all products to appear as out-of-stock
+// Stock status should be handled by individual queries and WooCommerce natively
+// add_filter('woocommerce_product_query_meta_query', 'eshop_require_instock_products_in_catalog', 20, 2);
 
 
 
