@@ -112,11 +112,47 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     if ( $product->is_type('variable') ) {
                         // Display variable product attributes in concept design style
                         $attributes = $product->get_variation_attributes();
+                        $available_variations = $product->get_available_variations();
+                        $attribute_availability = array();
+
+                        if ( ! empty( $available_variations ) ) {
+                            foreach ( $available_variations as $variation_data ) {
+                                if ( empty( $variation_data['attributes'] ) ) {
+                                    continue;
+                                }
+
+                                $variation_in_stock = ! empty( $variation_data['is_in_stock'] );
+
+                                foreach ( $variation_data['attributes'] as $attribute_key => $attribute_value ) {
+                                    if ( '' === $attribute_value ) {
+                                        continue;
+                                    }
+
+                                    if ( ! isset( $attribute_availability[ $attribute_key ] ) ) {
+                                        $attribute_availability[ $attribute_key ] = array();
+                                    }
+
+                                    if ( ! isset( $attribute_availability[ $attribute_key ][ $attribute_value ] ) ) {
+                                        $attribute_availability[ $attribute_key ][ $attribute_value ] = array(
+                                            'has_variation' => true,
+                                            'in_stock'      => false,
+                                        );
+                                    }
+
+                                    if ( $variation_in_stock ) {
+                                        $attribute_availability[ $attribute_key ][ $attribute_value ]['in_stock'] = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        $default_attributes = $product->get_default_attributes();
                         if ( !empty($attributes) ) {
                             echo '<div class="variation-selects">';
                             foreach ( $attributes as $attribute_name => $attribute ) {
                                 $attribute_id = wc_attribute_taxonomy_id_by_name( $attribute_name );
                                 $attribute_label = wc_attribute_label( str_replace( 'attribute_', '', $attribute_name ), $product );
+                                $attribute_base = str_replace( 'attribute_', '', $attribute_name );
                                 
                                 echo '<div class="variation-select">';
                                 echo '<span class="block-label">' . esc_html( $attribute_label ) . '</span>';
@@ -129,7 +165,27 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                         echo '<div class="color-palette">';
                                         foreach ( $terms as $term ) {
                                             $color_code = get_term_meta( $term->term_id, 'color_code', true );
-                                            echo '<button class="swatch" type="button" data-attribute="' . esc_attr( $attribute_name ) . '" data-value="' . esc_attr( $term->slug ) . '">';
+                                            $availability = $attribute_availability[ $attribute_name ][ $term->slug ] ?? array();
+                                            $is_in_stock = ! empty( $availability['in_stock'] );
+                                            $is_default  = isset( $default_attributes[ $attribute_base ] ) && $default_attributes[ $attribute_base ] === $term->slug;
+                                            $button_classes = array( 'swatch' );
+                                            if ( $is_default ) {
+                                                $button_classes[] = 'selected';
+                                            }
+                                            if ( ! $is_in_stock ) {
+                                                $button_classes[] = 'disabled';
+                                            }
+
+                                            $button_attributes = sprintf(
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s"',
+                                                esc_attr( implode( ' ', $button_classes ) ),
+                                                esc_attr( $attribute_name ),
+                                                esc_attr( $term->slug ),
+                                                $is_in_stock ? 'false' : 'true',
+                                                $is_default ? 'true' : 'false'
+                                            );
+
+                                            echo '<button ' . $button_attributes . '>';
                                             if ( $color_code ) {
                                                 echo '<span class="tone" style="background: ' . esc_attr( $color_code ) . ';"></span>';
                                             }
@@ -141,7 +197,27 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                         // Size or other select
                                         echo '<div class="size-grid">';
                                         foreach ( $terms as $term ) {
-                                            echo '<button class="size-tile" type="button" data-attribute="' . esc_attr( $attribute_name ) . '" data-value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</button>';
+                                            $availability = $attribute_availability[ $attribute_name ][ $term->slug ] ?? array();
+                                            $is_in_stock = ! empty( $availability['in_stock'] );
+                                            $is_default  = isset( $default_attributes[ $attribute_base ] ) && $default_attributes[ $attribute_base ] === $term->slug;
+                                            $button_classes = array( 'size-tile' );
+                                            if ( $is_default ) {
+                                                $button_classes[] = 'selected';
+                                            }
+                                            if ( ! $is_in_stock ) {
+                                                $button_classes[] = 'disabled';
+                                            }
+
+                                            $button_attributes = sprintf(
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s"',
+                                                esc_attr( implode( ' ', $button_classes ) ),
+                                                esc_attr( $attribute_name ),
+                                                esc_attr( $term->slug ),
+                                                $is_in_stock ? 'false' : 'true',
+                                                $is_default ? 'true' : 'false'
+                                            );
+
+                                            echo '<button ' . $button_attributes . '>' . esc_html( $term->name ) . '</button>';
                                         }
                                         echo '</div>';
                                     }

@@ -313,6 +313,12 @@ button:focus-visible {
   color: var(--pink);
 }
 
+.swatch.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .size-grid {
   display: flex;
   gap: 10px;
