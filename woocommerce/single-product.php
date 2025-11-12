@@ -190,16 +190,17 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : false;
                                             $is_default   = ( '' !== $default_value && $default_value === $term_slug );
                                             $initial_selected = $is_default && $is_in_stock;
-                                            $button_classes = array( 'swatch' );
+                                            $button_classes = array( 'swatch', 'color-variant' );
                                             if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
                                             if ( ! $is_in_stock ) {
                                                 $button_classes[] = 'disabled';
+                                                $button_classes[] = 'out-of-stock';
                                             }
 
                                             $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s"',
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
                                                 esc_attr( implode( ' ', $button_classes ) ),
                                                 esc_attr( $attribute_name ),
                                                 esc_attr( $term_slug ),
@@ -226,16 +227,17 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : false;
                                             $is_default   = ( '' !== $default_value && $default_value === $term_slug );
                                             $initial_selected = $is_default && $is_in_stock;
-                                            $button_classes = array( 'size-tile' );
+                                            $button_classes = array( 'size-tile', 'size-selection__button' );
                                             if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
                                             if ( ! $is_in_stock ) {
                                                 $button_classes[] = 'disabled';
+                                                $button_classes[] = 'is-out-of-stock';
                                             }
 
                                             $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s"',
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
                                                 esc_attr( implode( ' ', $button_classes ) ),
                                                 esc_attr( $attribute_name ),
                                                 esc_attr( $term_slug ),
@@ -263,21 +265,39 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             echo '</div>';
                         }
 
-                        // Render full WooCommerce variation form so quantity and add-to-cart work as expected
+                        // Custom variation form for better UX while maintaining WooCommerce functionality
                         echo '<div class="variable-add-to-cart">';
-                        ob_start();
-                        woocommerce_variable_add_to_cart();
-                        $variable_form_markup = ob_get_clean();
-
-                        if ( $variable_form_markup ) {
-                            $variable_form_markup = preg_replace(
-                                '/class="([^"]*variations_form[^"]*)"/i',
-                                'class="$1 eshop-variations-form"',
-                                $variable_form_markup,
-                                1
-                            );
-                            echo $variable_form_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                        echo '<form class="variations_form cart eshop-variations-form" action="' . esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ) . '" method="post" enctype="multipart/form-data" data-product_id="' . absint( $product->get_id() ) . '">';
+                        
+                        // Hidden selects for WooCommerce compatibility
+                        foreach ( $attributes as $attribute_name => $options ) {
+                            $attr_key = (strpos($attribute_name, 'attribute_') === 0) ? $attribute_name : 'attribute_' . $attribute_name;
+                            $taxonomy = str_replace('attribute_', '', $attribute_name);
+                            
+                            echo '<select name="' . esc_attr( $attr_key ) . '" id="' . esc_attr( sanitize_title( $attr_key ) ) . '" class="hidden" data-attribute_name="' . esc_attr( $attr_key ) . '" style="display: none;">';
+                            echo '<option value="">' . esc_html__( 'Choose an option', 'woocommerce' ) . '</option>';
+                            
+                            if ( ! empty( $options ) ) {
+                                if ( taxonomy_exists( $taxonomy ) ) {
+                                    $terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
+                                    foreach ( $terms as $term ) {
+                                        if ( in_array( $term->slug, $options, true ) ) {
+                                            echo '<option value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</option>';
+                                        }
+                                    }
+                                } else {
+                                    foreach ( $options as $option ) {
+                                        echo '<option value="' . esc_attr( $option ) . '">' . esc_html( $option ) . '</option>';
+                                    }
+                                }
+                            }
+                            echo '</select>';
                         }
+                        
+                        // Let WooCommerce handle the quantity and add to cart buttons
+                        do_action( 'woocommerce_single_variation' );
+                        
+                        echo '</form>';
                         echo '</div>';
                     }
                     

@@ -59,12 +59,26 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 															$term->name;
 											
 											// Check if size is in stock
-											$is_in_stock = true; // Default to in stock
+											$is_in_stock = false; // Default to out of stock until we find a valid variation
+											$found_variation = false;
+											
+											// Check if this size option corresponds to any available variation
+											$matching_variations = array();
 											foreach ( $available_variations as $variation ) {
 												if ( isset( $variation['attributes'][ $attr_key ] ) &&
 													 $variation['attributes'][ $attr_key ] === $term->slug ) {
-													$is_in_stock = $variation['is_in_stock'];
-													break;
+													$matching_variations[] = $variation;
+													$found_variation = true;
+												}
+											}
+											
+											// If we found matching variations, check if any are in stock
+											if ( $found_variation ) {
+												foreach ( $matching_variations as $variation ) {
+													if ( $variation['is_in_stock'] ) {
+														$is_in_stock = true;
+														break;
+													}
 												}
 											}
 											
