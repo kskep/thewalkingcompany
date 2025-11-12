@@ -163,12 +163,14 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                         // Color swatches
                                         echo '<div class="color-palette">';
                                         foreach ( $terms as $term ) {
-                                            $color_code = get_term_meta( $term->term_id, 'color_code', true );
-                                            $availability = $attribute_availability[ $attribute_name ][ $term->slug ] ?? array();
-                                            $is_in_stock = ! empty( $availability['in_stock'] );
-                                            $is_default  = isset( $default_attributes[ $attribute_base ] ) && $default_attributes[ $attribute_base ] === $term->slug;
+                                            $term_slug   = sanitize_title( $term->slug );
+                                            $color_code  = get_term_meta( $term->term_id, 'color_code', true );
+                                            $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
+                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : true;
+                                            $is_default   = isset( $default_attributes[ $attribute_base ] ) && $default_attributes[ $attribute_base ] === $term_slug;
+                                            $initial_selected = $is_default && $is_in_stock;
                                             $button_classes = array( 'swatch' );
-                                            if ( $is_default ) {
+                                            if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
                                             if ( ! $is_in_stock ) {
@@ -176,13 +178,14 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             }
 
                                             $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s"',
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s"',
                                                 esc_attr( implode( ' ', $button_classes ) ),
                                                 esc_attr( $attribute_name ),
-                                                esc_attr( $term->slug ),
+                                                esc_attr( $term_slug ),
                                                 $is_in_stock ? 'false' : 'true',
                                                 $is_default ? 'true' : 'false',
-                                                $is_default ? 'true' : 'false'
+                                                $initial_selected ? 'true' : 'false',
+                                                $is_in_stock ? 'true' : 'false'
                                             );
 
                                             echo '<button ' . $button_attributes . '>';
@@ -197,11 +200,13 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                         // Size or other select
                                         echo '<div class="size-grid">';
                                         foreach ( $terms as $term ) {
-                                            $availability = $attribute_availability[ $attribute_name ][ $term->slug ] ?? array();
-                                            $is_in_stock = ! empty( $availability['in_stock'] );
-                                            $is_default  = isset( $default_attributes[ $attribute_base ] ) && $default_attributes[ $attribute_base ] === $term->slug;
+                                            $term_slug    = sanitize_title( $term->slug );
+                                            $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
+                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : true;
+                                            $is_default   = isset( $default_attributes[ $attribute_base ] ) && $default_attributes[ $attribute_base ] === $term_slug;
+                                            $initial_selected = $is_default && $is_in_stock;
                                             $button_classes = array( 'size-tile' );
-                                            if ( $is_default ) {
+                                            if ( $initial_selected ) {
                                                 $button_classes[] = 'selected';
                                             }
                                             if ( ! $is_in_stock ) {
@@ -209,13 +214,14 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                             }
 
                                             $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s"',
+                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s"',
                                                 esc_attr( implode( ' ', $button_classes ) ),
                                                 esc_attr( $attribute_name ),
-                                                esc_attr( $term->slug ),
+                                                esc_attr( $term_slug ),
                                                 $is_in_stock ? 'false' : 'true',
                                                 $is_default ? 'true' : 'false',
-                                                $is_default ? 'true' : 'false'
+                                                $initial_selected ? 'true' : 'false',
+                                                $is_in_stock ? 'true' : 'false'
                                             );
 
                                             echo '<button ' . $button_attributes . '>' . esc_html( $term->name ) . '</button>';
