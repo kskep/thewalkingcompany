@@ -94,8 +94,21 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                 <?php if ( $product->get_short_description() ) : ?>
                     <div class="subtitle wc-short-description">
                         <?php
+                        // DEBUG: Log the original short description
+                        $original_description = $product->get_short_description();
+                        error_log('DEBUG: Original short description: ' . $original_description);
+                        
                         // Render WooCommerce short description allowing expected HTML instead of escaping tags
-                        echo apply_filters( 'woocommerce_short_description', $product->get_short_description() );
+                        $filtered_description = apply_filters( 'woocommerce_short_description', $original_description );
+                        error_log('DEBUG: Filtered short description: ' . $filtered_description);
+                        
+                        // Check for duplicate divs
+                        $div_count = substr_count($filtered_description, '<div class="product_feautures_item_title features_title_place">');
+                        if ($div_count > 1) {
+                            error_log('DEBUG: Found ' . $div_count . ' duplicate div elements in short description');
+                        }
+                        
+                        echo $filtered_description;
                         ?>
                     </div>
                 <?php endif; ?>

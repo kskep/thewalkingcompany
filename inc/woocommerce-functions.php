@@ -1047,8 +1047,135 @@ function eshop_output_related_products_from_categories() {
         if ($original_post && function_exists('wc_setup_product_data')) {
             wc_setup_product_data($original_post);
         }
+        
+        /**
+         * Debug function to log all functions hooked to woocommerce_short_description filter
+         */
+        function eshop_debug_short_description_filters() {
+            global $wp_filter;
+            
+            if (isset($wp_filter['woocommerce_short_description'])) {
+                error_log('DEBUG: Functions hooked to woocommerce_short_description:');
+                foreach ($wp_filter['woocommerce_short_description']->callbacks as $priority => $callbacks) {
+                    foreach ($callbacks as $callback) {
+                        if (is_array($callback['function'])) {
+                            $function_name = get_class($callback['function'][0]) . '::' . $callback['function'][1];
+                        } else {
+                            $function_name = $callback['function'];
+                        }
+                        error_log("DEBUG - Priority $priority: $function_name");
+                    }
+                }
+            }
+        }
+        add_action('wp_head', 'eshop_debug_short_description_filters');
+        
+        /**
+         * Debug function to trace short description modifications
+         */
+        function eshop_trace_short_description($description) {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+            $caller = 'unknown';
+            
+            foreach ($backtrace as $trace) {
+                if (isset($trace['function']) && $trace['function'] !== 'apply_filters' && $trace['function'] !== 'call_user_func_array') {
+                    if (isset($trace['class'])) {
+                        $caller = $trace['class'] . '::' . $trace['function'];
+                    } else {
+                        $caller = $trace['function'];
+                    }
+                    break;
+                }
+            }
+            
+            error_log("DEBUG: Short description modified by: $caller");
+            error_log("DEBUG: Description content: " . substr($description, 0, 200) . "...");
+            
+            return $description;
+        }
+        add_filter('woocommerce_short_description', 'eshop_trace_short_description', 9999);
+        
+        /**
+         * Fix duplicate div elements in short description
+         */
+        function eshop_fix_duplicate_short_description_divs($description) {
+            // Check if we have duplicate product_feautures_item_title divs
+            if (strpos($description, 'product_feautures_item_title features_title_place') !== false) {
+                // Count the occurrences
+                $div_pattern = '/<div\s+class="product_feautures_item_title\s+features_title_place">/i';
+                $matches = array();
+                preg_match_all($div_pattern, $description, $matches);
+                
+                if (count($matches[0]) > 1) {
+                    error_log('DEBUG: Found ' . count($matches[0]) . ' duplicate divs, cleaning up...');
+                    
+                    // Extract content from within all the duplicate divs
+                    $content_pattern = '/<div\s+class="product_feautures_item_title\s+features_title_place">(.*?)<\/div>/is';
+                    $content_matches = array();
+                    preg_match_all($content_pattern, $description, $content_matches);
+                    
+                    if (!empty($content_matches[1])) {
+                        // Combine all content from duplicate divs
+                        $combined_content = '';
+                        foreach ($content_matches[1] as $content) {
+                            $combined_content .= trim($content);
+                        }
+                        
+                        // Replace all duplicate divs with a single clean div
+                        $clean_div = '<div class="product_feautures_item_title features_title_place">' . $combined_content . '</div>';
+                        
+                        // Remove all duplicate divs first
+                        $description = preg_replace($content_pattern, '', $description);
+                        
+                        // Add single clean div at the beginning of description
+                        $description = $clean_div . $description;
+                        
+                        error_log('DEBUG: Combined duplicate divs into single clean div');
+                    }
+                }
+            }
+            
+            return $description;
+        }
+        add_filter('woocommerce_short_description', 'eshop_fix_duplicate_short_description_divs', 100);
     }
     $product = $original_product;
+}
+
+/**
+ * Test function to verify duplicate div fix (can be called from admin for testing)
+ */
+function eshop_test_duplicate_div_fix() {
+    // Simulate the problematic HTML with duplicate divs
+    $test_html = '
+    <div class="product_feautures_item_title features_title_place">
+        <div class="product_feautures_item_title features_title_place">
+            <div class="product_feautures_item_title features_title_place">
+                <div class="col-2 char_title">
+                <div class="product_feautures_item_title features_title_place">
+                <div class="product_feautures_item_title features_title_place">
+                <div class="product_feautures_item_title features_title_place">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;"><strong>ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ</strong></span></p>
+                <ul>
+                <li><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Χρώμα: Μπορντό</span></li>
+                <li><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Ύψος τακουνιού: 11cm</span></li>
+                <li><span style="font-family: arial, helvetica, sans-serif; font-size: 10pt;">Φόρμα: Κανονική</span></li>
+                </ul>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+    ';
+    
+    echo "Before fix:<br>";
+    echo htmlspecialchars($test_html);
+    echo "<br><br>After fix:<br>";
+    echo htmlspecialchars(eshop_fix_duplicate_short_description_divs($test_html));
 }
 /**
  * Ensure product context is properly set for single product pages
