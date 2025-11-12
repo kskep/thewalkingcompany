@@ -77,6 +77,8 @@
 
     $(document).ready(function(){
         initializeQuantityControls($(document));
+        // Ensure Woo variations script notices default selections
+        $('.variations_form').trigger('check_variations');
     });
 
     // Re-init when variation form updates the add-to-cart area

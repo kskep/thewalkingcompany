@@ -29,12 +29,15 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 		<div class="variations custom-variations">
 			<?php foreach ( $attributes as $attribute_name => $options ) : ?>
 				<?php
-				$attribute_label = wc_attribute_label( $attribute_name );
-				$attribute_slug = sanitize_title( $attribute_name );
+				// Woo passes keys like 'attribute_pa_size'. Normalize helpers.
+				$attr_key   = (strpos($attribute_name, 'attribute_') === 0) ? $attribute_name : 'attribute_' . $attribute_name;
+				$taxonomy   = str_replace('attribute_', '', $attribute_name); // e.g. 'pa_size'
+				$attribute_label = wc_attribute_label( $taxonomy );
+				$attribute_slug = sanitize_title( $taxonomy );
 				$is_size_attribute = ( strpos( strtolower( $attribute_name ), 'size' ) !== false );
 				?>
 				
-				<div class="variation-wrapper" data-attribute="<?php echo esc_attr( $attribute_slug ); ?>">
+				<div class="variation-wrapper" data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 					<label class="variation-label">
 						<?php echo esc_html( $attribute_label ); ?>:
 						<span class="selected-value"></span>
@@ -45,8 +48,8 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 						<div class="size-options-single">
 							<?php
 							if ( ! empty( $options ) ) {
-								if ( $product && taxonomy_exists( $attribute_name ) ) {
-									$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) );
+								if ( $product && taxonomy_exists( $taxonomy ) ) {
+									$terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
 									
 									foreach ( $terms as $term ) {
 										if ( in_array( $term->slug, $options, true ) ) {
@@ -58,8 +61,8 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 											// Check if size is in stock
 											$is_in_stock = true; // Default to in stock
 											foreach ( $available_variations as $variation ) {
-												if ( isset( $variation['attributes']['attribute_' . $attribute_name] ) &&
-													 $variation['attributes']['attribute_' . $attribute_name] === $term->slug ) {
+												if ( isset( $variation['attributes'][ $attr_key ] ) &&
+													 $variation['attributes'][ $attr_key ] === $term->slug ) {
 													$is_in_stock = $variation['is_in_stock'];
 													break;
 												}
@@ -73,7 +76,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 											<button type="button" 
 													class="<?php echo esc_attr( $button_class ); ?>"
 													data-value="<?php echo esc_attr( $term->slug ); ?>"
-													data-attribute="<?php echo esc_attr( $attribute_slug ); ?>"
+													data-attribute="<?php echo esc_attr( $attr_key ); ?>"
 													<?php echo ! $is_in_stock ? 'disabled' : ''; ?>>
 												<?php echo esc_html( $display_name ); ?>
 											</button>
@@ -90,7 +93,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 										<button type="button" 
 												class="size-option-single"
 												data-value="<?php echo esc_attr( $option ); ?>"
-												data-attribute="<?php echo esc_attr( $attribute_slug ); ?>">
+												data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 											<?php echo esc_html( $display_name ); ?>
 										</button>
 										<?php
@@ -105,8 +108,8 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 						<div class="attribute-options-single">
 							<?php
 							if ( ! empty( $options ) ) {
-								if ( $product && taxonomy_exists( $attribute_name ) ) {
-									$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) );
+								if ( $product && taxonomy_exists( $taxonomy ) ) {
+									$terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
 									
 									foreach ( $terms as $term ) {
 										if ( in_array( $term->slug, $options, true ) ) {
@@ -114,7 +117,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 											<button type="button" 
 													class="attribute-option-single"
 													data-value="<?php echo esc_attr( $term->slug ); ?>"
-													data-attribute="<?php echo esc_attr( $attribute_slug ); ?>">
+													data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 												<?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $term->name, $term, $attribute_name, $product ) ); ?>
 											</button>
 											<?php
@@ -126,7 +129,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 										<button type="button" 
 												class="attribute-option-single"
 												data-value="<?php echo esc_attr( $option ); ?>"
-												data-attribute="<?php echo esc_attr( $attribute_slug ); ?>">
+												data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 											<?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute_name, $product ) ); ?>
 										</button>
 										<?php
@@ -138,16 +141,16 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 					<?php endif; ?>
 					
 					<!-- Hidden select for WooCommerce compatibility -->
-					<select name="attribute_<?php echo esc_attr( $attribute_name ); ?>"
-							id="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"
+					<select name="<?php echo esc_attr( $attr_key ); ?>"
+							id="<?php echo esc_attr( sanitize_title( $attr_key ) ); ?>"
 							class="hidden"
-							data-attribute_name="attribute_<?php echo esc_attr( $attribute_name ); ?>"
+							data-attribute_name="<?php echo esc_attr( $attr_key ); ?>"
 							style="display: none;">
 						<option value=""><?php echo esc_html__( 'Choose an option', 'woocommerce' ); ?></option>
 						<?php
 						if ( ! empty( $options ) ) {
-							if ( $product && taxonomy_exists( $attribute_name ) ) {
-								$terms = wc_get_product_terms( $product->get_id(), $attribute_name, array( 'fields' => 'all' ) );
+							if ( $product && taxonomy_exists( $taxonomy ) ) {
+								$terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
 								foreach ( $terms as $term ) {
 									if ( in_array( $term->slug, $options, true ) ) {
 										echo '<option value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</option>';
