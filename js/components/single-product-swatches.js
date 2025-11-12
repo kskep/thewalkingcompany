@@ -20,6 +20,9 @@
             // Delay initial sync to allow Woo scripts to hydrate the variation form.
             window.requestAnimationFrame(() => {
                 this.initializeFromForms();
+                window.setTimeout(() => {
+                    this.initializeFromForms();
+                }, 60);
             });
         }
 
@@ -104,12 +107,17 @@
                 return;
             }
 
-            if (select.value !== value) {
+            const previousValue = select.value;
+            if (previousValue !== value) {
                 select.value = value;
             }
 
-            const changeEvent = new Event('change', { bubbles: true });
-            select.dispatchEvent(changeEvent);
+            if (window.jQuery) {
+                window.jQuery(select).trigger('change');
+            } else {
+                const changeEvent = new Event('change', { bubbles: true });
+                select.dispatchEvent(changeEvent);
+            }
 
             if (select.form) {
                 this.syncSelectedSwatches(select.form);
@@ -125,17 +133,27 @@
             selects.forEach((select) => {
                 const attribute = select.name;
                 const options = Array.from(select.options).filter((option) => option.value !== '');
+                const otherSelected = Array.from(selects).some((other) => other !== select && other.value !== '');
+                const currentHasSelection = select.value !== '';
 
                 options.forEach((option) => {
                     const value = option.value;
                     const elements = this.queryAttributeElements(attribute, value);
-                    const shouldDisable = option.disabled || option.classList.contains('disabled');
+
+                    if (!elements.length) {
+                        return;
+                    }
+
+                    const fallbackAvailable = elements.some((element) => element.dataset.inStock === 'true');
+                    const wooDisabled = option.disabled || option.classList.contains('disabled');
+                    const useWooConstraint = otherSelected || currentHasSelection;
+                    const shouldDisable = useWooConstraint ? wooDisabled : !fallbackAvailable;
 
                     elements.forEach((element) => {
                         element.classList.toggle('disabled', shouldDisable);
                         element.setAttribute('aria-disabled', shouldDisable ? 'true' : 'false');
 
-                        if (shouldDisable) {
+                        if (shouldDisable && element.classList.contains('selected')) {
                             element.classList.remove('selected');
                             element.setAttribute('aria-pressed', 'false');
                         }
@@ -162,7 +180,7 @@
                     element.classList.toggle('selected', matches);
                     element.setAttribute('aria-pressed', matches ? 'true' : 'false');
 
-                    if (!matches && !currentValue && element.dataset.default === 'true') {
+                    if (!matches && !currentValue && element.dataset.default === 'true' && element.dataset.inStock === 'true' && !element.classList.contains('disabled')) {
                         element.classList.add('selected');
                         element.setAttribute('aria-pressed', 'true');
                     }
@@ -184,7 +202,7 @@
                     element.classList.remove('selected');
                     element.setAttribute('aria-pressed', 'false');
 
-                    if (element.dataset.default === 'true') {
+                    if (element.dataset.default === 'true' && element.dataset.inStock === 'true' && !element.classList.contains('disabled')) {
                         element.classList.add('selected');
                         element.setAttribute('aria-pressed', 'true');
                     }

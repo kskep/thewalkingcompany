@@ -239,7 +239,8 @@ button:focus-visible {
   position: relative;
 }
 
-.eshop-variations-form .variations {
+.eshop-variations-form .variations,
+.eshop-variations-form table.variations {
   position: absolute;
   width: 1px;
   height: 1px;
