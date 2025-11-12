@@ -100,241 +100,40 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     </div>
                 <?php endif; ?>
 
-                <!-- Price Row -->
-                <div class="price-row">
-                    <?php woocommerce_template_single_price(); ?>
-                </div>
-
                 <!-- Options Block (Colors, Sizes, etc.) -->
                 <div class="options-block">
                     <?php
-                    // Product variations (colors, sizes, etc.)
-                    if ( $product->is_type('variable') ) {
-                        // Display variable product attributes in concept design style
-                        $attributes = $product->get_variation_attributes();
-                        $attribute_availability = array();
+                    /**
+                     * Hook: woocommerce_before_add_to_cart_form.
+                     *
+                     * @hooked woocommerce_output_all_notices - 10
+                     */
+                    do_action( 'woocommerce_before_add_to_cart_form' );
+                    ?>
 
-                        // Use WooCommerce standard pattern for variable products
-                        $variation_ids = $product->get_children();
-                        if ( ! empty( $variation_ids ) ) {
-                            foreach ( $variation_ids as $variation_id ) {
-                                $variation = wc_get_product( $variation_id );
+                    <?php
+                    /**
+                     * Hook: woocommerce_single_product_summary.
+                     *
+                     * @hooked woocommerce_template_single_title - 5
+                     * @hooked woocommerce_template_single_rating - 10
+                     * @hooked woocommerce_template_single_price - 10
+                     * @hooked woocommerce_template_single_excerpt - 20
+                     * @hooked woocommerce_template_single_add_to_cart - 30
+                     * @hooked woocommerce_template_single_meta - 40
+                     * @hooked woocommerce_template_single_sharing - 50
+                     * @hooked WC_Structured_Data::generate_product_data() - 60
+                     */
+                    do_action( 'woocommerce_single_product_summary' );
+                    ?>
 
-                                if ( ! $variation || 'product_variation' !== $variation->get_type() ) {
-                                    continue;
-                                }
-
-                                $variation_attributes = $variation->get_attributes();
-                                if ( empty( $variation_attributes ) ) {
-                                    continue;
-                                }
-
-                                $variation_in_stock = $variation->is_in_stock();
-                                
-                                // DEBUG: Add logging to understand what's happening with variations
-                                if ( WP_DEBUG && WP_DEBUG_LOG ) {
-                                    error_log( 'WooCommerce Variation Debug: ' . print_r( array(
-                                        'variation_id' => $variation_id,
-                                        'variation_in_stock' => $variation_in_stock,
-                                        'variation_attributes' => $variation_attributes,
-                                        'variation_stock_quantity' => $variation->get_stock_quantity(),
-                                        'variation_manage_stock' => $variation->get_manage_stock()
-                                    ), true ) );
-                                }
-
-                                foreach ( $variation_attributes as $variation_attribute_name => $variation_attribute_value ) {
-                                    if ( '' === $variation_attribute_value ) {
-                                        $variation_attribute_value = $variation->get_attribute( $variation_attribute_name );
-                                    }
-
-                                    if ( '' === $variation_attribute_value ) {
-                                        continue;
-                                    }
-
-                                    $attribute_key = strpos( $variation_attribute_name, 'attribute_' ) === 0
-                                        ? $variation_attribute_name
-                                        : 'attribute_' . $variation_attribute_name;
-                                    $attribute_value_slug = sanitize_title( $variation_attribute_value );
-
-                                    if ( '' === $attribute_value_slug ) {
-                                        continue;
-                                    }
-
-                                    if ( ! isset( $attribute_availability[ $attribute_key ] ) ) {
-                                        $attribute_availability[ $attribute_key ] = array();
-                                    }
-
-                                    if ( ! isset( $attribute_availability[ $attribute_key ][ $attribute_value_slug ] ) ) {
-                                        $attribute_availability[ $attribute_key ][ $attribute_value_slug ] = array(
-                                            'has_variation' => true,
-                                            'in_stock'      => true, // IMPROVED: Default to true for better UX
-                                        );
-                                    }
-
-                                    // If this specific variation is out of stock, mark it as such
-                                    if ( ! $variation_in_stock ) {
-                                        $attribute_availability[ $attribute_key ][ $attribute_value_slug ]['in_stock'] = false;
-                                    }
-                                }
-                            }
-                        }
-
-                        $default_attributes = $product->get_default_attributes();
-                        if ( !empty($attributes) ) {
-                            echo '<div class="variation-selects">';
-                            foreach ( $attributes as $attribute_name => $attribute ) {
-                                $attribute_label = wc_attribute_label( str_replace( 'attribute_', '', $attribute_name ), $product );
-                                $attribute_base = str_replace( 'attribute_', '', $attribute_name );
-                                $default_value = isset( $default_attributes[ $attribute_base ] ) ? sanitize_title( $default_attributes[ $attribute_base ] ) : '';
-                                
-                                echo '<div class="variation-select">';
-                                echo '<span class="block-label">' . esc_html( $attribute_label ) . '</span>';
-                                
-                                // Get terms for this attribute
-                                $terms = wp_get_post_terms( $product->get_id(), str_replace( 'attribute_', '', $attribute_name ) );
-                                if ( $terms && !is_wp_error( $terms ) ) {
-                                    if ( strpos( $attribute_name, 'color' ) !== false || strpos( $attribute_name, 'colour' ) !== false ) {
-                                        // Color swatches
-                                        echo '<div class="color-palette">';
-                                        foreach ( $terms as $term ) {
-                                            $term_slug   = sanitize_title( $term->slug );
-                                            $color_code  = get_term_meta( $term->term_id, 'color_code', true );
-                                            $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
-                                            // IMPROVED: Proper stock calculation logic
-                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : true; // Default to true for better UX
-                                            $is_default   = ( '' !== $default_value && $default_value === $term_slug );
-                                            $initial_selected = $is_default && $is_in_stock;
-                                            $button_classes = array( 'swatch', 'color-variant' );
-                                            if ( $initial_selected ) {
-                                                $button_classes[] = 'selected';
-                                            }
-                                            if ( ! $is_in_stock ) {
-                                                $button_classes[] = 'disabled';
-                                                $button_classes[] = 'out-of-stock';
-                                            }
-
-                                            $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
-                                                esc_attr( implode( ' ', $button_classes ) ),
-                                                esc_attr( $attribute_name ),
-                                                esc_attr( $term_slug ),
-                                                $is_in_stock ? 'false' : 'true',
-                                                $is_default ? 'true' : 'false',
-                                                $initial_selected ? 'true' : 'false',
-                                                $is_in_stock ? 'true' : 'false'
-                                            );
-
-                                            echo '<button ' . $button_attributes . '>';
-                                            if ( $color_code ) {
-                                                echo '<span class="tone" style="background: ' . esc_attr( $color_code ) . ';"></span>';
-                                            }
-                                            echo '<span class="swatch-name">' . esc_html( $term->name ) . '</span>';
-                                            echo '</button>';
-                                        }
-                                        echo '</div>';
-                                    } else {
-                                        // Size or other select
-                                        echo '<div class="size-grid">';
-                                        foreach ( $terms as $term ) {
-                                            $term_slug    = sanitize_title( $term->slug );
-                                            $availability = $attribute_availability[ $attribute_name ][ $term_slug ] ?? null;
-                                            // IMPROVED: Proper stock calculation logic
-                                            $is_in_stock  = isset( $availability['in_stock'] ) ? (bool) $availability['in_stock'] : true; // Default to true for better UX
-                                            $is_default   = ( '' !== $default_value && $default_value === $term_slug );
-                                            $initial_selected = $is_default && $is_in_stock;
-                                            $button_classes = array( 'size-tile', 'size-selection__button' );
-                                            if ( $initial_selected ) {
-                                                $button_classes[] = 'selected';
-                                            }
-                                            if ( ! $is_in_stock ) {
-                                                $button_classes[] = 'disabled';
-                                                $button_classes[] = 'is-out-of-stock';
-                                            }
-
-                                            $button_attributes = sprintf(
-                                                'class="%1$s" type="button" data-attribute="%2$s" data-value="%3$s" aria-disabled="%4$s" data-default="%5$s" aria-pressed="%6$s" data-in-stock="%7$s" data-attribute-name="%2$s" data-term-slug="%3$s"',
-                                                esc_attr( implode( ' ', $button_classes ) ),
-                                                esc_attr( $attribute_name ),
-                                                esc_attr( $term_slug ),
-                                                $is_in_stock ? 'false' : 'true',
-                                                $is_default ? 'true' : 'false',
-                                                $initial_selected ? 'true' : 'false',
-                                                $is_in_stock ? 'true' : 'false'
-                                            );
-
-                                            echo '<button ' . $button_attributes . '>' . esc_html( $term->name ) . '</button>';
-                                        }
-                                        echo '</div>';
-                                    }
-                                }
-                                echo '</div>';
-                            }
-                            echo '</div>';
-                        }
-
-                        // Stock availability for variable products
-                        if ( $product->get_manage_stock() ) {
-                            echo '<div class="availability">';
-                            echo '<span class="stock-badge">In Stock</span>';
-                            echo '<span class="stock-copy">Available in multiple sizes</span>';
-                            echo '</div>';
-                        }
-
-                        // Custom variation form for better UX while maintaining WooCommerce functionality
-                        echo '<div class="variable-add-to-cart">';
-                        echo '<form class="variations_form cart eshop-variations-form" action="' . esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ) . '" method="post" enctype="multipart/form-data" data-product_id="' . absint( $product->get_id() ) . '">';
-                        
-                        // Hidden selects for WooCommerce compatibility
-                        foreach ( $attributes as $attribute_name => $options ) {
-                            $attr_key = (strpos($attribute_name, 'attribute_') === 0) ? $attribute_name : 'attribute_' . $attribute_name;
-                            $taxonomy = str_replace('attribute_', '', $attribute_name);
-                            
-                            echo '<select name="' . esc_attr( $attr_key ) . '" id="' . esc_attr( sanitize_title( $attr_key ) ) . '" class="hidden" data-attribute_name="' . esc_attr( $attr_key ) . '" style="display: none;">';
-                            echo '<option value="">' . esc_html__( 'Choose an option', 'woocommerce' ) . '</option>';
-                            
-                            if ( ! empty( $options ) ) {
-                                if ( taxonomy_exists( $taxonomy ) ) {
-                                    $terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
-                                    foreach ( $terms as $term ) {
-                                        if ( in_array( $term->slug, $options, true ) ) {
-                                            echo '<option value="' . esc_attr( $term->slug ) . '">' . esc_html( $term->name ) . '</option>';
-                                        }
-                                    }
-                                } else {
-                                    foreach ( $options as $option ) {
-                                        echo '<option value="' . esc_attr( $option ) . '">' . esc_html( $option ) . '</option>';
-                                    }
-                                }
-                            }
-                            echo '</select>';
-                        }
-                        
-                        // Add hidden product_id field
-                        echo '<input type="hidden" name="add-to-cart" value="' . esc_attr( $product->get_id() ) . '" />';
-                        
-                        // Add quantity field (WooCommerce will style this)
-                        echo '<div class="single_variation_wrap" style="display: none;">';
-                        echo '    <div class="woocommerce-variation single_variation" style="display: block;"></div>';
-                        echo '    <div class="woocommerce-variation-add-to-cart variations_button">';
-                        echo '        <div class="quantity">';
-                        echo '            <label class="screen-reader-text" for="quantity_' . esc_attr( $product->get_id() ) . '">' . esc_html__( 'Quantity', 'woocommerce' ) . '</label>';
-                        echo '            <input type="number" id="quantity_' . esc_attr( $product->get_id() ) . '" class="input-text qty text" name="quantity" value="1" min="1" max="999" step="1" inputmode="numeric" />';
-                        echo '        </div>';
-                        echo '        <button type="submit" class="single_add_to_cart_button button alt disabled wc-variation-selection-needed">' . esc_html__( 'Add to cart', 'woocommerce' ) . '</button>';
-                        echo '        <input type="hidden" name="variation_id" value="" />';
-                        echo '    </div>';
-                        echo '</div>';
-                        
-                        echo '</form>';
-                        echo '</div>';
-                    }
-                    
-                    // Simple product add to cart
-                    if ( $product->is_type('simple') ) {
-                        echo '<div class="simple-add-to-cart">';
-                        woocommerce_simple_add_to_cart();
-                        echo '</div>';
-                    }
+                    <?php
+                    /**
+                     * Hook: woocommerce_after_add_to_cart_form.
+                     *
+                     * @hooked woocommerce_template_single_sharing - 10
+                     */
+                    do_action( 'woocommerce_after_add_to_cart_form' );
                     ?>
                 </div>
 

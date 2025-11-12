@@ -6,28 +6,76 @@
  * @package E-Shop Theme
  */
 
-/* Color Variants Container */
-.product-color-variants {
-    margin: 0;
+/* Color Palette Container - matches variable.php structure */
+.color-palette {
+    display: grid;
+    gap: 12px;
 }
 
-.color-variants-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-primary, #1a1a1a);
-    margin-bottom: 1rem;
-}
-
-.color-variants-container {
+/* Individual Color Swatch - matches variable.php structure */
+.swatch {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
     align-items: center;
+    gap: 16px;
+    padding: 12px 18px;
+    border: 1px solid var(--pane-line, #e6dce2);
+    border-radius: var(--radius, 4px);
+    background: var(--pane-mid, #f4eef2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    color: var(--muted, #6d6c75);
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    position: relative;
 }
 
-/* Individual Color Variant */
+.swatch .tone {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+}
+
+.swatch-name {
+    flex: 1;
+}
+
+.swatch:hover:not(.disabled) {
+    border-color: var(--pink, #ee81b3);
+}
+
+.swatch.selected {
+    border-color: var(--pink, #ee81b3);
+    background: #fff;
+    color: var(--pink, #ee81b3);
+    box-shadow: 0 0 0 1px var(--pink, #ee81b3);
+}
+
+.swatch.disabled,
+.swatch:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: var(--pane-mid, #f4eef2);
+  color: var(--muted, #6d6c75);
+  border-color: var(--pane-line, #e6dce2);
+}
+
+.swatch.disabled:hover,
+.swatch:disabled:hover {
+  border-color: var(--pane-line, #e6dce2);
+  background: var(--pane-mid, #f4eef2);
+  color: var(--muted, #6d6c75);
+}
+
+.swatch:focus {
+    outline: 2px solid var(--pink, #ee81b3);
+    outline-offset: 2px;
+}
+
+/* Alternative circular color swatch for magazine-style layout */
 .color-variant {
     position: relative;
     width: 44px;
@@ -68,29 +116,7 @@
     justify-content: center;
 }
 
-/* Variant information tooltip */
-.color-variant::after {
-    content: attr(data-color-name);
-    position: absolute;
-    bottom: -2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-primary, #1a1a1a);
-    color: white;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    z-index: 10;
-}
-
-.color-variant:hover::after {
-    opacity: 1;
-}
-
-/* Out of stock state */
+/* Out of stock state for circular color variants */
 .color-variant.out-of-stock {
     opacity: 0.5;
     cursor: not-allowed;
@@ -113,84 +139,38 @@
     border-color: transparent;
 }
 
-/* Color variant details */
-.color-variant-details {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 0.5rem;
-    padding: 0.75rem;
-    background: white;
-    border: 1px solid #e5e5e5;
-    z-index: 20;
-}
-
-.color-variant:hover .color-variant-details {
-    display: block;
-}
-
-.color-variant-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-primary, #1a1a1a);
-    margin-bottom: 0.25rem;
-}
-
-.color-variant-price {
-    font-size: 0.75rem;
-    color: var(--text-secondary, #666);
-}
-
-/* Color variants loading state */
-.color-variants-loading {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.color-variant-skeleton {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-/* Color selection feedback */
-/* Selected color display intentionally removed */
-
 /* Responsive design */
 @media (max-width: 768px) {
+    .swatch {
+        padding: 10px 14px;
+        font-size: 0.75rem;
+    }
+    
+    .swatch .tone {
+        width: 28px;
+        height: 28px;
+    }
+    
     .color-variant {
         width: 44px;
         height: 44px;
     }
-    
-    .color-variants-container {
-        gap: 0.5rem;
-    }
-    
-    .color-variant::after {
-        font-size: 0.7rem;
-        bottom: -2rem;
-    }
 }
 
 @media (max-width: 480px) {
+    .swatch {
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        gap: 12px;
+    }
+    
+    .swatch .tone {
+        width: 24px;
+        height: 24px;
+    }
+    
     .color-variant {
         width: 40px;
         height: 40px;
-    }
-    
-    .color-variants-title {
-        font-size: 0.85rem;
-        margin-bottom: 0.75rem;
     }
 }

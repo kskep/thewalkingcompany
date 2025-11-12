@@ -52,10 +52,42 @@ $is_in_wishlist = function_exists('eshop_is_in_wishlist') ? eshop_is_in_wishlist
 	</div>
 
 	<!-- Stock Info -->
-	<div class="stock-info-row" style="display: none;">
+	<div class="stock-info-row">
 		<span class="stock-indicator"></span>
-		<span class="stock-text"><?php _e('In Stock - Ready to Ship', 'eshop-theme'); ?></span>
+		<span class="stock-text"><?php _e('Please select options', 'woocommerce'); ?></span>
 	</div>
 
 	<?php do_action( 'woocommerce_after_add_to_cart_button' ); ?>
 </div>
+
+<script>
+jQuery(function($) {
+	// Update stock status based on variation selection
+	$(document).on('found_variation', function(event, variation) {
+		var $stockRow = $('.stock-info-row');
+		var $stockIndicator = $stockRow.find('.stock-indicator');
+		var $stockText = $stockRow.find('.stock-text');
+		
+		if (variation.is_in_stock) {
+			$stockRow.removeClass('out-of-stock');
+			$stockIndicator.css('background', '#10b981');
+			$stockText.text(variation.availability_html ? $(variation.availability_html).text() : '<?php echo esc_js(__('In stock', 'woocommerce')); ?>');
+		} else {
+			$stockRow.addClass('out-of-stock');
+			$stockIndicator.css('background', '#ef4444');
+			$stockText.text('<?php echo esc_js(__('Out of stock', 'woocommerce')); ?>');
+		}
+	});
+	
+	// Reset stock status when variation is reset
+	$(document).on('reset_data', function() {
+		var $stockRow = $('.stock-info-row');
+		var $stockIndicator = $stockRow.find('.stock-indicator');
+		var $stockText = $stockRow.find('.stock-text');
+		
+		$stockRow.removeClass('out-of-stock');
+		$stockIndicator.css('background', '#10b981');
+		$stockText.text('<?php echo esc_js(__('Please select options', 'woocommerce')); ?>');
+	});
+});
+</script>

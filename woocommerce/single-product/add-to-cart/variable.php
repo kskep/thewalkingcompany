@@ -1,7 +1,7 @@
 <?php
 /**
  * Variable product add to cart
- * Custom implementation with circular size buttons
+ * Enhanced implementation with circular size buttons and modern UI
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
@@ -24,39 +24,30 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 	<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
 		<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'woocommerce' ) ) ); ?></p>
 	<?php else : ?>
-		<?php
-		// Debug: Add logging to see what's happening with available variations
-		if ( WP_DEBUG && WP_DEBUG_LOG ) {
-			error_log( 'WooCommerce Available Variations Debug: ' . print_r( array(
-				'product_id' => $product->get_id(),
-				'available_variations_count' => count( $available_variations ),
-				'available_variations' => $available_variations,
-				'product_type' => $product->get_type()
-			), true ) );
-		}
-		?>
-		
-		<!-- Custom Variations Display -->
+		<!-- Enhanced Variations Display -->
 		<div class="variations custom-variations">
 			<?php foreach ( $attributes as $attribute_name => $options ) : ?>
 				<?php
-				// Woo passes keys like 'attribute_pa_size'. Normalize helpers.
+				// Normalize attribute keys for WooCommerce
 				$attr_key   = (strpos($attribute_name, 'attribute_') === 0) ? $attribute_name : 'attribute_' . $attribute_name;
-				$taxonomy   = str_replace('attribute_', '', $attribute_name); // e.g. 'pa_size'
+				$taxonomy   = str_replace('attribute_', '', $attribute_name);
 				$attribute_label = wc_attribute_label( $taxonomy );
 				$attribute_slug = sanitize_title( $taxonomy );
+				
+				// Determine attribute type for styling
 				$is_size_attribute = ( strpos( strtolower( $attribute_name ), 'size' ) !== false );
+				$is_color_attribute = ( strpos( strtolower( $attribute_name ), 'color' ) !== false || strpos( strtolower( $attribute_name ), 'colour' ) !== false );
 				?>
 				
 				<div class="variation-wrapper" data-attribute="<?php echo esc_attr( $attr_key ); ?>">
-					<label class="variation-label">
-						<?php echo esc_html( $attribute_label ); ?>:
+					<label class="block-label variation-label">
+						<?php echo esc_html( $attribute_label ); ?>
 						<span class="selected-value"></span>
 					</label>
 					
 					<?php if ( $is_size_attribute ) : ?>
 						<!-- Circular Size Buttons -->
-						<div class="size-options-single">
+						<div class="size-grid">
 							<?php
 							if ( ! empty( $options ) ) {
 								if ( $product && taxonomy_exists( $taxonomy ) ) {
@@ -69,8 +60,8 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 															eshop_transform_size_label( $term->name ) : 
 															$term->name;
 											
-											// Check if size is in stock
-											$is_in_stock = false; // Default to out of stock until we find a valid variation
+											// Check stock status for this size
+											$is_in_stock = false;
 											$found_variation = false;
 											
 											// Check if this size option corresponds to any available variation
@@ -93,9 +84,9 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 												}
 											}
 											
-											$button_class = 'size-option-single';
+											$button_class = 'size-tile';
 											if ( ! $is_in_stock ) {
-												$button_class .= ' out-of-stock';
+												$button_class .= ' disabled';
 											}
 											?>
 											<button type="button" 
@@ -116,10 +107,74 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 														$option;
 										?>
 										<button type="button" 
-												class="size-option-single"
+												class="size-tile"
 												data-value="<?php echo esc_attr( $option ); ?>"
 												data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 											<?php echo esc_html( $display_name ); ?>
+										</button>
+										<?php
+									}
+								}
+							}
+							?>
+						</div>
+						
+					<?php elseif ( $is_color_attribute ) : ?>
+						<!-- Color Swatches -->
+						<div class="color-palette">
+							<?php
+							if ( ! empty( $options ) ) {
+								if ( $product && taxonomy_exists( $taxonomy ) ) {
+									$terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
+									
+									foreach ( $terms as $term ) {
+										if ( in_array( $term->slug, $options, true ) ) {
+											// Check stock status for this color
+											$is_in_stock = false;
+											$found_variation = false;
+											
+											// Check if this color option corresponds to any available variation
+											foreach ( $available_variations as $variation ) {
+												if ( isset( $variation['attributes'][ $attr_key ] ) &&
+													 $variation['attributes'][ $attr_key ] === $term->slug ) {
+													$found_variation = true;
+													if ( $variation['is_in_stock'] ) {
+														$is_in_stock = true;
+													}
+												}
+											}
+											
+											$swatch_class = 'swatch';
+											if ( ! $is_in_stock ) {
+												$swatch_class .= ' disabled';
+											}
+											
+											// Try to get color hex from term meta
+											$color_hex = get_term_meta( $term->term_id, 'color', true );
+											?>
+											<button type="button" 
+													class="<?php echo esc_attr( $swatch_class ); ?>"
+													data-value="<?php echo esc_attr( $term->slug ); ?>"
+													data-attribute="<?php echo esc_attr( $attr_key ); ?>"
+													<?php echo ! $is_in_stock ? 'disabled' : ''; ?>>
+												<?php if ( $color_hex ) : ?>
+													<span class="tone" style="background-color: <?php echo esc_attr( $color_hex ); ?>"></span>
+												<?php endif; ?>
+												<span class="swatch-name"><?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $term->name, $term, $attribute_name, $product ) ); ?></span>
+											</button>
+											<?php
+										}
+									}
+								} else {
+									// Non-taxonomy color attributes
+									foreach ( $options as $option ) {
+										$swatch_class = 'swatch';
+										?>
+										<button type="button" 
+												class="<?php echo esc_attr( $swatch_class ); ?>"
+												data-value="<?php echo esc_attr( $option ); ?>"
+												data-attribute="<?php echo esc_attr( $attr_key ); ?>">
+											<span class="swatch-name"><?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute_name, $product ) ); ?></span>
 										</button>
 										<?php
 									}
@@ -138,11 +193,29 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 									
 									foreach ( $terms as $term ) {
 										if ( in_array( $term->slug, $options, true ) ) {
+											// Check stock status for this attribute
+											$is_in_stock = false;
+											
+											// Check if this option corresponds to any available variation
+											foreach ( $available_variations as $variation ) {
+												if ( isset( $variation['attributes'][ $attr_key ] ) &&
+													 $variation['attributes'][ $attr_key ] === $term->slug &&
+													 $variation['is_in_stock'] ) {
+													$is_in_stock = true;
+													break;
+												}
+											}
+											
+											$button_class = 'attribute-option-single';
+											if ( ! $is_in_stock ) {
+												$button_class .= ' disabled';
+											}
 											?>
 											<button type="button" 
-													class="attribute-option-single"
+													class="<?php echo esc_attr( $button_class ); ?>"
 													data-value="<?php echo esc_attr( $term->slug ); ?>"
-													data-attribute="<?php echo esc_attr( $attr_key ); ?>">
+													data-attribute="<?php echo esc_attr( $attr_key ); ?>"
+													<?php echo ! $is_in_stock ? 'disabled' : ''; ?>>
 												<?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $term->name, $term, $attribute_name, $product ) ); ?>
 											</button>
 											<?php
@@ -150,9 +223,10 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 									}
 								} else {
 									foreach ( $options as $option ) {
+										$button_class = 'attribute-option-single';
 										?>
 										<button type="button" 
-												class="attribute-option-single"
+												class="<?php echo esc_attr( $button_class ); ?>"
 												data-value="<?php echo esc_attr( $option ); ?>"
 												data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 											<?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute_name, $product ) ); ?>
@@ -209,43 +283,5 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 do_action( 'woocommerce_after_add_to_cart_form' );
 ?>
 
-<script>
-// Handle size and attribute button clicks
-jQuery(function($) {
-	// Size button click handler
-	$(document).on('click', '.size-option-single:not(.out-of-stock)', function(e) {
-		e.preventDefault();
-		var $this = $(this);
-		var value = $this.data('value');
-		
-		// Update button states
-		$this.siblings('.size-option-single').removeClass('selected');
-		$this.addClass('selected');
-		
-		// Update hidden select
-		var $select = $this.closest('.variation-wrapper').find('select');
-		$select.val(value).trigger('change');
-		
-		// Update label
-		$this.closest('.variation-wrapper').find('.selected-value').text($this.text());
-	});
-	
-	// Other attribute button click handler
-	$(document).on('click', '.attribute-option-single', function(e) {
-		e.preventDefault();
-		var $this = $(this);
-		var value = $this.data('value');
-		
-		// Update button states
-		$this.siblings('.attribute-option-single').removeClass('selected');
-		$this.addClass('selected');
-		
-		// Update hidden select
-		var $select = $this.closest('.variation-wrapper').find('select');
-		$select.val(value).trigger('change');
-		
-		// Update label
-		$this.closest('.variation-wrapper').find('.selected-value').text($this.text());
-	});
-});
-</script>
+<!-- JavaScript functionality moved to js/components/single-product-swatches.js -->
+<!-- This prevents conflicts and consolidates all variation handling -->

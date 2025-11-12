@@ -2,6 +2,10 @@
 .variations_button .quantity { padding: 0 6px; }
 /* Import Google Fonts for concept design */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&display=swap');
+
+/* Import component styles */
+@import url('../components/attribute-options.css');
 
 :root {
   --pink: #ee81b3;
@@ -235,6 +239,30 @@ button:focus-visible {
   gap: 32px;
 }
 
+/* Enhanced variations container */
+.custom-variations {
+  display: grid;
+  gap: 32px;
+}
+
+/* Individual variation wrapper */
+.variation-wrapper {
+  display: grid;
+  gap: 16px;
+}
+
+/* Variation label with selected value display */
+.variation-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.variation-label .selected-value {
+  color: var(--pink, #ee81b3);
+  font-weight: 600;
+}
+
 .eshop-variations-form {
   position: relative;
 }
@@ -272,92 +300,17 @@ button:focus-visible {
   margin-bottom: 16px;
 }
 
+/* Color palette container - styles moved to components/color-variants.css */
 .color-palette {
   display: grid;
   gap: 12px;
 }
 
-.swatch {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 18px;
-  border: 1px solid var(--pane-line);
-  border-radius: var(--radius);
-  background: var(--pane-mid);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.8rem;
-  color: var(--muted);
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-  cursor: pointer;
-}
-
-.swatch .tone {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-.swatch-name {
-  flex: 1;
-}
-
-.swatch:hover {
-  border-color: var(--pink);
-}
-
-.swatch.selected {
-  border-color: var(--pink);
-  background: #fff;
-  color: var(--pink);
-}
-
-.swatch.disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
+/* Size grid container - styles moved to components/size-selection.css */
 .size-grid {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-}
-
-.size-tile {
-  min-width: 54px;
-  height: 48px;
-  border: 1px solid var(--pane-line);
-  border-radius: var(--radius);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  background: var(--pane-mid);
-  color: var(--ink);
-  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-  cursor: pointer;
-}
-
-.size-tile:hover {
-  border-color: var(--pink);
-}
-
-.size-tile.selected {
-  border-color: var(--pink);
-  color: var(--pink);
-  background: #fff;
-}
-
-.size-tile.disabled,
-.size-tile:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 /* WooCommerce select styling */
@@ -587,12 +540,6 @@ button:focus-visible {
 
   .size-grid {
     gap: 8px;
-  }
-
-  .size-tile {
-    min-width: 48px;
-    height: 44px;
-    font-size: 0.75rem;
   }
 }
 
