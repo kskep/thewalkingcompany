@@ -1052,6 +1052,20 @@ function eshop_output_related_products_from_categories() {
 }
 
 /**
+ * Remove erroneously injected product summary content from the short description.
+ * This is a corrective filter to clean up the output before the final wrapper is applied.
+ */
+function eshop_remove_summary_from_short_description($description) {
+    // The pattern looks for the start of the injected price row and removes everything from there to the end.
+    $pattern = '/<div class="price-row".*/s';
+    $cleaned_description = preg_replace($pattern, '', $description);
+    
+    // If cleaning resulted in an empty string, return the original to be safe.
+    return $cleaned_description !== '' ? $cleaned_description : $description;
+}
+add_filter('woocommerce_short_description', 'eshop_remove_summary_from_short_description', 0);
+
+/**
  * Clean up the short description from duplicate wrappers.
  * This can happen if content is copy-pasted from a visual editor with its own wrappers.
  */
