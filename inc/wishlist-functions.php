@@ -139,6 +139,10 @@ function eshop_add_to_wishlist() {
 add_action('wp_ajax_add_to_wishlist', 'eshop_add_to_wishlist');
 add_action('wp_ajax_nopriv_add_to_wishlist', 'eshop_add_to_wishlist');
 
+// Add toggle_wishlist handlers that use the same function
+add_action('wp_ajax_toggle_wishlist', 'eshop_add_to_wishlist');
+add_action('wp_ajax_nopriv_toggle_wishlist', 'eshop_add_to_wishlist');
+
 /**
  * AJAX handler to remove product from wishlist
  */
