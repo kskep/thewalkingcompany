@@ -430,6 +430,71 @@ button:focus-visible {
   cursor: not-allowed;
 }
 
+.wishlist-action-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--pane-line);
+  background: #fff;
+  color: var(--pink);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.wishlist-action-btn:hover {
+  background: var(--pink) !important;
+  color: white !important;
+  border-color: var(--pink) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(238, 129, 179, 0.3);
+}
+
+.wishlist-action-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
+  stroke: currentColor;
+}
+
+/* Active state - product is in wishlist */
+.wishlist-action-btn.in-wishlist {
+  background: var(--pink) !important;
+  color: white !important;
+  border-color: var(--pink) !important;
+}
+
+.wishlist-action-btn.in-wishlist svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Loading state */
+.wishlist-action-btn.loading {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.wishlist-action-btn.loading svg {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Legacy wishlist class for backward compatibility */
 .wishlist {
   border: 1px solid var(--pane-line);
   background: #fff;
