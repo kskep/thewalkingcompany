@@ -69,6 +69,7 @@
                 const form = event.currentTarget;
                 this.syncSelectedAttributes(form);
                 this.updateStockInfo(variation);
+                this.updatePrice(variation);
                 this.initializeQuantityControls($(form));
             });
 
@@ -76,6 +77,7 @@
                 const form = event.currentTarget;
                 this.resetAttributes(form);
                 this.resetStockInfo();
+                this.resetPrice();
             });
 
             $(document).on('updated_wc_div found_variation show_variation', () => {
@@ -383,6 +385,43 @@
                 $stockInfo.addClass('out-of-stock').show();
                 $indicator.css('background', '#ef4444');
                 $text.text('Out of Stock');
+            }
+        }
+
+        updatePrice(variation) {
+            const priceRow = document.querySelector('.price-row');
+            if (!priceRow) {
+                return;
+            }
+
+            const priceTarget = priceRow.querySelector('.price-amount');
+            if (!priceTarget) {
+                return;
+            }
+
+            const basePrice = priceRow.dataset.basePrice || priceTarget.innerHTML;
+
+            if (variation && variation.price_html) {
+                priceTarget.innerHTML = variation.price_html;
+            } else {
+                priceTarget.innerHTML = basePrice;
+            }
+        }
+
+        resetPrice() {
+            const priceRow = document.querySelector('.price-row');
+            if (!priceRow) {
+                return;
+            }
+
+            const priceTarget = priceRow.querySelector('.price-amount');
+            if (!priceTarget) {
+                return;
+            }
+
+            const basePrice = priceRow.dataset.basePrice;
+            if (basePrice) {
+                priceTarget.innerHTML = basePrice;
             }
         }
 

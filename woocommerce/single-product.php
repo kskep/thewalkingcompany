@@ -101,8 +101,8 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                 <?php endif; ?>
 
                 <?php if ( $product->get_price_html() ) : ?>
-                    <div class="price-row">
-                        <?php echo wp_kses_post( $product->get_price_html() ); ?>
+                    <div class="price-row" data-base-price="<?php echo esc_attr( wp_kses_post( $product->get_price_html() ) ); ?>">
+                        <span class="price-amount"><?php echo wp_kses_post( $product->get_price_html() ); ?></span>
                     </div>
                 <?php endif; ?>
 

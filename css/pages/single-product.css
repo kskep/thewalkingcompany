@@ -209,19 +209,36 @@ button:focus-visible {
 .wc-short-description li { margin: 0.25rem 0; }
 
 .price-row {
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   gap: 16px;
-  align-items: baseline;
-  font-size: 1.4rem;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
   color: var(--ink);
+  padding: 18px 28px;
+  background: var(--pane-soft);
+  border: 1px solid var(--pane-line);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(31, 31, 35, 0.06);
 }
 
 .price-row .price {
-  font-weight: 600;
+  display: inline-flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.price-row .woocommerce-Price-amount {
+  font-family: "Playfair Display", serif;
+}
+
+.price-row ins {
+  color: var(--pink);
+  text-decoration: none;
 }
 
 .price-row del {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: rgba(31, 31, 35, 0.4);
 }
 
@@ -392,6 +409,11 @@ button:focus-visible {
 .stock-info-row .stock-indicator { width: 8px; height: 8px; border-radius: 999px; background: #10b981; }
 .stock-info-row.out-of-stock .stock-indicator { background: #ef4444; }
 
+.single_variation_wrap .woocommerce-variation-price,
+.single_variation_wrap .woocommerce-variation-availability {
+  display: none !important;
+}
+
 .single_add_to_cart_button {
   border: 1px solid var(--pink) !important;
   background: var(--pink) !important;
@@ -516,30 +538,68 @@ button:focus-visible {
 @media (max-width: 1200px) {
   .hero {
     grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .gallery-card {
+    order: 1;
   }
 
   .details-panel {
-    order: -1;
+    order: 2;
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .page-shell {
-    padding: 48px 24px 96px;
-    gap: 72px;
+    padding: 40px 24px 80px;
+    gap: 60px;
   }
 
-  .cta-row {
-    flex-direction: column;
-    align-items: stretch;
+  .price-row {
+    width: 100%;
+    justify-content: space-between;
+    font-size: clamp(1.6rem, 5.6vw, 2.1rem);
+    padding: 16px 20px;
+  }
+
+  .options-block {
+    gap: 24px;
+  }
+
+  .cart-actions-wrapper {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cart-actions-wrapper .single_add_to_cart_button {
+    flex: 1 1 200px;
   }
 
   .wishlist {
-    align-self: center;
+    align-self: flex-start;
   }
 
   .size-grid {
     gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 32px 20px 64px;
+    gap: 48px;
+  }
+
+  .cart-actions-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cart-actions-wrapper .single_add_to_cart_button,
+  .cart-actions-wrapper .wishlist-action-btn {
+    width: 100%;
   }
 }
 
