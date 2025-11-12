@@ -100,6 +100,12 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     </div>
                 <?php endif; ?>
 
+                <?php if ( $product->get_price_html() ) : ?>
+                    <div class="price-row">
+                        <?php echo wp_kses_post( $product->get_price_html() ); ?>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Options Block (Colors, Sizes, etc.) -->
                 <div class="options-block">
                     <?php

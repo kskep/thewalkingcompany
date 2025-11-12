@@ -308,10 +308,14 @@ add_filter('woocommerce_sale_flash', '__return_empty_string', 10, 3);
  */
 function eshop_customize_single_product_summary_hooks() {
     if (!function_exists('is_product') || !is_product()) { return; }
-    // Remove reviews/rating from summary
+
+    // Avoid duplicate summary output because the template renders these manually
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_title', 5);
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 10);
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
+
+    // Keep ratings hidden to match the concept layout
     remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10);
-    // Prevent duplicate Add to Cart in summary; we'll render it in our Product Actions block
-    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
 }
 add_action('wp', 'eshop_customize_single_product_summary_hooks');
 
