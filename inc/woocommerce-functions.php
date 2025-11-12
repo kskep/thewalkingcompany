@@ -1052,28 +1052,29 @@ function eshop_output_related_products_from_categories() {
 }
 
 /**
- * Fix duplicate div elements in short description
+ * Clean up the short description from duplicate wrappers.
+ * This can happen if content is copy-pasted from a visual editor with its own wrappers.
  */
-function eshop_fix_duplicate_short_description_divs($description) {
-    // The filter was being applied multiple times, causing nested divs.
-    // The root cause is that the add_filter was inside a function that was called during rendering.
-    // This function now simply wraps the description if it's not already wrapped.
-    
+function eshop_clean_short_description_wrapper($description) {
     $wrapper_class = 'product_feautures_item_title features_title_place';
+    $div_pattern = '/<div class="' . preg_quote($wrapper_class, '/') . '">/i';
 
-    // Check if the description is already wrapped.
-    if (strpos(trim($description), '<div class="' . $wrapper_class . '">') === 0) {
-        return $description; // Already wrapped, do nothing.
+    // If the wrapper is present multiple times, clean it up.
+    if (preg_match_all($div_pattern, $description, $matches) && count($matches[0]) > 1) {
+        // This regex will find the content inside the deepest nested div.
+        $content_pattern = '/(?:<div class="' . preg_quote($wrapper_class, '/') . '">\s*)+(.+?)(?:\s*<\/div>)+/is';
+        
+        if (preg_match($content_pattern, $description, $content_match)) {
+            $inner_content = trim($content_match[1]);
+            // Return the content wrapped in a single, clean div.
+            return '<div class="' . $wrapper_class . '">' . $inner_content . '</div>';
+        }
     }
 
-    // If there's content, wrap it.
-    if (!empty(trim($description))) {
-        return '<div class="' . $wrapper_class . '">' . $description . '</div>';
-    }
-    
+    // If there's no duplication, return the description as is.
     return $description;
 }
-add_filter('woocommerce_short_description', 'eshop_fix_duplicate_short_description_divs', 1);
+add_filter('woocommerce_short_description', 'eshop_clean_short_description_wrapper', 1);
 
 /**
  * Ensure product context is properly set for single product pages
