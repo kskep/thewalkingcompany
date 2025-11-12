@@ -58,7 +58,7 @@ button:focus-visible {
 .page-shell {
   max-width: 1630px;
   margin: 0 auto;
-  padding: 72px 64px 120px;
+  padding: 2rem 0rem;
   display: grid;
   gap: 96px;
 }
