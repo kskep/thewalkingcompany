@@ -16,8 +16,6 @@ get_header();
         <?php while (have_posts()) : the_post(); ?>
             <?php
             $page_id      = get_the_ID();
-            $raw_title    = get_post_field('post_title', $page_id);
-            $page_title   = $raw_title ? $raw_title : get_the_title();
             $page_excerpt = has_excerpt($page_id) ? wp_strip_all_tags(get_the_excerpt()) : '';
             $ancestors    = get_post_ancestors($page_id);
             $parent_id    = wp_get_post_parent_id($page_id);
@@ -33,45 +31,13 @@ get_header();
             }
 
             $reading_time = function_exists('eshop_estimated_reading_time') ? eshop_estimated_reading_time($page_id) : 0;
-
-            $child_nav = '';
-            $child_nav_heading = '';
-
-            $child_list = wp_list_pages(array(
-                'child_of' => $page_id,
-                'title_li' => '',
-                'echo' => 0,
-                'depth' => 1,
-                'sort_column' => 'menu_order,post_title',
-            ));
-
-            if (!empty($child_list)) {
-                $child_nav = $child_list;
-                $child_nav_heading = esc_html__('Subpages', 'eshop-theme');
-            } elseif ($parent_id) {
-                $sibling_list = wp_list_pages(array(
-                    'child_of' => $parent_id,
-                    'title_li' => '',
-                    'echo' => 0,
-                    'depth' => 1,
-                    'sort_column' => 'menu_order,post_title',
-                ));
-
-                if (!empty($sibling_list)) {
-                    $child_nav = $sibling_list;
-                    $child_nav_heading = esc_html__('In this section', 'eshop-theme');
-                }
-            }
             ?>
 
             <article id="page-<?php the_ID(); ?>" <?php post_class('static-page-article'); ?>>
                 <div class="page-shell static-page-shell">
                     <header class="static-page-hero">
                         <div class="static-page-hero__content">
-                            <?php get_template_part('template-parts/components/breadcrumbs'); ?>
-
                             <p class="static-page-eyebrow"><?php echo esc_html($section_label); ?></p>
-                            <h1 class="static-page-title"><?php echo esc_html($page_title); ?></h1>
 
                             <?php if (!empty($page_excerpt)) : ?>
                                 <p class="static-page-dek"><?php echo esc_html($page_excerpt); ?></p>
@@ -124,25 +90,6 @@ get_header();
 
                             <?php edit_post_link(esc_html__('Edit page', 'eshop-theme'), '<p class="static-page-edit">', '</p>'); ?>
                         </div>
-
-                        <aside class="static-page-aside" aria-label="Secondary">
-                            <?php if (!empty($child_nav) && !empty($child_nav_heading)) : ?>
-                                <div class="static-page-outline">
-                                    <p class="static-page-outline__label"><?php echo esc_html($child_nav_heading); ?></p>
-                                    <ul class="static-page-outline__list">
-                                        <?php echo wp_kses_post($child_nav); ?>
-                                    </ul>
-                                </div>
-                            <?php endif; ?>
-
-                            <div class="static-page-note">
-                                <p class="note-eyebrow"><?php esc_html_e('Need support?', 'eshop-theme'); ?></p>
-                                <p class="note-body"><?php esc_html_e('Our stylists reply within 24 hours. Use the contact form or visit a boutique for personal guidance.', 'eshop-theme'); ?></p>
-                                <a class="note-link" href="<?php echo esc_url(home_url('/contact/')); ?>">
-                                    <?php esc_html_e('Contact us', 'eshop-theme'); ?>
-                                </a>
-                            </div>
-                        </aside>
                     </div>
                 </div>
             </article>
