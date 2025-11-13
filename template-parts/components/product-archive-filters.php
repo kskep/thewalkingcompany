@@ -222,9 +222,9 @@ $sort_options = [
                 </select>
             </div>
 
-            <!-- Desktop Filter Toggle Button -->
+            <!-- Filter Toggle Button -->
             <button type="button"
-                    id="filter-toggle-desktop"
+                    id="filter-toggle"
                     class="filter-toggle"
                     aria-controls="filter-modal"
                     aria-expanded="false">
@@ -256,16 +256,6 @@ $sort_options = [
             </button>
         </div>
     <?php endif; ?>
-
-    <!-- Filter Toggle Button (Mobile) -->
-    <button type="button" 
-            id="filter-toggle" 
-            class="filter-toggle"
-            aria-controls="filter-modal"
-            aria-expanded="false">
-        <span class="filter-toggle-icon" aria-hidden="true">⚙</span>
-        <span class="filter-toggle-text"><?php _e('Filters', 'your-textdomain'); ?></span>
-    </button>
 </section>
 
 <!-- Filter Modal Overlay -->

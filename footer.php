@@ -5,16 +5,23 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 
-                <!-- Brand & Newsletter -->
+                <!-- Brand & Logo -->
                 <div>
+                    <!-- Company Logo -->
+                    <div class="mb-6">
+                        <img src="https://walk.thewebplace.gr/wp-content/uploads/2023/01/twc-logo-pink.png"
+                             alt="The Walking Company"
+                             class="h-16 w-auto">
+                    </div>
+                    
                     <h3 class="font-serif text-2xl font-semibold text-gray-900 mb-4">
-                        <?php bloginfo('name'); ?>
+                        thewalkingcompany
                     </h3>
                     <p class="text-gray-500 text-sm mb-6">
                         Your daily dose of fashion inspiration, bringing you curated collections and the latest trends.
                     </p>
 
-                    <!-- Newsletter Signup -->
+                    <!-- Newsletter Signup - COMMENTED OUT FOR NOW
                     <div>
                         <h4 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">Newsletter</h4>
                         <p class="text-gray-500 text-sm mb-4">Subscribe for exclusive offers and style updates.</p>
@@ -31,6 +38,7 @@
                             </button>
                         </form>
                     </div>
+                    -->
                 </div>
 
                 <!-- My Account -->
@@ -68,22 +76,7 @@
 
             <!-- Footer Bottom -->
             <div class="border-t border-gray-200 mt-8 pt-6 text-center text-sm text-gray-500">
-                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                    <p>&copy; <?php echo date('Y'); ?> <?php bloginfo('name'); ?>. All Rights Reserved.</p>
-
-                    <!-- Social Links -->
-                    <div class="social-links flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-primary transition-colors duration-200" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </div>
-                </div>
+                <p>&copy; <?php echo date('Y'); ?> thewalkingcompany. All Rights Reserved.</p>
             </div>
         </div>
     </footer>

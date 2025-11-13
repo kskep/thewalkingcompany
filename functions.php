@@ -60,6 +60,12 @@ function eshop_theme_scripts() {
         wp_enqueue_style('eshop-page-front', get_template_directory_uri() . '/css/pages.front.css', array('eshop-theme-style'), '1.0.0');
     }
 
+    if (is_page() && !is_front_page()) {
+        $static_page_css_path = get_template_directory() . '/css/pages.static-page.css';
+        $static_page_css_ver = file_exists($static_page_css_path) ? filemtime($static_page_css_path) : '1.0.0';
+        wp_enqueue_style('eshop-static-page', get_template_directory_uri() . '/css/pages.static-page.css', array('eshop-theme-style'), $static_page_css_ver);
+    }
+
     if (is_cart() || is_checkout()) {
         wp_enqueue_style('eshop-cart-checkout', get_template_directory_uri() . '/css/pages.cart-checkout.css', array('eshop-theme-style'), '1.0.0');
     }

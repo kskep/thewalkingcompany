@@ -284,3 +284,35 @@ function eshop_ensure_mo_files_exist($po_files) {
         }
     }
 }
+
+if (!function_exists('eshop_estimated_reading_time')) {
+    /**
+     * Calculate an estimated reading time for long-form pages.
+     * Roughly based on 200 words per minute which aligns with WP handbook guidance.
+     *
+     * @param int|null $post_id Optional post ID. Defaults to current post.
+     * @return int Estimated minutes rounded up. Minimum value is 0 when content is empty.
+     */
+    function eshop_estimated_reading_time($post_id = null) {
+        $post_id = $post_id ? absint($post_id) : get_the_ID();
+
+        if (!$post_id) {
+            return 0;
+        }
+
+        $content = get_post_field('post_content', $post_id);
+
+        if (empty($content)) {
+            return 0;
+        }
+
+        $stripped = wp_strip_all_tags(strip_shortcodes($content));
+        $word_count = str_word_count($stripped);
+
+        if ($word_count <= 0) {
+            return 0;
+        }
+
+        return (int) max(1, ceil($word_count / 200));
+    }
+}

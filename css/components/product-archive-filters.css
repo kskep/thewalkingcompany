@@ -555,6 +555,15 @@
   border-color: var(--pink-dark);
 }
 
+
+@media (max-width: 768px) {
+  .toolbar .filter-toggle {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .toolbar__top {
@@ -587,9 +596,15 @@
   }
 }
 
-/* Ensure desktop filter toggle is visible */
+/* Ensure desktop filter toggle is visible on desktop only */
 #filter-toggle-desktop {
   display: inline-flex;
+}
+
+@media (max-width: 768px) {
+  #filter-toggle-desktop {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
