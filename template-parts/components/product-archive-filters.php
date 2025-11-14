@@ -148,66 +148,80 @@ $sort_options = [
     'price' => 'Sort — Price (Low)',
     'price-desc' => 'Sort — Price (High)'
 ];
+
+// Modern slider icon shared by desktop + mobile filter buttons
+$filter_icon_svg = <<<SVG
+<svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
+    <path d="M4 6h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    <circle cx="15" cy="6" r="2.2" stroke="currentColor" stroke-width="1.6" fill="none" />
+    <path d="M4 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    <circle cx="9" cy="12" r="2.2" stroke="currentColor" stroke-width="1.6" fill="none" />
+    <path d="M4 18h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    <circle cx="13" cy="18" r="2.2" stroke="currentColor" stroke-width="1.6" fill="none" />
+</svg>
+SVG;
 ?>
 
 <section class="toolbar" role="region" aria-label="Product filtering and sorting">
-    <!-- Top Section: Breadcrumb and Result Meta -->
+    <!-- Top Section: Breadcrumb, Meta, and Desktop Controls -->
     <div class="toolbar__top">
-        <!-- Breadcrumb Navigation -->
-        <nav class="breadcrumb" aria-label="Breadcrumb">
-            <?php foreach ($breadcrumbs as $index => $crumb): ?>
-                <?php if ($index > 0): ?>
-                    <span class="breadcrumb-separator"> / </span>
-                <?php endif; ?>
-                <?php if ($index < count($breadcrumbs) - 1): ?>
-                    <a href="<?php echo esc_url($crumb['url']); ?>" class="breadcrumb-link">
-                        <?php echo esc_html($crumb['label']); ?>
-                    </a>
-                <?php else: ?>
-                    <span class="breadcrumb-current" aria-current="page">
-                        <?php echo esc_html($crumb['label']); ?>
-                    </span>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </nav>
+        <div class="toolbar__info">
+            <!-- Breadcrumb Navigation -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <?php foreach ($breadcrumbs as $index => $crumb): ?>
+                    <?php if ($index > 0): ?>
+                        <span class="breadcrumb-separator"> / </span>
+                    <?php endif; ?>
+                    <?php if ($index < count($breadcrumbs) - 1): ?>
+                        <a href="<?php echo esc_url($crumb['url']); ?>" class="breadcrumb-link">
+                            <?php echo esc_html($crumb['label']); ?>
+                        </a>
+                    <?php else: ?>
+                        <span class="breadcrumb-current" aria-current="page">
+                            <?php echo esc_html($crumb['label']); ?>
+                        </span>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </nav>
 
-        <!-- Result Metadata and Sort -->
-        <div class="result-meta" role="status" aria-live="polite">
-            <!-- Product Count Description -->
-            <span class="result-description">
-                <?php
-                if ($total_products > 0) {
-                    echo sprintf(
-                        _n(
-                            '%s style curated for you',
-                            '%s styles curated for you',
-                            $total_products,
-                            'eshop-theme'
-                        ),
-                        '<strong>' . number_format_i18n($total_products) . '</strong>'
-                    );
-                } else {
-                    echo '<strong>0</strong> products found';
-                }
-                ?>
-            </span>
+            <!-- Result Metadata -->
+            <div class="result-meta" role="status" aria-live="polite">
+                <span class="result-description">
+                    <?php
+                    if ($total_products > 0) {
+                        echo sprintf(
+                            _n(
+                                '%s style curated for you',
+                                '%s styles curated for you',
+                                $total_products,
+                                'eshop-theme'
+                            ),
+                            '<strong>' . number_format_i18n($total_products) . '</strong>'
+                        );
+                    } else {
+                        echo '<strong>0</strong> products found';
+                    }
+                    ?>
+                </span>
 
-            <span class="result-divider" aria-hidden="true">|</span>
+                <span class="result-divider" aria-hidden="true">|</span>
 
-            <!-- Page Range -->
-            <span class="result-range">
-                <?php
-                if ($total_products > 0) {
-                    printf(
-                        __('Showing %d – %d', 'eshop-theme'),
-                        $start,
-                        $end
-                    );
-                }
-                ?>
-            </span>
+                <span class="result-range">
+                    <?php
+                    if ($total_products > 0) {
+                        printf(
+                            __('Showing %d – %d', 'eshop-theme'),
+                            $start,
+                            $end
+                        );
+                    }
+                    ?>
+                </span>
+            </div>
+        </div>
 
-            <!-- Sort Dropdown -->
+        <!-- Desktop Controls -->
+        <div class="toolbar__actions" role="group" aria-label="<?php esc_attr_e('Filter and sort products', 'eshop-theme'); ?>">
             <div class="sort-container">
                 <label for="product-sort" class="visually-hidden">
                     <?php _e('Sort products', 'eshop-theme'); ?>
@@ -222,16 +236,27 @@ $sort_options = [
                 </select>
             </div>
 
-            <!-- Filter Toggle Button -->
             <button type="button"
-                    id="filter-toggle"
-                    class="filter-toggle"
+                    id="filter-toggle-desktop"
+                    class="filter-toggle filter-toggle--desktop"
                     aria-controls="filter-modal"
                     aria-expanded="false">
-                <span class="filter-toggle-icon" aria-hidden="true">⚙</span>
+                <span class="filter-toggle-icon" aria-hidden="true"><?php echo $filter_icon_svg; ?></span>
                 <span class="filter-toggle-text"><?php _e('Filters', 'eshop-theme'); ?></span>
             </button>
         </div>
+    </div>
+
+    <!-- Mobile Filter Toggle -->
+    <div class="toolbar__mobile-toggle">
+        <button type="button"
+                id="filter-toggle"
+                class="filter-toggle filter-toggle--mobile"
+                aria-controls="filter-modal"
+                aria-expanded="false">
+            <span class="filter-toggle-icon" aria-hidden="true"><?php echo $filter_icon_svg; ?></span>
+            <span class="filter-toggle-text"><?php _e('Filters', 'eshop-theme'); ?></span>
+        </button>
     </div>
 
     <!-- Active Filters Section -->

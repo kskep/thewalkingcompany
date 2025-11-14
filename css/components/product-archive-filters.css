@@ -13,11 +13,32 @@
 
 .toolbar__top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 32px;
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--line);
   padding-bottom: 18px;
+}
+
+.toolbar__info {
+  flex: 1 1 320px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toolbar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  flex: 0 0 auto;
+}
+
+.toolbar__mobile-toggle {
+  display: none;
 }
 
 .breadcrumb {
@@ -31,6 +52,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-wrap: wrap;
   font-size: 0.86rem;
   color: var(--muted);
 }
@@ -121,29 +143,47 @@
   border-color: var(--pink);
 }
 
-/* Filter Toggle Button (Mobile) */
+/* Filter Toggle Buttons */
 .filter-toggle {
-  display: none;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--pink);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.filter-toggle:hover {
+.filter-toggle--desktop:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+  box-shadow: 0 8px 24px rgba(238, 129, 179, 0.18);
+}
+
+.filter-toggle--mobile {
+  display: none;
+  width: 100%;
+  justify-content: center;
+  background: var(--pink);
+  border-color: var(--pink);
+  color: #fff;
+}
+
+.filter-toggle--mobile:hover {
   background: var(--pink-dark);
+  border-color: var(--pink-dark);
 }
 
-.filter-toggle-icon {
-  font-size: 1rem;
+.filter-toggle-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 /* Filter Modal */
@@ -556,15 +596,14 @@
 }
 
 
-@media (max-width: 768px) {
-  .toolbar .filter-toggle {
-    display: flex;
-    width: 100%;
-    justify-content: center;
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .toolbar__actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .toolbar__top {
     flex-direction: column;
@@ -572,13 +611,25 @@
     gap: 16px;
   }
 
-  .result-meta {
-    flex-wrap: wrap;
-    gap: 12px;
+  .toolbar__actions {
+    width: 100%;
+    justify-content: space-between;
   }
 
-  .filter-toggle {
+  .toolbar__mobile-toggle {
+    display: block;
+  }
+
+  .filter-toggle--desktop {
+    display: none;
+  }
+
+  .filter-toggle--mobile {
     display: flex;
+  }
+
+  .result-meta {
+    gap: 12px;
   }
 
   .active-filters {
