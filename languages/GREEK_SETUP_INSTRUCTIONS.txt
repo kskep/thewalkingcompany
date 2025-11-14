@@ -1,118 +1,456 @@
-INSTRUCTIONS FOR GREEK LANGUAGE ACTIVATION
-==========================================
+# GREEK LANGUAGE SETUP INSTRUCTIONS
+=====================================
 
-The Greek language files have been created for your theme. To activate Greek:
+This guide provides comprehensive instructions for setting up and maintaining Greek language support for the eshop-theme WordPress theme.
 
-STEP 1: Compile the Translation File
--------------------------------------
+## OVERVIEW
+-----------
 
-The .po file needs to be compiled into a .mo file for WordPress to use it.
+The eshop-theme includes Greek language support with the following files:
+- el_GR.po - Translation source file (editable text)
+- el_GR.mo - Compiled translation file (used by WordPress)
+- eshop-theme.pot - Template file for creating new translations
 
-Choose ONE of these methods:
+## THEME INFORMATION
+------------------
 
-METHOD A - Using Poedit (Easiest - Recommended)
-1. Download and install Poedit from: https://poedit.net/
-2. Open languages/el_GR.po in Poedit
-3. Click "Save" (Ctrl+S)
-4. The el_GR.mo file will be automatically created
-5. Done! Go to Step 2.
+- Text Domain: eshop-theme
+- Language Files Location: /languages/
+- WordPress Locale Code for Greek: el_GR
+- Plural Forms: nplurals=2; plural=n != 1;
 
-METHOD B - Using WP-CLI (If installed)
-1. Open terminal in your WordPress root directory
-2. Run: wp i18n make-mo wp-content/themes/thewalkingcompany/languages/
-3. Done! Go to Step 2.
+## COMPILING TRANSLATIONS
+-----------------------
 
-METHOD C - Using WordPress Plugin
-1. Install the "Loco Translate" plugin from WordPress.org
-2. Go to Loco Translate → Themes → Fashion Magazine Theme
-3. It will automatically detect and compile translations
-4. Done! Go to Step 2.
+### Method 1: Using Poedit (GUI Method)
 
-METHOD D - Online Tool
-1. Go to: https://po2mo.net/
-2. Upload your el_GR.po file
-3. Download the generated el_GR.mo file
-4. Place it in: wp-content/themes/thewalkingcompany/languages/
-5. Done! Go to Step 2.
+1. **Download and Install Poedit**
+   - Visit: https://poedit.net/download
+   - Download and install the appropriate version for your system
 
+2. **Open the PO File**
+   - Launch Poedit
+   - Open File → Open
+   - Navigate to: /languages/el_GR.po
+   - Click "Open"
 
-STEP 2: Activate Greek Language
---------------------------------
+3. **Edit Translations (if needed)**
+   - Review existing translations in the main window
+   - Click on any string to edit the translation
+   - Make changes as needed
 
-Option A - Via WordPress Admin (Easiest):
-1. Log in to WordPress admin
-2. Go to Settings → General
-3. Find "Site Language"
-4. Select "Ελληνικά" (Greek)
-5. Click "Save Changes"
-6. Your site is now in Greek!
+4. **Compile to MO File**
+   - Go to File → Save
+   - Poedit will automatically compile and save both .po and .mo files
+   - Alternatively, go to File → Compile to MO
 
-Option B - Via wp-config.php:
-1. Open wp-config.php in a text editor
-2. Find the line: define('WPLANG', '');
-   OR add this line before "/* That's all, stop editing! */"
-3. Change it to: define('WPLANG', 'el_GR');
-4. Save the file
-5. Your site is now in Greek!
+5. **Verify Compilation**
+   - Check that el_GR.mo file exists in the /languages/ directory
+   - The file should have a recent timestamp
 
+### Method 2: Using WP-CLI (Command Line Method)
 
-VERIFICATION
-------------
+1. **Install WP-CLI** (if not already installed)
+   ```bash
+   curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o wp-cli.phar
+   php wp-cli.phar --info
+   chmod +x wp-cli.phar
+   sudo mv wp-cli.phar /usr/local/bin/wp
+   ```
 
-After completing both steps, visit your website:
-- The "Filters" button should show as "Φίλτρα"
-- "Add to Cart" should show as "Προσθήκη στο Καλάθι"
-- "Shopping Cart" should show as "Καλάθι Αγορών"
+2. **Navigate to Theme Directory**
+   ```bash
+   cd /path/to/your/theme/directory
+   ```
 
-If translations don't appear:
-1. Clear your browser cache (Ctrl+F5)
-2. Clear WordPress cache (if using a caching plugin)
-3. Verify the el_GR.mo file exists in the languages/ folder
-4. Check that Greek is selected in Settings → General
+3. **Compile PO to MO**
+   ```bash
+   wp i18n make-mo languages/
+   ```
 
+4. **Alternative: Compile Specific File**
+   ```bash
+   msgfmt languages/el_GR.po -o languages/el_GR.mo
+   ```
 
-UPDATING TRANSLATIONS
----------------------
+5. **Verify Compilation**
+   ```bash
+   ls -la languages/el_GR.mo
+   ```
 
-To modify or add translations:
-1. Edit languages/el_GR.po with Poedit or a text editor
-2. Find the msgid (English text) and update the msgstr (Greek text)
-3. Save the file (Poedit compiles automatically)
-4. Clear cache and refresh your site
+### Method 3: Using Loco Translate Plugin (WordPress Method)
 
+1. **Install Loco Translate Plugin**
+   - In WordPress admin, go to Plugins → Add New
+   - Search for "Loco Translate"
+   - Install and activate the plugin
 
-NEED HELP?
-----------
+2. **Configure Theme Translation**
+   - Go to Loco Translate → Themes
+   - Find "eshop-theme" in the list
+   - Click on it
 
-- Check languages/README.md for detailed documentation
-- WordPress i18n: https://developer.wordpress.org/apis/internationalization/
-- Poedit website: https://poedit.net/
-- Loco Translate plugin: https://wordpress.org/plugins/loco-translate/
+3. **Edit Greek Translation**
+   - Click on the "Greek" language
+   - Click "Edit" to open the translation editor
+   - Make any necessary changes
 
+4. **Save and Compile**
+   - Click "Save" to save changes
+   - Loco Translate will automatically compile the MO file
+   - The compiled file will be saved to /languages/el_GR.mo
 
-COMMON TRANSLATIONS IN THIS THEME
+## CONFIGURING WORDPRESS FOR GREEK
 ----------------------------------
 
-Filters → Φίλτρα
-Price Range → Εύρος Τιμών
-Categories → Κατηγορίες
-Colors → Χρώματα
-Sizes → Μεγέθη
-On Sale → Σε Προσφορά
-Shopping Cart → Καλάθι Αγορών
-Add to Cart → Προσθήκη στο Καλάθι
-Checkout → Ολοκλήρωση Αγοράς
-Wishlist → Λίστα Επιθυμιών
-Search → Αναζήτηση
-Account → Λογαριασμός
+### Method 1: Site-Wide Language Setting
 
+1. **Via WordPress Admin**
+   - Go to Settings → General
+   - Find "Site Language" dropdown
+   - Select "Ελληνικά (Greek)"
+   - Click "Save Changes"
 
-FILE LOCATIONS
---------------
+2. **Via wp-config.php**
+   - Add this line to your wp-config.php file:
+   ```php
+   define('WPLANG', 'el_GR');
+   ```
 
-Translation files are in:
-wp-content/themes/thewalkingcompany/languages/
+### Method 2: User-Specific Language
 
-- eshop-theme.pot (template)
-- el_GR.po (Greek source - human readable)
-- el_GR.mo (Greek compiled - used by WordPress) ← YOU NEED TO CREATE THIS!
+1. **Enable User Language Selection**
+   - Go to Users → Your Profile
+   - Find "Language" section
+   - Select "Ελληνικά (Greek)"
+   - Click "Update Profile"
+
+### Method 3: Multilingual Plugin
+
+1. **Install a Multilingual Plugin**
+   - WPML (Premium)
+   - Polylang (Free/Premium)
+   - Weglot (Premium)
+
+2. **Configure Greek Language**
+   - Add Greek as a language option
+   - Set up language switching
+   - Configure translation settings
+
+## VERIFYING TRANSLATIONS
+------------------------
+
+### 1. Check Frontend Display
+
+1. **Navigate to Your Site**
+   - Visit your WordPress site
+   - Ensure Greek language is active
+
+2. **Check Translated Strings**
+   - Look for translated interface elements
+   - Check buttons, labels, and messages
+   - Verify product pages, cart, and checkout
+
+3. **Test Key Areas**
+   - Header navigation
+   - Product listings
+   - Shopping cart
+   - Checkout process
+   - User account pages
+
+### 2. Check Admin Display
+
+1. **WordPress Admin Interface**
+   - Log in to WordPress admin
+   - Check theme-specific admin strings
+   - Verify custom post type labels
+
+2. **Theme Customizer**
+   - Go to Appearance → Customize
+   - Check theme options and descriptions
+
+### 3. Debug Mode
+
+1. **Enable WordPress Debug**
+   ```php
+   // In wp-config.php
+   define('WP_DEBUG', true);
+   define('WP_DEBUG_LOG', true);
+   ```
+
+2. **Check for Missing Translations**
+   - Look for debug.log in /wp-content/
+   - Search for "Missing translation" messages
+
+## TROUBLESHOOTING
+-----------------
+
+### Issue: Translations Not Appearing
+
+**Symptoms:**
+- Site displays in English despite Greek configuration
+- Some strings remain untranslated
+
+**Solutions:**
+
+1. **Check MO File Exists**
+   ```bash
+   ls -la languages/el_GR.mo
+   ```
+
+2. **Verify File Permissions**
+   ```bash
+   chmod 644 languages/el_GR.mo
+   chmod 644 languages/el_GR.po
+   ```
+
+3. **Clear Caches**
+   - Clear WordPress cache (if using caching plugins)
+   - Clear browser cache
+   - Clear server cache (if applicable)
+
+4. **Check Text Domain Loading**
+   - Verify functions.php loads text domain:
+   ```php
+   load_theme_textdomain('eshop-theme', get_template_directory() . '/languages');
+   ```
+
+5. **Check WordPress Language Setting**
+   - Verify WPLANG is set to 'el_GR'
+   - Check Settings → General in WordPress admin
+
+### Issue: MO File Not Being Loaded
+
+**Symptoms:**
+- No translations appear
+- Debug shows "MO file not found" errors
+
+**Solutions:**
+
+1. **Verify File Location**
+   - Ensure el_GR.mo is in /languages/ directory
+   - Check directory structure is correct
+
+2. **Check File Format**
+   - Ensure file is compiled correctly
+   - Try recompiling with different method
+
+3. **Verify WordPress Version**
+   - Ensure WordPress supports the locale
+   - Update WordPress if needed
+
+4. **Check Server Configuration**
+   - Verify PHP has file reading permissions
+   - Check .htaccess rules
+
+### Issue: Text Domain Problems
+
+**Symptoms:**
+- Only some strings are translated
+- Inconsistent translation behavior
+
+**Solutions:**
+
+1. **Check Text Domain Consistency**
+   - Ensure all translation functions use 'eshop-theme'
+   - Verify no typos in text domain
+
+2. **Check Function Usage**
+   ```php
+   // Correct usage
+   __('String', 'eshop-theme')
+   _e('String', 'eshop-theme')
+   
+   // Incorrect usage
+   __('String')  // Missing text domain
+   __('String', 'wrong-domain')  // Wrong text domain
+   ```
+
+3. **Verify Theme Loading**
+   - Check that theme is properly activated
+   - Verify text domain is loaded early
+
+### Issue: File Permission Problems
+
+**Symptoms:**
+- Unable to save translation files
+- MO file not accessible
+
+**Solutions:**
+
+1. **Check Directory Permissions**
+   ```bash
+   chmod 755 languages/
+   chmod 644 languages/*.po
+   chmod 644 languages/*.mo
+   ```
+
+2. **Check File Ownership**
+   ```bash
+   chown www-data:www-data languages/
+   chown www-data:www-data languages/*.po
+   chown www-data:www-data languages/*.mo
+   ```
+
+3. **Verify Server Configuration**
+   - Check PHP open_basedir restrictions
+   - Verify file system permissions
+
+## UPDATING TRANSLATIONS
+-----------------------
+
+### When Theme Updates
+
+1. **Backup Current Translations**
+   ```bash
+   cp languages/el_GR.po languages/el_GR.po.backup
+   cp languages/el_GR.mo languages/el_GR.mo.backup
+   ```
+
+2. **Update POT File**
+   - Use WP-CLI:
+   ```bash
+   wp i18n make-pot . languages/eshop-theme.pot --domain=eshop-theme
+   ```
+
+3. **Merge New Strings**
+   - Open el_GR.po in Poedit
+   - Go to Catalog → Update from POT file
+   - Select the updated POT file
+   - Review and translate new strings
+
+4. **Recompile MO File**
+   - Save the updated PO file
+   - Poedit will automatically recompile the MO file
+
+### Adding New Strings
+
+1. **In Theme Files**
+   ```php
+   // Add new translatable string
+   __('New string to translate', 'eshop-theme')
+   
+   // With variables
+   sprintf(__('Welcome %s', 'eshop-theme'), $username)
+   
+   // Plural forms
+   _n('One item', '%d items', $count, 'eshop-theme')
+   ```
+
+2. **Update POT File**
+   ```bash
+   wp i18n make-pot . languages/eshop-theme.pot --domain=eshop-theme
+   ```
+
+3. **Update PO File**
+   - Open el_GR.po in Poedit
+   - Update from POT file
+   - Translate new strings
+   - Save and compile
+
+### Handling Plural Forms in Greek
+
+Greek uses the following plural rule:
+- Singular: n == 1
+- Plural: n != 1
+
+**Example in PO file:**
+```
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] "%d προϊόν"
+msgstr[1] "%d προϊόντα"
+```
+
+**In PHP code:**
+```php
+$translated = _n('%d item', '%d items', $count, 'eshop-theme');
+echo sprintf($translated, $count);
+```
+
+## BEST PRACTICES
+-----------------
+
+### Translation Maintenance
+
+1. **Regular Updates**
+   - Review translations monthly
+   - Update after theme updates
+   - Check for new strings
+
+2. **Quality Assurance**
+   - Have native speakers review translations
+   - Test translations in context
+   - Check for consistency
+
+3. **Version Control**
+   - Commit translation files to Git
+   - Track changes over time
+   - Maintain backup copies
+
+### Development Workflow
+
+1. **For Developers**
+   - Always use text domain in translation functions
+   - Provide context for translators
+   - Test with different languages
+
+2. **For Translators**
+   - Use consistent terminology
+   - Consider cultural context
+   - Test translations on live site
+
+3. **For Site Administrators**
+   - Keep translations updated
+   - Monitor for missing strings
+   - Test after updates
+
+### File Organization
+
+```
+languages/
+├── eshop-theme.pot      # Template file
+├── el_GR.po            # Greek source file
+├── el_GR.mo            # Greek compiled file
+├── el_GR.po.backup     # Backup of source file
+└── GREEK_SETUP_INSTRUCTIONS.txt  # This file
+```
+
+## ADDITIONAL RESOURCES
+---------------------
+
+### WordPress Documentation
+- WordPress i18n: https://developer.wordpress.org/themes/functionality/internationalization/
+- Translating WordPress: https://wordpress.org/support/article/translating-wordpress/
+
+### Tools
+- Poedit: https://poedit.net/
+- WP-CLI: https://wp-cli.org/
+- Loco Translate: https://wordpress.org/plugins/loco-translate/
+
+### Greek Language Resources
+- Greek WordPress Team: https://el.wordpress.org/
+- Greek Translation Guidelines: https://make.wordpress.org/polyglots/handbook/translating/greek/
+
+## SUPPORT
+---------
+
+If you encounter issues with Greek translations:
+
+1. **Check this guide first** for common solutions
+2. **Verify file permissions** and locations
+3. **Test with a fresh compilation** of the MO file
+4. **Check WordPress debug logs** for specific errors
+5. **Consult WordPress forums** for similar issues
+
+For theme-specific translation issues, contact the theme developer with:
+- WordPress version
+- Theme version
+- Specific strings not translating
+- Steps to reproduce the issue
+
+---
+
+Last Updated: November 14, 2024
+Theme Version: 1.0.0
+WordPress Compatible: 5.0+

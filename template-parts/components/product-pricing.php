@@ -40,7 +40,7 @@ if ($regular_price_num <= 0 && $sale_price_num <= 0) {
                 </span>
             </div>
             <div class="price-original">
-                <span class="original-label"><?php _e('Προτ. Λιαν. Τιμή:', 'thewalkingtheme'); ?></span>
+                <span class="original-label"><?php _e('Προτ. Λιαν. Τιμή:', 'eshop-theme'); ?></span>
                 <span class="original-price"><?php echo wc_price($regular_price_num); ?></span>
             </div>
             <?php
@@ -74,7 +74,7 @@ if ($regular_price_num <= 0 && $sale_price_num <= 0) {
         $price_html = $product->get_price_html();
         if ($price_html && strpos($price_html, '–') !== false) {
             echo '<div class="price-range">';
-            echo '<span class="range-label">' . __('Τιμές από:', 'thewalkingtheme') . '</span>';
+            echo '<span class="range-label">' . __('Τιμές από:', 'eshop-theme') . '</span>';
             echo wp_kses_post($price_html);
             echo '</div>';
         }

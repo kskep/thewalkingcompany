@@ -182,7 +182,7 @@ $sort_options = [
                             '%s style curated for you',
                             '%s styles curated for you',
                             $total_products,
-                            'your-textdomain'
+                            'eshop-theme'
                         ),
                         '<strong>' . number_format_i18n($total_products) . '</strong>'
                     );
@@ -199,7 +199,7 @@ $sort_options = [
                 <?php
                 if ($total_products > 0) {
                     printf(
-                        __('Showing %d – %d', 'your-textdomain'),
+                        __('Showing %d – %d', 'eshop-theme'),
                         $start,
                         $end
                     );
@@ -210,9 +210,9 @@ $sort_options = [
             <!-- Sort Dropdown -->
             <div class="sort-container">
                 <label for="product-sort" class="visually-hidden">
-                    <?php _e('Sort products', 'your-textdomain'); ?>
+                    <?php _e('Sort products', 'eshop-theme'); ?>
                 </label>
-                <select id="product-sort" class="sort-select" aria-label="<?php _e('Sort products', 'your-textdomain'); ?>">
+                <select id="product-sort" class="sort-select" aria-label="<?php _e('Sort products', 'eshop-theme'); ?>">
                     <?php foreach ($sort_options as $value => $label): ?>
                         <option value="<?php echo esc_attr($value); ?>" 
                                 <?php selected($orderby, $value); ?>>
@@ -229,19 +229,19 @@ $sort_options = [
                     aria-controls="filter-modal"
                     aria-expanded="false">
                 <span class="filter-toggle-icon" aria-hidden="true">⚙</span>
-                <span class="filter-toggle-text"><?php _e('Filters', 'your-textdomain'); ?></span>
+                <span class="filter-toggle-text"><?php _e('Filters', 'eshop-theme'); ?></span>
             </button>
         </div>
     </div>
 
     <!-- Active Filters Section -->
     <?php if (!empty($current_filters)): ?>
-        <div class="active-filters" role="region" aria-label="<?php _e('Active filters', 'your-textdomain'); ?>">
+        <div class="active-filters" role="region" aria-label="<?php _e('Active filters', 'eshop-theme'); ?>">
             <?php foreach ($current_filters as $filter): ?>
                 <button type="button" 
                         class="filter-chip" 
                         data-param="<?php echo esc_attr($filter['param']); ?>"
-                        title="<?php printf(__('Remove %s filter', 'your-textdomain'), esc_attr($filter['label'])); ?>">
+                        title="<?php printf(__('Remove %s filter', 'eshop-theme'), esc_attr($filter['label'])); ?>">
                     <span class="filter-chip-text"><?php echo esc_html($filter['label']); ?></span>
                     <span class="filter-chip-remove" aria-hidden="true">×</span>
                 </button>
@@ -251,8 +251,8 @@ $sort_options = [
             <button type="button" 
                     id="clear-all-filters" 
                     class="reset-filters"
-                    title="<?php _e('Clear all filters', 'your-textdomain'); ?>">
-                <?php _e('Clear Filters', 'your-textdomain'); ?>
+                    title="<?php _e('Clear all filters', 'eshop-theme'); ?>">
+                <?php _e('Clear Filters', 'eshop-theme'); ?>
             </button>
         </div>
     <?php endif; ?>
@@ -266,12 +266,12 @@ $sort_options = [
     <!-- Filter Modal Header -->
     <div class="filter-modal-header">
         <h2 id="filter-modal-title" class="filter-modal-title">
-            <?php _e('Filter Products', 'your-textdomain'); ?>
+            <?php _e('Filter Products', 'eshop-theme'); ?>
         </h2>
         <button type="button" 
                 id="filter-modal-close" 
                 class="filter-modal-close"
-                aria-label="<?php _e('Close filter modal', 'your-textdomain'); ?>">
+                aria-label="<?php _e('Close filter modal', 'eshop-theme'); ?>">
             <span aria-hidden="true">×</span>
         </button>
     </div>
@@ -281,10 +281,10 @@ $sort_options = [
         <?php
         // Include filter sections
         $filter_sections = [
-            'category' => __('Category', 'your-textdomain'),
-            'price' => __('Price', 'your-textdomain'),
-            'attributes' => __('Attributes', 'your-textdomain'),
-            'availability' => __('Availability', 'your-textdomain')
+            'category' => __('Category', 'eshop-theme'),
+            'price' => __('Price', 'eshop-theme'),
+            'attributes' => __('Attributes', 'eshop-theme'),
+            'availability' => __('Availability', 'eshop-theme')
         ];
 
         foreach ($filter_sections as $section_key => $section_title):
@@ -511,7 +511,7 @@ $sort_options = [
                                            value="<?php echo esc_attr($max_price); ?>">
                                 </div>
                                 <button type="button" id="price-filter-apply" class="price-filter-apply">
-                                    <?php _e('Apply Price', 'your-textdomain'); ?>
+                                    <?php _e('Apply Price', 'eshop-theme'); ?>
                                 </button>
                             </div>
                         <?php
@@ -565,7 +565,7 @@ $sort_options = [
                                        name="on_sale" 
                                        value="1"
                                        <?php checked(isset($_GET['on_sale']) && $_GET['on_sale'] === '1'); ?>>
-                                <span class="filter-option-label"><?php _e('On Sale', 'your-textdomain'); ?></span>
+                                <span class="filter-option-label"><?php _e('On Sale', 'eshop-theme'); ?></span>
                             </label>
                             
                             <label class="filter-option">
@@ -573,7 +573,7 @@ $sort_options = [
                                        name="stock_status" 
                                        value="instock"
                                        <?php checked(isset($_GET['stock_status']) && $_GET['stock_status'] === 'instock'); ?>>
-                                <span class="filter-option-label"><?php _e('In Stock', 'your-textdomain'); ?></span>
+                                <span class="filter-option-label"><?php _e('In Stock', 'eshop-theme'); ?></span>
                             </label>
                         <?php
                             break;
@@ -587,10 +587,10 @@ $sort_options = [
     <!-- Filter Modal Footer -->
     <div class="filter-modal-footer">
         <button type="button" id="filter-clear-all" class="filter-clear-all">
-            <?php _e('Clear All', 'your-textdomain'); ?>
+            <?php _e('Clear All', 'eshop-theme'); ?>
         </button>
         <button type="button" id="filter-apply" class="filter-apply">
-            <?php _e('Apply Filters', 'your-textdomain'); ?>
+            <?php _e('Apply Filters', 'eshop-theme'); ?>
         </button>
     </div>
 </div>

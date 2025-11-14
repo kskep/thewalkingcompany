@@ -127,9 +127,9 @@ if ($is_variable) {
         $wishlist_class = $is_in_wishlist ? 'active in-wishlist' : '';
         // Guests see a prompt instead of wishlist toggle intent
         if (!is_user_logged_in()) {
-            $wishlist_aria_label = __('Log in to save to wishlist', 'thewalkingtheme');
+            $wishlist_aria_label = __('Log in to save to wishlist', 'eshop-theme');
         } else {
-            $wishlist_aria_label = $is_in_wishlist ? __('Remove from wishlist', 'thewalkingtheme') : __('Add to wishlist', 'thewalkingtheme');
+            $wishlist_aria_label = $is_in_wishlist ? __('Remove from wishlist', 'eshop-theme') : __('Add to wishlist', 'eshop-theme');
         }
         $wishlist_fill = $is_in_wishlist ? 'currentColor' : 'none';
                     }

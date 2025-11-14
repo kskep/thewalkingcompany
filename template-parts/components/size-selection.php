@@ -145,7 +145,7 @@ if ($selected_variation) {
     <?php if (apply_filters('thewalking_show_size_guide', true)) : ?>
         <div class="size-guide-link">
             <button type="button" class="size-guide-trigger" aria-label="View size guide">
-                <?php echo esc_html__('Size Guide', 'thewalkingcompany'); ?>
+                <?php echo esc_html__('Size Guide', 'eshop-theme'); ?>
             </button>
         </div>
     <?php endif; ?>

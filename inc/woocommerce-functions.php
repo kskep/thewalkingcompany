@@ -1010,7 +1010,7 @@ function eshop_output_related_products_from_categories() {
         <section class="related-products-section magazine-related">
             <div class="magazine-container">
                 <h2 class="related-products-heading">
-                    <?php _e('You May Also Like', 'thewalkingtheme'); ?>
+                    <?php _e('You May Also Like', 'eshop-theme'); ?>
                 </h2>
 
                 <ul class="products-grid related-products-grid" id="related-products-grid">

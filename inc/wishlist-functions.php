@@ -72,7 +72,7 @@ function eshop_add_to_wishlist() {
     if (!is_user_logged_in()) {
         wp_send_json_error(array(
             'requires_auth' => true,
-            'message' => __('Please create an account or log in to use wishlist.', 'thewalkingtheme'),
+            'message' => __('Please create an account or log in to use wishlist.', 'eshop-theme'),
             'redirect' => wc_get_page_permalink('myaccount'),
         ));
     }
@@ -80,7 +80,7 @@ function eshop_add_to_wishlist() {
     $product_id = intval($_POST['product_id']);
     if (!$product_id) {
         wp_send_json_error(array(
-            'message' => __('Invalid product ID', 'thewalkingtheme')
+            'message' => __('Invalid product ID', 'eshop-theme')
         ));
     }
     
@@ -88,7 +88,7 @@ function eshop_add_to_wishlist() {
     $product = wc_get_product($product_id);
     if (!$product) {
         wp_send_json_error(array(
-            'message' => __('Product not found', 'thewalkingtheme')
+            'message' => __('Product not found', 'eshop-theme')
         ));
     }
     $product_name_plain = wp_strip_all_tags($product->get_name());
@@ -100,11 +100,11 @@ function eshop_add_to_wishlist() {
     if (!in_array($product_id, $current)) {
         $current[] = $product_id;
         $action = 'added';
-        $message = sprintf(__('%s added to wishlist', 'thewalkingtheme'), $product_name_plain);
+        $message = sprintf(__('%s added to wishlist', 'eshop-theme'), $product_name_plain);
     } else {
         $current = array_diff($current, array($product_id));
         $action = 'removed';
-        $message = sprintf(__('%s removed from wishlist', 'thewalkingtheme'), $product_name_plain);
+        $message = sprintf(__('%s removed from wishlist', 'eshop-theme'), $product_name_plain);
     }
 
     // Persist changes
@@ -113,10 +113,10 @@ function eshop_add_to_wishlist() {
     $wishlist_count      = count($current);
     $is_in_wishlist      = ($action === 'added');
     $product_name        = $product_name_plain;
-    $button_text         = $is_in_wishlist ? __('Saved', 'thewalkingtheme') : __('Save', 'thewalkingtheme');
+    $button_text         = $is_in_wishlist ? __('Saved', 'eshop-theme') : __('Save', 'eshop-theme');
     $aria_label          = $is_in_wishlist
-        ? sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product_name)
-        : sprintf(__('Add %s to wishlist', 'thewalkingtheme'), $product_name);
+        ? sprintf(__('Remove %s from wishlist', 'eshop-theme'), $product_name)
+        : sprintf(__('Add %s to wishlist', 'eshop-theme'), $product_name);
     $dropdown_html       = eshop_get_wishlist_dropdown_items_html();
     $notification_type   = $is_in_wishlist ? 'success' : 'info';
 
@@ -162,7 +162,7 @@ function eshop_remove_from_wishlist_ajax() {
     if (!is_user_logged_in()) {
         wp_send_json_error(array(
             'requires_auth' => true,
-            'message' => __('You must be logged in to modify wishlist.', 'thewalkingtheme'),
+            'message' => __('You must be logged in to modify wishlist.', 'eshop-theme'),
             'redirect' => wc_get_page_permalink('myaccount'),
         ));
     }
@@ -189,7 +189,7 @@ function eshop_remove_from_wishlist_ajax() {
         $wishlist_count = eshop_get_wishlist_count();
         
         wp_send_json_success(array(
-            'message' => sprintf(__('Removed "%s" from wishlist', 'thewalkingtheme'), $product->get_name()),
+            'message' => sprintf(__('Removed "%s" from wishlist', 'eshop-theme'), $product->get_name()),
             'count' => $wishlist_count,
             'count_label' => eshop_get_wishlist_count_display(),
             'product_id' => $product_id,
@@ -254,7 +254,7 @@ function eshop_get_wishlist_dropdown_items_html() {
                     </h4>
                     <p class="text-sm text-primary font-semibold"><?php echo wp_kses_post($product_price); ?></p>
                 </div>
-                <button class="remove-from-wishlist text-gray-400 hover:text-red-500 transition-colors" data-product-id="<?php echo esc_attr($product_id); ?>" aria-label="<?php echo esc_attr(sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product_name)); ?>">
+                <button class="remove-from-wishlist text-gray-400 hover:text-red-500 transition-colors" data-product-id="<?php echo esc_attr($product_id); ?>" aria-label="<?php echo esc_attr(sprintf(__('Remove %s from wishlist', 'eshop-theme'), $product_name)); ?>">
                     <i class="fas fa-times text-xs"></i>
                 </button>
             </div>
@@ -262,7 +262,7 @@ function eshop_get_wishlist_dropdown_items_html() {
         }
     } else {
         ?>
-        <p class="text-gray-500 text-center py-4"><?php esc_html_e('Your wishlist is empty', 'thewalkingtheme'); ?></p>
+        <p class="text-gray-500 text-center py-4"><?php esc_html_e('Your wishlist is empty', 'eshop-theme'); ?></p>
         <?php
     }
 
@@ -291,15 +291,15 @@ function eshop_wishlist_button_enhanced($product_id = null, $show_text = true, $
     }
     
     $button_text = !is_user_logged_in()
-        ? __('Save', 'thewalkingtheme')
-        : ($is_in_wishlist ? __('Saved', 'thewalkingtheme') : __('Save', 'thewalkingtheme'));
+        ? __('Save', 'eshop-theme')
+        : ($is_in_wishlist ? __('Saved', 'eshop-theme') : __('Save', 'eshop-theme'));
     
     if (!is_user_logged_in()) {
-        $aria_label = sprintf(__('Log in to save %s to wishlist', 'thewalkingtheme'), $product->get_name());
+        $aria_label = sprintf(__('Log in to save %s to wishlist', 'eshop-theme'), $product->get_name());
     } else {
         $aria_label = $is_in_wishlist 
-            ? sprintf(__('Remove %s from wishlist', 'thewalkingtheme'), $product->get_name())
-            : sprintf(__('Add %s to wishlist', 'thewalkingtheme'), $product->get_name());
+            ? sprintf(__('Remove %s from wishlist', 'eshop-theme'), $product->get_name())
+            : sprintf(__('Add %s to wishlist', 'eshop-theme'), $product->get_name());
     }
     
     ?>

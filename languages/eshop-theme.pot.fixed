@@ -1,4 +1,4 @@
-﻿# Copyright (C) 2024 The Walking Company
+# Copyright (C) 2024 The Walking Company
 # This file is distributed under the same license as the eshop-theme package.
 msgid ""
 msgstr ""
@@ -13,7 +13,6 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: Poedit 3.8\n"
 "# Total entries: 251\n"
-
 #: footer.php:60
 msgid "Αίτημα αλλαγής/επιστροφής"
 msgstr ""
@@ -50,6 +49,7 @@ msgstr ""
 msgid "Desktop slides"
 msgstr ""
 
+#: inc/front-page-meta.php:137
 #: inc/front-page-meta.php:69
 msgid "Select Image"
 msgstr ""
@@ -90,10 +90,6 @@ msgstr ""
 msgid "Link URL"
 msgstr ""
 
-#: inc/front-page-meta.php:137
-msgid "Select Image"
-msgstr ""
-
 #: header.php:72
 msgid "Wishlist"
 msgstr ""
@@ -103,18 +99,27 @@ msgid "View All"
 msgstr ""
 
 #: header.php:130
+#: template-parts/components/flying-cart.php:50
+#: woocommerce/cart/cart.php:21
 msgid "Shopping Cart"
 msgstr ""
 
 #: header.php:156
+#: inc/woocommerce-functions.php:106
+#: template-parts/components/flying-cart.php:63
+#: woocommerce/cart/cart.php:154
 msgid "Your cart is empty"
 msgstr ""
 
 #: header.php:163
+#: inc/woocommerce-functions.php:113
+#: template-parts/components/flying-cart.php:161
 msgid "View Cart"
 msgstr ""
 
 #: header.php:166
+#: inc/woocommerce-functions.php:116
+#: template-parts/components/flying-cart.php:164
 msgid "Checkout"
 msgstr ""
 
@@ -139,6 +144,10 @@ msgid "Product information is currently unavailable. Please try again later."
 msgstr ""
 
 #: inc/auth-functions.php:19
+#: inc/auth-functions.php:97
+#: inc/color-grouping-functions.php:409
+#: inc/woocommerce-functions.php:138
+#: inc/woocommerce-functions.php:179
 msgid "Security check failed"
 msgstr ""
 
@@ -146,6 +155,7 @@ msgstr ""
 msgid "Email and password are required"
 msgstr ""
 
+#: inc/auth-functions.php:215
 #: inc/auth-functions.php:42
 msgid "Please enter a valid email address"
 msgstr ""
@@ -156,10 +166,6 @@ msgstr ""
 
 #: inc/auth-functions.php:83
 msgid "Login successful! Redirecting..."
-msgstr ""
-
-#: inc/auth-functions.php:97
-msgid "Security check failed"
 msgstr ""
 
 #: inc/auth-functions.php:106
@@ -175,6 +181,7 @@ msgid "Please correct the errors below"
 msgstr ""
 
 #: inc/auth-functions.php:150
+#: inc/auth-functions.php:217
 msgid "An account with this email already exists"
 msgstr ""
 
@@ -188,14 +195,6 @@ msgstr ""
 
 #: inc/auth-functions.php:210
 msgid "Last name must be at least 2 characters"
-msgstr ""
-
-#: inc/auth-functions.php:215
-msgid "Please enter a valid email address"
-msgstr ""
-
-#: inc/auth-functions.php:217
-msgid "An account with this email already exists"
 msgstr ""
 
 #: inc/auth-functions.php:222
@@ -282,11 +281,8 @@ msgstr ""
 msgid "Related Color Variants"
 msgstr ""
 
-#: inc/color-grouping-functions.php:409
-msgid "Security check failed"
-msgstr ""
-
 #: inc/color-grouping-functions.php:417
+#: inc/wishlist-functions.php:83
 msgid "Invalid product ID"
 msgstr ""
 
@@ -398,10 +394,12 @@ msgstr ""
 msgid "Sign in to your account to access exclusive features and personalized content."
 msgstr ""
 
+#: template-parts/components/auth-modal.php:122
 #: template-parts/components/auth-modal.php:36
 msgid "Email Address"
 msgstr ""
 
+#: template-parts/components/auth-modal.php:128
 #: template-parts/components/auth-modal.php:42
 msgid "Enter your email address"
 msgstr ""
@@ -452,14 +450,6 @@ msgstr ""
 
 #: template-parts/components/auth-modal.php:117
 msgid "Your last name"
-msgstr ""
-
-#: template-parts/components/auth-modal.php:122
-msgid "Email Address"
-msgstr ""
-
-#: template-parts/components/auth-modal.php:128
-msgid "Enter your email address"
 msgstr ""
 
 #: template-parts/components/auth-modal.php:133
@@ -522,11 +512,14 @@ msgstr ""
 msgid "Select %s color variant"
 msgstr ""
 
+#: template-parts/components/product-gallery-simple.php:28
+#: template-parts/components/product-gallery.php:41
 #: woocommerce/single-product/product-image.php:34
 msgid "Product image placeholder"
 msgstr ""
 
 #: page-wishlist.php:51
+#: template-parts/components/product-gallery.php:92
 msgid "Sale"
 msgstr ""
 
@@ -535,13 +528,17 @@ msgid "Select Options"
 msgstr ""
 
 #: page-wishlist.php:73
+#: template-parts/components/filters/stock-filter.php:16
+#: woocommerce/single-product/add-to-cart/simple.php:71
 msgid "Out of Stock"
 msgstr ""
 
 #: page-wishlist.php:87
+#: template-parts/components/flying-cart.php:65
 msgid "Continue Shopping"
 msgstr ""
 
+#: inc/wishlist-functions.php:265
 #: page-wishlist.php:96
 msgid "Your wishlist is empty"
 msgstr ""
@@ -554,28 +551,20 @@ msgstr ""
 msgid "Start Shopping"
 msgstr ""
 
+#: template-parts/components/product-card.php:132
 #: woocommerce/single-product/add-to-cart/simple.php:48
+#: woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php:43
 msgid "Remove from wishlist"
 msgstr ""
 
+#: template-parts/components/product-card.php:132
 #: woocommerce/single-product/add-to-cart/simple.php:48
+#: woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php:43
 msgid "Add to wishlist"
 msgstr ""
 
 #: woocommerce/single-product/add-to-cart/simple.php:59
 msgid "In Stock - Ready to Ship"
-msgstr ""
-
-#: woocommerce/single-product/add-to-cart/simple.php:71
-msgid "Out of Stock"
-msgstr ""
-
-#: woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php:43
-msgid "Remove from wishlist"
-msgstr ""
-
-#: woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php:43
-msgid "Add to wishlist"
 msgstr ""
 
 #: template-parts/components/breadcrumbs.php:32
@@ -590,18 +579,8 @@ msgstr ""
 msgid "Not Found"
 msgstr ""
 
-#: woocommerce/cart/cart.php:21
-msgid "Shopping Cart"
-msgstr ""
-
 #: woocommerce/cart/cart.php:22
 msgid "%d item"
-msgid_plural "%d items"
-msgstr[0] ""
-msgstr[1] ""
-
-#: woocommerce/cart/cart.php:154
-msgid "Your cart is empty"
 msgstr ""
 
 #: woocommerce/cart/cart.php:155
@@ -612,7 +591,11 @@ msgstr ""
 msgid "Order Summary"
 msgstr ""
 
+#: functions.php:814
+#: template-parts/components/filter-modal.php:27
+#: template-parts/components/filters.php:12
 #: template-parts/components/modal.php:8
+#: template-parts/components/product-archive-filters.php:232
 msgid "Filters"
 msgstr ""
 
@@ -680,26 +663,16 @@ msgstr ""
 msgid "Free exchanges for different sizes or colors."
 msgstr ""
 
-#: template-parts/components/flying-cart.php:50
-msgid "Shopping Cart"
-msgstr ""
-
-#: template-parts/components/flying-cart.php:63
-msgid "Your cart is empty"
-msgstr ""
-
-#: template-parts/components/flying-cart.php:65
-msgid "Continue Shopping"
-msgstr ""
-
 #: template-parts/components/flying-cart.php:104
 msgid "Qty: %s"
 msgstr ""
 
+#: inc/woocommerce-functions.php:62
 #: template-parts/components/flying-cart.php:134
 msgid "Add %s more for FREE shipping!"
 msgstr ""
 
+#: inc/woocommerce-functions.php:75
 #: template-parts/components/flying-cart.php:147
 msgid "Congratulations! You qualify for FREE shipping!"
 msgstr ""
@@ -708,44 +681,23 @@ msgstr ""
 msgid "Subtotal:"
 msgstr ""
 
-#: template-parts/components/flying-cart.php:161
-msgid "View Cart"
-msgstr ""
-
-#: template-parts/components/flying-cart.php:164
-msgid "Checkout"
-msgstr ""
-
-#: functions.php:814
-msgid "Filters"
-msgstr ""
-
-#: template-parts/components/filter-modal.php:27
-msgid "Filters"
-msgstr ""
-
 #: template-parts/components/filter-modal.php:29
 msgid "Close Filters"
 msgstr ""
 
 #: template-parts/components/filter-modal.php:83
+#: template-parts/components/filters.php:25
+#: template-parts/components/product-archive-filters.php:589
 msgid "Clear All"
 msgstr ""
 
 #: template-parts/components/filter-modal.php:86
+#: template-parts/components/product-archive-filters.php:593
 msgid "Apply Filters"
-msgstr ""
-
-#: template-parts/components/filters.php:12
-msgid "Filters"
 msgstr ""
 
 #: template-parts/components/filters.php:22
 msgid "Active Filters:"
-msgstr ""
-
-#: template-parts/components/filters.php:25
-msgid "Clear All"
 msgstr ""
 
 #: template-parts/components/filters/sale-filter.php:24
@@ -753,6 +705,7 @@ msgid "Special Offers"
 msgstr ""
 
 #: template-parts/components/filters/sale-filter.php:38
+#: template-parts/components/product-archive-filters.php:568
 msgid "On Sale"
 msgstr ""
 
@@ -785,11 +738,8 @@ msgid "Apply Price Filter"
 msgstr ""
 
 #: template-parts/components/filters/stock-filter.php:15
+#: template-parts/components/product-archive-filters.php:576
 msgid "In Stock"
-msgstr ""
-
-#: template-parts/components/filters/stock-filter.php:16
-msgid "Out of Stock"
 msgstr ""
 
 #: template-parts/components/filters/stock-filter.php:17
@@ -817,9 +767,6 @@ msgid "Filter %s"
 msgstr ""
 
 #: template-parts/components/filters/category-filter.php:174
-msgid "Categories"
-msgstr ""
-
 #: template-parts/components/filters/category-filter.php:177
 msgid "Categories"
 msgstr ""
@@ -848,10 +795,6 @@ msgstr ""
 msgid "Please create an account or log in to use wishlist."
 msgstr ""
 
-#: inc/wishlist-functions.php:83
-msgid "Invalid product ID"
-msgstr ""
-
 #: inc/wishlist-functions.php:91
 msgid "Product not found"
 msgstr ""
@@ -865,18 +808,24 @@ msgid "%s removed from wishlist"
 msgstr ""
 
 #: inc/wishlist-functions.php:116
+#: inc/wishlist-functions.php:295
 msgid "Saved"
 msgstr ""
 
 #: inc/wishlist-functions.php:116
+#: inc/wishlist-functions.php:294
+#: inc/wishlist-functions.php:295
 msgid "Save"
 msgstr ""
 
 #: inc/wishlist-functions.php:118
+#: inc/wishlist-functions.php:257
+#: inc/wishlist-functions.php:301
 msgid "Remove %s from wishlist"
 msgstr ""
 
 #: inc/wishlist-functions.php:119
+#: inc/wishlist-functions.php:302
 msgid "Add %s to wishlist"
 msgstr ""
 
@@ -884,36 +833,8 @@ msgstr ""
 msgid "You must be logged in to modify wishlist."
 msgstr ""
 
-#: inc/wishlist-functions.php:257
-msgid "Remove %s from wishlist"
-msgstr ""
-
-#: inc/wishlist-functions.php:265
-msgid "Your wishlist is empty"
-msgstr ""
-
-#: inc/wishlist-functions.php:294
-msgid "Save"
-msgstr ""
-
-#: inc/wishlist-functions.php:295
-msgid "Saved"
-msgstr ""
-
-#: inc/wishlist-functions.php:295
-msgid "Save"
-msgstr ""
-
 #: inc/wishlist-functions.php:298
 msgid "Log in to save %s to wishlist"
-msgstr ""
-
-#: inc/wishlist-functions.php:301
-msgid "Remove %s from wishlist"
-msgstr ""
-
-#: inc/wishlist-functions.php:302
-msgid "Add %s to wishlist"
 msgstr ""
 
 #: template-parts/components/product-actions.php:29
@@ -944,31 +865,8 @@ msgstr ""
 msgid "Χαμηλό απόθεμα!"
 msgstr ""
 
-#: inc/woocommerce-functions.php:62
-msgid "Add %s more for FREE shipping!"
-msgstr ""
-
-#: inc/woocommerce-functions.php:75
-msgid "Congratulations! You qualify for FREE shipping!"
-msgstr ""
-
-#: inc/woocommerce-functions.php:106
-msgid "Your cart is empty"
-msgstr ""
-
-#: inc/woocommerce-functions.php:113
-msgid "View Cart"
-msgstr ""
-
-#: inc/woocommerce-functions.php:116
-msgid "Checkout"
-msgstr ""
-
-#: inc/woocommerce-functions.php:138
-msgid "Security check failed"
-msgstr ""
-
 #: inc/woocommerce-functions.php:145
+#: inc/woocommerce-functions.php:186
 msgid "WooCommerce is not active"
 msgstr ""
 
@@ -982,14 +880,6 @@ msgstr ""
 
 #: inc/woocommerce-functions.php:167
 msgid "Error removing item from cart"
-msgstr ""
-
-#: inc/woocommerce-functions.php:179
-msgid "Security check failed"
-msgstr ""
-
-#: inc/woocommerce-functions.php:186
-msgid "WooCommerce is not active"
 msgstr ""
 
 #: inc/woocommerce-functions.php:196
@@ -1073,15 +963,8 @@ msgid "Showing %d – %d"
 msgstr ""
 
 #: template-parts/components/product-archive-filters.php:213
-msgid "Sort products"
-msgstr ""
-
 #: template-parts/components/product-archive-filters.php:215
 msgid "Sort products"
-msgstr ""
-
-#: template-parts/components/product-archive-filters.php:232
-msgid "Filters"
 msgstr ""
 
 #: template-parts/components/product-archive-filters.php:239
@@ -1128,48 +1011,17 @@ msgstr ""
 msgid "Apply Price"
 msgstr ""
 
-#: template-parts/components/product-archive-filters.php:568
-msgid "On Sale"
-msgstr ""
-
-#: template-parts/components/product-archive-filters.php:576
-msgid "In Stock"
-msgstr ""
-
-#: template-parts/components/product-archive-filters.php:589
-msgid "Clear All"
-msgstr ""
-
-#: template-parts/components/product-archive-filters.php:593
-msgid "Apply Filters"
-msgstr ""
-
 #: template-parts/components/product-card.php:130
 msgid "Log in to save to wishlist"
 msgstr ""
 
-#: template-parts/components/product-card.php:132
-msgid "Remove from wishlist"
-msgstr ""
-
-#: template-parts/components/product-card.php:132
-msgid "Add to wishlist"
-msgstr ""
-
-#: template-parts/components/product-gallery.php:41
-msgid "Product image placeholder"
-msgstr ""
-
+#: template-parts/components/product-gallery-simple.php:70
 #: template-parts/components/product-gallery.php:80
 msgid "Product placeholder"
 msgstr ""
 
 #: template-parts/components/product-gallery.php:91
 msgid "On sale"
-msgstr ""
-
-#: template-parts/components/product-gallery.php:92
-msgid "Sale"
 msgstr ""
 
 #: template-parts/components/product-gallery.php:112
@@ -1190,14 +1042,6 @@ msgstr ""
 
 #: template-parts/components/product-gallery.php:171
 msgid "View image %d of %d: %s"
-msgstr ""
-
-#: template-parts/components/product-gallery-simple.php:28
-msgid "Product image placeholder"
-msgstr ""
-
-#: template-parts/components/product-gallery-simple.php:70
-msgid "Product placeholder"
 msgstr ""
 
 #: template-parts/components/product-pricing.php:43

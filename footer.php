@@ -57,7 +57,7 @@
                 <div>
                     <h3 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">Orders & Returns</h3>
                     <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%ce%b1%ce%af%cf%84%ce%b7%ce%bc%ce%b1-%ce%b1%ce%bb%ce%bb%ce%b1%ce%b3%ce%ae%cf%82-%ce%b5%cf%80%ce%b9%cf%83%cf%84%cf%81%ce%bf%cf%86%ce%ae%cf%82/">Αίτημα αλλαγής/επιστροφής</a></li>
+                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%ce%b1%ce%af%cf%84%ce%b7%ce%bc%ce%b1-%ce%b1%ce%bb%ce%bb%ce%b1%ce%b3%ce%ae%cf%82-%ce%b5%cf%80%ce%b9%cf%83%cf%84%cf%81%ce%bf%cf%86%ce%ae%cf%82/"><?php _e('Αίτημα αλλαγής/επιστροφής', 'eshop-theme'); ?></a></li>
                         <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/refund_returns/">Refund and Returns Policy</a></li>
                     </ul>
                 </div>
@@ -66,10 +66,10 @@
                 <div>
                     <h3 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">Help & Information</h3>
                     <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/contact-us/">Επικοινωνια</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%cf%83%cf%85%cf%87%ce%bd%ce%ad%cf%82-%ce%b5%cf%81%cf%89%cf%84%ce%ae%cf%83%ce%b5%ce%b9%cf%82/">Συχνές Ερωτήσεις</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/about-us/">Σχετικά με εμάς</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%ce%b4%ce%ae%ce%bb%cf%89%cf%83%ce%b7-%cf%80%cf%81%ce%bf%cf%83%ce%b2%ce%b1%cf%83%ce%b7%ce%bc%cf%8c%cf%84%ce%b7%cf%84%ce%b1%cf%82/">Δήλωση Προσβασημότητας</a></li>
+                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/contact-us/"><?php _e('Επικοινωνια', 'eshop-theme'); ?></a></li>
+                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%cf%83%cf%85%cf%87%ce%bd%ce%ad%cf%82-%ce%b5%cf%81%cf%89%cf%84%ce%ae%cf%83%ce%b5%ce%b9%cf%82/"><?php _e('Συχνές Ερωτήσεις', 'eshop-theme'); ?></a></li>
+                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/about-us/"><?php _e('Σχετικά με εμάς', 'eshop-theme'); ?></a></li>
+                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%ce%b4%ce%ae%ce%bb%cf%89%cf%83%ce%b7-%cf%80%cf%81%ce%bf%cf%83%ce%b2%ce%b1%cf%83%ce%b7%ce%bc%cf%8c%cf%84%ce%b7%cf%84%ce%b1%cf%82/"><?php _e('Δήλωση Προσβασημότητας', 'eshop-theme'); ?></a></li>
                     </ul>
                 </div>
             </div>

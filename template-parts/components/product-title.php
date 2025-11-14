@@ -23,7 +23,7 @@ if (!$product) {
     
     <?php if ($product->get_sku()) : ?>
         <div class="product-sku">
-            <span class="sku-label"><?php _e('Κωδικός:', 'thewalkingtheme'); ?></span>
+            <span class="sku-label"><?php _e('Κωδικός:', 'eshop-theme'); ?></span>
             <span class="sku-value"><?php echo esc_html($product->get_sku()); ?></span>
         </div>
     <?php endif; ?>
