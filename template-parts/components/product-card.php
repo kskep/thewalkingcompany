@@ -115,8 +115,7 @@ if ($is_variable) {
             <?php echo woocommerce_get_product_thumbnail(); ?>
         </a>
         <div class="badge-stack">
-            <?php if ($is_on_sale) : ?>
-                <?php
+            <?php if ($is_on_sale) :
                 $regular_price = $product->get_regular_price();
                 $sale_price = $product->get_sale_price();
                 if ($regular_price && $sale_price && $regular_price > $sale_price) {
@@ -124,10 +123,8 @@ if ($is_variable) {
                     if ($percentage > 0) {
                         echo '<span class="badge badge--sale">' . $percentage . '% Off</span>';
                     }
-                    }
                 }
-                ?>
-            <?php endif; ?>
+            endif; ?>
             <?php
             // Add "New" badge for products created within last 30 days
             $date_created_timestamp = strtotime($date_created);
