@@ -18,20 +18,14 @@ if (!defined('ABSPATH')) {
                 <!-- Column 1: Brand Info -->
                 <div class="footer-brand">
                     <div class="footer-logo mb-6">
-                        <?php 
-                        if (has_custom_logo()) {
-                            the_custom_logo();
-                        } else {
-                            ?>
-                            <a href="<?php echo esc_url(home_url('/')); ?>" class="text-2xl font-bold tracking-tighter uppercase text-gray-900 no-underline">
-                                <?php bloginfo('name'); ?>
-                            </a>
-                            <?php
-                        }
-                        ?>
+                        <a href="<?php echo esc_url(home_url('/')); ?>" class="block">
+                            <img src="https://walk.thewebplace.gr/wp-content/uploads/2023/01/twc-logo-pink.png"
+                                 alt="<?php bloginfo('name'); ?>"
+                                 class="h-12 w-auto">
+                        </a>
                     </div>
                     <p class="text-gray-600 mb-6 max-w-sm">
-                        <?php echo get_bloginfo('description'); ?>
+                        Your daily dose of fashion inspiration, bringing you curated collections and the latest trends.
                     </p>
                     <div class="social-links flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-instagram text-xl"></i></a>

@@ -29,29 +29,6 @@
                     <!-- Language Switcher (hidden on mobile) -->
                     <div class="language-switcher hidden lg:flex items-center space-x-2 text-sm">
                         <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EN</a>
-                        <span class="text-gray-300">|</span>
-                        <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EL</a>
-                    </div>
-
-                    <!-- Logo -->
-                    <div class="site-branding">
-                        <?php 
-                        if (has_custom_logo()) {
-                            the_custom_logo();
-                        } else {
-                            ?>
-                            <a href="<?php echo esc_url(home_url('/')); ?>" class="block text-2xl font-bold tracking-tighter uppercase text-dark no-underline">
-                                <?php bloginfo('name'); ?>
-                            </a>
-                            <?php
-                        }
-                        ?>
-                    </div>
-
-                    <!-- Header Actions (hidden on mobile, visible on desktop) -->
-                    <?php get_template_part('template-parts/header/actions'); ?>
-                </div>
-            </div>
         </div>
 
         <!-- Bottom Row: Navigation Menu (desktop only) -->
