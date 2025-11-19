@@ -86,7 +86,8 @@ function eshop_theme_setup() {
     // Register navigation menus
     register_nav_menus(array(
         'primary' => __('Primary Menu', 'eshop-theme'),
-        'footer' => __('Footer Menu', 'eshop-theme'),
+        'footer-main' => __('Footer Main Menu', 'eshop-theme'),
+        'footer-account' => __('Footer Account Menu', 'eshop-theme'),
     ));
 }
 add_action('after_setup_theme', 'eshop_theme_setup');

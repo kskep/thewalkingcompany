@@ -1,88 +1,102 @@
+<?php
+/**
+ * The template for displaying the footer
+ *
+ * @package E-Shop Theme
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
     </div><!-- #content -->
 
-    <!-- Footer -->
-    <footer id="colophon" class="site-footer bg-white mt-24 py-12 border-t border-gray-200">
+    <footer id="colophon" class="site-footer bg-gray-100 pt-16 pb-8 border-t border-gray-200">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-
-                <!-- Brand & Logo -->
-                <div>
-                    <!-- Company Logo -->
-                    <div class="mb-6">
-                        <img src="https://walk.thewebplace.gr/wp-content/uploads/2023/01/twc-logo-pink.png"
-                             alt="The Walking Company"
-                             class="h-16 w-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                
+                <!-- Column 1: Brand Info -->
+                <div class="footer-brand">
+                    <div class="footer-logo mb-6">
+                        <?php 
+                        if (has_custom_logo()) {
+                            the_custom_logo();
+                        } else {
+                            ?>
+                            <a href="<?php echo esc_url(home_url('/')); ?>" class="text-2xl font-bold tracking-tighter uppercase text-gray-900 no-underline">
+                                <?php bloginfo('name'); ?>
+                            </a>
+                            <?php
+                        }
+                        ?>
                     </div>
-                    
-                    <h3 class="font-serif text-2xl font-semibold text-gray-900 mb-4">
-                        thewalkingcompany
-                    </h3>
-                    <p class="text-gray-500 text-sm mb-6">
-                        Your daily dose of fashion inspiration, bringing you curated collections and the latest trends.
+                    <p class="text-gray-600 mb-6 max-w-sm">
+                        <?php echo get_bloginfo('description'); ?>
                     </p>
-
-                    <!-- Newsletter Signup - COMMENTED OUT FOR NOW
-                    <div>
-                        <h4 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">Newsletter</h4>
-                        <p class="text-gray-500 text-sm mb-4">Subscribe for exclusive offers and style updates.</p>
-                        <form class="flex" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                            <input type="hidden" name="action" value="newsletter_signup">
-                            <?php wp_nonce_field('newsletter_signup', 'newsletter_nonce'); ?>
-                            <input class="w-full text-sm border border-gray-300 p-2 focus:outline-none focus:border-primary"
-                                   placeholder="Your email"
-                                   type="email"
-                                   name="newsletter_email"
-                                   required />
-                            <button class="bg-primary text-white px-4 hover:opacity-90 transition-opacity" type="submit">
-                                <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </form>
+                    <div class="social-links flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-twitter text-xl"></i></a>
                     </div>
-                    -->
                 </div>
 
-                <!-- My Account -->
-                <div>
-                    <h3 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">My Account</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/account/">Account</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/log-in/">Log In</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/register/">Register</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/password-reset/">Password Reset</a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/profile/">Profile</a></li>
-                    </ul>
+                <!-- Column 2: Footer Main Menu -->
+                <div class="footer-nav">
+                    <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('Explore', 'eshop-theme'); ?></h3>
+                    <?php
+                    if (has_nav_menu('footer-main')) {
+                        wp_nav_menu(array(
+                            'theme_location' => 'footer-main',
+                            'container' => false,
+                            'menu_class' => 'space-y-3 text-sm text-gray-600',
+                            'fallback_cb' => false,
+                            'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                        ));
+                    } else {
+                        // Fallback if no menu assigned
+                        echo '<p class="text-sm text-gray-500">' . __('Please assign a menu to "Footer Main Menu" location.', 'eshop-theme') . '</p>';
+                    }
+                    ?>
                 </div>
 
-                <!-- Orders & Returns -->
-                <div>
-                    <h3 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">Orders & Returns</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%ce%b1%ce%af%cf%84%ce%b7%ce%bc%ce%b1-%ce%b1%ce%bb%ce%bb%ce%b1%ce%b3%ce%ae%cf%82-%ce%b5%cf%80%ce%b9%cf%83%cf%84%cf%81%ce%bf%cf%86%ce%ae%cf%82/"><?php _e('Αίτημα αλλαγής/επιστροφής', 'eshop-theme'); ?></a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/refund_returns/">Refund and Returns Policy</a></li>
-                    </ul>
+                <!-- Column 3: Account & Help -->
+                <div class="footer-nav">
+                    <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('Account & Help', 'eshop-theme'); ?></h3>
+                    <?php
+                    if (has_nav_menu('footer-account')) {
+                        wp_nav_menu(array(
+                            'theme_location' => 'footer-account',
+                            'container' => false,
+                            'menu_class' => 'space-y-3 text-sm text-gray-600',
+                            'fallback_cb' => false,
+                            'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                        ));
+                    } else {
+                         // Fallback if no menu assigned
+                         echo '<p class="text-sm text-gray-500">' . __('Please assign a menu to "Footer Account Menu" location.', 'eshop-theme') . '</p>';
+                    }
+                    ?>
                 </div>
 
-                <!-- Help & Information -->
-                <div>
-                    <h3 class="uppercase tracking-wider text-sm font-semibold text-gray-900 mb-4">Help & Information</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/contact-us/"><?php _e('Επικοινωνια', 'eshop-theme'); ?></a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%cf%83%cf%85%cf%87%ce%bd%ce%ad%cf%82-%ce%b5%cf%81%cf%89%cf%84%ce%ae%cf%83%ce%b5%ce%b9%cf%82/"><?php _e('Συχνές Ερωτήσεις', 'eshop-theme'); ?></a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/about-us/"><?php _e('Σχετικά με εμάς', 'eshop-theme'); ?></a></li>
-                        <li><a class="hover:text-gray-900 transition-colors" href="https://www.thewalkingcompany.gr/%ce%b4%ce%ae%ce%bb%cf%89%cf%83%ce%b7-%cf%80%cf%81%ce%bf%cf%83%ce%b2%ce%b1%cf%83%ce%b7%ce%bc%cf%8c%cf%84%ce%b7%cf%84%ce%b1%cf%82/"><?php _e('Δήλωση Προσβασημότητας', 'eshop-theme'); ?></a></li>
-                    </ul>
-                </div>
             </div>
 
             <!-- Footer Bottom -->
-            <div class="border-t border-gray-200 mt-8 pt-6 text-center text-sm text-gray-500">
-                <p>&copy; <?php echo date('Y'); ?> thewalkingcompany. All Rights Reserved.</p>
+            <div class="border-t border-gray-200 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                    &copy; <?php echo date('Y'); ?> <?php bloginfo('name'); ?>. <?php _e('All rights reserved.', 'eshop-theme'); ?>
+                </p>
+                <div class="payment-methods flex space-x-4 grayscale opacity-60 text-gray-600">
+                    <i class="fab fa-cc-visa text-2xl"></i>
+                    <i class="fab fa-cc-mastercard text-2xl"></i>
+                    <i class="fab fa-cc-amex text-2xl"></i>
+                    <i class="fab fa-cc-paypal text-2xl"></i>
+                </div>
             </div>
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300 opacity-0 invisible">
+    <button id="back-to-top" class="fixed bottom-6 right-6 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300 opacity-0 invisible z-50">
         <i class="fas fa-chevron-up icon"></i>
     </button>
 
