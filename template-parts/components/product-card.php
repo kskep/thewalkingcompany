@@ -123,15 +123,7 @@ if ($is_variable) {
                     $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
                     if ($percentage > 0) {
                         echo '<span class="badge badge--sale">' . $percentage . '% Off</span>';
-        $is_in_wishlist = is_user_logged_in() ? eshop_is_in_wishlist($product_id) : false;
-        $wishlist_class = $is_in_wishlist ? 'active in-wishlist' : '';
-        // Guests see a prompt instead of wishlist toggle intent
-        if (!is_user_logged_in()) {
-            $wishlist_aria_label = __('Log in to save to wishlist', 'eshop-theme');
-        } else {
-            $wishlist_aria_label = $is_in_wishlist ? __('Remove from wishlist', 'eshop-theme') : __('Add to wishlist', 'eshop-theme');
-        }
-        $wishlist_fill = $is_in_wishlist ? 'currentColor' : 'none';
+                    }
                     }
                 }
                 ?>
@@ -146,9 +138,12 @@ if ($is_variable) {
             ?>
         </div>
         <?php 
-        $is_in_wishlist = eshop_is_in_wishlist($product_id);
+        $user_logged_in = is_user_logged_in();
+        $is_in_wishlist = $user_logged_in ? eshop_is_in_wishlist($product_id) : false;
         $wishlist_class = $is_in_wishlist ? 'active in-wishlist' : '';
-        $wishlist_aria_label = $is_in_wishlist ? 'Remove from wishlist' : 'Add to wishlist';
+        $wishlist_aria_label = $user_logged_in
+            ? ($is_in_wishlist ? __('Remove from wishlist', 'eshop-theme') : __('Add to wishlist', 'eshop-theme'))
+            : __('Log in to save to wishlist', 'eshop-theme');
         $wishlist_fill = $is_in_wishlist ? 'currentColor' : 'none';
         ?>
         <button class="wishlist-button add-to-wishlist <?php echo esc_attr($wishlist_class); ?>"
@@ -157,6 +152,7 @@ if ($is_variable) {
                 aria-label="<?php echo esc_attr($wishlist_aria_label); ?>"
                 data-product-id="<?php echo esc_attr($product_id); ?>"
                 data-product-name="<?php echo esc_attr($product->get_name()); ?>"
+                <?php echo $user_logged_in ? '' : 'data-requires-auth="true"'; ?>
                 style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.95);border:1px solid rgba(238,129,179,0.4);z-index:10;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="<?php echo esc_attr($wishlist_fill); ?>" stroke="#ee81b3" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>

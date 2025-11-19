@@ -8,6 +8,11 @@
 
 defined('ABSPATH') || exit;
 
+if (defined('ESHOP_PRODUCT_ARCHIVE_FILTERS_RENDERED')) {
+    return;
+}
+define('ESHOP_PRODUCT_ARCHIVE_FILTERS_RENDERED', true);
+
 // Get current query for metadata
 global $wp_query;
 $total_products = $wp_query->found_posts;
@@ -94,50 +99,9 @@ if ($attribute_taxonomies) {
 }
 
 // Generate breadcrumb
-function get_product_archive_breadcrumb() {
-    $breadcrumbs = [];
-    
-    // Home
-    $breadcrumbs[] = [
-        'label' => 'Home',
-        'url' => home_url('/')
-    ];
-    
-    // Shop
-    $breadcrumbs[] = [
-        'label' => 'Shop',
-        'url' => get_permalink(wc_get_page_id('shop'))
-    ];
-    
-    // Current category/taxonomy
-    $current_term = get_queried_object();
-    if ($current_term && !is_wp_error($current_term) && isset($current_term->term_id)) {
-        // Get parent categories for hierarchy
-        $parents = [];
-        $parent = get_term($current_term->parent, $current_term->taxonomy);
-        while ($parent && !is_wp_error($parent) && $parent->term_id) {
-            array_unshift($parents, $parent);
-            $parent = get_term($parent->parent, $current_term->taxonomy);
-        }
-        
-        foreach ($parents as $parent_term) {
-            $breadcrumbs[] = [
-                'label' => $parent_term->name,
-                'url' => get_term_link($parent_term)
-            ];
-        }
-        
-        // Current term
-        $breadcrumbs[] = [
-            'label' => $current_term->name,
-            'url' => get_term_link($current_term)
-        ];
-    }
-    
-    return $breadcrumbs;
-}
-
-$breadcrumbs = get_product_archive_breadcrumb();
+$breadcrumbs = function_exists('eshop_get_product_archive_breadcrumbs')
+    ? eshop_get_product_archive_breadcrumbs()
+    : [];
 
 // Sort options
 $sort_options = [
