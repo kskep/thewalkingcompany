@@ -29,6 +29,23 @@
                     <!-- Language Switcher (hidden on mobile) -->
                     <div class="language-switcher hidden lg:flex items-center space-x-2 text-sm">
                         <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EN</a>
+                        <span class="text-gray-300">|</span>
+                        <a href="#" class="text-gray-600 hover:text-primary transition-colors font-medium">EL</a>
+                    </div>
+
+                    <!-- Logo -->
+                    <div class="site-branding">
+                        <a href="<?php echo esc_url(home_url('/')); ?>" class="block">
+                            <img src="https://walk.thewebplace.gr/wp-content/uploads/2023/01/twc-logo-pink.png"
+                                 alt="<?php bloginfo('name'); ?>"
+                                 class="h-12 w-auto">
+                        </a>
+                    </div>
+
+                    <!-- Header Actions (hidden on mobile, visible on desktop) -->
+                    <?php get_template_part('template-parts/header/actions'); ?>
+                </div>
+            </div>
         </div>
 
         <!-- Bottom Row: Navigation Menu (desktop only) -->
