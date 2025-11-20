@@ -191,12 +191,6 @@ function eshop_get_flying_cart_content_ajax() {
     get_template_part('template-parts/components/flying-cart');
     $html = ob_get_clean();
 
-    if (empty($html)) {
-        wp_send_json_error(array(
-            'message' => __('Failed to load cart content', 'eshop-theme')
-        ));
-    }
-
     wp_send_json_success(array(
         'html' => $html
     ));
@@ -284,11 +278,22 @@ function eshop_woocommerce_product_loop_end($html) {
 }
 add_filter('woocommerce_product_loop_end', 'eshop_woocommerce_product_loop_end');
 
-// Set default shop columns to 4
+// Set default shop columns to 5
 function eshop_woocommerce_loop_columns() {
-    return 4;
+    return 5;
 }
 add_filter('loop_shop_columns', 'eshop_woocommerce_loop_columns');
+
+// Inform WooCommerce defaults used by wc_get_default_products_per_row()/rows per page
+function eshop_woocommerce_default_products_per_row() {
+    return 5;
+}
+add_filter('woocommerce_default_products_per_row', 'eshop_woocommerce_default_products_per_row');
+
+function eshop_woocommerce_default_product_rows_per_page() {
+    return 3; // 5 columns × 3 rows = 15 products
+}
+add_filter('woocommerce_default_product_rows_per_page', 'eshop_woocommerce_default_product_rows_per_page');
 
 // Remove default WooCommerce styles that conflict with our grid
 function eshop_dequeue_woocommerce_styles() {
@@ -409,7 +414,7 @@ function eshop_filter_products() {
             'nonce'   => isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '',
             'filters' => isset($_POST['filters']) ? $_POST['filters'] : array(),
             'paged'   => isset($_POST['paged']) ? intval($_POST['paged']) : 1,
-            'orderby' => isset($_POST['orderby']) ? sanitize_text_field(wp_unslash($_POST['orderby'])) : 'menu_order',
+            'orderby' => isset($_POST['orderby']) ? sanitize_text_field(wp_unslash($_POST['orderby'])) : 'date',
         );
     } else {
         // JSON body fallback
@@ -425,12 +430,12 @@ function eshop_filter_products() {
 
     $filters = isset($data['filters']) && is_array($data['filters']) ? $data['filters'] : array();
     $paged = isset($data['paged']) ? intval($data['paged']) : 1;
-    $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'menu_order';
+    $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'date';
 
     // Build WP_Query args
-    // Force 12 products per page for consistency across all categories
-    // This must match the value set in eshop_force_12_products_per_page() in functions.php
-    $computed_per_page = 12;
+    // Force 15 products per page for consistency across all categories
+    // This must match the value set in eshop_force_15_products_per_page() in functions.php
+    $computed_per_page = 15;
 
     $args = array(
         'post_type' => 'product',
@@ -1104,3 +1109,38 @@ function eshop_ensure_product_context() {
 }
 add_action('wp', 'eshop_ensure_product_context');
 add_action('woocommerce_after_single_product_summary', 'eshop_output_related_products_from_categories', 20);
+
+/**
+ * Make "Newest" the default catalog ordering everywhere.
+ */
+function eshop_default_catalog_orderby_value($default) {
+    return 'date';
+}
+add_filter('woocommerce_default_catalog_orderby', 'eshop_default_catalog_orderby_value');
+
+/**
+ * Ensure the "Newest" option always sorts by descending publish date.
+ */
+function eshop_force_newest_catalog_ordering($args, $orderby, $order) {
+    if ('date' === $orderby) {
+        $args['orderby'] = 'date';
+        $args['order'] = 'DESC';
+        unset($args['meta_key']);
+    }
+
+    return $args;
+}
+add_filter('woocommerce_get_catalog_ordering_args', 'eshop_force_newest_catalog_ordering', 10, 3);
+
+/**
+ * Remove the rating-based catalog ordering option everywhere WooCommerce exposes it.
+ */
+function eshop_remove_rating_catalog_ordering($options) {
+    if (isset($options['rating'])) {
+        unset($options['rating']);
+    }
+
+    return $options;
+}
+add_filter('woocommerce_default_catalog_orderby_options', 'eshop_remove_rating_catalog_ordering');
+add_filter('woocommerce_catalog_orderby', 'eshop_remove_rating_catalog_ordering');

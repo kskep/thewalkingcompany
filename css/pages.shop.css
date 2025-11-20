@@ -260,7 +260,7 @@ body.tax-product_tag {
 .products-grid,
 .woocommerce ul.products {
   display: grid !important;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 48px 24px;
   width: 100%;
   margin: 0 !important;
@@ -305,7 +305,7 @@ body.tax-product_tag {
 @media (min-width: 1024px) {
   .products-grid,
   .woocommerce ul.products {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 64px 32px;
   }
 }

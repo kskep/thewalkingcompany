@@ -22,8 +22,8 @@ $start = ($current_page - 1) * $per_page + 1;
 $end = min($current_page * $per_page, $total_products);
 
 // Get current sort order
-$orderby = isset($_GET['orderby']) ? $_GET['orderby'] : 'menu_order';
-$order = isset($_GET['order']) ? $_GET['order'] : 'ASC';
+$orderby = isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : 'date';
+$order = isset($_GET['order']) ? strtoupper(sanitize_text_field($_GET['order'])) : 'DESC';
 
 // Get current filters from URL
 $current_filters = [];
@@ -107,7 +107,6 @@ $breadcrumbs = function_exists('eshop_get_product_archive_breadcrumbs')
 $sort_options = [
     'menu_order' => 'Sort — Featured',
     'popularity' => 'Sort — Popularity',
-    'rating' => 'Sort — Rating',
     'date' => 'Sort — Newest',
     'price' => 'Sort — Price (Low)',
     'price-desc' => 'Sort — Price (High)'

@@ -21,7 +21,7 @@ ul.products-grid,
     margin: 0;
     display: grid;
     gap: 36px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 /* Responsive Design */
@@ -49,6 +49,6 @@ ul.products-grid,
     .products-grid,
     ul.products-grid,
     #products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

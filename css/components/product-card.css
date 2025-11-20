@@ -203,6 +203,14 @@
   transform: translateY(0);
 }
 
+.size-overlay--status {
+  justify-content: center;
+}
+
+.size-overlay--status .size-chip {
+  min-width: 100%;
+}
+
 .size-chip {
   min-width: 44px;
   padding: 8px 0;

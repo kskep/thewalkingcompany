@@ -23,6 +23,11 @@ $cart_count = WC()->cart->get_cart_contents_count();
 $cart_total = WC()->cart->get_cart_total();
 $cart_items = WC()->cart->get_cart();
 $is_cart_empty = WC()->cart->is_empty();
+
+// Only render the flying cart when exactly one item is in the cart
+if ($cart_count !== 1) {
+    return;
+}
 ?>
 
 <!-- Flying Cart Component -->
@@ -38,9 +43,6 @@ $is_cart_empty = WC()->cart->is_empty();
         </div>
         <div class="cart-total-display">
             <span class="cart-total-amount"><?php echo $cart_total; ?></span>
-        </div>
-        <div class="toggle-arrow">
-            <i class="fas fa-chevron-up"></i>
         </div>
     </div>
 
