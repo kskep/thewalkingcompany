@@ -73,9 +73,6 @@ $is_in_wishlist = function_exists('eshop_is_in_wishlist') ? eshop_is_in_wishlist
         <div class="stock-quantity">
             <span class="quantity-label"><?php _e('Διαθέσιμα:', 'eshop-theme'); ?></span>
             <span class="quantity-value"><?php echo esc_html($stock_quantity); ?></span>
-            <?php if ($stock_quantity <= 5) : ?>
-                <span class="low-stock-notice"><?php _e('Χαμηλό απόθεμα!', 'eshop-theme'); ?></span>
-            <?php endif; ?>
         </div>
     <?php endif; ?>
     

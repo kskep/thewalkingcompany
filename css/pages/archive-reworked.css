@@ -250,11 +250,6 @@ ul#products-grid {
   background: #fff;
 }
 
-.size-chip.is-low {
-  border-color: var(--pink);
-  color: var(--pink);
-}
-
 .size-chip.is-out {
   border-style: dashed;
   color: rgba(109, 108, 117, 0.5);
@@ -319,13 +314,6 @@ ul#products-grid {
 .price-row del {
   color: rgba(31, 31, 35, 0.38);
   font-size: 0.9rem;
-}
-
-.stock-flag {
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--pink);
 }
 
 .card-footer {

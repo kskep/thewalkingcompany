@@ -142,10 +142,6 @@ function eshop_get_product_badges($product) {
         $badges[] = array('text' => __('HOT', 'eshop-theme'), 'class' => 'badge-hot', 'style' => 'background-color: #ea580c; color: white;');
     }
 
-    if ($product->managing_stock() && $product->get_stock_quantity() <= 5 && $product->get_stock_quantity() > 0) {
-        $badges[] = array('text' => __('ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ', 'eshop-theme'), 'class' => 'badge-low-stock', 'style' => 'background-color: #f59e0b; color: white;');
-    }
-
     return $badges;
 }
 

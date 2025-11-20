@@ -47,7 +47,7 @@ $has_size_variations = false;
 $all_sizes_out_of_stock = false;
 if ($is_variable) {
     $variation_ids = $product->get_children();
-    $priority = array('out' => 0, 'low' => 1, 'available' => 2);
+    $priority = array('out' => 0, 'available' => 1);
 
     foreach ($variation_ids as $variation_id) {
         $variation = wc_get_product($variation_id);
@@ -80,10 +80,8 @@ if ($is_variable) {
                 $status = 'available';
             } elseif ($qty <= 0) {
                 $status = 'out';
-            } elseif ($qty > 5) {
-                $status = 'available';
             } else {
-                $status = 'low';
+                $status = 'available';
             }
         }
 
@@ -182,16 +180,14 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
         <div class="size-overlay" aria-hidden="true">
             <?php foreach ($stock_info as $size => $info) : 
                 $size_class = 'size-chip';
-                if ($info['status'] === 'low') {
-                    $size_class .= ' is-low';
-                } elseif ($info['status'] === 'out') {
+                if ($info['status'] === 'out') {
                     $size_class .= ' is-out';
                 }
                 // Transform size label for display (e.g., XSmall -> XS)
                 $display_size = function_exists('eshop_transform_size_label') ? eshop_transform_size_label($size) : $size;
                 $label = strtoupper($display_size);
             ?>
-                <span class="<?php echo esc_attr($size_class); ?>" title="<?php echo esc_attr($info['status'] === 'out' ? 'Out of stock' : ($info['status'] === 'low' ? 'Low stock' : 'In stock')); ?>">
+                <span class="<?php echo esc_attr($size_class); ?>" title="<?php echo esc_attr($info['status'] === 'out' ? __('Out of stock', 'eshop-theme') : __('In stock', 'eshop-theme')); ?>">
                     <?php echo esc_html($label); ?>
                 </span>
             <?php endforeach; ?>
@@ -227,10 +223,7 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
         <div class="price-row">
             <?php
             echo $product->get_price_html();
-            if ($product->is_in_stock() && $product->get_stock_quantity() < 5 && $product->get_stock_quantity() > 0) :
             ?>
-                <span class="stock-flag">Low stock</span>
-            <?php endif; ?>
         </div>
     </div>
 </article>
