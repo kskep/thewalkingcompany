@@ -162,14 +162,17 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 												$variation_image_src = wc_placeholder_img_src();
 											}
 											?>
-											<button type="button" 
-												class="<?php echo esc_attr( $swatch_class ); ?>"
-												data-value="<?php echo esc_attr( $term->slug ); ?>"
-												data-attribute="<?php echo esc_attr( $attr_key ); ?>"
-												title="<?php echo esc_attr( $term->name ); ?>"
-												<?php echo ! $is_in_stock ? 'disabled' : ''; ?>>
-												<img src="<?php echo esc_url( $variation_image_src ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" />
-											</button>
+											<div class="color-swatch-wrapper">
+												<button type="button" 
+													class="<?php echo esc_attr( $swatch_class ); ?>"
+													data-value="<?php echo esc_attr( $term->slug ); ?>"
+													data-attribute="<?php echo esc_attr( $attr_key ); ?>"
+													title="<?php echo esc_attr( $term->name ); ?>"
+													<?php echo ! $is_in_stock ? 'disabled' : ''; ?>>
+													<img src="<?php echo esc_url( $variation_image_src ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" />
+												</button>
+												<span class="color-name"><?php echo esc_html( $term->name ); ?></span>
+											</div>
 											<?php
 										}
 									}

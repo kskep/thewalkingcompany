@@ -60,15 +60,18 @@ foreach ($variants as $variant) {
                     $image_src = wc_placeholder_img_src();
                 }
             ?>
-                <button type="button"
-                        class="<?php echo esc_attr($class_string); ?>"
-                        onclick="window.location.href='<?php echo esc_url($variant['url']); ?>'"
-                        title="<?php echo esc_attr($color_name); ?>"
-                        aria-label="<?php echo esc_attr(sprintf(__('Select %s color variant', 'eshop-theme'), $color_name)); ?>"
-                        <?php echo !$variant['in_stock'] ? 'disabled' : ''; ?>>
-                    
-                    <img src="<?php echo esc_url($image_src); ?>" alt="<?php echo esc_attr($color_name); ?>" />
-                </button>
+                <div class="color-swatch-wrapper">
+                    <button type="button"
+                            class="<?php echo esc_attr($class_string); ?>"
+                            onclick="window.location.href='<?php echo esc_url($variant['url']); ?>'"
+                            title="<?php echo esc_attr($color_name); ?>"
+                            aria-label="<?php echo esc_attr(sprintf(__('Select %s color variant', 'eshop-theme'), $color_name)); ?>"
+                            <?php echo !$variant['in_stock'] ? 'disabled' : ''; ?>>
+                        
+                        <img src="<?php echo esc_url($image_src); ?>" alt="<?php echo esc_attr($color_name); ?>" />
+                    </button>
+                    <span class="color-name"><?php echo esc_html($color_name); ?></span>
+                </div>
             <?php endforeach; ?>
         </div>
     </div>

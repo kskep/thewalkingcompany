@@ -335,7 +335,7 @@ button:focus-visible {
 .woocommerce-variation-add-to-cart,
 .variations_form {
   display: grid;
-  gap: 32px;
+  gap: 16px;
 }
 
 /* Enhanced variations container */
@@ -347,7 +347,7 @@ button:focus-visible {
 /* Individual variation wrapper */
 .variation-wrapper {
   display: grid;
-  gap: 16px;
+  gap: 0;
 }
 
 /* Variation label with selected value display */
@@ -874,9 +874,9 @@ button:focus-visible {
 .product-header-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 20px;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
   width: 100%;
 }
 
@@ -907,16 +907,28 @@ button:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
+}
+
+.color-swatch-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.color-name {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .color-thumbnail-swatch {
-  width: 60px;
-  /* Adjusted for 75px height ratio */
-  height: 75px;
-  /* Adjusted height per user request */
+  width: 80px;
+  height: 85px;
   border: 1px solid var(--border-light);
-  padding: 2px;
+  padding: 0;
   cursor: pointer;
   background: white;
   transition: all 0.2s ease;
