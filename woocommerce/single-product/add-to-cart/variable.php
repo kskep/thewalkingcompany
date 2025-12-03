@@ -41,11 +41,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 				
 				<div class="variation-wrapper" data-attribute="<?php echo esc_attr( $attr_key ); ?>">
 					<?php
-					if ( $is_color_attribute ) {
-						$attribute_label = __( 'Color Story', 'eshop-theme' );
-					} else {
-						$attribute_label = isset( $attribute_label ) ? $attribute_label : wc_attribute_label( $taxonomy );
-					}
+					$attribute_label = isset( $attribute_label ) ? $attribute_label : wc_attribute_label( $taxonomy );
 					?>
 					<label class="block-label variation-label">
 						<?php echo esc_html( $attribute_label ); ?>

@@ -38,10 +38,10 @@ foreach ($variants as $variant) {
 
 <div class="product-color-variants" data-product-id="<?php echo esc_attr($current_id); ?>">
     <div>
-        <span class="block-label"><?php _e('Color Story', 'eshop-theme'); ?></span>
-        <div class="color-palette">
+        <!-- Label removed as per new design -->
+        <div class="color-thumbnails-row">
             <?php foreach ($variants as $variant) :
-                $variant_classes = array('swatch');
+                $variant_classes = array('color-thumbnail-swatch');
                 
                 if ($variant['is_current']) {
                     $variant_classes[] = 'selected';
@@ -53,37 +53,21 @@ foreach ($variants as $variant) {
                 
                 $class_string = implode(' ', $variant_classes);
                 $color_name = $variant['name'] ?: __('Unnamed Color', 'eshop-theme');
-                $color_hex = $variant['hex'] ?: '#f8c5d8';
                 
-                // Create gradient style for color swatch
-                $gradient_style = '';
-                if ($variant['hex']) {
-                    $gradient_style = sprintf(
-                        'background: radial-gradient(circle at 30%% 30%%, rgba(255, 255, 255, 0.65) 0%%, %s 72%%); background-color: %s;',
-                        $color_hex,
-                        $color_hex
-                    );
-                } else {
-                    $gradient_style = sprintf(
-                        'background: radial-gradient(circle at 30%% 30%%, rgba(255, 255, 255, 0.65) 0%%, %s 72%%); background-color: %s;',
-                        $color_hex,
-                        $color_hex
-                    );
+                // Use featured image or fallback placeholder
+                $image_src = $variant['image'];
+                if (empty($image_src)) {
+                    $image_src = wc_placeholder_img_src();
                 }
             ?>
                 <button type="button"
                         class="<?php echo esc_attr($class_string); ?>"
-                        data-product-id="<?php echo esc_attr($variant['id']); ?>"
-                        data-url="<?php echo esc_url($variant['url']); ?>"
-                        data-color-name="<?php echo esc_attr($color_name); ?>"
-                        data-price="<?php echo esc_attr($variant['price']); ?>"
-                        data-in-stock="<?php echo $variant['in_stock'] ? '1' : '0'; ?>"
+                        onclick="window.location.href='<?php echo esc_url($variant['url']); ?>'"
                         title="<?php echo esc_attr($color_name); ?>"
                         aria-label="<?php echo esc_attr(sprintf(__('Select %s color variant', 'eshop-theme'), $color_name)); ?>"
                         <?php echo !$variant['in_stock'] ? 'disabled' : ''; ?>>
                     
-                    <span class="tone" style="<?php echo esc_attr($gradient_style); ?>"></span>
-                    <span class="swatch-name"><?php echo esc_html($color_name); ?></span>
+                    <img src="<?php echo esc_url($image_src); ?>" alt="<?php echo esc_attr($color_name); ?>" />
                 </button>
             <?php endforeach; ?>
         </div>
