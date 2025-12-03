@@ -82,6 +82,17 @@ if (empty($gallery_images)) {
              class="product-gallery__main-image-img"
              loading="eager"
              decoding="async">
+             
+        <?php if (count($gallery_images) > 1) : ?>
+            <div class="gallery-nav">
+                <button class="gallery-prev" aria-label="<?php esc_attr_e('Previous image', 'eshop-theme'); ?>">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="gallery-next" aria-label="<?php esc_attr_e('Next image', 'eshop-theme'); ?>">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- Thumbnail Strip -->
@@ -109,12 +120,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const mainImg = gallery.querySelector('.main-image img');
     const thumbs = gallery.querySelectorAll('.thumb');
+    const prevBtn = gallery.querySelector('.gallery-prev');
+    const nextBtn = gallery.querySelector('.gallery-next');
+    
+    let currentIndex = 0;
+    const totalImages = thumbs.length;
 
-    thumbs.forEach(thumb => {
-        thumb.addEventListener('click', function() {
-            const src = this.dataset.src;
-            const alt = this.querySelector('img').alt;
-            const title = this.querySelector('img').title;
+    function updateGallery(index) {
+        if (index < 0) index = totalImages - 1;
+        if (index >= totalImages) index = 0;
+        
+        currentIndex = index;
+        const targetThumb = thumbs[currentIndex];
+        
+        if (targetThumb) {
+            const src = targetThumb.dataset.src;
+            const alt = targetThumb.querySelector('img').alt;
+            const title = targetThumb.querySelector('img').title;
             
             // Update main image
             mainImg.src = src;
@@ -123,8 +145,29 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update active state
             thumbs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
+            targetThumb.classList.add('active');
+            
+            // Scroll thumbnail into view if needed
+            targetThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        }
+    }
+
+    thumbs.forEach((thumb, index) => {
+        thumb.addEventListener('click', function() {
+            updateGallery(index);
         });
     });
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            updateGallery(currentIndex - 1);
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            updateGallery(currentIndex + 1);
+        });
+    }
 });
 </script>

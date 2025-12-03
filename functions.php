@@ -14,11 +14,12 @@ if (!defined('ABSPATH')) {
  * Include modular function files
  */
 require_once get_template_directory() . '/inc/theme-setup.php';
-require_once get_template_directory() . '/inc/helpers.php'; // [NEW] Helper functions
-require_once get_template_directory() . '/inc/enqueue-scripts.php'; // [NEW] Enqueue scripts & styles
-require_once get_template_directory() . '/inc/class-product-filters.php'; // [NEW] Product Filters Class
+require_once get_template_directory() . '/inc/helpers.php';
+require_once get_template_directory() . '/inc/enqueue-scripts.php';
+require_once get_template_directory() . '/inc/class-product-filters.php';
 require_once get_template_directory() . '/inc/wishlist-functions.php';
 require_once get_template_directory() . '/inc/woocommerce-functions.php';
+require_once get_template_directory() . '/inc/ajax-handlers.php';
 require_once get_template_directory() . '/inc/woocommerce/product-display.php';
 require_once get_template_directory() . '/inc/woocommerce/size-transformation.php';
 require_once get_template_directory() . '/inc/mega-menu-walker.php';
