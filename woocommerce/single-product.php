@@ -84,37 +84,17 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     ?>
                 </span>
                 
-                <!-- Product Title -->
-                <h1 class="product-title"><?php echo esc_html( $product->get_name() ); ?></h1>
-                
-                <!-- Product Subtitle/Description -->
-                <?php if ( $product->get_short_description() ) : ?>
-                    <div class="subtitle wc-short-description">
-                        <?php
-                        // DEBUG: Log the original short description
-                        $original_description = $product->get_short_description();
-                        error_log('DEBUG: Original short description: ' . $original_description);
-                        
-                        // Render WooCommerce short description allowing expected HTML instead of escaping tags
-                        $filtered_description = apply_filters( 'woocommerce_short_description', $original_description );
-                        error_log('DEBUG: Filtered short description: ' . $filtered_description);
-                        
-                        // Check for duplicate divs
-                        $div_count = substr_count($filtered_description, '<div class="product_feautures_item_title features_title_place">');
-                        if ($div_count > 1) {
-                            error_log('DEBUG: Found ' . $div_count . ' duplicate div elements in short description');
-                        }
-                        
-                        echo $filtered_description;
-                        ?>
-                    </div>
-                <?php endif; ?>
+                <!-- Product Header Row (Title + Price) -->
+                <div class="product-header-row">
+                    <!-- Product Title -->
+                    <h1 class="product-title"><?php echo esc_html( $product->get_name() ); ?></h1>
 
-                <?php if ( $product->get_price_html() ) : ?>
-                    <div class="price-row" data-base-price="<?php echo esc_attr( wp_kses_post( $product->get_price_html() ) ); ?>">
-                        <span class="price-amount"><?php echo wp_kses_post( $product->get_price_html() ); ?></span>
-                    </div>
-                <?php endif; ?>
+                    <?php if ( $product->get_price_html() ) : ?>
+                        <div class="price-row" data-base-price="<?php echo esc_attr( wp_kses_post( $product->get_price_html() ) ); ?>">
+                            <span class="price-amount"><?php echo wp_kses_post( $product->get_price_html() ); ?></span>
+                        </div>
+                    <?php endif; ?>
+                </div>
 
                 <!-- Options Block (Colors, Sizes, etc.) -->
                 <div class="options-block">
@@ -167,9 +147,10 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
 
                 <!-- Detail Accordions -->
                 <div class="detail-accordions">
+                    <!-- Information Accordion (Moved Short Description) -->
                     <div class="detail-accordion">
                         <button class="detail-accordion-trigger" type="button" aria-expanded="true">
-                            <span>Shipping & Returns</span>
+                            <span><?php _e('ΠΛΗΡΟΦΟΡΙΕΣ', 'eshop-theme'); ?></span>
                             <span class="icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M6 9l6 6 6-6"></path>
@@ -177,6 +158,24 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             </span>
                         </button>
                         <div class="detail-accordion-panel">
+                            <?php if ( $product->get_short_description() ) : ?>
+                                <div class="subtitle wc-short-description">
+                                    <?php echo apply_filters( 'woocommerce_short_description', $product->get_short_description() ); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="detail-accordion">
+                        <button class="detail-accordion-trigger" type="button" aria-expanded="false">
+                            <span>Shipping & Returns</span>
+                            <span class="icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="detail-accordion-panel" hidden>
                             <p>Complimentary carbon-neutral delivery across Greece within 2 business days. EU orders arrive in 3–5 days.</p>
                             <p>We offer free exchanges within 30 days. Returns remain effortless—use the enclosed prepaid label or visit a Walking Company boutique.</p>
                         </div>

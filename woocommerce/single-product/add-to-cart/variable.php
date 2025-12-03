@@ -127,92 +127,9 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 						</div>
 						
 					<?php elseif ( $is_color_attribute ) : ?>
-						<!-- Color Swatches -->
-						<div class="color-palette">
+						<!-- Color Thumbnails (Images) -->
+						<div class="color-thumbnails-row">
 							<?php
-							$prepare_color_style = static function( $term, $fallback_name ) {
-								$meta_keys = array( 'pa_color_gradient', 'pa_color_color', 'color_gradient', 'gradient', 'color' );
-								$raw_value = '';
-
-								foreach ( $meta_keys as $meta_key ) {
-									$term_value = get_term_meta( $term->term_id, $meta_key, true );
-									if ( ! empty( $term_value ) ) {
-										$raw_value = $term_value;
-										break;
-									}
-								}
-
-								$normalized_gradient = '';
-								$primary = '';
-								$secondary = '';
-
-								if ( is_string( $raw_value ) ) {
-									$trimmed = trim( $raw_value );
-									$decoded = json_decode( $trimmed, true );
-									if ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) {
-										$raw_value = $decoded;
-									} else {
-										if ( false !== stripos( $trimmed, 'gradient' ) ) {
-											$normalized_gradient = $trimmed;
-										} else {
-											$primary = $trimmed;
-										}
-									}
-								}
-
-								if ( is_array( $raw_value ) ) {
-									$normalized_gradient = $raw_value['gradient'] ?? '';
-									$primary = $raw_value['primary'] ?? $raw_value['base'] ?? $raw_value['color'] ?? ( $raw_value[0] ?? $primary );
-									$secondary = $raw_value['secondary'] ?? $raw_value['accent'] ?? ( $raw_value[1] ?? $secondary );
-								}
-
-								$normalize_color = static function( $token ) {
-									$token = is_string( $token ) ? trim( $token ) : '';
-									if ( '' === $token ) {
-										return '';
-									}
-									if ( 0 === strpos( $token, '#' ) ) {
-										return $token;
-									}
-									if ( preg_match( '/^[0-9a-fA-F]{3,6}$/', $token ) ) {
-										return '#' . $token;
-									}
-									return $token;
-								};
-
-								$primary = $normalize_color( $primary );
-								$secondary = $normalize_color( $secondary );
-
-								if ( empty( $normalized_gradient ) && $primary && $secondary ) {
-									$normalized_gradient = sprintf( 'radial-gradient(circle at 30%% 30%%, %1$s 0%%, %2$s 72%%)', $primary, $secondary );
-								}
-
-								if ( empty( $normalized_gradient ) && $primary ) {
-									$normalized_gradient = sprintf( 'radial-gradient(circle at 30%% 30%%, rgba(255,255,255,0.65) 0%%, %1$s 72%%)', $primary );
-								}
-
-								if ( ! empty( $normalized_gradient ) ) {
-									$gradient_value = trim( $normalized_gradient );
-									if ( 0 === stripos( $gradient_value, 'background' ) ) {
-										$style = rtrim( $gradient_value, ';' ) . ';';
-									} else {
-										$style = 'background: ' . $gradient_value . ';';
-									}
-									if ( $primary ) {
-										$style .= ' background-color: ' . $primary . ';';
-									}
-
-									return $style;
-								}
-
-								$fallback = function_exists( 'eshop_get_color_from_name' ) ? eshop_get_color_from_name( $fallback_name ) : '#f8c5d8';
-
-								return sprintf(
-									'background: radial-gradient(circle at 30%% 30%%, rgba(255,255,255,0.65) 0%%, %1$s 72%%); background-color: %1$s;',
-									$fallback
-								);
-							};
-
 							if ( ! empty( $options ) ) {
 								if ( $product && taxonomy_exists( $taxonomy ) ) {
 									$terms = wc_get_product_terms( $product->get_id(), $taxonomy, array( 'fields' => 'all' ) );
@@ -220,50 +137,45 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 									foreach ( $terms as $term ) {
 										if ( in_array( $term->slug, $options, true ) ) {
 											$is_in_stock = false;
-											$found_variation = false;
+											$variation_image_src = '';
 
 											foreach ( $available_variations as $variation ) {
 												if ( isset( $variation['attributes'][ $attr_key ] ) &&
 												 $variation['attributes'][ $attr_key ] === $term->slug ) {
-												$found_variation = true;
-												if ( $variation['is_in_stock'] ) {
-													$is_in_stock = true;
+													
+													// Get variation image
+													if ( !empty($variation['image']['src']) ) {
+														$variation_image_src = $variation['image']['src'];
+													}
+
+													if ( $variation['is_in_stock'] ) {
+														$is_in_stock = true;
+													}
+													// Break once we find the matching variation to get its image
+													if ($variation_image_src) break; 
 												}
 											}
-											}
 
-											$swatch_class = 'swatch';
+											$swatch_class = 'color-thumbnail-swatch';
 											if ( ! $is_in_stock ) {
 												$swatch_class .= ' disabled';
 											}
-
-											$swatch_style = $prepare_color_style( $term, $term->name );
+											
+											// Fallback to placeholder if no image found
+											if ( empty($variation_image_src) ) {
+												$variation_image_src = wc_placeholder_img_src();
+											}
 											?>
 											<button type="button" 
 												class="<?php echo esc_attr( $swatch_class ); ?>"
 												data-value="<?php echo esc_attr( $term->slug ); ?>"
 												data-attribute="<?php echo esc_attr( $attr_key ); ?>"
+												title="<?php echo esc_attr( $term->name ); ?>"
 												<?php echo ! $is_in_stock ? 'disabled' : ''; ?>>
-												<span class="tone" style="<?php echo esc_attr( $swatch_style ); ?>"></span>
-												<span class="swatch-name"><?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $term->name, $term, $attribute_name, $product ) ); ?></span>
+												<img src="<?php echo esc_url( $variation_image_src ); ?>" alt="<?php echo esc_attr( $term->name ); ?>" />
 											</button>
 											<?php
 										}
-									}
-								} else {
-									foreach ( $options as $option ) {
-										$swatch_class = 'swatch';
-										$faux_term = (object) array( 'term_id' => 0, 'name' => $option );
-										$swatch_style = $prepare_color_style( $faux_term, $option );
-										?>
-										<button type="button" 
-											class="<?php echo esc_attr( $swatch_class ); ?>"
-											data-value="<?php echo esc_attr( $option ); ?>"
-											data-attribute="<?php echo esc_attr( $attr_key ); ?>">
-											<span class="tone" style="<?php echo esc_attr( $swatch_style ); ?>"></span>
-											<span class="swatch-name"><?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute_name, $product ) ); ?></span>
-										</button>
-										<?php
 									}
 								}
 							}
