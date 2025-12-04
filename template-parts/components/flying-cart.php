@@ -24,25 +24,22 @@ $cart_total = WC()->cart->get_cart_total();
 $cart_items = WC()->cart->get_cart();
 $is_cart_empty = WC()->cart->is_empty();
 
-// Only render the flying cart when exactly one item is in the cart
-if ($cart_count !== 1) {
+// Only render the flying cart when cart has items
+if ($is_cart_empty) {
     return;
 }
 ?>
 
 <!-- Flying Cart Component -->
-<div id="flying-cart" class="flying-cart <?php echo $is_cart_empty ? 'cart-empty' : 'cart-has-items'; ?>">
+<div id="flying-cart" class="flying-cart cart-has-items">
     
-    <!-- Cart Toggle Button -->
+    <!-- Cart Toggle Button - Compact icon with quantity -->
     <div class="flying-cart__toggle" role="button" tabindex="0" aria-label="Toggle Flying Cart">
         <div class="cart-icon-wrapper">
             <i class="fas fa-shopping-bag cart-icon"></i>
-            <span class="cart-count-badge <?php echo $cart_count > 0 ? 'visible' : 'hidden'; ?>" data-count="<?php echo $cart_count; ?>">
+            <span class="cart-count-badge visible" data-count="<?php echo $cart_count; ?>">
                 <?php echo $cart_count; ?>
             </span>
-        </div>
-        <div class="cart-total-display">
-            <span class="cart-total-amount"><?php echo $cart_total; ?></span>
         </div>
     </div>
 
