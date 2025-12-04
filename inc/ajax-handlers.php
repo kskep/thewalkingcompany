@@ -93,6 +93,59 @@ add_action('wp_ajax_get_flying_cart_content', 'eshop_get_flying_cart_content_aja
 add_action('wp_ajax_nopriv_get_flying_cart_content', 'eshop_get_flying_cart_content_ajax');
 
 /**
+ * Update cart item quantity via AJAX
+ * 
+ * @return void Sends JSON response
+ */
+function eshop_update_cart_quantity_ajax() {
+    // Verify nonce for security
+    if (!check_ajax_referer('eshop_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Security check failed', 'eshop-theme')
+        ));
+    }
+
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_error(array(
+            'message' => __('WooCommerce is not active', 'eshop-theme')
+        ));
+    }
+
+    $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
+    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1;
+
+    if (empty($cart_item_key)) {
+        wp_send_json_error(array(
+            'message' => __('Invalid cart item', 'eshop-theme')
+        ));
+    }
+
+    // If quantity is 0 or less, remove the item
+    if ($quantity <= 0) {
+        WC()->cart->remove_cart_item($cart_item_key);
+    } else {
+        WC()->cart->set_quantity($cart_item_key, $quantity, true);
+    }
+
+    WC()->cart->calculate_totals();
+
+    // Get updated cart data
+    $cart_count = WC()->cart->get_cart_contents_count();
+    $cart_total = WC()->cart->get_cart_total();
+
+    wp_send_json_success(array(
+        'message' => __('Cart updated', 'eshop-theme'),
+        'cart_count' => $cart_count,
+        'cart_total' => $cart_total,
+        'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array()),
+        'cart_hash' => apply_filters('woocommerce_add_to_cart_hash', WC()->cart->get_cart_hash())
+    ));
+}
+add_action('wp_ajax_update_cart_quantity', 'eshop_update_cart_quantity_ajax');
+add_action('wp_ajax_nopriv_update_cart_quantity', 'eshop_update_cart_quantity_ajax');
+
+/**
  * AJAX handler for product filtering
  * 
  * Note: AJAX filtering is currently disabled in favor of standard page navigation.

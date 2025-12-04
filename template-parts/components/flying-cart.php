@@ -100,7 +100,15 @@ if ($is_cart_empty) {
                                 </div>
                                 
                                 <div class="cart-item-meta">
-                                    <span class="cart-item-quantity"><?php echo sprintf(__('Qty: %s', 'eshop-theme'), $cart_item['quantity']); ?></span>
+                                    <div class="cart-item-quantity-controls">
+                                        <button type="button" class="qty-btn qty-minus" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Decrease quantity">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <span class="qty-value"><?php echo $cart_item['quantity']; ?></span>
+                                        <button type="button" class="qty-btn qty-plus" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Increase quantity">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
                                     <span class="cart-item-price"><?php echo $product_price; ?></span>
                                 </div>
                             </div>

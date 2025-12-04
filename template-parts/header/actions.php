@@ -105,18 +105,28 @@ if (!defined('ABSPATH')) {
                             $product_id = $cart_item['product_id'];
                             $quantity = $cart_item['quantity'];
                         ?>
-                            <div class="minicart-item flex items-center space-x-3 py-3 border-b border-gray-100 last:border-b-0">
+                            <div class="minicart-item flex items-center space-x-3 py-3 border-b border-gray-100 last:border-b-0" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>">
                                 <div class="w-12 h-12 flex-shrink-0">
                                     <?php echo $product->get_image(array(48, 48)); ?>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h4 class="text-sm font-medium text-dark truncate"><?php echo $product->get_name(); ?></h4>
-                                    <p class="text-xs text-gray-500"><?php echo sprintf('%s × %s', $quantity, wc_price($product->get_price())); ?></p>
-                                    <p class="text-sm text-primary font-semibold"><?php echo wc_price($product->get_price() * $quantity); ?></p>
+                                    <div class="flex items-center justify-between mt-1">
+                                        <div class="minicart-qty-controls flex items-center">
+                                            <button type="button" class="minicart-qty-btn qty-minus p-1 text-gray-400 hover:text-primary" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Decrease quantity">
+                                                <i class="fas fa-minus text-xs"></i>
+                                            </button>
+                                            <span class="qty-value mx-2 text-sm font-medium"><?php echo $quantity; ?></span>
+                                            <button type="button" class="minicart-qty-btn qty-plus p-1 text-gray-400 hover:text-primary" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Increase quantity">
+                                                <i class="fas fa-plus text-xs"></i>
+                                            </button>
+                                        </div>
+                                        <span class="text-sm text-primary font-semibold"><?php echo wc_price($product->get_price() * $quantity); ?></span>
+                                    </div>
                                 </div>
-                                <a href="<?php echo wc_get_cart_remove_url($cart_item_key); ?>" class="remove-from-cart text-gray-400 hover:text-red-500 transition-colors" data-cart-item-key="<?php echo $cart_item_key; ?>">
+                                <button class="remove-from-cart text-gray-400 hover:text-red-500 transition-colors" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Remove item">
                                     <i class="fas fa-times text-xs"></i>
-                                </a>
+                                </button>
                             </div>
                         <?php endforeach; ?>
                     <?php else : ?>

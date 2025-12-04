@@ -7,7 +7,7 @@
  * @package E-Shop Theme
  */
 
-(function($) {
+(function ($) {
     'use strict';
 
     // Flying Cart Class
@@ -19,7 +19,7 @@
             this.closeBtn = this.cart.find('.cart-close-btn');
             this.isExpanded = false;
             this.isLoading = false;
-            
+
             this.init();
         }
 
@@ -55,6 +55,31 @@
                 e.preventDefault();
                 const cartItemKey = $(e.currentTarget).data('cart-item-key');
                 this.removeCartItem(cartItemKey);
+            });
+
+            // Quantity plus button
+            this.cart.on('click', '.qty-plus', (e) => {
+                e.preventDefault();
+                const $btn = $(e.currentTarget);
+                const cartItemKey = $btn.data('cart-item-key');
+                const $qtyValue = $btn.siblings('.qty-value');
+                const currentQty = parseInt($qtyValue.text()) || 1;
+                this.updateCartQuantity(cartItemKey, currentQty + 1);
+            });
+
+            // Quantity minus button
+            this.cart.on('click', '.qty-minus', (e) => {
+                e.preventDefault();
+                const $btn = $(e.currentTarget);
+                const cartItemKey = $btn.data('cart-item-key');
+                const $qtyValue = $btn.siblings('.qty-value');
+                const currentQty = parseInt($qtyValue.text()) || 1;
+                if (currentQty > 1) {
+                    this.updateCartQuantity(cartItemKey, currentQty - 1);
+                } else {
+                    // If quantity would be 0, remove the item
+                    this.removeCartItem(cartItemKey);
+                }
             });
 
             // Listen for WooCommerce cart updates
@@ -102,11 +127,11 @@
 
         openCart() {
             if (this.isLoading) return;
-            
+
             this.isExpanded = true;
             this.cart.addClass('expanded');
             this.toggle.attr('aria-expanded', 'true');
-            
+
             // Focus management for accessibility
             setTimeout(() => {
                 this.panel.find('.cart-close-btn').focus();
@@ -121,7 +146,7 @@
 
         setupAutoHide() {
             let hideTimeout;
-            
+
             // Auto-hide after inactivity
             this.cart.on('mouseenter', () => {
                 clearTimeout(hideTimeout);
@@ -140,7 +165,7 @@
             if (this.isLoading) return;
 
             this.setLoading(true);
-            
+
             const data = {
                 action: 'remove_cart_item',
                 cart_item_key: cartItemKey,
@@ -157,10 +182,10 @@
                         if (response.data.fragments) {
                             this.updateFragments(response.data.fragments);
                         }
-                        
+
                         // Show success message
                         this.showNotification('Item removed from cart', 'success');
-                        
+
                         // Refresh the cart display
                         this.refreshCart();
                     } else {
@@ -176,6 +201,48 @@
             });
         }
 
+        updateCartQuantity(cartItemKey, quantity) {
+            if (this.isLoading) return;
+
+            this.setLoading(true);
+
+            const data = {
+                action: 'update_cart_quantity',
+                cart_item_key: cartItemKey,
+                quantity: quantity,
+                nonce: eshop_ajax.nonce
+            };
+
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                data: data,
+                success: (response) => {
+                    if (response.success) {
+                        // Update cart fragments
+                        if (response.data.fragments) {
+                            this.updateFragments(response.data.fragments);
+                        }
+
+                        // Trigger WooCommerce events
+                        $(document.body).trigger('wc_fragment_refresh');
+                        $(document.body).trigger('updated_cart_totals');
+
+                        // Refresh the cart display
+                        this.refreshCart();
+                    } else {
+                        this.showNotification('Error updating quantity', 'error');
+                    }
+                },
+                error: () => {
+                    this.showNotification('Error updating quantity', 'error');
+                },
+                complete: () => {
+                    this.setLoading(false);
+                }
+            });
+        }
+
         onCartUpdated(fragments) {
             this.updateFragments(fragments);
             this.updateCartDisplay();
@@ -184,7 +251,7 @@
 
         updateFragments(fragments) {
             if (fragments) {
-                $.each(fragments, function(key, value) {
+                $.each(fragments, function (key, value) {
                     $(key).replaceWith(value);
                 });
             }
@@ -204,8 +271,23 @@
                 },
                 success: (response) => {
                     if (response.success) {
+                        // Check if the response HTML is empty (cart is empty)
+                        if (!response.data.html || response.data.html.trim() === '') {
+                            // Cart is empty - hide/remove the flying cart
+                            this.cart.fadeOut(300, () => {
+                                this.cart.remove();
+                            });
+                            return;
+                        }
+
                         this.cart.replaceWith(response.data.html);
                         this.cart = $('#flying-cart');
+
+                        // If the flying cart no longer exists (was not rendered), stop
+                        if (!this.cart.length) {
+                            return;
+                        }
+
                         this.toggle = this.cart.find('.flying-cart__toggle');
                         this.panel = this.cart.find('.flying-cart__panel');
                         this.closeBtn = this.cart.find('.cart-close-btn');
@@ -221,10 +303,10 @@
         updateCartDisplay() {
             const cartCount = this.cart.find('.cart-count-badge').data('count') || 0;
             const isEmpty = cartCount === 0;
-            
+
             this.cart.toggleClass('cart-empty', isEmpty);
             this.cart.toggleClass('cart-has-items', !isEmpty);
-            
+
             // Update badge visibility
             const badge = this.cart.find('.cart-count-badge');
             if (cartCount > 0) {
@@ -245,18 +327,18 @@
 
             // Animate the flying cart
             this.showCartUpdateAnimation();
-            
+
             // Show notification
             this.showNotification('Item added to cart!', 'success');
         }
 
         showCartUpdateAnimation() {
             this.cart.addClass('cart-updated');
-            
+
             // Pulse animation for the cart icon
             const icon = this.cart.find('.cart-icon');
             icon.addClass('animate-pulse');
-            
+
             setTimeout(() => {
                 this.cart.removeClass('cart-updated');
                 icon.removeClass('animate-pulse');
@@ -266,7 +348,7 @@
         setLoading(loading) {
             this.isLoading = loading;
             this.cart.toggleClass('loading', loading);
-            
+
             if (loading) {
                 this.toggle.attr('aria-busy', 'true');
             } else {
@@ -289,7 +371,7 @@
             `);
 
             $('body').append(notification);
-            
+
             setTimeout(() => {
                 notification.addClass('show');
             }, 100);
@@ -317,7 +399,7 @@
     }
 
     // Initialize Flying Cart when DOM is ready
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Only initialize if the flying cart element exists
         if ($('#flying-cart').length) {
             window.FlyingCartInstance = new FlyingCart();
