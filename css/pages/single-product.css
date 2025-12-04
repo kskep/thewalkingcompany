@@ -79,9 +79,8 @@ button:focus-visible {
 }
 
 .gallery-card {
-  border: 1px solid var(--pane-line);
-  background: var(--pane-mid);
-  padding: 32px;
+
+
   display: grid;
   gap: 28px;
   border-radius: var(--radius);

@@ -19,7 +19,7 @@
         <!-- Top Row: Language | Logo | Account/Cart -->
         <div class="header-top border-b border-gray-100">
             <div class="container mx-auto px-4">
-                <div class="flex items-center justify-between py-3">
+                <div class="relative flex items-center justify-between py-3 min-h-12">
 
                     <!-- Mobile Menu Toggle (visible on mobile only, left side) -->
                     <button class="mobile-menu-toggle lg:hidden p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Menu">
@@ -34,7 +34,7 @@
                     </div>
 
                     <!-- Logo -->
-                    <div class="site-branding">
+                    <div class="site-branding absolute left-1/2 transform -translate-x-1/2 z-10">
                         <a href="<?php echo esc_url(home_url('/')); ?>" class="block">
                             <img src="https://walk.thewebplace.gr/wp-content/uploads/2023/01/twc-logo-pink.png"
                                  alt="<?php bloginfo('name'); ?>"
