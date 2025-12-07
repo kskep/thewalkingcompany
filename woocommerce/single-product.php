@@ -150,7 +150,7 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     <!-- Information Accordion (Moved Short Description) -->
                     <div class="detail-accordion">
                         <button class="detail-accordion-trigger" type="button" aria-expanded="true">
-                            <span><?php _e('ΠΛΗΡΟΦΟΡΙΕΣ', 'eshop-theme'); ?></span>
+                            <span><?php _e('INFORMATION', 'eshop-theme'); ?></span>
                             <span class="icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M6 9l6 6 6-6"></path>
