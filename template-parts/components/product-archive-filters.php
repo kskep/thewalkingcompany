@@ -320,7 +320,7 @@ SVG;
                                     return $sum;
                                 };
 
-                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_terms, $aggregate_count) {
+                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_terms, $aggregate_count, $excluded_ids) {
                                     $parent_id = ($parent_term instanceof WP_Term) ? $parent_term->term_id : (int) $parent_term;
                                     $children = get_terms(array(
                                         'taxonomy' => 'product_cat',
