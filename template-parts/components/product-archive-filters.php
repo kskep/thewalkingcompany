@@ -222,28 +222,7 @@ SVG;
         </button>
     </div>
 
-    <!-- Active Filters Section -->
-    <?php if (!empty($current_filters)): ?>
-        <div class="active-filters" role="region" aria-label="<?php _e('Active filters', 'eshop-theme'); ?>">
-            <?php foreach ($current_filters as $filter): ?>
-                <button type="button" 
-                        class="filter-chip" 
-                        data-param="<?php echo esc_attr($filter['param']); ?>"
-                        title="<?php printf(__('Remove %s filter', 'eshop-theme'), esc_attr($filter['label'])); ?>">
-                    <span class="filter-chip-text"><?php echo esc_html($filter['label']); ?></span>
-                    <span class="filter-chip-remove" aria-hidden="true">×</span>
-                </button>
-            <?php endforeach; ?>
 
-            <!-- Clear All Filters -->
-            <button type="button" 
-                    id="clear-all-filters" 
-                    class="reset-filters"
-                    title="<?php _e('Clear all filters', 'eshop-theme'); ?>">
-                <?php _e('Clear Filters', 'eshop-theme'); ?>
-            </button>
-        </div>
-    <?php endif; ?>
 </section>
 
 <!-- Filter Modal Overlay -->
@@ -304,10 +283,13 @@ SVG;
                             }
 
                             // Fetch all top-level categories regardless of empty state
+                            $excluded_ids = array(15, 323, 446); // Uncategorized, Giftwrapping, Mystery Box
+
                             $top_level = get_terms(array(
                                 'taxonomy' => 'product_cat',
                                 'parent' => 0,
                                 'hide_empty' => false,
+                                'exclude' => $excluded_ids,
                                 'orderby' => 'menu_order',
                                 'order' => 'ASC',
                             ));
@@ -375,12 +357,27 @@ SVG;
                                         ));
                                     }
 
+                                    // Filter out excluded IDs and ensure distinct items
+                                    $items = array_filter($items, function($t) use ($excluded_ids) {
+                                        return $t instanceof WP_Term && !in_array((int)$t->term_id, $excluded_ids, true);
+                                    });
+
                                     foreach ($items as $term) {
                                         if (!($term instanceof WP_Term)) continue;
+                                        
+                                        // Skip excluded categories (double check)
+                                        if (in_array((int)$term->term_id, $excluded_ids, true)) continue;
+
+                                        $display_count = (int) $aggregate_count($term->term_id);
+                                        
+                                        // Skip if count is 0
+                                        if ($display_count === 0) continue;
+
                                         $term_has_children = get_terms(array(
                                             'taxonomy' => 'product_cat',
                                             'parent' => $term->term_id,
                                             'hide_empty' => true,
+                                            'exclude' => $excluded_ids,
                                             'number' => 1,
                                         ));
                                         $has_kids = !empty($term_has_children) && !is_wp_error($term_has_children);
@@ -402,7 +399,7 @@ SVG;
                                         } else {
                                             echo '<span class="toggle-spacer"></span>';
                                         }
-                                        $display_count = (int) $aggregate_count($term->term_id);
+                                        
                                         echo '<label class="filter-option category-option">';
                                         echo '<input type="checkbox" name="category" value="' . esc_attr($term->slug) . '" ' . checked($is_selected, true, false) . ' />';
                                         echo '<span class="filter-option-label">' . esc_html($term->name) . ' <span class="filter-option-count">(' . $display_count . ')</span></span>';
@@ -414,15 +411,23 @@ SVG;
                                                 'taxonomy' => 'product_cat',
                                                 'parent' => $term->term_id,
                                                 'hide_empty' => false,
+                                                'exclude' => $excluded_ids,
                                                 'orderby' => 'name',
                                             ));
                                             if (!empty($grand_children) && !is_wp_error($grand_children)) {
                                                 echo '<ul class="subcategory-list level-' . (int) ($level + 1) . '">';
                                                 foreach ($grand_children as $child) {
+                                                    // Skip excluded and zero count
+                                                    if (in_array((int)$child->term_id, $excluded_ids, true)) continue;
+                                                    
+                                                    $child_count = (int) $aggregate_count($child->term_id);
+                                                    if ($child_count === 0) continue;
+
                                                     $child_has_kids = get_terms(array(
                                                         'taxonomy' => 'product_cat',
                                                         'parent' => $child->term_id,
                                                         'hide_empty' => true,
+                                                        'exclude' => $excluded_ids,
                                                         'number' => 1,
                                                     ));
                                                     $child_has_children = !empty($child_has_kids) && !is_wp_error($child_has_kids);
@@ -443,7 +448,7 @@ SVG;
                                                     } else {
                                                         echo '<span class="toggle-spacer"></span>';
                                                     }
-                                                    $child_count = (int) $aggregate_count($child->term_id);
+                                                    
                                                     echo '<label class="filter-option category-option">';
                                                     echo '<input type="checkbox" name="category" value="' . esc_attr($child->slug) . '" ' . checked($child_selected, true, false) . ' />';
                                                     echo '<span class="filter-option-label">' . esc_html($child->name) . ' <span class="filter-option-count">(' . $child_count . ')</span></span>';
@@ -519,6 +524,10 @@ SVG;
                                         $term_slug = is_array($term) ? $term['slug'] : $term->slug;
                                         $term_name = is_array($term) ? $term['name'] : $term->name;
                                         $term_count = is_array($term) ? intval($term['count']) : intval($term->count);
+                                        
+                                        // Skip if count is 0
+                                        if ($term_count === 0) continue;
+                                        
                                         $is_checked = false;
                                         if (isset($_GET[$attr_name])) {
                                             if (is_array($_GET[$attr_name])) {
