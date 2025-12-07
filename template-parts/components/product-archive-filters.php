@@ -255,14 +255,12 @@ SVG;
         ];
 
         foreach ($filter_sections as $section_key => $section_title):
-        ?>
-            <div class="filter-section" data-filter-section="<?php echo esc_attr($section_key); ?>">
-                <h3 class="filter-section-title"><?php echo esc_html($section_title); ?></h3>
-                
-                <div class="filter-options">
-                    <?php
-                    // Render appropriate filter section
-                    switch ($section_key) {
+            // Use output buffering to check if section has content
+            ob_start();
+            $section_has_content = false;
+            
+            // Render appropriate filter section
+            switch ($section_key) {
                         case 'category':
                             // Context-aware category filter
                             // On a subcategory page: show siblings (other subcategories of same parent)
@@ -731,9 +729,21 @@ SVG;
                         <?php
                             break;
                     }
-                    ?>
+                    
+            // Get buffered content
+            $section_content = ob_get_clean();
+            
+            // Only render section if it has actual content (not just whitespace/comments)
+            $clean_content = trim(preg_replace('/<!--.*?-->/s', '', $section_content));
+            if (!empty($clean_content)):
+            ?>
+                <div class="filter-section" data-filter-section="<?php echo esc_attr($section_key); ?>">
+                    <h3 class="filter-section-title"><?php echo esc_html($section_title); ?></h3>
+                    <div class="filter-options">
+                        <?php echo $section_content; ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         <?php endforeach; ?>
     </div>
 
