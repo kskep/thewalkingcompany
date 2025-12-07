@@ -10,6 +10,9 @@
 
 if (!defined('ABSPATH')) { exit; }
 
+// Categories to always hide from filters
+$excluded_category_ids = array(15, 323, 446); // Uncategorized, Giftwrapping, Mystery Box
+
 // Parse selected categories from URL (IDs or slugs)
 $selected_raw = isset($_GET['product_cat']) ? sanitize_text_field(wp_unslash($_GET['product_cat'])) : '';
 $selected_tokens = $selected_raw !== '' ? array_filter(array_map('trim', explode(',', $selected_raw))) : array();
@@ -35,6 +38,10 @@ if (is_product_category()) {
 
         if (!empty($children) && !is_wp_error($children)) {
             foreach ($children as $term) {
+                // Skip excluded categories and those with 0 count
+                if (in_array((int) $term->term_id, $excluded_category_ids, true) || (int) $term->count === 0) {
+                    continue;
+                }
                 // Get grandchildren for this child
                 $grandchildren = get_terms(array(
                     'taxonomy' => 'product_cat',
@@ -56,6 +63,10 @@ if (is_product_category()) {
                 // Add grandchildren if they exist
                 if (!empty($grandchildren) && !is_wp_error($grandchildren)) {
                     foreach ($grandchildren as $grandchild) {
+                        // Skip excluded categories and those with 0 count
+                        if (in_array((int) $grandchild->term_id, $excluded_category_ids, true) || (int) $grandchild->count === 0) {
+                            continue;
+                        }
                         $child_data['children'][] = array(
                             'term_id' => (int) $grandchild->term_id,
                             'name' => $grandchild->name,
@@ -88,6 +99,10 @@ if (is_product_category()) {
     
     if (!empty($top_level_categories) && !is_wp_error($top_level_categories)) {
         foreach ($top_level_categories as $category) {
+            // Skip excluded categories and those with 0 count
+            if (in_array((int) $category->term_id, $excluded_category_ids, true) || (int) $category->count === 0) {
+                continue;
+            }
             // Get children for this top-level category
             $children = get_terms(array(
                 'taxonomy' => 'product_cat',
@@ -109,6 +124,10 @@ if (is_product_category()) {
             // Add children if they exist
             if (!empty($children) && !is_wp_error($children)) {
                 foreach ($children as $child) {
+                    // Skip excluded categories and those with 0 count
+                    if (in_array((int) $child->term_id, $excluded_category_ids, true) || (int) $child->count === 0) {
+                        continue;
+                    }
                     // Get grandchildren for this child
                     $grandchildren = get_terms(array(
                         'taxonomy' => 'product_cat',
@@ -130,6 +149,10 @@ if (is_product_category()) {
                     // Add grandchildren if they exist
                     if (!empty($grandchildren) && !is_wp_error($grandchildren)) {
                         foreach ($grandchildren as $grandchild) {
+                            // Skip excluded categories and those with 0 count
+                            if (in_array((int) $grandchild->term_id, $excluded_category_ids, true) || (int) $grandchild->count === 0) {
+                                continue;
+                            }
                             $child_data['children'][] = array(
                                 'term_id' => (int) $grandchild->term_id,
                                 'name' => $grandchild->name,

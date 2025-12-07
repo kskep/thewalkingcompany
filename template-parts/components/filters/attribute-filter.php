@@ -71,6 +71,13 @@ if (isset($_GET[$taxonomy]) && !empty($_GET[$taxonomy])) {
             <div class="size-grid">
                 <?php foreach ($terms as $term) :
                     $slug = isset($term->slug) ? $term->slug : '';
+                    $term_count = isset($term->count) ? intval($term->count) : 0;
+                    
+                    // Skip terms with 0 count
+                    if ($term_count === 0) {
+                        continue;
+                    }
+                    
                     $is_checked = in_array($slug, $selected_values, true);
                     $selected_class = $is_checked ? 'bg-primary text-white border-primary' : 'bg-white text-gray-700 border-gray-300';
                     $term_name = isset($term->name) ? $term->name : '';
@@ -100,6 +107,11 @@ if (isset($_GET[$taxonomy]) && !empty($_GET[$taxonomy])) {
                 $slug = isset($term->slug) ? $term->slug : '';
                 $is_checked = in_array($slug, $selected_values, true);
                 $product_count = isset($term->count) ? intval($term->count) : 0;
+                
+                // Skip terms with 0 count
+                if ($product_count === 0) {
+                    continue;
+                }
 
                 // Support color meta from helper; else from term meta
                 $color_value = isset($term->color) ? $term->color : '';
