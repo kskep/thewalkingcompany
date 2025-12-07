@@ -219,25 +219,29 @@
                 data: data,
                 success: (response) => {
                     if (response.success) {
-                        // Update cart fragments
+                        // Update cart fragments for header cart
                         if (response.data.fragments) {
                             this.updateFragments(response.data.fragments);
                         }
 
-                        // Trigger WooCommerce events
-                        $(document.body).trigger('wc_fragment_refresh');
-                        $(document.body).trigger('updated_cart_totals');
+                        // Update header cart count
+                        const $cartCount = $('.cart-count');
+                        if (response.data.cart_count > 0) {
+                            $cartCount.text(response.data.cart_count).removeClass('hidden');
+                        } else {
+                            $cartCount.addClass('hidden');
+                        }
 
-                        // Refresh the cart display
+                        // Refresh flying cart display (this will get fresh HTML)
+                        this.setLoading(false); // Allow refresh
                         this.refreshCart();
                     } else {
                         this.showNotification('Error updating quantity', 'error');
+                        this.setLoading(false);
                     }
                 },
                 error: () => {
                     this.showNotification('Error updating quantity', 'error');
-                },
-                complete: () => {
                     this.setLoading(false);
                 }
             });

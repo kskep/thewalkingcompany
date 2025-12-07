@@ -439,242 +439,432 @@
                 complete: function () {
                     $button.removeClass('loading');
                     $button.attr('aria-busy', 'false');
-
-                    document.querySelectorAll('.js-hero-slider').forEach(function (wrapper) {
-                        // Desktop instance per wrapper
-                        var desktopEl = wrapper.querySelector('.hero-slider-desktop');
-                        if (desktopEl) {
-                            var desktopSwiper = new Swiper(desktopEl, {
-                                loop: true,
-                                speed: 700,
-                                effect: 'fade',
-                                fadeEffect: { crossFade: true },
-                                autoplay: {
-                                    delay: 4500,
-                                    disableOnInteraction: false
-                                },
-                                pagination: {
-                                    el: desktopEl.querySelector('.swiper-pagination'),
-                                    clickable: true
-                                },
-                                navigation: {
-                                    nextEl: desktopEl.querySelector('.swiper-button-next'),
-                                    prevEl: desktopEl.querySelector('.swiper-button-prev')
-                                }
-                            });
-
-                            if (window.gsap) {
-                                desktopSwiper.on('slideChangeTransitionStart', function () {
-                                    var active = desktopEl.querySelector('.swiper-slide-active .slide-caption');
-                                    if (!active) return;
-                                    gsap.fromTo(active, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
-                                });
-                            }
-                        }
-
-                        // Mobile instance per wrapper
-                        var mobileEl = wrapper.querySelector('.hero-slider-mobile');
-                        if (mobileEl) {
-                            var mobileSwiper = new Swiper(mobileEl, {
-                                loop: true,
-                                speed: 600,
-                                autoplay: {
-                                    delay: 4000,
-                                    disableOnInteraction: false
-                                },
-                                pagination: {
-                                    el: mobileEl.querySelector('.swiper-pagination'),
-                                    clickable: true
-                                }
-                            });
-
-                            if (window.gsap) {
-                                mobileSwiper.on('slideChangeTransitionStart', function () {
-                                    var active = mobileEl.querySelector('.swiper-slide-active .slide-caption');
-                                    if (!active) return;
-                                    gsap.fromTo(active, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.1 });
-                                });
-                            }
-                        }
-                    });
-                }
-
-        // Initialize product sliders used on archive cards
-        function initializeProductCardSliders() {
-                if(typeof Swiper === 'undefined') return;
-
-            document.querySelectorAll('.product-slider').forEach(function (el) {
-                // Avoid double init
-                if (el.__eshop_inited) return;
-                el.__eshop_inited = true;
-                try {
-                    var swiperConfig = {
-                        pagination: {
-                            el: el.querySelector('.swiper-pagination'),
-                            clickable: true
-                        },
-                        navigation: {
-                            nextEl: el.querySelector('.swiper-button-next'),
-                            prevEl: el.querySelector('.swiper-button-prev'),
-                        },
-                        loop: false,
-                        slidesPerView: 1,
-                        observer: true,
-                        observeParents: true,
-                        watchOverflow: true,
-                        // Disable autoplay on archive product sliders
-                        autoplay: false,
-                        effect: 'fade',
-                        fadeEffect: {
-                            crossFade: true
-                        },
-                        speed: 300
-                    };
-
-                    var normaliseSlides = function (swiperInstance) {
-                        if (!swiperInstance || !swiperInstance.slides) { return; }
-                        swiperInstance.slides.forEach(function (slide) {
-                            slide.style.width = '100%';
-                        });
-                    };
-
-                    swiperConfig.on = {
-                        beforeInit: function () {
-                            normaliseSlides(this);
-                        },
-                        init: function () {
-                            var slideCount = this.slides.length;
-                            if (slideCount <= 1) {
-                                var nav = el.querySelectorAll('.swiper-button-prev, .swiper-button-next, .swiper-pagination');
-                                nav.forEach(function (navEl) {
-                                    navEl.style.display = 'none';
-                                });
-                            }
-                            normaliseSlides(this);
-                            this.updateSlides();
-                        },
-                        resize: function () {
-                            normaliseSlides(this);
-                            this.update();
-                        },
-                        observerUpdate: function () {
-                            normaliseSlides(this);
-                            this.update();
-                        }
-                    };
-
-                    var swiper = new Swiper(el, swiperConfig);
-                    el.__swiper = swiper;
-
-                    // Final safety pass after layout settles
-                    setTimeout(function () {
-                        normaliseSlides(swiper);
-                        swiper.update();
-                    }, 150);
-
-                    // Hover-to-second-image behavior
-                    var originalIndex = 0;
-                    el.addEventListener('mouseenter', function () {
-                        if (!swiper || swiper.slides.length <= 1) { return; }
-                        try { swiper.slideTo(1, 200); } catch (e) { }
-                    });
-                    el.addEventListener('mouseleave', function () {
-                        if (!swiper) { return; }
-                        try { swiper.slideTo(0, 200); } catch (e) { }
-                    });
-                } catch (e) {
-                    console.warn('Swiper init failed for product slider', e);
+                    $button.css('pointer-events', '');
                 }
             });
-        }
+        });
 
-        // Simple hover-to-second-image fallback for product cards without Swiper
-        $(document).on('mouseenter', '.twc-card', function () {
-            var $card = $(this);
-            if ($card.data('hover-swap-initialized')) return;
-            $card.data('hover-swap-initialized', true);
+        // Remove from cart in minicart dropdown
+        $(document).on('click', '.minicart-dropdown .remove-from-cart', function (e) {
+            e.preventDefault();
+            var $button = $(this);
+            if ($button.hasClass('loading')) {
+                return;
+            }
 
-            var $img = $card.find('.twc-card__image img').first();
-            if ($img.length === 0) return;
+            var cartItemKey = $button.data('cart-item-key');
 
-            var $gallery = $card.data('gallery');
-            // If we have a swiper in the card, skip fallback
-            if ($card.find('.product-slider.swiper').length) return;
+            if (!cartItemKey) {
+                // Fallback to default behavior if key missing
+                window.location.href = $button.attr('href');
+                return;
+            }
 
-            // Try to find a secondary image in Woo markup (common pattern)
-            var $secondary = $card.find('img.secondary-image').first();
-            if ($secondary.length) {
-                var primarySrc = $img.attr('src');
-                var secondarySrc = $secondary.attr('src');
-                $card.on('mouseenter', function () { $img.attr('src', secondarySrc); });
-                $card.on('mouseleave', function () { $img.attr('src', primarySrc); });
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'remove_cart_item',
+                    cart_item_key: cartItemKey,
+                    nonce: eshop_ajax.nonce
+                },
+                beforeSend: function () {
+                    $button.addClass('loading');
+                    $button.attr('aria-disabled', 'true');
+                },
+                success: function (response) {
+                    if (response.success && response.data) {
+                        eshopUpdateCartFragments(response.data.fragments);
+                        $(document.body).trigger('removed_from_cart', [response.data.fragments || {}, response.data.cart_hash || null, $button]);
+                        $(document.body).trigger('wc_fragment_refresh');
+                        eshopNotify(response.data.message || 'Product removed from cart!', 'success');
+                    } else {
+                        var errorMessage = response.data && response.data.message ? response.data.message : 'Unable to remove item. Please try again.';
+                        eshopNotify(errorMessage, 'error');
+                    }
+                },
+                error: function () {
+                    eshopNotify('Unable to remove item. Please try again.', 'error');
+                },
+                complete: function () {
+                    $button.removeClass('loading');
+                    $button.removeAttr('aria-disabled');
+                }
+            });
+        });
+
+        // Minicart quantity plus button
+        $(document).on('click', '.minicart-dropdown .qty-plus', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            if ($btn.hasClass('loading')) return;
+
+            var cartItemKey = $btn.data('cart-item-key');
+            var $qtyValue = $btn.siblings('.qty-value');
+            var currentQty = parseInt($qtyValue.text()) || 1;
+
+            updateMinicartQuantity(cartItemKey, currentQty + 1, $btn);
+        });
+
+        // Minicart quantity minus button
+        $(document).on('click', '.minicart-dropdown .qty-minus', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            if ($btn.hasClass('loading')) return;
+
+            var cartItemKey = $btn.data('cart-item-key');
+            var $qtyValue = $btn.siblings('.qty-value');
+            var currentQty = parseInt($qtyValue.text()) || 1;
+
+            if (currentQty > 1) {
+                updateMinicartQuantity(cartItemKey, currentQty - 1, $btn);
+            } else {
+                // If quantity would be 0, trigger removal
+                var $removeBtn = $btn.closest('.minicart-item').find('.remove-from-cart');
+                $removeBtn.trigger('click');
             }
         });
 
-        // Product Filter Functions (fallback if component not loaded)
-        function initProductFilters() {
-            console.log('Using fallback filter initialization');
-            console.log('Filter button exists:', $('#open-filters').length);
-            console.log('Filter drawer exists:', $('#filter-drawer').length);
-            console.log('Filter backdrop exists:', $('#filter-backdrop').length);
+        // Helper function to update minicart quantity
+        function updateMinicartQuantity(cartItemKey, quantity, $btn) {
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'update_cart_quantity',
+                    cart_item_key: cartItemKey,
+                    quantity: quantity,
+                    nonce: eshop_ajax.nonce
+                },
+                beforeSend: function () {
+                    $btn.addClass('loading');
+                    $btn.closest('.minicart-qty-controls').css('opacity', '0.6');
+                },
+                success: function (response) {
+                    if (response.success && response.data) {
+                        eshopUpdateCartFragments(response.data.fragments);
+                        $(document.body).trigger('wc_fragment_refresh');
 
-            // Remove any existing event handlers to prevent duplicates
-            $('#open-filters').off('click.fallback');
-            $('#close-filters, #filter-backdrop').off('click.fallback');
+                        // Update the quantity display
+                        $btn.siblings('.qty-value').text(quantity);
 
-            // Basic filter drawer functionality
-            $('#open-filters').on('click.fallback', function (e) {
-                e.preventDefault();
-                console.log('Filter button clicked (fallback)');
-                $('#filter-backdrop').removeClass('hidden').addClass('show');
-                $('#filter-drawer').addClass('open');
-                $('body').addClass('overflow-hidden');
-            });
-
-            $('#close-filters, #filter-backdrop').on('click.fallback', function (e) {
-                e.preventDefault();
-                console.log('Closing filter drawer (fallback)');
-                $('#filter-backdrop').removeClass('show').addClass('hidden');
-                $('#filter-drawer').removeClass('open');
-                $('body').removeClass('overflow-hidden');
-            });
-
-            // Keyboard accessibility - Escape to close drawer
-            $(document).on('keydown', function (e) {
-                if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
-                    $('#filter-backdrop').removeClass('show').addClass('hidden');
-                    $('#filter-drawer').removeClass('open');
-                    $('body').removeClass('overflow-hidden');
+                        // Update cart count badge
+                        var $cartCount = $('.cart-count');
+                        if (response.data.cart_count > 0) {
+                            $cartCount.text(response.data.cart_count).removeClass('hidden');
+                        } else {
+                            $cartCount.addClass('hidden');
+                        }
+                    } else {
+                        eshopNotify('Error updating quantity', 'error');
+                    }
+                },
+                error: function () {
+                    eshopNotify('Error updating quantity', 'error');
+                },
+                complete: function () {
+                    $btn.removeClass('loading');
+                    $btn.closest('.minicart-qty-controls').css('opacity', '1');
                 }
             });
         }
 
-        // Filter functions moved to components/filters.js
+        // Product Archive Filters - Let the filter component handle initialization
+        // This is now handled by the filters.js component itself
+        console.log('Theme.js: Filter initialization delegated to filters.js component');
 
+        // Quick add to cart
+        $(document).on('click', '.add-to-cart-simple', function (e) {
+            e.preventDefault();
+            var $button = $(this);
+            var productId = $button.data('product-id');
 
+            $.ajax({
+                url: eshop_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'quick_add_to_cart',
+                    product_id: productId,
+                    quantity: 1,
+                    nonce: eshop_ajax.nonce
+                },
+                beforeSend: function () {
+                    $button.addClass('loading').text('Adding...');
+                },
+                success: function (response) {
+                    if (response.success) {
+                        EShopTheme.showNotification(response.data.message, 'success');
+                        // Update cart fragments
+                        $(document.body).trigger('wc_fragment_refresh');
+                    } else {
+                        EShopTheme.showNotification(response.data.message, 'error');
+                    }
+                },
+                complete: function () {
+                    $button.removeClass('loading').text('Add to Cart');
+                }
+            });
+        });
+    });
 
-        // Utility Functions
-        window.EShopTheme = {
-            // Add utility functions here
-            showNotification: function (message, type = 'success') {
-                var notification = $('<div class="notification notification-' + type + ' fixed top-4 right-4 bg-white border-l-4 border-' + (type === 'success' ? 'green' : 'red') + '-500 p-4 shadow-lg rounded-md z-50">' +
-                    '<div class="flex items-center">' +
-                    '<i class="fas fa-' + (type === 'success' ? 'check-circle text-green-500' : 'exclamation-circle text-red-500') + ' mr-3"></i>' +
-                    '<span>' + message + '</span>' +
-                    '<button class="ml-4 text-gray-400 hover:text-gray-600" onclick="$(this).parent().parent().remove()">' +
-                    '<i class="fas fa-times"></i>' +
-                    '</button>' +
-                    '</div>' +
-                    '</div>');
+    // Window Load
+    $(window).on('load', function () {
+        // Remove loading class from body if it exists
+        $('body').removeClass('loading');
 
-                $('body').append(notification);
+        // Initialize any plugins that need to wait for full page load
+        initializePlugins();
+        initializeHeroSliders();
+        initializeProductCardSliders();
+    });
 
-                setTimeout(function () {
-                    notification.fadeOut(function () {
-                        $(this).remove();
+    // Initialize Plugins
+    function initializePlugins() {
+        // Initialize any third-party plugins here
+        console.log('E-Shop Theme loaded successfully!');
+    }
+
+    // Initialize Swiper sliders and GSAP animations for hero
+    function initializeHeroSliders() {
+        if (typeof Swiper === 'undefined') return;
+
+        document.querySelectorAll('.js-hero-slider').forEach(function (wrapper) {
+            // Desktop instance per wrapper
+            var desktopEl = wrapper.querySelector('.hero-slider-desktop');
+            if (desktopEl) {
+                var desktopSwiper = new Swiper(desktopEl, {
+                    loop: true,
+                    speed: 700,
+                    effect: 'fade',
+                    fadeEffect: { crossFade: true },
+                    autoplay: {
+                        delay: 4500,
+                        disableOnInteraction: false
+                    },
+                    pagination: {
+                        el: desktopEl.querySelector('.swiper-pagination'),
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: desktopEl.querySelector('.swiper-button-next'),
+                        prevEl: desktopEl.querySelector('.swiper-button-prev')
+                    }
+                });
+
+                if (window.gsap) {
+                    desktopSwiper.on('slideChangeTransitionStart', function () {
+                        var active = desktopEl.querySelector('.swiper-slide-active .slide-caption');
+                        if (!active) return;
+                        gsap.fromTo(active, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
                     });
-                }, 5000);
+                }
             }
-        };
 
-    })(jQuery);
+            // Mobile instance per wrapper
+            var mobileEl = wrapper.querySelector('.hero-slider-mobile');
+            if (mobileEl) {
+                var mobileSwiper = new Swiper(mobileEl, {
+                    loop: true,
+                    speed: 600,
+                    autoplay: {
+                        delay: 4000,
+                        disableOnInteraction: false
+                    },
+                    pagination: {
+                        el: mobileEl.querySelector('.swiper-pagination'),
+                        clickable: true
+                    }
+                });
+
+                if (window.gsap) {
+                    mobileSwiper.on('slideChangeTransitionStart', function () {
+                        var active = mobileEl.querySelector('.swiper-slide-active .slide-caption');
+                        if (!active) return;
+                        gsap.fromTo(active, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.1 });
+                    });
+                }
+            }
+        });
+    }
+
+    // Initialize product sliders used on archive cards
+    function initializeProductCardSliders() {
+        if (typeof Swiper === 'undefined') return;
+
+        document.querySelectorAll('.product-slider').forEach(function (el) {
+            // Avoid double init
+            if (el.__eshop_inited) return;
+            el.__eshop_inited = true;
+            try {
+                var swiperConfig = {
+                    pagination: {
+                        el: el.querySelector('.swiper-pagination'),
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: el.querySelector('.swiper-button-next'),
+                        prevEl: el.querySelector('.swiper-button-prev'),
+                    },
+                    loop: false,
+                    slidesPerView: 1,
+                    observer: true,
+                    observeParents: true,
+                    watchOverflow: true,
+                    // Disable autoplay on archive product sliders
+                    autoplay: false,
+                    effect: 'fade',
+                    fadeEffect: {
+                        crossFade: true
+                    },
+                    speed: 300
+                };
+
+                var normaliseSlides = function (swiperInstance) {
+                    if (!swiperInstance || !swiperInstance.slides) { return; }
+                    swiperInstance.slides.forEach(function (slide) {
+                        slide.style.width = '100%';
+                    });
+                };
+
+                swiperConfig.on = {
+                    beforeInit: function () {
+                        normaliseSlides(this);
+                    },
+                    init: function () {
+                        var slideCount = this.slides.length;
+                        if (slideCount <= 1) {
+                            var nav = el.querySelectorAll('.swiper-button-prev, .swiper-button-next, .swiper-pagination');
+                            nav.forEach(function (navEl) {
+                                navEl.style.display = 'none';
+                            });
+                        }
+                        normaliseSlides(this);
+                        this.updateSlides();
+                    },
+                    resize: function () {
+                        normaliseSlides(this);
+                        this.update();
+                    },
+                    observerUpdate: function () {
+                        normaliseSlides(this);
+                        this.update();
+                    }
+                };
+
+                var swiper = new Swiper(el, swiperConfig);
+                el.__swiper = swiper;
+
+                // Final safety pass after layout settles
+                setTimeout(function () {
+                    normaliseSlides(swiper);
+                    swiper.update();
+                }, 150);
+
+                // Hover-to-second-image behavior
+                var originalIndex = 0;
+                el.addEventListener('mouseenter', function () {
+                    if (!swiper || swiper.slides.length <= 1) { return; }
+                    try { swiper.slideTo(1, 200); } catch (e) { }
+                });
+                el.addEventListener('mouseleave', function () {
+                    if (!swiper) { return; }
+                    try { swiper.slideTo(0, 200); } catch (e) { }
+                });
+            } catch (e) {
+                console.warn('Swiper init failed for product slider', e);
+            }
+        });
+    }
+
+    // Simple hover-to-second-image fallback for product cards without Swiper
+    $(document).on('mouseenter', '.twc-card', function () {
+        var $card = $(this);
+        if ($card.data('hover-swap-initialized')) return;
+        $card.data('hover-swap-initialized', true);
+
+        var $img = $card.find('.twc-card__image img').first();
+        if ($img.length === 0) return;
+
+        var $gallery = $card.data('gallery');
+        // If we have a swiper in the card, skip fallback
+        if ($card.find('.product-slider.swiper').length) return;
+
+        // Try to find a secondary image in Woo markup (common pattern)
+        var $secondary = $card.find('img.secondary-image').first();
+        if ($secondary.length) {
+            var primarySrc = $img.attr('src');
+            var secondarySrc = $secondary.attr('src');
+            $card.on('mouseenter', function () { $img.attr('src', secondarySrc); });
+            $card.on('mouseleave', function () { $img.attr('src', primarySrc); });
+        }
+    });
+
+    // Product Filter Functions (fallback if component not loaded)
+    function initProductFilters() {
+        console.log('Using fallback filter initialization');
+        console.log('Filter button exists:', $('#open-filters').length);
+        console.log('Filter drawer exists:', $('#filter-drawer').length);
+        console.log('Filter backdrop exists:', $('#filter-backdrop').length);
+
+        // Remove any existing event handlers to prevent duplicates
+        $('#open-filters').off('click.fallback');
+        $('#close-filters, #filter-backdrop').off('click.fallback');
+
+        // Basic filter drawer functionality
+        $('#open-filters').on('click.fallback', function (e) {
+            e.preventDefault();
+            console.log('Filter button clicked (fallback)');
+            $('#filter-backdrop').removeClass('hidden').addClass('show');
+            $('#filter-drawer').addClass('open');
+            $('body').addClass('overflow-hidden');
+        });
+
+        $('#close-filters, #filter-backdrop').on('click.fallback', function (e) {
+            e.preventDefault();
+            console.log('Closing filter drawer (fallback)');
+            $('#filter-backdrop').removeClass('show').addClass('hidden');
+            $('#filter-drawer').removeClass('open');
+            $('body').removeClass('overflow-hidden');
+        });
+
+        // Keyboard accessibility - Escape to close drawer
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape' && $('#filter-drawer').hasClass('open')) {
+                $('#filter-backdrop').removeClass('show').addClass('hidden');
+                $('#filter-drawer').removeClass('open');
+                $('body').removeClass('overflow-hidden');
+            }
+        });
+    }
+
+    // Filter functions moved to components/filters.js
+
+
+
+    // Utility Functions
+    window.EShopTheme = {
+        // Add utility functions here
+        showNotification: function (message, type = 'success') {
+            var notification = $('<div class="notification notification-' + type + ' fixed top-4 right-4 bg-white border-l-4 border-' + (type === 'success' ? 'green' : 'red') + '-500 p-4 shadow-lg rounded-md z-50">' +
+                '<div class="flex items-center">' +
+                '<i class="fas fa-' + (type === 'success' ? 'check-circle text-green-500' : 'exclamation-circle text-red-500') + ' mr-3"></i>' +
+                '<span>' + message + '</span>' +
+                '<button class="ml-4 text-gray-400 hover:text-gray-600" onclick="$(this).parent().parent().remove()">' +
+                '<i class="fas fa-times"></i>' +
+                '</button>' +
+                '</div>' +
+                '</div>');
+
+            $('body').append(notification);
+
+            setTimeout(function () {
+                notification.fadeOut(function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+    };
+
+})(jQuery);
