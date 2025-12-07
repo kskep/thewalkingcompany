@@ -16,15 +16,7 @@ defined('ABSPATH') || exit;
   </div>
   </div>
 
-<div class="active-filters-bar mb-6" style="display:none">
-  <div class="flex flex-wrap items-center justify-between gap-4">
-    <div class="flex flex-wrap items-center gap-2">
-      <span class="text-sm font-semibold uppercase tracking-wide" style="color: var(--ink-soft);"><?php _e('Active Filters:', 'eshop-theme'); ?></span>
-      <div class="active-filters-list flex flex-wrap gap-2"></div>
-    </div>
-    <button class="clear-all-filters text-sm font-semibold uppercase tracking-wide" style="color: var(--ink);"><?php _e('Clear All', 'eshop-theme'); ?></button>
-  </div>
-</div>
+
 
 <?php
 // Filter drawer markup is rendered in template-parts/components/filter-modal.php via wp_footer hook.

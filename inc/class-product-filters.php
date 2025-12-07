@@ -109,6 +109,7 @@ class Eshop_Product_Filters {
     /**
      * Get available attribute terms from current query results
      * This gets terms only from products that match the current context
+     * AND have in-stock variations for that attribute term
      */
     public static function get_available_attribute_terms($taxonomy) {
         // First, get the product IDs that match the current context
@@ -123,19 +124,61 @@ class Eshop_Product_Filters {
         // Create placeholders for the product IDs
         $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
 
-        // Query to get attribute terms only from the current product set
+        // Query to get attribute terms only from in-stock variations or simple products
+        // This query:
+        // 1. Gets terms from simple products that are in stock
+        // 2. Gets terms from variations that are in stock (for variable products)
         $sql = "
-            SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT tr.object_id) as count
-            FROM {$wpdb->term_relationships} tr
-            INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s
-            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-            WHERE tr.object_id IN ($placeholders)
+            SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT counted_product.ID) as count
+            FROM {$wpdb->terms} t
+            INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id AND tt.taxonomy = %s
+            INNER JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+            INNER JOIN (
+                -- Simple products in stock
+                SELECT p.ID, p.ID as countable_id
+                FROM {$wpdb->posts} p
+                INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id 
+                    AND pm_stock.meta_key = '_stock_status' 
+                    AND pm_stock.meta_value = 'instock'
+                WHERE p.post_type = 'product' 
+                    AND p.post_status = 'publish'
+                    AND p.ID IN ($placeholders)
+                    AND p.ID NOT IN (
+                        SELECT DISTINCT post_parent FROM {$wpdb->posts} WHERE post_type = 'product_variation'
+                    )
+                
+                UNION ALL
+                
+                -- Variations in stock (count parent product once per attribute term)
+                SELECT DISTINCT v.post_parent as ID, v.post_parent as countable_id
+                FROM {$wpdb->posts} v
+                INNER JOIN {$wpdb->postmeta} pm_var_stock ON v.ID = pm_var_stock.post_id 
+                    AND pm_var_stock.meta_key = '_stock_status' 
+                    AND pm_var_stock.meta_value = 'instock'
+                INNER JOIN {$wpdb->term_relationships} tr_var ON v.ID = tr_var.object_id
+                INNER JOIN {$wpdb->term_taxonomy} tt_var ON tr_var.term_taxonomy_id = tt_var.term_taxonomy_id 
+                    AND tt_var.taxonomy = %s
+                WHERE v.post_type = 'product_variation'
+                    AND v.post_status = 'publish'
+                    AND v.post_parent IN ($placeholders)
+            ) as counted_product ON tr.object_id = counted_product.ID OR tr.object_id IN (
+                SELECT v2.ID FROM {$wpdb->posts} v2 
+                WHERE v2.post_type = 'product_variation' 
+                AND v2.post_parent = counted_product.ID
+            )
             GROUP BY t.term_id, t.name, t.slug
             HAVING count > 0
             ORDER BY t.name ASC
         ";
 
-        $query_params = array_merge(array($taxonomy), $product_ids);
+        // Build query params: taxonomy, product_ids (simple), taxonomy again (for variations), product_ids (variations)
+        $query_params = array_merge(
+            array($taxonomy), 
+            $product_ids, 
+            array($taxonomy), 
+            $product_ids
+        );
+        
         $results = $wpdb->get_results($wpdb->prepare($sql, $query_params), ARRAY_A);
 
         // Add color values for color attributes
