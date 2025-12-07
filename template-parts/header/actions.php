@@ -91,7 +91,7 @@ if (!defined('ABSPATH')) {
         </button>
         
         <!-- Minicart Dropdown -->
-        <div class="minicart-dropdown absolute right-0 top-full mt-2 w-96 md:w-[450px] bg-white border border-gray-100 shadow-xl z-50 hidden rounded-md overflow-hidden ring-1 ring-black ring-opacity-5">
+        <div class="minicart-dropdown absolute right-0 top-full mt-2 w-[360px] md:w-[520px] max-h-[85vh] bg-white border border-gray-100 shadow-xl z-50 hidden rounded-md overflow-hidden ring-1 ring-black ring-opacity-5">
             <?php get_template_part('template-parts/header/minicart-content'); ?>
         </div>
     </div>

@@ -11,10 +11,10 @@ if (!defined('ABSPATH')) {
 
 $cart_count = WC()->cart->get_cart_contents_count();
 ?>
-<div class="eshop-minicart-inner p-6 bg-white text-left h-full flex flex-col">
+<div class="eshop-minicart-inner p-8 bg-white text-left h-full flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 flex-shrink-0">
-        <h3 class="text-xl font-bold text-gray-900 tracking-tight flex items-center">
+        <h3 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center">
             <?php _e('Shopping Cart', 'eshop-theme'); ?>
             <span class="ml-2 bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full"><?php echo $cart_count; ?></span>
         </h3>
@@ -24,9 +24,9 @@ $cart_count = WC()->cart->get_cart_contents_count();
     </div>
 
     <!-- Items -->
-    <div class="minicart-items flex-1 overflow-y-auto pr-2 -mr-2 min-h-[150px] custom-scrollbar">
+    <div class="minicart-items flex-1 overflow-y-auto pr-2 -mr-2 min-h-[200px] max-h-[400px] custom-scrollbar">
         <?php if ($cart_count > 0) : ?>
-            <div class="space-y-6">
+            <div class="space-y-5">
                 <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) :
                     $_product   = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
                     $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
@@ -34,9 +34,9 @@ $cart_count = WC()->cart->get_cart_contents_count();
                     if ($_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters('woocommerce_cart_item_visible', true, $cart_item, $cart_item_key)) {
                         $product_permalink = apply_filters('woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key);
                         ?>
-                        <div class="minicart-item grid grid-cols-[80px_1fr_auto] gap-4 group" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>">
+                        <div class="minicart-item grid grid-cols-[100px_1fr_auto] gap-5 group pb-5 border-b border-gray-50 last:border-b-0 last:pb-0" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>">
                             <!-- Image -->
-                            <div class="relative w-20 h-24 overflow-hidden rounded-md bg-gray-50 border border-gray-100">
+                            <div class="relative w-[100px] h-[120px] overflow-hidden rounded-lg bg-gray-50 border border-gray-100">
                                <?php
                                 $thumbnail = $_product->get_image('woocommerce_gallery_thumbnail', array('class' => 'w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500'));
                                 if (!$product_permalink) {
@@ -50,7 +50,7 @@ $cart_count = WC()->cart->get_cart_contents_count();
                             <!-- Details -->
                             <div class="flex flex-col justify-between py-0.5">
                                 <div>
-                                    <h4 class="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 mb-1">
+                                    <h4 class="text-base font-semibold text-gray-900 leading-snug line-clamp-2 mb-1.5">
                                         <?php if (!$product_permalink) : ?>
                                             <?php echo $_product->get_name(); ?>
                                         <?php else : ?>
@@ -63,18 +63,18 @@ $cart_count = WC()->cart->get_cart_contents_count();
                                     <?php echo wc_get_formatted_cart_item_data($cart_item); ?>
                                     
                                     <!-- Price Single -->
-                                    <div class="text-xs text-gray-500 font-medium">
+                                    <div class="text-sm text-gray-600 font-medium mt-1">
                                         <?php echo apply_filters('woocommerce_cart_item_price', WC()->cart->get_product_price($_product), $cart_item, $cart_item_key); ?>
                                     </div>
                                 </div>
 
                                 <!-- Qty Controls -->
-                                <div class="minicart-qty-controls flex items-center mt-2 bg-gray-50 border border-gray-200 rounded-lg w-max h-8">
-                                    <button type="button" class="minicart-qty-btn qty-minus w-8 h-full flex items-center justify-center text-gray-500 hover:text-primary hover:bg-white rounded-l-lg transition-all focus:outline-none border-r border-transparent hover:border-gray-200" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Decrease quantity">
+                                <div class="minicart-qty-controls flex items-center mt-3 bg-gray-50 border border-gray-200 rounded-lg w-max h-9">
+                                    <button type="button" class="minicart-qty-btn qty-minus w-9 h-full flex items-center justify-center text-gray-500 hover:text-primary hover:bg-white rounded-l-lg transition-all focus:outline-none" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Decrease quantity">
                                         <i class="fas fa-minus text-[0.6rem]"></i>
                                     </button>
-                                    <span class="qty-value w-8 text-center text-xs font-semibold text-gray-900"><?php echo $cart_item['quantity']; ?></span>
-                                    <button type="button" class="minicart-qty-btn qty-plus w-8 h-full flex items-center justify-center text-gray-500 hover:text-primary hover:bg-white rounded-r-lg transition-all focus:outline-none border-l border-transparent hover:border-gray-200" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Increase quantity">
+                                    <span class="qty-value w-10 text-center text-sm font-semibold text-gray-900"><?php echo $cart_item['quantity']; ?></span>
+                                    <button type="button" class="minicart-qty-btn qty-plus w-9 h-full flex items-center justify-center text-gray-500 hover:text-primary hover:bg-white rounded-r-lg transition-all focus:outline-none" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Increase quantity">
                                         <i class="fas fa-plus text-[0.6rem]"></i>
                                     </button>
                                 </div>
