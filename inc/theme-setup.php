@@ -104,9 +104,28 @@ function eshop_theme_setup() {
     // Compile MO files early if missing (before loading textdomain)
     eshop_compile_translations_early();
     
+    // Debug: Check locale and translation file paths
+    $locale = determine_locale();
+    $mofile = get_template_directory() . '/languages/' . $locale . '.mo';
+    
     // Make theme available for translation
     // Translations can be filed in the /languages/ directory
-    load_theme_textdomain('eshop-theme', get_template_directory() . '/languages');
+    $loaded = load_theme_textdomain('eshop-theme', get_template_directory() . '/languages');
+    
+    // Store debug info for later output
+    if (current_user_can('manage_options') && isset($_GET['debug_translations'])) {
+        add_action('wp_footer', function() use ($locale, $mofile, $loaded) {
+            echo '<!-- TRANSLATION DEBUG -->';
+            echo '<div style="background:#333;color:#fff;padding:20px;position:fixed;bottom:0;left:0;right:0;z-index:99999;font-family:monospace;font-size:12px;">';
+            echo '<strong>Translation Debug:</strong><br>';
+            echo 'Locale: ' . esc_html($locale) . '<br>';
+            echo 'MO Path: ' . esc_html($mofile) . '<br>';
+            echo 'MO Exists: ' . (file_exists($mofile) ? 'YES' : 'NO') . '<br>';
+            echo 'Loaded: ' . ($loaded ? 'YES' : 'NO') . '<br>';
+            echo 'Test Translation: ' . esc_html(__('Shopping Cart', 'eshop-theme')) . '<br>';
+            echo '</div>';
+        });
+    }
     
     // Add theme support for various features
     add_theme_support('post-thumbnails');
