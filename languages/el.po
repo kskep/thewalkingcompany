@@ -1,0 +1,1094 @@
+# Copyright (C) 2024 The Walking Company
+# This file is distributed under the same license as the eshop-theme package.
+msgid ""
+msgstr ""
+"Project-Id-Version: eshop-theme 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/theme/eshop-theme\n"
+"POT-Creation-Date: 2024-11-14T10:24:00+00:00\n"
+"PO-Revision-Date: 2025-12-07 19:40+0200\n"
+"Last-Translator: The Walking Company <info@thewalkingcompany.gr>\n"
+"Language-Team: Greek <el@li.org>\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.8\n"
+
+#. ============================================
+#. Header and Navigation
+#. ============================================
+
+#: header.php
+msgid "Wishlist"
+msgstr "Λίστα Επιθυμιών"
+
+#: header.php
+msgid "View All"
+msgstr "Προβολή Όλων"
+
+#: header.php template-parts/components/flying-cart.php woocommerce/cart/cart.php
+msgid "Shopping Cart"
+msgstr "Καλάθι Αγορών"
+
+#: header.php inc/woocommerce-functions.php template-parts/components/flying-cart.php
+msgid "Your cart is empty"
+msgstr "Το καλάθι σας είναι άδειο"
+
+#: header.php inc/woocommerce-functions.php template-parts/components/flying-cart.php
+msgid "View Cart"
+msgstr "Προβολή Καλαθιού"
+
+#: header.php inc/woocommerce-functions.php template-parts/components/flying-cart.php
+msgid "Checkout"
+msgstr "Ολοκλήρωση Αγοράς"
+
+#: header.php
+msgid "WISHLIST"
+msgstr "ΛΙΣΤΑ ΕΠΙΘΥΜΙΩΝ"
+
+#: header.php
+msgid "MY ACCOUNT"
+msgstr "Ο ΛΟΓΑΡΙΑΣΜΟΣ ΜΟΥ"
+
+#: header.php
+msgid "LOGIN / REGISTER"
+msgstr "ΣΥΝΔΕΣΗ / ΕΓΓΡΑΦΗ"
+
+#: header.php
+msgid "SHOPPING CART"
+msgstr "ΚΑΛΑΘΙ ΑΓΟΡΩΝ"
+
+#. ============================================
+#. Minicart Content
+#. ============================================
+
+#: template-parts/header/minicart-content.php
+msgid "Looks like you haven't added any items yet."
+msgstr "Φαίνεται ότι δεν έχετε προσθέσει κανένα προϊόν ακόμα."
+
+#: template-parts/header/minicart-content.php
+msgid "Start Shopping"
+msgstr "Ξεκινήστε τις Αγορές"
+
+#: template-parts/header/minicart-content.php
+msgid "Subtotal"
+msgstr "Μερικό Σύνολο"
+
+#: template-parts/header/minicart-content.php
+msgid "Shipping & taxes calculated at checkout"
+msgstr "Τα έξοδα αποστολής και οι φόροι υπολογίζονται στο ταμείο"
+
+#. ============================================
+#. Single Product Page
+#. ============================================
+
+#: woocommerce/single-product.php
+msgid "INFORMATION"
+msgstr "ΠΛΗΡΟΦΟΡΙΕΣ"
+
+#: woocommerce/single-product.php
+msgid "Product information is currently unavailable. Please try again later."
+msgstr "Οι πληροφορίες του προϊόντος δεν είναι διαθέσιμες αυτή τη στιγμή. Παρακαλώ δοκιμάστε ξανά αργότερα."
+
+#: template-parts/components/product-actions.php
+msgid "ADD TO CART"
+msgstr "ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ"
+
+#: template-parts/components/product-actions.php
+msgid "Favorites"
+msgstr "Αγαπημένα"
+
+#: template-parts/components/product-actions.php
+msgid "Add to favorites"
+msgstr "Προσθήκη στα αγαπημένα"
+
+#: template-parts/components/product-actions.php
+msgid "In Stock"
+msgstr "Σε Απόθεμα"
+
+#: template-parts/components/product-actions.php woocommerce/single-product/add-to-cart/simple.php
+msgid "Out of Stock"
+msgstr "Εξαντλήθηκε"
+
+#: template-parts/components/product-actions.php
+msgid "Available:"
+msgstr "Διαθέσιμα:"
+
+#: template-parts/components/product-title.php
+msgid "SKU:"
+msgstr "Κωδικός:"
+
+#: template-parts/components/product-pricing.php
+msgid "RRP:"
+msgstr "Προτ. Λιαν. Τιμή:"
+
+#: template-parts/components/product-pricing.php
+msgid "Prices from:"
+msgstr "Τιμές από:"
+
+#: woocommerce/single-product/add-to-cart/simple.php
+msgid "In Stock - Ready to Ship"
+msgstr "Σε Απόθεμα - Έτοιμο για Αποστολή"
+
+#: woocommerce/single-product/add-to-cart/simple.php woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php
+msgid "Remove from wishlist"
+msgstr "Αφαίρεση από τη λίστα επιθυμιών"
+
+#: woocommerce/single-product/add-to-cart/simple.php woocommerce/single-product/add-to-cart/variation-add-to-cart-button.php
+msgid "Add to wishlist"
+msgstr "Προσθήκη στη λίστα επιθυμιών"
+
+#: woocommerce/single-product/product-image.php
+msgid "Product image placeholder"
+msgstr "Εικόνα προϊόντος"
+
+#. ============================================
+#. Cart Page
+#. ============================================
+
+#: woocommerce/cart/cart.php
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] "%d προϊόν"
+msgstr[1] "%d προϊόντα"
+
+#: woocommerce/cart/cart.php
+msgid "Looks like you haven't added anything to your cart yet"
+msgstr "Φαίνεται ότι δεν έχετε προσθέσει τίποτα στο καλάθι σας ακόμα"
+
+#: woocommerce/cart/cart.php
+msgid "Order Summary"
+msgstr "Σύνοψη Παραγγελίας"
+
+#. ============================================
+#. Checkout Page
+#. ============================================
+
+#: woocommerce/checkout/form-checkout.php
+msgid "Billing Details"
+msgstr "Στοιχεία Χρέωσης"
+
+#: woocommerce/checkout/form-checkout.php
+msgid "Shipping Details"
+msgstr "Στοιχεία Αποστολής"
+
+#: woocommerce/checkout/form-checkout.php
+msgid "Additional Information"
+msgstr "Πρόσθετες Πληροφορίες"
+
+#. ============================================
+#. Flying Cart
+#. ============================================
+
+#: template-parts/components/flying-cart.php
+msgid "Continue Shopping"
+msgstr "Συνέχεια Αγορών"
+
+#: template-parts/components/flying-cart.php
+msgid "Qty: %s"
+msgstr "Ποσ.: %s"
+
+#: inc/woocommerce-functions.php template-parts/components/flying-cart.php
+msgid "Add %s more for FREE shipping!"
+msgstr "Προσθέστε %s ακόμα για ΔΩΡΕΑΝ αποστολή!"
+
+#: inc/woocommerce-functions.php template-parts/components/flying-cart.php
+msgid "Congratulations! You qualify for FREE shipping!"
+msgstr "Συγχαρητήρια! Πληροίτε τις προϋποθέσεις για ΔΩΡΕΑΝ αποστολή!"
+
+#: template-parts/components/flying-cart.php
+msgid "Subtotal:"
+msgstr "Μερικό Σύνολο:"
+
+#. ============================================
+#. Filters
+#. ============================================
+
+#: functions.php template-parts/components/filter-modal.php template-parts/components/filters.php template-parts/components/product-archive-filters.php
+msgid "Filters"
+msgstr "Φίλτρα"
+
+#: template-parts/components/modal.php
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: template-parts/components/filter-modal.php
+msgid "Close Filters"
+msgstr "Κλείσιμο Φίλτρων"
+
+#: template-parts/components/filter-modal.php template-parts/components/filters.php template-parts/components/product-archive-filters.php
+msgid "Clear All"
+msgstr "Καθαρισμός Όλων"
+
+#: template-parts/components/filter-modal.php template-parts/components/product-archive-filters.php
+msgid "Apply Filters"
+msgstr "Εφαρμογή Φίλτρων"
+
+#: template-parts/components/filters.php
+msgid "Active Filters:"
+msgstr "Ενεργά Φίλτρα:"
+
+#: template-parts/components/filters/sale-filter.php
+msgid "Special Offers"
+msgstr "Ειδικές Προσφορές"
+
+#: template-parts/components/filters/sale-filter.php template-parts/components/product-archive-filters.php
+msgid "On Sale"
+msgstr "Σε Έκπτωση"
+
+#: template-parts/components/filters/sale-filter.php
+msgid "Sale Items"
+msgstr "Είδη σε Έκπτωση"
+
+#: template-parts/components/filters/sale-filter.php
+msgid "Featured Products"
+msgstr "Προβεβλημένα Προϊόντα"
+
+#: template-parts/components/filters/sale-filter.php
+msgid "Featured Items"
+msgstr "Προβεβλημένα Είδη"
+
+#: template-parts/components/filters/price-filter.php
+msgid "Price Range"
+msgstr "Εύρος Τιμών"
+
+#: template-parts/components/filters/price-filter.php
+msgid "Min"
+msgstr "Ελάχ."
+
+#: template-parts/components/filters/price-filter.php
+msgid "Max"
+msgstr "Μέγ."
+
+#: template-parts/components/filters/price-filter.php
+msgid "Apply Price Filter"
+msgstr "Εφαρμογή Φίλτρου Τιμής"
+
+#: template-parts/components/filters/stock-filter.php template-parts/components/product-archive-filters.php
+msgid "In stock"
+msgstr "Σε απόθεμα"
+
+#: template-parts/components/filters/stock-filter.php
+msgid "On Backorder"
+msgstr "Με Προπαραγγελία"
+
+#: template-parts/components/filters/stock-filter.php
+msgid "Stock Status"
+msgstr "Κατάσταση Αποθέματος"
+
+#: template-parts/components/filters/stock-filter.php
+msgid "Available"
+msgstr "Διαθέσιμο"
+
+#: template-parts/components/filters/stock-filter.php
+msgid "Not Available"
+msgstr "Μη Διαθέσιμο"
+
+#: template-parts/components/filters/stock-filter.php
+msgid "Available Soon"
+msgstr "Διαθέσιμο Σύντομα"
+
+#: template-parts/components/filters/category-filter.php
+msgid "Filter %s"
+msgstr "Φίλτρο %s"
+
+#: template-parts/components/filters/category-filter.php
+msgid "Categories"
+msgstr "Κατηγορίες"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Category"
+msgstr "Κατηγορία"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Price"
+msgstr "Τιμή"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Attributes"
+msgstr "Χαρακτηριστικά"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Availability"
+msgstr "Διαθεσιμότητα"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Showing %d – %d"
+msgstr "Εμφάνιση %d – %d"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Sort products"
+msgstr "Ταξινόμηση προϊόντων"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Active filters"
+msgstr "Ενεργά φίλτρα"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Remove %s filter"
+msgstr "Αφαίρεση φίλτρου %s"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Clear all filters"
+msgstr "Καθαρισμός όλων των φίλτρων"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Clear Filters"
+msgstr "Καθαρισμός Φίλτρων"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Filter Products"
+msgstr "Φίλτρα Προϊόντων"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Close filter modal"
+msgstr "Κλείσιμο modal φίλτρων"
+
+#: template-parts/components/product-archive-filters.php
+msgid "Apply Price"
+msgstr "Εφαρμογή Τιμής"
+
+#. ============================================
+#. Product Card and Gallery
+#. ============================================
+
+#: page-wishlist.php template-parts/components/product-gallery.php
+msgid "Sale"
+msgstr "Έκπτωση"
+
+#: page-wishlist.php
+msgid "Select Options"
+msgstr "Επιλογή Επιλογών"
+
+#: template-parts/components/product-card.php
+msgid "Log in to save to wishlist"
+msgstr "Συνδεθείτε για να αποθηκεύσετε στη λίστα επιθυμιών"
+
+#: template-parts/components/product-gallery-simple.php template-parts/components/product-gallery.php
+msgid "Product placeholder"
+msgstr "Placeholder προϊόντος"
+
+#: template-parts/components/product-gallery.php
+msgid "On sale"
+msgstr "Σε έκπτωση"
+
+#: template-parts/components/product-gallery.php
+msgid "Your browser does not support video tag."
+msgstr "Ο browser σας δεν υποστηρίζει την ετικέτα video."
+
+#: template-parts/components/product-gallery.php
+msgid "Previous image"
+msgstr "Προηγούμενη εικόνα"
+
+#: template-parts/components/product-gallery.php
+msgid "Next image"
+msgstr "Επόμενη εικόνα"
+
+#: template-parts/components/product-gallery.php
+msgid "Close zoom"
+msgstr "Κλείσιμο zoom"
+
+#: template-parts/components/product-gallery.php
+msgid "View image %d of %d: %s"
+msgstr "Προβολή εικόνας %d από %d: %s"
+
+#. ============================================
+#. Wishlist
+#. ============================================
+
+#: inc/wishlist-functions.php page-wishlist.php
+msgid "Your wishlist is empty"
+msgstr "Η λίστα επιθυμιών σας είναι άδεια"
+
+#: page-wishlist.php
+msgid "Start adding products you love to your wishlist"
+msgstr "Ξεκινήστε να προσθέτετε προϊόντα που αγαπάτε στη λίστα επιθυμιών σας"
+
+#: inc/wishlist-functions.php
+msgid "Please create an account or log in to use wishlist."
+msgstr "Παρακαλώ δημιουργήστε λογαριασμό ή συνδεθείτε για να χρησιμοποιήσετε τη λίστα επιθυμιών."
+
+#: inc/wishlist-functions.php
+msgid "Product not found"
+msgstr "Το προϊόν δεν βρέθηκε"
+
+#: inc/wishlist-functions.php
+msgid "%s added to wishlist"
+msgstr "Το %s προστέθηκε στη λίστα επιθυμιών"
+
+#: inc/wishlist-functions.php
+msgid "%s removed from wishlist"
+msgstr "Το %s αφαιρέθηκε από τη λίστα επιθυμιών"
+
+#: inc/wishlist-functions.php
+msgid "Saved"
+msgstr "Αποθηκεύτηκε"
+
+#: inc/wishlist-functions.php
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#: inc/wishlist-functions.php
+msgid "Remove %s from wishlist"
+msgstr "Αφαίρεση %s από τη λίστα επιθυμιών"
+
+#: inc/wishlist-functions.php
+msgid "Add %s to wishlist"
+msgstr "Προσθήκη %s στη λίστα επιθυμιών"
+
+#: inc/wishlist-functions.php
+msgid "You must be logged in to modify wishlist."
+msgstr "Πρέπει να είστε συνδεδεμένοι για να τροποποιήσετε τη λίστα επιθυμιών."
+
+#: inc/wishlist-functions.php
+msgid "Log in to save %s to wishlist"
+msgstr "Συνδεθείτε για να αποθηκεύσετε το %s στη λίστα επιθυμιών"
+
+#. ============================================
+#. Authentication
+#. ============================================
+
+#: inc/auth-functions.php inc/color-grouping-functions.php inc/woocommerce-functions.php
+msgid "Security check failed"
+msgstr "Ο έλεγχος ασφαλείας απέτυχε"
+
+#: inc/auth-functions.php
+msgid "Email and password are required"
+msgstr "Το email και ο κωδικός είναι υποχρεωτικά"
+
+#: inc/auth-functions.php
+msgid "Please enter a valid email address"
+msgstr "Παρακαλώ εισάγετε μια έγκυρη διεύθυνση email"
+
+#: inc/auth-functions.php
+msgid "Invalid email or password"
+msgstr "Μη έγκυρο email ή κωδικός"
+
+#: inc/auth-functions.php
+msgid "Login successful! Redirecting..."
+msgstr "Επιτυχής σύνδεση! Ανακατεύθυνση..."
+
+#: inc/auth-functions.php
+msgid "All fields are required"
+msgstr "Όλα τα πεδία είναι υποχρεωτικά"
+
+#: inc/auth-functions.php
+msgid "You must agree to the Terms & Conditions"
+msgstr "Πρέπει να συμφωνήσετε με τους Όρους & Προϋποθέσεις"
+
+#: inc/auth-functions.php
+msgid "Please correct the errors below"
+msgstr "Παρακαλώ διορθώστε τα παρακάτω λάθη"
+
+#: inc/auth-functions.php
+msgid "An account with this email already exists"
+msgstr "Υπάρχει ήδη λογαριασμός με αυτό το email"
+
+#: inc/auth-functions.php
+msgid "Account created successfully! Welcome aboard!"
+msgstr "Ο λογαριασμός δημιουργήθηκε με επιτυχία! Καλώς ορίσατε!"
+
+#: inc/auth-functions.php
+msgid "First name must be at least 2 characters"
+msgstr "Το όνομα πρέπει να έχει τουλάχιστον 2 χαρακτήρες"
+
+#: inc/auth-functions.php
+msgid "Last name must be at least 2 characters"
+msgstr "Το επώνυμο πρέπει να έχει τουλάχιστον 2 χαρακτήρες"
+
+#: inc/auth-functions.php
+msgid "Password is required"
+msgstr "Ο κωδικός είναι υποχρεωτικός"
+
+#: inc/auth-functions.php
+msgid "Password must be at least 8 characters"
+msgstr "Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες"
+
+#: inc/auth-functions.php
+msgid "Password must contain uppercase, lowercase, and number"
+msgstr "Ο κωδικός πρέπει να περιέχει κεφαλαία, πεζά και αριθμό"
+
+#: inc/auth-functions.php
+msgid "Please confirm your password"
+msgstr "Παρακαλώ επιβεβαιώστε τον κωδικό σας"
+
+#: inc/auth-functions.php
+msgid "Passwords do not match"
+msgstr "Οι κωδικοί δεν ταιριάζουν"
+
+#: inc/auth-functions.php
+msgid "Too many login attempts. Please try again in 15 minutes."
+msgstr "Πάρα πολλές προσπάθειες σύνδεσης. Παρακαλώ δοκιμάστε ξανά σε 15 λεπτά."
+
+#: inc/auth-functions.php
+msgid "Welcome to %s!"
+msgstr "Καλώς ορίσατε στο %s!"
+
+#: inc/auth-functions.php
+msgid "Processing..."
+msgstr "Επεξεργασία..."
+
+#: inc/auth-functions.php
+msgid "Login successful!"
+msgstr "Επιτυχής σύνδεση!"
+
+#: inc/auth-functions.php
+msgid "Account created successfully!"
+msgstr "Ο λογαριασμός δημιουργήθηκε με επιτυχία!"
+
+#: inc/auth-functions.php
+msgid "An error occurred. Please try again."
+msgstr "Παρουσιάστηκε σφάλμα. Παρακαλώ δοκιμάστε ξανά."
+
+#: inc/auth-functions.php
+msgid "Connection error. Please try again."
+msgstr "Σφάλμα σύνδεσης. Παρακαλώ δοκιμάστε ξανά."
+
+#. ============================================
+#. Auth Modal
+#. ============================================
+
+#: template-parts/components/auth-modal.php
+msgid "Sign in to your account to access exclusive features and personalized content."
+msgstr "Συνδεθείτε στον λογαριασμό σας για να αποκτήσετε πρόσβαση σε αποκλειστικά χαρακτηριστικά και εξατομικευμένο περιεχόμενο."
+
+#: template-parts/components/auth-modal.php
+msgid "Email Address"
+msgstr "Διεύθυνση Email"
+
+#: template-parts/components/auth-modal.php
+msgid "Enter your email address"
+msgstr "Εισάγετε τη διεύθυνση email σας"
+
+#: template-parts/components/auth-modal.php
+msgid "Password"
+msgstr "Κωδικός"
+
+#: template-parts/components/auth-modal.php
+msgid "Enter your password"
+msgstr "Εισάγετε τον κωδικό σας"
+
+#: template-parts/components/auth-modal.php
+msgid "Keep me signed in for 30 days"
+msgstr "Κράτα με συνδεδεμένο για 30 ημέρες"
+
+#: template-parts/components/auth-modal.php
+msgid "Sign In"
+msgstr "Σύνδεση"
+
+#: template-parts/components/auth-modal.php
+msgid "Forgot your password?"
+msgstr "Ξεχάσατε τον κωδικό σας;"
+
+#: template-parts/components/auth-modal.php
+msgid "New to our community?"
+msgstr "Νέος στην κοινότητά μας;"
+
+#: template-parts/components/auth-modal.php
+msgid "Create an account"
+msgstr "Δημιουργία λογαριασμού"
+
+#: template-parts/components/auth-modal.php
+msgid "Create your account to unlock exclusive access to our premium collection and member benefits."
+msgstr "Δημιουργήστε τον λογαριασμό σας για να ξεκλειδώσετε αποκλειστική πρόσβαση στην premium συλλογή μας και τα οφέλη των μελών."
+
+#: template-parts/components/auth-modal.php
+msgid "First Name"
+msgstr "Όνομα"
+
+#: template-parts/components/auth-modal.php
+msgid "Your first name"
+msgstr "Το όνομά σας"
+
+#: template-parts/components/auth-modal.php
+msgid "Last Name"
+msgstr "Επώνυμο"
+
+#: template-parts/components/auth-modal.php
+msgid "Your last name"
+msgstr "Το επώνυμό σας"
+
+#: template-parts/components/auth-modal.php
+msgid "Create Password"
+msgstr "Δημιουργία Κωδικού"
+
+#: template-parts/components/auth-modal.php
+msgid "Create a strong password"
+msgstr "Δημιουργήστε έναν ισχυρό κωδικό"
+
+#: template-parts/components/auth-modal.php
+msgid "Confirm Password"
+msgstr "Επιβεβαίωση Κωδικού"
+
+#: template-parts/components/auth-modal.php
+msgid "Confirm your password"
+msgstr "Επιβεβαιώστε τον κωδικό σας"
+
+#: template-parts/components/auth-modal.php
+msgid "I agree to the"
+msgstr "Συμφωνώ με τους"
+
+#: template-parts/components/auth-modal.php
+msgid "Terms of Service"
+msgstr "Όρους Υπηρεσίας"
+
+#: template-parts/components/auth-modal.php
+msgid "and"
+msgstr "και"
+
+#: template-parts/components/auth-modal.php
+msgid "Privacy Policy"
+msgstr "Πολιτική Απορρήτου"
+
+#: template-parts/components/auth-modal.php
+msgid "Subscribe to our newsletter for exclusive offers, style tips, and early access to new collections"
+msgstr "Εγγραφείτε στο newsletter μας για αποκλειστικές προσφορές, συμβουλές στυλ και πρόωρη πρόσβαση σε νέες συλλογές"
+
+#: template-parts/components/auth-modal.php
+msgid "Create My Account"
+msgstr "Δημιουργία Λογαριασμού"
+
+#: template-parts/components/auth-modal.php
+msgid "Already part of our community?"
+msgstr "Είστε ήδη μέλος της κοινότητάς μας;"
+
+#: template-parts/components/auth-modal.php
+msgid "Sign in here"
+msgstr "Συνδεθείτε εδώ"
+
+#. ============================================
+#. Color Grouping
+#. ============================================
+
+#: inc/color-grouping-functions.php
+msgid "Color Grouping"
+msgstr "Ομαδοποίηση Χρωμάτων"
+
+#: inc/color-grouping-functions.php
+msgid "Grouped SKU"
+msgstr "Ομαδοποιημένο SKU"
+
+#: inc/color-grouping-functions.php
+msgid "Enter common identifier for color variants"
+msgstr "Εισάγετε κοινό αναγνωριστικό για τις παραλλαγές χρωμάτων"
+
+#: inc/color-grouping-functions.php
+msgid "Color Name"
+msgstr "Όνομα Χρώματος"
+
+#: inc/color-grouping-functions.php
+msgid "e.g. Crimson Red"
+msgstr "π.χ. Βαθύ Κόκκινο"
+
+#: inc/color-grouping-functions.php
+msgid "Display name for this color variant."
+msgstr "Εμφανιζόμενο όνομα για αυτή την παραλλαγή χρώματος."
+
+#: inc/color-grouping-functions.php
+msgid "Color Hex Code"
+msgstr "Κώδικας Hex Χρώματος"
+
+#: inc/color-grouping-functions.php
+msgid "Used as fallback when no featured image is available. Will display as a circular color swatch."
+msgstr "Χρησιμοποιείται ως εναλλακτικό όταν δεν υπάρχει εικόνα. Θα εμφανιστεί ως κυκλικό δείγμα χρώματος."
+
+#: inc/color-grouping-functions.php
+msgid "Related Color Variants"
+msgstr "Σχετικές Παραλλαγές Χρώματος"
+
+#: inc/color-grouping-functions.php inc/wishlist-functions.php
+msgid "Invalid product ID"
+msgstr "Μη έγκυρο ID προϊόντος"
+
+#: template-parts/components/color-variants.php
+msgid "Color Story"
+msgstr "Ιστορία Χρώματος"
+
+#: template-parts/components/color-variants.php
+msgid "Unnamed Color"
+msgstr "Ανώνυμο Χρώμα"
+
+#: template-parts/components/color-variants.php
+msgid "Select %s color variant"
+msgstr "Επιλογή παραλλαγής χρώματος %s"
+
+#. ============================================
+#. Theme Setup and Admin
+#. ============================================
+
+#: inc/theme-setup.php
+msgid "Primary Menu"
+msgstr "Κύριο Μενού"
+
+#: inc/theme-setup.php
+msgid "Footer Main Menu"
+msgstr "Κύριο Μενού Footer"
+
+#: inc/theme-setup.php
+msgid "Footer Account Menu"
+msgstr "Μενού Λογαριασμού Footer"
+
+#: inc/theme-setup.php
+msgid "Primary Pink"
+msgstr "Κύριο Ροζ"
+
+#: inc/theme-setup.php
+msgid "Primary Pink Light"
+msgstr "Ανοιχτό Κύριο Ροζ"
+
+#: inc/theme-setup.php
+msgid "Primary Pink Dark"
+msgstr "Σκούρο Κύριο Ροζ"
+
+#: inc/theme-setup.php
+msgid "Dark Gray"
+msgstr "Σκούρο Γκρι"
+
+#: inc/theme-setup.php
+msgid "Darker Gray"
+msgstr "Πιο Σκούρο Γκρι"
+
+#: inc/theme-setup.php
+msgid "White"
+msgstr "Λευκό"
+
+#: inc/theme-setup.php
+msgid "Footer Widget Area"
+msgstr "Περιοχή Widget Footer"
+
+#: inc/theme-setup.php
+msgid "Add footer widgets here."
+msgstr "Προσθέστε footer widgets εδώ."
+
+#: inc/theme-setup.php
+msgid "Shop Filters"
+msgstr "Φίλτρα Καταστήματος"
+
+#: inc/theme-setup.php
+msgid "Widgets shown inside the shop filters modal."
+msgstr "Widgets που εμφανίζονται μέσα στο modal φίλτρων του καταστήματος."
+
+#: inc/theme-setup.php
+msgid "Translation Compilation Required"
+msgstr "Απαιτείται Μεταγλώττιση Μετάφρασης"
+
+#: inc/theme-setup.php
+msgid "Translation file for %s needs to be compiled. Please install and use Poedit, Loco Translate plugin, or WP-CLI to compile the .po file to .mo format."
+msgstr "Το αρχείο μετάφρασης για %s πρέπει να μεταγλωττιστεί. Παρακαλώ εγκαταστήστε και χρησιμοποιήστε το Poedit, το plugin Loco Translate, ή το WP-CLI για να μεταγλωττίσετε το αρχείο .po σε μορφή .mo."
+
+#: inc/theme-setup.php
+msgid "Download Poedit"
+msgstr "Λήψη Poedit"
+
+#: inc/theme-setup.php
+msgid "Install Loco Translate Plugin"
+msgstr "Εγκατάσταση Plugin Loco Translate"
+
+#: inc/theme-setup.php
+msgid "View Instructions"
+msgstr "Προβολή Οδηγιών"
+
+#. ============================================
+#. Front Page Meta
+#. ============================================
+
+#: inc/front-page-meta.php
+msgid "Front Page: Hero Slider"
+msgstr "Αρχική Σελίδα: Hero Slider"
+
+#: inc/front-page-meta.php
+msgid "Front Page: Category Grid"
+msgstr "Αρχική Σελίδα: Πλέγμα Κατηγοριών"
+
+#: inc/front-page-meta.php
+msgid "Add hero slides. You can drag to reorder. If Mobile is empty, Desktop slides will be used on mobile."
+msgstr "Προσθέστε hero slides. Μπορείτε να σύρετε για να αλλάξετε τη σειρά. Αν το Mobile είναι κενό, θα χρησιμοποιηθούν τα Desktop slides για κινητά."
+
+#: inc/front-page-meta.php
+msgid "Desktop slides"
+msgstr "Slides για υπολογιστή"
+
+#: inc/front-page-meta.php
+msgid "Select Image"
+msgstr "Επιλογή Εικόνας"
+
+#: inc/front-page-meta.php
+msgid "Alt text (optional)"
+msgstr "Κείμενο Alt (προαιρετικό)"
+
+#: inc/front-page-meta.php
+msgid "Add Desktop Slide"
+msgstr "Προσθήκη Slide για Υπολογιστή"
+
+#: inc/front-page-meta.php
+msgid "Mobile slides (optional)"
+msgstr "Slides για κινητά (προαιρετικά)"
+
+#: inc/front-page-meta.php
+msgid "Add Mobile Slide"
+msgstr "Προσθήκη Slide για Κινητά"
+
+#: inc/front-page-meta.php
+msgid "Configure the 4 tiles. Title is optional; defaults to a sensible label."
+msgstr "Ρυθμίστε τα 4 πλακίδια. Ο τίτλος είναι προαιρετικός· προεπιλέγεται μια λογική ετικέτα."
+
+#: inc/front-page-meta.php
+msgid "Image"
+msgstr "Εικόνα"
+
+#: inc/front-page-meta.php
+msgid "Alt"
+msgstr "Alt"
+
+#: inc/front-page-meta.php
+msgid "Title"
+msgstr "Τίτλος"
+
+#: inc/front-page-meta.php
+msgid "Link URL"
+msgstr "URL Συνδέσμου"
+
+#. ============================================
+#. WooCommerce Functions
+#. ============================================
+
+#: inc/woocommerce-functions.php
+msgid "WooCommerce is not active"
+msgstr "Το WooCommerce δεν είναι ενεργό"
+
+#: inc/woocommerce-functions.php
+msgid "Invalid cart item"
+msgstr "Μη έγκυρο αντικείμενο καλαθιού"
+
+#: inc/woocommerce-functions.php
+msgid "Item removed from cart"
+msgstr "Το αντικείμενο αφαιρέθηκε από το καλάθι"
+
+#: inc/woocommerce-functions.php
+msgid "Error removing item from cart"
+msgstr "Σφάλμα κατά την αφαίρεση του αντικειμένου από το καλάθι"
+
+#: inc/woocommerce-functions.php
+msgid "Failed to load cart content"
+msgstr "Αποτυχία φόρτωσης περιεχομένου καλαθιού"
+
+#: inc/woocommerce-functions.php
+msgid "Flying Cart Settings"
+msgstr "Ρυθμίσεις Ιπτάμενου Καλαθιού"
+
+#: inc/woocommerce-functions.php
+msgid "Configure flying cart component settings."
+msgstr "Ρυθμίστε τις ρυθμίσεις του component του ιπτάμενου καλαθιού."
+
+#: inc/woocommerce-functions.php
+msgid "Free Shipping Threshold"
+msgstr "Όριο Δωρεάν Αποστολής"
+
+#: inc/woocommerce-functions.php
+msgid "Minimum order amount for free shipping message in flying cart. Leave empty to use WooCommerce free shipping settings."
+msgstr "Ελάχιστο ποσό παραγγελίας για μήνυμα δωρεάν αποστολής στο ιπτάμενο καλάθι. Αφήστε κενό για να χρησιμοποιήσετε τις ρυθμίσεις δωρεάν αποστολής του WooCommerce."
+
+#: inc/woocommerce-functions.php
+msgid "No products found"
+msgstr "Δεν βρέθηκαν προϊόντα"
+
+#: inc/woocommerce-functions.php
+msgid "Try adjusting your filters or search terms"
+msgstr "Δοκιμάστε να προσαρμόσετε τα φίλτρα ή τους όρους αναζήτησης"
+
+#: inc/woocommerce-functions.php
+msgid "Showing single result"
+msgstr "Εμφάνιση ενός αποτελέσματος"
+
+#: inc/woocommerce-functions.php
+msgid "Showing all %d results"
+msgstr "Εμφάνιση όλων των %d αποτελεσμάτων"
+
+#: inc/woocommerce-functions.php
+msgid "Showing %1$d–%2$d of %3$d results"
+msgstr "Εμφάνιση %1$d–%2$d από %3$d αποτελέσματα"
+
+#: inc/woocommerce-functions.php
+msgid "Dashboard"
+msgstr "Πίνακας ελέγχου"
+
+#: inc/woocommerce-functions.php
+msgid "Orders"
+msgstr "Παραγγελίες"
+
+#: inc/woocommerce-functions.php
+msgid "Downloads"
+msgstr "Λήψεις"
+
+#: inc/woocommerce-functions.php
+msgid "Addresses"
+msgstr "Διευθύνσεις"
+
+#: inc/woocommerce-functions.php
+msgid "Account Details"
+msgstr "Λεπτομέρειες Λογαριασμού"
+
+#: inc/woocommerce-functions.php
+msgid "Logout"
+msgstr "Αποσύνδεση"
+
+#: inc/woocommerce-functions.php
+msgid "Login"
+msgstr "Σύνδεση"
+
+#: inc/woocommerce-functions.php
+msgid "Register"
+msgstr "Εγγραφή"
+
+#: inc/woocommerce-functions.php
+msgid "You May Also Like"
+msgstr "Μπορεί επίσης να σας αρέσουν"
+
+#. ============================================
+#. Breadcrumbs
+#. ============================================
+
+#: template-parts/components/breadcrumbs.php
+msgid "Home"
+msgstr "Αρχική"
+
+#: template-parts/components/breadcrumbs.php
+msgid "Search: %s"
+msgstr "Αναζήτηση: %s"
+
+#: template-parts/components/breadcrumbs.php
+msgid "Not Found"
+msgstr "Δεν Βρέθηκε"
+
+#. ============================================
+#. Product Accordions
+#. ============================================
+
+#: template-parts/components/product-accordions.php
+msgid "Size & Fit Guide"
+msgstr "Οδηγός Μεγέθους & Προσαρμογής"
+
+#: template-parts/components/product-accordions.php
+msgid "These shoes run true to size. We recommend ordering your usual shoe size for best fit."
+msgstr "Αυτά τα παπούτσια έχουν κανονική εφαρμογή. Συνιστούμε να παραγγείλετε το συνηθισμένο μέγεθός σας για καλύτερη εφαρμογή."
+
+#: template-parts/components/product-accordions.php
+msgid "Medium width (D for men, B for women)"
+msgstr "Μεσαίο πλάτος (D για άνδρες, B για γυναίκες)"
+
+#: template-parts/components/product-accordions.php
+msgid "Heel-to-toe drop: 8mm"
+msgstr "Διαφορά ύψους φτέρνας-δαχτύλων: 8mm"
+
+#: template-parts/components/product-accordions.php
+msgid "Weight: 10.5 oz (men's size 9)"
+msgstr "Βάρος: 10.5 oz (ανδρικό νούμερο 42)"
+
+#: template-parts/components/product-accordions.php
+msgid "For wide feet, consider ordering a half size up"
+msgstr "Για πλατιά πόδια, εξετάστε το ενδεχόμενο να παραγγείλετε μισό νούμερο μεγαλύτερο"
+
+#: template-parts/components/product-accordions.php
+msgid "Shipping & Returns"
+msgstr "Αποστολή & Επιστροφές"
+
+#: template-parts/components/product-accordions.php
+msgid "Free Shipping:"
+msgstr "Δωρεάν Αποστολή:"
+
+#: template-parts/components/product-accordions.php
+msgid "On orders over $75. Delivered in 3-5 business days."
+msgstr "Για παραγγελίες άνω των €75. Παράδοση σε 3-5 εργάσιμες ημέρες."
+
+#: template-parts/components/product-accordions.php
+msgid "Express Shipping:"
+msgstr "Γρήγορη Αποστολή:"
+
+#: template-parts/components/product-accordions.php
+msgid "$12.95. Delivered in 1-2 business days."
+msgstr "€12.95. Παράδοση σε 1-2 εργάσιμες ημέρες."
+
+#: template-parts/components/product-accordions.php
+msgid "Returns:"
+msgstr "Επιστροφές:"
+
+#: template-parts/components/product-accordions.php
+msgid "30-day return policy. Items must be in original condition with tags attached."
+msgstr "Πολιτική επιστροφής 30 ημερών. Τα είδη πρέπει να είναι στην αρχική τους κατάσταση με τις ετικέτες."
+
+#: template-parts/components/product-accordions.php
+msgid "Exchanges:"
+msgstr "Ανταλλαγές:"
+
+#: template-parts/components/product-accordions.php
+msgid "Free exchanges for different sizes or colors."
+msgstr "Δωρεάν ανταλλαγές για διαφορετικά μεγέθη ή χρώματα."
+
+#. ============================================
+#. Product Badges
+#. ============================================
+
+#: inc/woocommerce/product-display.php
+msgid "SALE"
+msgstr "ΕΚΠΤΩΣΗ"
+
+#: inc/woocommerce/product-display.php
+msgid "OUT OF STOCK"
+msgstr "ΕΞΑΝΤΛΗΘΗΚΕ"
+
+#: inc/woocommerce/product-display.php
+msgid "NEW"
+msgstr "ΝΕΟ"
+
+#: inc/woocommerce/product-display.php
+msgid "HOT"
+msgstr "ΚΑΥΤΟ"
+
+#: inc/woocommerce/product-display.php
+msgid "LOW STOCK"
+msgstr "ΧΑΜΗΛΟ ΑΠΟΘΕΜΑ"
+
+#. ============================================
+#. Trust Badges
+#. ============================================
+
+#: template-parts/components/trust-badges.php
+msgid "Free Shipping"
+msgstr "Δωρεάν Αποστολή"
+
+#: template-parts/components/trust-badges.php
+msgid "30-Day Returns"
+msgstr "Επιστροφές 30 Ημερών"
+
+#: template-parts/components/size-selection.php
+msgid "Size Guide"
+msgstr "Οδηγός Μεγεθών"
+
+#. ============================================
+#. Page
+#. ============================================
+
+#: page.php
+msgid "Updated"
+msgstr "Ενημερώθηκε"
+
+#: page.php
+msgid "Published"
+msgstr "Δημοσιεύτηκε"
+
+#: page.php
+msgid "Reading time"
+msgstr "Χρόνος ανάγνωσης"
+
+#: page.php
+msgid "Pages:"
+msgstr "Σελίδες:"
+
+#: page.php
+msgid "Edit page"
+msgstr "Επεξεργασία σελίδας"
+
+#: page.php
+msgid "Content is not available right now."
+msgstr "Το περιεχόμενο δεν είναι διαθέσιμο αυτή τη στιγμή."
