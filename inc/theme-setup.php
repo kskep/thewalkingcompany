@@ -52,9 +52,58 @@ if (!function_exists('eshop_maybe_start_session')) {
 }
 
 /**
+ * Compile MO files early if missing
+ * This runs before load_theme_textdomain to ensure translations work on first load
+ */
+function eshop_compile_translations_early() {
+    $languages_dir = get_template_directory() . '/languages';
+    $po_files = glob($languages_dir . '/*.po');
+    
+    if (empty($po_files)) {
+        return;
+    }
+    
+    foreach ($po_files as $po_file) {
+        $mo_file = str_replace('.po', '.mo', $po_file);
+        
+        // Skip if MO already exists and is newer than PO
+        if (file_exists($mo_file) && filemtime($mo_file) >= filemtime($po_file)) {
+            continue;
+        }
+        
+        // Skip if PO file is not readable
+        if (!is_readable($po_file)) {
+            continue;
+        }
+        
+        // Load WordPress POMO classes
+        if (!class_exists('PO')) {
+            require_once ABSPATH . 'wp-includes/pomo/po.php';
+        }
+        if (!class_exists('MO')) {
+            require_once ABSPATH . 'wp-includes/pomo/mo.php';
+        }
+        
+        // Compile PO to MO
+        $po = new PO();
+        if ($po->import_from_file($po_file)) {
+            $mo = new MO();
+            $mo->set_header('Project-Id-Version', $po->get_header('Project-Id-Version'));
+            foreach ($po->entries as $entry) {
+                $mo->add_entry($entry);
+            }
+            $mo->export_to_file($mo_file);
+        }
+    }
+}
+
+/**
  * Theme Setup
  */
 function eshop_theme_setup() {
+    // Compile MO files early if missing (before loading textdomain)
+    eshop_compile_translations_early();
+    
     // Make theme available for translation
     // Translations can be filed in the /languages/ directory
     load_theme_textdomain('eshop-theme', get_template_directory() . '/languages');
