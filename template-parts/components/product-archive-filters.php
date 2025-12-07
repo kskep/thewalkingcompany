@@ -264,8 +264,10 @@ SVG;
                     // Render appropriate filter section
                     switch ($section_key) {
                         case 'category':
-                            // Hierarchical category tree: always show top-level categories; expand to children on demand
-                            // Determine selected category slugs (support multi-select via comma separated 'product_cat')
+                            // Context-aware category filter
+                            // On a subcategory page: show siblings (other subcategories of same parent)
+                            // On shop page: show top-level categories
+                            
                             $selected_cat_slugs = array();
                             if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
                                 $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
@@ -282,13 +284,41 @@ SVG;
                                 if ($t && !is_wp_error($t)) $selected_terms[] = $t;
                             }
 
-                            // Fetch all top-level categories regardless of empty state
+                            // Categories to always hide
                             $excluded_ids = array(15, 323, 446); // Uncategorized, Giftwrapping, Mystery Box
+
+                            // Determine what categories to show based on context
+                            $is_on_category_page = function_exists('is_product_category') && is_product_category();
+                            $parent_id_to_use = 0;
+                            $current_category_obj = null;
+                            
+                            if ($is_on_category_page) {
+                                $current_category_obj = get_queried_object();
+                                if ($current_category_obj && !is_wp_error($current_category_obj)) {
+                                    // Show children of current category (sub-subcategories)
+                                    $children_of_current = get_terms(array(
+                                        'taxonomy' => 'product_cat',
+                                        'parent' => $current_category_obj->term_id,
+                                        'hide_empty' => true,
+                                        'exclude' => $excluded_ids,
+                                    ));
+                                    
+                                    if (!empty($children_of_current) && !is_wp_error($children_of_current)) {
+                                        // Current category has children, show them
+                                        $parent_id_to_use = $current_category_obj->term_id;
+                                    } else {
+                                        // Current category has no children, don't show category filter at all
+                                        // (we're at a leaf category)
+                                        echo '<!-- No subcategories to filter -->';
+                                        break;
+                                    }
+                                }
+                            }
 
                             $top_level = get_terms(array(
                                 'taxonomy' => 'product_cat',
-                                'parent' => 0,
-                                'hide_empty' => false,
+                                'parent' => $parent_id_to_use,
+                                'hide_empty' => true,
                                 'exclude' => $excluded_ids,
                                 'orderby' => 'menu_order',
                                 'order' => 'ASC',
@@ -666,7 +696,7 @@ SVG;
                                     ?>
                                         <label class="filter-option">
                                             <input type="checkbox" 
-                                                   name="<?php echo esc_attr($attr_name); ?>[]"
+                                                   name="<?php echo esc_attr($attr_name); ?>"
                                                    value="<?php echo esc_attr($term_slug); ?>"
                                                    <?php checked($is_checked); ?>>
                                             <span class="filter-option-label">

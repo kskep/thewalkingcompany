@@ -3,7 +3,7 @@
  * Handles filtering functionality matching the concept design
  */
 
-(function() {
+(function () {
     'use strict';
 
     // DOM Elements
@@ -36,10 +36,10 @@
 
         // Parse current URL parameters
         parseURLParameters();
-        
+
         // Event listeners
         setupEventListeners();
-        
+
         // Update UI based on current filters
         updateFilterUI();
     }
@@ -73,7 +73,7 @@
         // Categories: support comma-delimited list (multi-select)
         if (urlParams.has('product_cat')) {
             const rawCat = urlParams.get('product_cat');
-            filterState.categories = rawCat ? rawCat.split(',').map(v=>v.trim()).filter(Boolean) : [];
+            filterState.categories = rawCat ? rawCat.split(',').map(v => v.trim()).filter(Boolean) : [];
         }
     }
 
@@ -99,55 +99,55 @@
         if (filterToggle) filterToggle.addEventListener('click', openFilterModal);
         const filterToggleDesktop = document.getElementById('filter-toggle-desktop');
         if (filterToggleDesktop) filterToggleDesktop.addEventListener('click', openFilterModal);
-        
+
         if (filterModalClose) {
             filterModalClose.addEventListener('click', closeFilterModal);
         }
-        
+
         if (filterModalOverlay) {
             filterModalOverlay.addEventListener('click', closeFilterModal);
         }
-        
+
         // Filter controls
         if (filterApply) {
             filterApply.addEventListener('click', applyFilters);
         }
-        
+
         if (filterClearAll) {
             filterClearAll.addEventListener('click', clearAllFilters);
         }
-        
+
         if (priceFilterApply) {
             priceFilterApply.addEventListener('click', applyPriceFilter);
         }
-        
+
         // Checkbox/radio change handlers
         const filterOptions = filterModalContent?.querySelectorAll('input[type="checkbox"], input[type="radio"]');
         filterOptions?.forEach(option => {
             option.addEventListener('change', handleFilterChange);
         });
-        
+
         // Price input handlers
         const minPriceInput = document.getElementById('filter-min-price');
         const maxPriceInput = document.getElementById('filter-max-price');
-        
+
         if (minPriceInput) {
             minPriceInput.addEventListener('input', handlePriceInput);
         }
-        
+
         if (maxPriceInput) {
             maxPriceInput.addEventListener('input', handlePriceInput);
         }
-        
+
         // Close modal on escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && filterModal?.classList.contains('active')) {
                 closeFilterModal();
             }
         });
 
         // Category expand/collapse delegation (improved for hierarchical tree)
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const toggle = e.target.closest('.category-toggle');
             if (!toggle) return;
             const expanded = toggle.getAttribute('aria-expanded') === 'true';
@@ -165,9 +165,9 @@
                 branch.removeAttribute('hidden');
             }
         });
-        
+
         // Active filters event delegation
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             // Remove individual filter chip (use closest to handle inner spans)
             const chip = e.target.closest('.filter-chip');
             if (chip) {
@@ -187,10 +187,10 @@
 
         // Direct listener as well if the button exists
         const clearAll = document.getElementById('clear-all-filters');
-        if (clearAll) clearAll.addEventListener('click', function(e){ e.preventDefault(); clearAllFilters(); });
-        
+        if (clearAll) clearAll.addEventListener('click', function (e) { e.preventDefault(); clearAllFilters(); });
+
         // Handle browser back/forward
-        window.addEventListener('popstate', function() {
+        window.addEventListener('popstate', function () {
             parseURLParameters();
             updateFilterUI();
         });
@@ -204,7 +204,7 @@
             filterModal.classList.add('active');
             filterModalOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
+
             // Focus management
             filterModalClose?.focus();
         }
@@ -229,7 +229,7 @@
         const name = input.name;
         const value = input.value;
         const checked = input.checked;
-        
+
         if (name === 'on_sale') {
             filterState.sale = checked;
         } else if (name === 'stock_status') {
@@ -246,7 +246,7 @@
             if (!filterState.attributes[name]) {
                 filterState.attributes[name] = [];
             }
-            
+
             if (checked) {
                 if (!filterState.attributes[name].includes(value)) {
                     filterState.attributes[name].push(value);
@@ -266,7 +266,7 @@
     function handlePriceInput() {
         const minPrice = document.getElementById('filter-min-price')?.value || '';
         const maxPrice = document.getElementById('filter-max-price')?.value || '';
-        
+
         filterState.price.min = minPrice;
         filterState.price.max = maxPrice;
     }
@@ -276,11 +276,11 @@
      */
     function applyPriceFilter() {
         const currentURL = new URL(window.location);
-        
+
         // Remove existing price parameters
         currentURL.searchParams.delete('min_price');
         currentURL.searchParams.delete('max_price');
-        
+
         // Add new price parameters
         if (filterState.price.min) {
             currentURL.searchParams.set('min_price', filterState.price.min);
@@ -288,7 +288,7 @@
         if (filterState.price.max) {
             currentURL.searchParams.set('max_price', filterState.price.max);
         }
-        
+
         // Navigate to new URL
         window.location.href = currentURL.toString();
     }
@@ -298,6 +298,12 @@
      */
     function applyFilters() {
         const currentURL = new URL(window.location);
+
+        // Read price values directly from hidden inputs (slider updates these)
+        const minPriceInput = document.getElementById('filter-min-price');
+        const maxPriceInput = document.getElementById('filter-max-price');
+        if (minPriceInput) filterState.price.min = minPriceInput.value;
+        if (maxPriceInput) filterState.price.max = maxPriceInput.value;
 
         // Preserve non-filter params (orderby, order) and clear others
         const preserve = ['orderby', 'order'];
@@ -311,7 +317,7 @@
         if (filterState.price.max) currentURL.searchParams.set('max_price', filterState.price.max);
         if (filterState.sale) currentURL.searchParams.set('on_sale', '1');
         if (filterState.inStock) currentURL.searchParams.set('stock_status', 'instock');
-    if (filterState.categories.length) currentURL.searchParams.set('product_cat', filterState.categories.join(','));
+        if (filterState.categories.length) currentURL.searchParams.set('product_cat', filterState.categories.join(','));
 
         // Attribute filters: write as comma-delimited list (Woo parsing expects this format)
         Object.entries(filterState.attributes).forEach(([taxonomy, values]) => {
@@ -378,7 +384,7 @@
 
         const currentURL = new URL(window.location.href);
         // Remove known filter params
-        ['min_price','max_price','on_sale','stock_status','product_cat'].forEach(p=>currentURL.searchParams.delete(p));
+        ['min_price', 'max_price', 'on_sale', 'stock_status', 'product_cat'].forEach(p => currentURL.searchParams.delete(p));
         // Remove all attribute params (pa_*) including array-style
         [...currentURL.searchParams.keys()].forEach(key => {
             if (key.startsWith('pa_')) currentURL.searchParams.delete(key);
@@ -396,15 +402,15 @@
         // Update price inputs
         const minPriceInput = document.getElementById('filter-min-price');
         const maxPriceInput = document.getElementById('filter-max-price');
-        
+
         if (minPriceInput) {
             minPriceInput.value = filterState.price.min;
         }
-        
+
         if (maxPriceInput) {
             maxPriceInput.value = filterState.price.max;
         }
-        
+
         // Update checkboxes
         const checkboxes = filterModalContent?.querySelectorAll('input[type="checkbox"][name^="pa_"], input[type="checkbox"][name="on_sale"], input[type="checkbox"][name="stock_status"]');
         checkboxes?.forEach(checkbox => {
@@ -421,7 +427,7 @@
                 checkbox.checked = false;
             }
         });
-        
+
         // Update category checkboxes
         const catBoxes = filterModalContent?.querySelectorAll('input[type="checkbox"][name="category"]');
         catBoxes?.forEach(cb => {
@@ -470,7 +476,7 @@
     }
 
     // Handle page load
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         hideLoading();
     });
 
@@ -480,7 +486,7 @@
         close: closeFilterModal,
         apply: applyFilters,
         clear: clearAllFilters,
-        getState: () => ({...filterState})
+        getState: () => ({ ...filterState })
     };
 
 })();
