@@ -225,6 +225,11 @@
             $('.wishlist-dropdown, .account-dropdown').addClass('hidden');
         });
 
+        $(document).on('click', '.minicart-close', function (e) {
+            e.preventDefault();
+            $('.minicart-dropdown').addClass('hidden');
+        });
+
         // Close dropdowns when clicking outside
         $(document).on('click', function (e) {
             if (!$(e.target).closest('.wishlist-wrapper, .account-wrapper, .minicart-wrapper').length) {

@@ -91,60 +91,8 @@ if (!defined('ABSPATH')) {
         </button>
         
         <!-- Minicart Dropdown -->
-        <div class="minicart-dropdown absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 hidden">
-            <div class="p-4">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-lg font-semibold text-dark"><?php _e('Shopping Cart', 'eshop-theme'); ?></h3>
-                    <span class="cart-total text-primary font-semibold"><?php echo WC()->cart->get_cart_total(); ?></span>
-                </div>
-                
-                <div class="minicart-items max-h-64 overflow-y-auto">
-                    <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
-                        <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) :
-                            $product = $cart_item['data'];
-                            $product_id = $cart_item['product_id'];
-                            $quantity = $cart_item['quantity'];
-                        ?>
-                            <div class="minicart-item flex items-center space-x-3 py-3 border-b border-gray-100 last:border-b-0" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>">
-                                <div class="w-12 h-12 flex-shrink-0">
-                                    <?php echo $product->get_image(array(48, 48)); ?>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-medium text-dark truncate"><?php echo $product->get_name(); ?></h4>
-                                    <div class="flex items-center justify-between mt-1">
-                                        <div class="minicart-qty-controls flex items-center">
-                                            <button type="button" class="minicart-qty-btn qty-minus p-1 text-gray-400 hover:text-primary" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Decrease quantity">
-                                                <i class="fas fa-minus text-xs"></i>
-                                            </button>
-                                            <span class="qty-value mx-2 text-sm font-medium"><?php echo $quantity; ?></span>
-                                            <button type="button" class="minicart-qty-btn qty-plus p-1 text-gray-400 hover:text-primary" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Increase quantity">
-                                                <i class="fas fa-plus text-xs"></i>
-                                            </button>
-                                        </div>
-                                        <span class="text-sm text-primary font-semibold"><?php echo wc_price($product->get_price() * $quantity); ?></span>
-                                    </div>
-                                </div>
-                                <button class="remove-from-cart text-gray-400 hover:text-red-500 transition-colors" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>" aria-label="Remove item">
-                                    <i class="fas fa-times text-xs"></i>
-                                </button>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else : ?>
-                        <p class="text-gray-500 text-center py-8"><?php _e('Your cart is empty', 'eshop-theme'); ?></p>
-                    <?php endif; ?>
-                </div>
-                
-                <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
-                    <div class="mt-4 pt-3 border-t border-gray-200 space-y-2">
-                        <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-center bg-gray-100 text-dark py-2 hover:bg-gray-200 transition-colors duration-200">
-                            <?php _e('View Cart', 'eshop-theme'); ?>
-                        </a>
-                        <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-center bg-primary text-white py-2 hover:bg-primary-dark transition-colors duration-200">
-                            <?php _e('Checkout', 'eshop-theme'); ?>
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
+        <div class="minicart-dropdown absolute right-0 top-full mt-2 w-96 md:w-[450px] bg-white border border-gray-100 shadow-xl z-50 hidden rounded-md overflow-hidden ring-1 ring-black ring-opacity-5">
+            <?php get_template_part('template-parts/header/minicart-content'); ?>
         </div>
     </div>
     <?php endif; ?>

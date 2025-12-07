@@ -80,45 +80,8 @@ function eshop_cart_fragment($fragments) {
     
     // Update entire minicart content
     ob_start();
-    ?>
-    <div class="minicart-items max-h-64 overflow-y-auto">
-        <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
-            <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) :
-                $product = $cart_item['data'];
-                $product_id = $cart_item['product_id'];
-                $quantity = $cart_item['quantity'];
-            ?>
-                <div class="minicart-item flex items-center space-x-3 py-3 border-b border-gray-100 last:border-b-0">
-                    <div class="w-12 h-12 flex-shrink-0">
-                        <?php echo $product->get_image(array(48, 48)); ?>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-sm font-medium text-dark truncate"><?php echo $product->get_name(); ?></h4>
-                        <p class="text-xs text-gray-500"><?php echo sprintf('%s × %s', $quantity, wc_price($product->get_price())); ?></p>
-                        <p class="text-sm text-primary font-semibold"><?php echo wc_price($product->get_price() * $quantity); ?></p>
-                    </div>
-                    <a href="<?php echo wc_get_cart_remove_url($cart_item_key); ?>" class="remove-from-cart text-gray-400 hover:text-red-500 transition-colors" data-cart-item-key="<?php echo $cart_item_key; ?>">
-                        <i class="fas fa-times text-xs"></i>
-                    </a>
-                </div>
-            <?php endforeach; ?>
-        <?php else : ?>
-            <p class="text-gray-500 text-center py-8"><?php _e('Your cart is empty', 'eshop-theme'); ?></p>
-        <?php endif; ?>
-    </div>
-    
-    <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
-        <div class="mt-4 pt-3 border-t border-gray-200 space-y-2">
-            <a href="<?php echo wc_get_cart_url(); ?>" class="block w-full text-center bg-gray-100 text-dark py-2 hover:bg-gray-200 transition-colors duration-200">
-                <?php _e('View Cart', 'eshop-theme'); ?>
-            </a>
-            <a href="<?php echo wc_get_checkout_url(); ?>" class="block w-full text-center bg-primary text-white py-2 hover:bg-primary-dark transition-colors duration-200">
-                <?php _e('Checkout', 'eshop-theme'); ?>
-            </a>
-        </div>
-    <?php endif; ?>
-    <?php
-    $fragments['.minicart-dropdown .p-4'] = ob_get_clean();
+    get_template_part('template-parts/header/minicart-content');
+    $fragments['.eshop-minicart-inner'] = ob_get_clean();
     
     return $fragments;
 }
