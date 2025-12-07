@@ -117,6 +117,72 @@ class Eshop_Product_Filters {
 
         if (empty($product_ids)) {
             return array();
+        }
+
+        global $wpdb;
+
+        // Create placeholders for the product IDs
+        $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
+
+        // Query to get attribute terms from products in current context
+        // For simple products: use term_relationships
+        // For variable products: use postmeta on variations
+        $sql = "
+            SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT product_id) as count
+            FROM (
+                -- Simple products with this attribute term
+                SELECT p.ID as product_id, tr.term_taxonomy_id
+                FROM {$wpdb->posts} p
+                INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id 
+                    AND pm_stock.meta_key = '_stock_status' 
+                    AND pm_stock.meta_value = 'instock'
+                INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+                INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
+                    AND tt.taxonomy = %s
+                WHERE p.post_type = 'product' 
+                    AND p.post_status = 'publish'
+                    AND p.ID IN ($placeholders)
+                
+                UNION
+                
+                -- Variable product variations with this attribute term (via postmeta)
+                SELECT DISTINCT v.post_parent as product_id, tt2.term_taxonomy_id
+                FROM {$wpdb->posts} v
+                INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id 
+                    AND pm_stock.meta_key = '_stock_status' 
+                    AND pm_stock.meta_value = 'instock'
+                INNER JOIN {$wpdb->postmeta} pm_attr ON v.ID = pm_attr.post_id 
+                    AND pm_attr.meta_key = %s
+                INNER JOIN {$wpdb->terms} t2 ON t2.slug = pm_attr.meta_value
+                INNER JOIN {$wpdb->term_taxonomy} tt2 ON t2.term_id = tt2.term_id 
+                    AND tt2.taxonomy = %s
+                WHERE v.post_type = 'product_variation' 
+                    AND v.post_status = 'publish'
+                    AND v.post_parent IN ($placeholders)
+            ) matched
+            INNER JOIN {$wpdb->term_taxonomy} tt ON matched.term_taxonomy_id = tt.term_taxonomy_id
+            INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+            GROUP BY t.term_id, t.name, t.slug
+            HAVING count > 0
+            ORDER BY t.name ASC
+        ";
+
+        // Prepare attribute meta key (e.g., 'attribute_pa_size')
+        $attr_meta_key = 'attribute_' . $taxonomy;
+
+        // Query params: taxonomy, product_ids, attr_meta_key, taxonomy, product_ids
+        $query_params = array_merge(
+            array($taxonomy), 
+            $product_ids, 
+            array($attr_meta_key, $taxonomy), 
+            $product_ids
+        );
+        
+        $results = $wpdb->get_results($wpdb->prepare($sql, $query_params), ARRAY_A);
+
+        // Add color values for color attributes
+        if ($taxonomy === 'pa_color' && !empty($results)) {
+            foreach ($results as &$result) {
                 $result['color'] = get_term_meta($result['term_id'], 'color', true);
             }
         }
