@@ -249,9 +249,9 @@ SVG;
         // Include filter sections
         $filter_sections = [
             'category' => __('Category', 'eshop-theme'),
-            'price' => __('Price', 'eshop-theme'),
             'attributes' => __('Attributes', 'eshop-theme'),
-            'availability' => __('Availability', 'eshop-theme')
+            'availability' => __('Availability', 'eshop-theme'),
+            'price' => __('Price', 'eshop-theme')
         ];
 
         foreach ($filter_sections as $section_key => $section_title):
@@ -478,35 +478,161 @@ SVG;
                             break;
 
                         case 'price':
-                            $price_ranges = [
-                                ['min' => 0, 'max' => 50, 'label' => 'Under €50'],
-                                ['min' => 50, 'max' => 100, 'label' => '€50 - €100'],
-                                ['min' => 100, 'max' => 200, 'label' => '€100 - €200'],
-                                ['min' => 200, 'max' => 0, 'label' => 'Over €200']
-                            ];
+                            // Get price range from database
+                            $price_min = 0;
+                            $price_max = 500; // Default max
+                            
+                            // Try to get actual price range
+                            global $wpdb;
+                            $price_data = $wpdb->get_row("
+                                SELECT MIN(CAST(meta_value AS DECIMAL(10,2))) as min_price, 
+                                       MAX(CAST(meta_value AS DECIMAL(10,2))) as max_price
+                                FROM {$wpdb->postmeta}
+                                WHERE meta_key = '_price' AND meta_value != ''
+                            ");
+                            if ($price_data) {
+                                $price_min = floor(floatval($price_data->min_price));
+                                $price_max = ceil(floatval($price_data->max_price));
+                            }
+                            
+                            // Current selected values
+                            $current_min = $min_price > 0 ? $min_price : $price_min;
+                            $current_max = $max_price > 0 ? $max_price : $price_max;
                         ?>
-                            <div class="price-filter">
-                                <div class="price-inputs">
-                                    <input type="number" 
-                                           id="filter-min-price"
-                                           class="price-input" 
-                                           placeholder="€ Min" 
-                                           min="0" 
-                                           step="0.01"
-                                           value="<?php echo esc_attr($min_price); ?>">
-                                    <span class="price-separator">–</span>
-                                    <input type="number" 
-                                           id="filter-max-price"
-                                           class="price-input" 
-                                           placeholder="€ Max" 
-                                           min="0" 
-                                           step="0.01"
-                                           value="<?php echo esc_attr($max_price); ?>">
+                            <div class="price-filter-slider">
+                                <div class="price-slider-labels">
+                                    <span class="price-label-min">€<span id="price-display-min"><?php echo esc_html($current_min); ?></span></span>
+                                    <span class="price-label-max">€<span id="price-display-max"><?php echo esc_html($current_max); ?></span></span>
                                 </div>
-                                <button type="button" id="price-filter-apply" class="price-filter-apply">
-                                    <?php _e('Apply Price', 'eshop-theme'); ?>
-                                </button>
+                                <div class="price-slider-track">
+                                    <div class="price-slider-range" id="price-slider-range"></div>
+                                    <input type="range" 
+                                           id="price-slider-min" 
+                                           class="price-slider" 
+                                           min="<?php echo esc_attr($price_min); ?>" 
+                                           max="<?php echo esc_attr($price_max); ?>" 
+                                           value="<?php echo esc_attr($current_min); ?>" 
+                                           step="1">
+                                    <input type="range" 
+                                           id="price-slider-max" 
+                                           class="price-slider" 
+                                           min="<?php echo esc_attr($price_min); ?>" 
+                                           max="<?php echo esc_attr($price_max); ?>" 
+                                           value="<?php echo esc_attr($current_max); ?>" 
+                                           step="1">
+                                </div>
+                                <input type="hidden" id="filter-min-price" value="<?php echo esc_attr($current_min); ?>">
+                                <input type="hidden" id="filter-max-price" value="<?php echo esc_attr($current_max); ?>">
                             </div>
+                            
+                            <style>
+                            .price-filter-slider {
+                                padding: 1rem 0;
+                            }
+                            .price-slider-labels {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 0.75rem;
+                                font-size: 0.875rem;
+                                font-weight: 500;
+                                color: var(--ink, #1a1a1a);
+                            }
+                            .price-slider-track {
+                                position: relative;
+                                height: 6px;
+                                background: #e5e5e5;
+                                border-radius: 3px;
+                                margin: 1rem 0;
+                            }
+                            .price-slider-range {
+                                position: absolute;
+                                height: 100%;
+                                background: var(--pink, #e91e63);
+                                border-radius: 3px;
+                            }
+                            .price-slider {
+                                position: absolute;
+                                width: 100%;
+                                height: 6px;
+                                background: transparent;
+                                pointer-events: none;
+                                -webkit-appearance: none;
+                                top: 0;
+                                left: 0;
+                            }
+                            .price-slider::-webkit-slider-thumb {
+                                -webkit-appearance: none;
+                                width: 20px;
+                                height: 20px;
+                                background: var(--pink, #e91e63);
+                                border-radius: 50%;
+                                cursor: pointer;
+                                pointer-events: auto;
+                                border: 3px solid white;
+                                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                                margin-top: -7px;
+                            }
+                            .price-slider::-moz-range-thumb {
+                                width: 20px;
+                                height: 20px;
+                                background: var(--pink, #e91e63);
+                                border-radius: 50%;
+                                cursor: pointer;
+                                pointer-events: auto;
+                                border: 3px solid white;
+                                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                            }
+                            </style>
+                            
+                            <script>
+                            (function() {
+                                const minSlider = document.getElementById('price-slider-min');
+                                const maxSlider = document.getElementById('price-slider-max');
+                                const range = document.getElementById('price-slider-range');
+                                const minDisplay = document.getElementById('price-display-min');
+                                const maxDisplay = document.getElementById('price-display-max');
+                                const minInput = document.getElementById('filter-min-price');
+                                const maxInput = document.getElementById('filter-max-price');
+                                
+                                function updateSlider() {
+                                    const min = parseInt(minSlider.value);
+                                    const max = parseInt(maxSlider.value);
+                                    const total = parseInt(minSlider.max) - parseInt(minSlider.min);
+                                    
+                                    // Prevent crossing
+                                    if (min > max - 10) {
+                                        if (this === minSlider) {
+                                            minSlider.value = max - 10;
+                                        } else {
+                                            maxSlider.value = min + 10;
+                                        }
+                                    }
+                                    
+                                    const minVal = parseInt(minSlider.value);
+                                    const maxVal = parseInt(maxSlider.value);
+                                    
+                                    // Update range bar
+                                    const leftPercent = ((minVal - parseInt(minSlider.min)) / total) * 100;
+                                    const rightPercent = ((maxVal - parseInt(minSlider.min)) / total) * 100;
+                                    range.style.left = leftPercent + '%';
+                                    range.style.width = (rightPercent - leftPercent) + '%';
+                                    
+                                    // Update displays
+                                    minDisplay.textContent = minVal;
+                                    maxDisplay.textContent = maxVal;
+                                    
+                                    // Update hidden inputs
+                                    minInput.value = minVal;
+                                    maxInput.value = maxVal;
+                                }
+                                
+                                if (minSlider && maxSlider) {
+                                    minSlider.addEventListener('input', updateSlider);
+                                    maxSlider.addEventListener('input', updateSlider);
+                                    updateSlider(); // Initial update
+                                }
+                            })();
+                            </script>
                         <?php
                             break;
 
