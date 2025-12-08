@@ -380,6 +380,20 @@
   animation: fadeOut 0.15s ease-in;
 }
 
+/* Minicart Size - Override Tailwind */
+.minicart-dropdown {
+  width: 30rem !important; /* 480px */
+  max-height: 85vh;
+}
+
+@media (max-width: 640px) {
+  .minicart-dropdown {
+    width: calc(100vw - 32px) !important;
+    max-width: 360px;
+    right: -16px;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
