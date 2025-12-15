@@ -32,6 +32,11 @@ get_header(); ?>
         endwhile;
     endif; 
     ?>
+
+    <?php 
+    // Display service highlights above the footer
+    get_template_part('template-parts/front/service-highlights'); 
+    ?>
 </main>
 
 <?php get_footer(); ?>
