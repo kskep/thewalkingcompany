@@ -111,19 +111,17 @@
     background: var(--primary-pink, #EE81B3);
     color: #fff;
     margin-top: 3rem;
+    padding: 2.75rem 0;
 }
 
 .service-highlights-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-width: var(--max-width, 1630px);
-    margin: 0 auto;
-    border-left: 1px solid rgba(255, 255, 255, 0.35);
-    border-right: 1px solid rgba(255, 255, 255, 0.35);
+    width: 100%;
 }
 
 .service-highlight {
-    padding: 2.75rem 2rem;
+    padding: 0 2rem;
     text-align: center;
     border-left: 1px solid rgba(255, 255, 255, 0.35);
 }
@@ -148,21 +146,19 @@
 
 @media (max-width: 1024px) {
     .service-highlight {
-        padding: 2.25rem 1.5rem;
+        padding: 0 1.5rem;
     }
 }
 
 @media (max-width: 768px) {
     .service-highlights-grid {
         grid-template-columns: 1fr;
-        border-left: none;
-        border-right: none;
     }
 
     .service-highlight {
         border-left: none;
         border-top: 1px solid rgba(255, 255, 255, 0.35);
-        padding: 1.75rem 1.25rem;
+        padding: 1.25rem 1.25rem;
     }
 
     .service-highlight:first-child {
