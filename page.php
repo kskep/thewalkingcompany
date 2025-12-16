@@ -35,46 +35,6 @@ get_header();
 
             <article id="page-<?php the_ID(); ?>" <?php post_class('static-page-article'); ?>>
                 <div class="page-shell static-page-shell">
-                    <header class="static-page-hero">
-                        <div class="static-page-hero__content">
-                            <p class="static-page-eyebrow"><?php echo esc_html($section_label); ?></p>
-
-                            <?php if (!empty($page_excerpt)) : ?>
-                                <p class="static-page-dek"><?php echo esc_html($page_excerpt); ?></p>
-                            <?php endif; ?>
-
-                            <ul class="static-page-meta">
-                                <li>
-                                    <span><?php esc_html_e('Updated', 'eshop-theme'); ?></span>
-                                    <strong><?php echo esc_html(get_the_modified_date()); ?></strong>
-                                </li>
-                                <li>
-                                    <span><?php esc_html_e('Published', 'eshop-theme'); ?></span>
-                                    <strong><?php echo esc_html(get_the_date()); ?></strong>
-                                </li>
-                                <?php if ($reading_time) : ?>
-                                    <li>
-                                        <span><?php esc_html_e('Reading time', 'eshop-theme'); ?></span>
-                                        <strong>
-                                            <?php
-                                            printf(
-                                                esc_html(_n('%s minute', '%s minutes', $reading_time, 'eshop-theme')),
-                                                esc_html(number_format_i18n($reading_time))
-                                            );
-                                            ?>
-                                        </strong>
-                                    </li>
-                                <?php endif; ?>
-                            </ul>
-                        </div>
-
-                        <?php if (has_post_thumbnail()) : ?>
-                            <figure class="static-page-hero__media">
-                                <?php the_post_thumbnail('full', array('class' => 'static-page-featured-image')); ?>
-                            </figure>
-                        <?php endif; ?>
-                    </header>
-
                     <div class="static-page-content-grid">
                         <div class="static-page-content">
                             <?php the_content(); ?>
