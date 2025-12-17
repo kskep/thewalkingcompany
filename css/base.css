@@ -23,5 +23,29 @@
   max-width: 100vw;
 }
 
+/* Footer Navigation Styles */
+.site-footer .footer-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer .footer-nav ul li {
+  margin-bottom: 0.75rem;
+}
+
+.site-footer .footer-nav ul li a {
+  display: inline-block;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.site-footer .footer-nav ul li a:hover {
+  color: var(--primary-pink);
+}
+
 
 

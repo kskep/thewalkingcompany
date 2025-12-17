@@ -36,7 +36,7 @@ if (!defined('ABSPATH')) {
 
                 <!-- Column 2: Footer Main Menu -->
                 <div class="footer-nav">
-                    <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('Explore', 'eshop-theme'); ?></h3>
+                    <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('ΠΛΗΡΟΦΟΡΙΕΣ', 'eshop-theme'); ?></h3>
                     <?php
                     if (has_nav_menu('footer-main')) {
                         wp_nav_menu(array(
@@ -55,7 +55,7 @@ if (!defined('ABSPATH')) {
 
                 <!-- Column 3: Account & Help -->
                 <div class="footer-nav">
-                    <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('Account & Help', 'eshop-theme'); ?></h3>
+                    <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('ΛΟΓΑΡΙΑΣΜΟΣ', 'eshop-theme'); ?></h3>
                     <?php
                     if (has_nav_menu('footer-account')) {
                         wp_nav_menu(array(
