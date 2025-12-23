@@ -137,6 +137,7 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
                             </div>
                         </div>
                     </div>
+                    <?php $GLOBALS['eshop_has_checkout_gift_wrap'] = true; ?>
                     
                     <!-- Order Items -->
                     <div class="order-items mb-6">
