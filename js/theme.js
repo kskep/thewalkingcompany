@@ -155,6 +155,51 @@
             }
         });
 
+        // Gift wrap controls (checkout)
+        var giftWrapUpdateTimer;
+        function scheduleGiftWrapUpdate() {
+            clearTimeout(giftWrapUpdateTimer);
+            giftWrapUpdateTimer = setTimeout(function () {
+                $('body').trigger('update_checkout');
+            }, 250);
+        }
+
+        $(document).on('click', '.gift-wrap-toggle', function () {
+            var $section = $(this).closest('.gift-wrap-section');
+            $section.toggleClass('is-collapsed');
+        });
+
+        $(document).on('click', '.gift-wrap-plus', function () {
+            var $input = $(this).siblings('.gift-wrap-input');
+            var currentVal = parseInt($input.val()) || 0;
+            var maxVal = parseInt($input.attr('max')) || 99;
+            if (currentVal < maxVal) {
+                $input.val(currentVal + 1).trigger('change');
+            }
+        });
+
+        $(document).on('click', '.gift-wrap-minus', function () {
+            var $input = $(this).siblings('.gift-wrap-input');
+            var currentVal = parseInt($input.val()) || 0;
+            var minVal = parseInt($input.attr('min')) || 0;
+            if (currentVal > minVal) {
+                $input.val(currentVal - 1).trigger('change');
+            }
+        });
+
+        $(document).on('change', '.gift-wrap-input', function () {
+            var $input = $(this);
+            var val = parseInt($input.val());
+            var minVal = parseInt($input.attr('min')) || 0;
+            var maxVal = parseInt($input.attr('max')) || 99;
+            if (isNaN(val)) {
+                val = 0;
+            }
+            val = Math.max(minVal, Math.min(maxVal, val));
+            $input.val(val);
+            scheduleGiftWrapUpdate();
+        });
+
         // Image Lazy Loading (if not using native lazy loading)
         if ('IntersectionObserver' in window) {
             const imageObserver = new IntersectionObserver((entries, observer) => {

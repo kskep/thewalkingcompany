@@ -88,6 +88,128 @@
   background-color: rgba(0, 0, 0, 0.02);
 }
 
+/* Gift Wrap */
+.gift-wrap-section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.gift-wrap-toggle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111827;
+}
+
+.gift-wrap-toggle-icon {
+  transition: transform 0.2s ease;
+  color: #6b7280;
+}
+
+.gift-wrap-section.is-collapsed .gift-wrap-panel {
+  display: none;
+}
+
+.gift-wrap-section.is-collapsed .gift-wrap-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+.gift-wrap-description {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.gift-wrap-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gift-wrap-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-wrap-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gift-wrap-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gift-wrap-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.gift-wrap-price {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.gift-wrap-qty {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.gift-wrap-qty-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  border: none;
+  color: #6b7280;
+  font-size: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.gift-wrap-qty-btn:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.gift-wrap-input {
+  width: 34px;
+  height: 28px;
+  border: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  padding: 0;
+  background: #ffffff;
+}
+
+.gift-wrap-input:focus {
+  outline: none;
+}
+
 /* Payment Methods */
 .wc_payment_methods {
   list-style: none;
@@ -200,5 +322,13 @@
   .coupon-wrapper .flex input,
   .coupon-wrapper .flex button {
     border: 1px solid #ddd;
+  }
+
+  .gift-wrap-item {
+    align-items: flex-start;
+  }
+
+  .gift-wrap-qty {
+    margin-left: 0;
   }
 }

@@ -88,6 +88,83 @@ function eshop_cart_fragment($fragments) {
 add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
 
 /**
+ * Gift wrap helpers and checkout fee.
+ */
+function eshop_get_gift_wrap_price() {
+    return (float) apply_filters('eshop_gift_wrap_price', 1);
+}
+
+function eshop_get_gift_wrap_title() {
+    return apply_filters('eshop_gift_wrap_title', __('Επαναχρησιμοποιήσιμη Τσάντα LUIGI 38x49x14cm', 'eshop-theme'));
+}
+
+function eshop_get_gift_wrap_description() {
+    return apply_filters(
+        'eshop_gift_wrap_description',
+        __('Η συσκευασία δώρου που έχετε επιλέξει, συσκευάζεται στην παραγγελία σας μαζί με τα προϊόντα. Δεν παραλαμβάνετε τα προϊόντα συσκευασμένα, προκειμένου να αποτρέπεται η φθορά της συσκευασίας κατά τη μεταφορά του δέματος.', 'eshop-theme')
+    );
+}
+
+function eshop_get_gift_wrap_image_url() {
+    return apply_filters('eshop_gift_wrap_image_url', wc_placeholder_img_src('woocommerce_thumbnail'));
+}
+
+function eshop_capture_gift_wrap_qty($posted_data) {
+    if (!class_exists('WooCommerce') || !WC()->session) {
+        return;
+    }
+
+    $data = array();
+    parse_str($posted_data, $data);
+    $qty = isset($data['gift_wrap_qty']) ? absint($data['gift_wrap_qty']) : 0;
+    WC()->session->set('eshop_gift_wrap_qty', $qty);
+}
+add_action('woocommerce_checkout_update_order_review', 'eshop_capture_gift_wrap_qty');
+
+function eshop_apply_gift_wrap_fee($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    if (!class_exists('WooCommerce') || !WC()->session) {
+        return;
+    }
+
+    $qty = absint(WC()->session->get('eshop_gift_wrap_qty', 0));
+    if ($qty < 1) {
+        return;
+    }
+
+    $price = eshop_get_gift_wrap_price();
+    if ($price <= 0) {
+        return;
+    }
+
+    $label = sprintf(__('Συσκευασία δώρου (%d)', 'eshop-theme'), $qty);
+    $cart->add_fee($label, $price * $qty, false);
+}
+add_action('woocommerce_cart_calculate_fees', 'eshop_apply_gift_wrap_fee', 20, 1);
+
+function eshop_save_gift_wrap_meta($order, $data) {
+    if (!class_exists('WooCommerce') || !WC()->session) {
+        return;
+    }
+
+    $qty = absint(WC()->session->get('eshop_gift_wrap_qty', 0));
+    if ($qty > 0) {
+        $order->update_meta_data('_eshop_gift_wrap_qty', $qty);
+    }
+}
+add_action('woocommerce_checkout_create_order', 'eshop_save_gift_wrap_meta', 20, 2);
+
+function eshop_clear_gift_wrap_session($order_id) {
+    if (class_exists('WooCommerce') && WC()->session) {
+        WC()->session->__unset('eshop_gift_wrap_qty');
+    }
+}
+add_action('woocommerce_checkout_order_processed', 'eshop_clear_gift_wrap_session', 20, 1);
+
+/**
  * Flying Cart Settings
  */
 
