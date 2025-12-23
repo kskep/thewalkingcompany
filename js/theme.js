@@ -164,6 +164,43 @@
             }, 250);
         }
 
+        function insertGiftWrapBlockIfMissing() {
+            if (!$('body').hasClass('woocommerce-checkout')) {
+                return;
+            }
+
+            if ($('.gift-wrap-section').length) {
+                return;
+            }
+
+            var $template = $('#eshop-gift-wrap-template');
+            if (!$template.length) {
+                return;
+            }
+
+            var giftWrapHtml = $template.html();
+            if (!giftWrapHtml) {
+                return;
+            }
+
+            var $totalsBlock = $('.wp-block-woocommerce-checkout-totals');
+            if ($totalsBlock.length) {
+                $totalsBlock.prepend(giftWrapHtml);
+                return;
+            }
+
+            var $summaryBlock = $('.wp-block-woocommerce-checkout-order-summary');
+            if ($summaryBlock.length) {
+                $summaryBlock.prepend(giftWrapHtml);
+                return;
+            }
+
+            var $review = $('#order_review');
+            if ($review.length) {
+                $review.prepend(giftWrapHtml);
+            }
+        }
+
         $(document).on('click', '.gift-wrap-toggle', function () {
             var $section = $(this).closest('.gift-wrap-section');
             $section.toggleClass('is-collapsed');
@@ -199,6 +236,9 @@
             $input.val(val);
             scheduleGiftWrapUpdate();
         });
+
+        insertGiftWrapBlockIfMissing();
+        $(document.body).on('updated_checkout', insertGiftWrapBlockIfMissing);
 
         // Image Lazy Loading (if not using native lazy loading)
         if ('IntersectionObserver' in window) {

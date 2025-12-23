@@ -254,6 +254,19 @@ function eshop_inject_gift_wrap_into_blocks($block_content, $block) {
 }
 add_filter('render_block', 'eshop_inject_gift_wrap_into_blocks', 10, 2);
 
+function eshop_output_gift_wrap_template() {
+    if (!eshop_is_checkout_block_context()) {
+        return;
+    }
+
+    if (!empty($GLOBALS['eshop_has_checkout_gift_wrap'])) {
+        return;
+    }
+
+    echo '<template id="eshop-gift-wrap-template">' . eshop_get_gift_wrap_markup() . '</template>';
+}
+add_action('wp_footer', 'eshop_output_gift_wrap_template', 20);
+
 function eshop_save_gift_wrap_meta($order, $data) {
     if (!class_exists('WooCommerce') || !WC()->session) {
         return;
