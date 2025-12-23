@@ -146,6 +146,44 @@ add_action('wp_ajax_update_cart_quantity', 'eshop_update_cart_quantity_ajax');
 add_action('wp_ajax_nopriv_update_cart_quantity', 'eshop_update_cart_quantity_ajax');
 
 /**
+ * Update gift wrap quantity via AJAX (checkout).
+ *
+ * @return void Sends JSON response
+ */
+function eshop_set_gift_wrap_qty_ajax() {
+    if (!check_ajax_referer('eshop_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Security check failed', 'eshop-theme')
+        ));
+    }
+
+    if (!class_exists('WooCommerce')) {
+        wp_send_json_error(array(
+            'message' => __('WooCommerce is not active', 'eshop-theme')
+        ));
+    }
+
+    if (!WC()->session) {
+        wp_send_json_error(array(
+            'message' => __('Session not available', 'eshop-theme')
+        ));
+    }
+
+    $qty = isset($_POST['gift_wrap_qty']) ? absint($_POST['gift_wrap_qty']) : 0;
+    WC()->session->set('eshop_gift_wrap_qty', $qty);
+
+    if (WC()->cart) {
+        WC()->cart->calculate_totals();
+    }
+
+    wp_send_json_success(array(
+        'message' => __('Gift wrap updated', 'eshop-theme')
+    ));
+}
+add_action('wp_ajax_set_gift_wrap_qty', 'eshop_set_gift_wrap_qty_ajax');
+add_action('wp_ajax_nopriv_set_gift_wrap_qty', 'eshop_set_gift_wrap_qty_ajax');
+
+/**
  * AJAX handler for product filtering
  * 
  * Note: AJAX filtering is currently disabled in favor of standard page navigation.

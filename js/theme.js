@@ -157,10 +157,39 @@
 
         // Gift wrap controls (checkout)
         var giftWrapUpdateTimer;
+        function refreshBlocksCheckoutTotals() {
+            if (window.wp && wp.data && typeof wp.data.dispatch === 'function') {
+                var coreData = wp.data.dispatch('core/data');
+                if (coreData && typeof coreData.invalidateResolution === 'function') {
+                    coreData.invalidateResolution('wc/store/cart', 'getCartData');
+                    coreData.invalidateResolution('wc/store/cart', 'getCartTotals');
+                    coreData.invalidateResolution('wc/store/cart', 'getShippingRates');
+                }
+            }
+        }
+
         function scheduleGiftWrapUpdate() {
             clearTimeout(giftWrapUpdateTimer);
             giftWrapUpdateTimer = setTimeout(function () {
-                $('body').trigger('update_checkout');
+                var qty = parseInt($('.gift-wrap-input').first().val()) || 0;
+                if (typeof eshop_ajax !== 'undefined') {
+                    $.ajax({
+                        url: eshop_ajax.ajax_url,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'set_gift_wrap_qty',
+                            gift_wrap_qty: qty,
+                            nonce: eshop_ajax.nonce
+                        },
+                        success: function (response) {
+                            if (response && response.success) {
+                                $('body').trigger('update_checkout');
+                                refreshBlocksCheckoutTotals();
+                            }
+                        }
+                    });
+                }
             }, 250);
         }
 
@@ -183,15 +212,20 @@
                 return;
             }
 
-            var $totalsBlock = $('.wp-block-woocommerce-checkout-totals');
-            if ($totalsBlock.length) {
-                $totalsBlock.prepend(giftWrapHtml);
+            var $summaryBlock = $('.wp-block-woocommerce-checkout-order-summary');
+            if ($summaryBlock.length) {
+                var $itemsList = $summaryBlock.find('.wc-block-order-summary__items, .wc-block-components-order-summary__items, .wc-block-order-summary, .wc-block-components-order-summary').first();
+                if ($itemsList.length) {
+                    $itemsList.after(giftWrapHtml);
+                    return;
+                }
+                $summaryBlock.append(giftWrapHtml);
                 return;
             }
 
-            var $summaryBlock = $('.wp-block-woocommerce-checkout-order-summary');
-            if ($summaryBlock.length) {
-                $summaryBlock.prepend(giftWrapHtml);
+            var $totalsBlock = $('.wp-block-woocommerce-checkout-totals');
+            if ($totalsBlock.length) {
+                $totalsBlock.prepend(giftWrapHtml);
                 return;
             }
 
