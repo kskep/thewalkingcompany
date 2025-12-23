@@ -214,6 +214,46 @@ function eshop_inject_gift_wrap_checkout_block($block_content, $block) {
 }
 add_filter('render_block_woocommerce/checkout-order-summary', 'eshop_inject_gift_wrap_checkout_block', 10, 2);
 
+function eshop_is_checkout_block_context() {
+    if (function_exists('is_checkout') && is_checkout()) {
+        return true;
+    }
+
+    if (function_exists('has_block')) {
+        return has_block('woocommerce/checkout') || has_block('woocommerce/checkout-block');
+    }
+
+    return false;
+}
+
+function eshop_inject_gift_wrap_into_blocks($block_content, $block) {
+    if (empty($block['blockName'])) {
+        return $block_content;
+    }
+
+    if (!eshop_is_checkout_block_context()) {
+        return $block_content;
+    }
+
+    if (!empty($GLOBALS['eshop_has_checkout_gift_wrap'])) {
+        return $block_content;
+    }
+
+    $block_name = (string) $block['blockName'];
+    $matches_summary = strpos($block_name, 'woocommerce/checkout-order-summary') !== false;
+    $matches_totals = strpos($block_name, 'woocommerce/checkout-totals') !== false;
+
+    if (!$matches_summary && !$matches_totals) {
+        return $block_content;
+    }
+
+    $markup = eshop_get_gift_wrap_markup();
+    $GLOBALS['eshop_has_checkout_gift_wrap'] = true;
+
+    return $markup . $block_content;
+}
+add_filter('render_block', 'eshop_inject_gift_wrap_into_blocks', 10, 2);
+
 function eshop_save_gift_wrap_meta($order, $data) {
     if (!class_exists('WooCommerce') || !WC()->session) {
         return;
