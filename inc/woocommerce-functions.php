@@ -109,6 +109,49 @@ function eshop_get_gift_wrap_image_url() {
     return apply_filters('eshop_gift_wrap_image_url', wc_placeholder_img_src('woocommerce_thumbnail'));
 }
 
+function eshop_get_gift_wrap_markup() {
+    $gift_wrap_qty = 0;
+    if (function_exists('WC') && WC()->session) {
+        $gift_wrap_qty = (int) WC()->session->get('eshop_gift_wrap_qty', 0);
+    }
+    $gift_wrap_price = eshop_get_gift_wrap_price();
+    $gift_wrap_image = eshop_get_gift_wrap_image_url();
+    $gift_wrap_title = eshop_get_gift_wrap_title();
+    $gift_wrap_desc = eshop_get_gift_wrap_description();
+
+    ob_start();
+    ?>
+    <div class="gift-wrap-section mb-6">
+        <button type="button" class="gift-wrap-toggle w-full flex items-center justify-between text-left">
+            <span class="gift-wrap-toggle-text"><?php _e('ΕΠΙΛΕΞΤΕ ΣΥΣΚΕΥΑΣΙΑ ΔΩΡΟΥ', 'eshop-theme'); ?></span>
+            <i class="fas fa-chevron-down gift-wrap-toggle-icon"></i>
+        </button>
+        <div class="gift-wrap-panel mt-3">
+            <p class="gift-wrap-description"><?php echo esc_html($gift_wrap_desc); ?></p>
+            <div class="gift-wrap-item mt-4">
+                <div class="gift-wrap-thumb">
+                    <img src="<?php echo esc_url($gift_wrap_image); ?>" alt="<?php echo esc_attr($gift_wrap_title); ?>">
+                </div>
+                <div class="gift-wrap-info">
+                    <div class="gift-wrap-name"><?php echo esc_html($gift_wrap_title); ?></div>
+                    <div class="gift-wrap-price"><?php echo wc_price($gift_wrap_price); ?></div>
+                </div>
+                <div class="gift-wrap-qty">
+                    <button type="button" class="gift-wrap-qty-btn gift-wrap-minus" aria-label="<?php esc_attr_e('Decrease gift wrap quantity', 'eshop-theme'); ?>">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <input type="number" name="gift_wrap_qty" class="gift-wrap-input" min="0" max="99" step="1" value="<?php echo esc_attr($gift_wrap_qty); ?>">
+                    <button type="button" class="gift-wrap-qty-btn gift-wrap-plus" aria-label="<?php esc_attr_e('Increase gift wrap quantity', 'eshop-theme'); ?>">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
 function eshop_capture_gift_wrap_qty($posted_data) {
     if (!class_exists('WooCommerce') || !WC()->session) {
         return;
@@ -150,45 +193,26 @@ function eshop_render_gift_wrap_checkout_section() {
         return;
     }
 
-    $gift_wrap_qty = 0;
-    if (function_exists('WC') && WC()->session) {
-        $gift_wrap_qty = (int) WC()->session->get('eshop_gift_wrap_qty', 0);
-    }
-    $gift_wrap_price = eshop_get_gift_wrap_price();
-    $gift_wrap_image = eshop_get_gift_wrap_image_url();
-    $gift_wrap_title = eshop_get_gift_wrap_title();
-    $gift_wrap_desc = eshop_get_gift_wrap_description();
-    ?>
-    <div class="gift-wrap-section mb-6">
-        <button type="button" class="gift-wrap-toggle w-full flex items-center justify-between text-left">
-            <span class="gift-wrap-toggle-text"><?php _e('ΕΠΙΛΕΞΤΕ ΣΥΣΚΕΥΑΣΙΑ ΔΩΡΟΥ', 'eshop-theme'); ?></span>
-            <i class="fas fa-chevron-down gift-wrap-toggle-icon"></i>
-        </button>
-        <div class="gift-wrap-panel mt-3">
-            <p class="gift-wrap-description"><?php echo esc_html($gift_wrap_desc); ?></p>
-            <div class="gift-wrap-item mt-4">
-                <div class="gift-wrap-thumb">
-                    <img src="<?php echo esc_url($gift_wrap_image); ?>" alt="<?php echo esc_attr($gift_wrap_title); ?>">
-                </div>
-                <div class="gift-wrap-info">
-                    <div class="gift-wrap-name"><?php echo esc_html($gift_wrap_title); ?></div>
-                    <div class="gift-wrap-price"><?php echo wc_price($gift_wrap_price); ?></div>
-                </div>
-                <div class="gift-wrap-qty">
-                    <button type="button" class="gift-wrap-qty-btn gift-wrap-minus" aria-label="<?php esc_attr_e('Decrease gift wrap quantity', 'eshop-theme'); ?>">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <input type="number" name="gift_wrap_qty" class="gift-wrap-input" min="0" max="99" step="1" value="<?php echo esc_attr($gift_wrap_qty); ?>">
-                    <button type="button" class="gift-wrap-qty-btn gift-wrap-plus" aria-label="<?php esc_attr_e('Increase gift wrap quantity', 'eshop-theme'); ?>">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php
+    echo eshop_get_gift_wrap_markup();
+    $GLOBALS['eshop_has_checkout_gift_wrap'] = true;
 }
 add_action('woocommerce_review_order_before_cart_contents', 'eshop_render_gift_wrap_checkout_section', 5);
+
+function eshop_inject_gift_wrap_checkout_block($block_content, $block) {
+    if (!function_exists('is_checkout') || !is_checkout()) {
+        return $block_content;
+    }
+
+    if (!empty($GLOBALS['eshop_has_checkout_gift_wrap'])) {
+        return $block_content;
+    }
+
+    $markup = eshop_get_gift_wrap_markup();
+    $GLOBALS['eshop_has_checkout_gift_wrap'] = true;
+
+    return $markup . $block_content;
+}
+add_filter('render_block_woocommerce/checkout-order-summary', 'eshop_inject_gift_wrap_checkout_block', 10, 2);
 
 function eshop_save_gift_wrap_meta($order, $data) {
     if (!class_exists('WooCommerce') || !WC()->session) {
