@@ -147,9 +147,10 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
 
                 <!-- Detail Accordions -->
                 <div class="detail-accordions">
-                    <!-- Information Accordion (Moved Short Description) -->
+                    <?php if ( $product->get_short_description() ) : ?>
+                    <!-- Information Accordion (Short Description) -->
                     <div class="detail-accordion">
-                        <button class="detail-accordion-trigger" type="button" aria-expanded="true">
+                        <button class="detail-accordion-trigger" type="button" aria-expanded="false">
                             <span><?php _e('INFORMATION', 'eshop-theme'); ?></span>
                             <span class="icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -157,14 +158,13 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                                 </svg>
                             </span>
                         </button>
-                        <div class="detail-accordion-panel">
-                            <?php if ( $product->get_short_description() ) : ?>
-                                <div class="subtitle wc-short-description">
-                                    <?php echo apply_filters( 'woocommerce_short_description', $product->get_short_description() ); ?>
-                                </div>
-                            <?php endif; ?>
+                        <div class="detail-accordion-panel" hidden>
+                            <div class="subtitle wc-short-description">
+                                <?php echo apply_filters( 'woocommerce_short_description', $product->get_short_description() ); ?>
+                            </div>
                         </div>
                     </div>
+                    <?php endif; ?>
 
                     <div class="detail-accordion">
                         <button class="detail-accordion-trigger" type="button" aria-expanded="false">

@@ -760,10 +760,21 @@ button:focus-visible {
   color: var(--muted);
   font-size: 0.85rem;
   line-height: 1.7;
+  overflow: hidden;
 }
 
+/* Hide panel when collapsed */
 .detail-accordion-panel[hidden] {
   display: none;
+  padding: 0;
+  border-top: none;
+}
+
+/* When accordion is collapsed, hide panel border */
+.detail-accordion-trigger[aria-expanded="false"] + .detail-accordion-panel {
+  display: none;
+  padding: 0;
+  border-top: none;
 }
 
 @media (max-width: 1200px) {
@@ -860,7 +871,6 @@ button:focus-visible {
 .related-products-section.magazine-related {
   margin-top: 72px;
   padding: 0 64px 80px;
-  background: var(--pane-soft, #f9f4f7);
 }
 
 .related-products-section .magazine-container {
