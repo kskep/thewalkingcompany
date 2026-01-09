@@ -881,7 +881,7 @@ button:focus-visible {
 /* Related Products Grid - Match Archive Page Layout */
 .related-products-grid {
   display: grid !important;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 24px;
   list-style: none !important;
   margin: 0 !important;
@@ -900,6 +900,26 @@ button:focus-visible {
   width: 100% !important;
   margin: 0 !important;
   display: block !important;
+}
+
+/* Override single product page price styles for related products cards */
+.related-products-grid .product-card .price-row {
+  font-size: 1.1rem;
+  font-weight: 600;
+  gap: 12px;
+}
+
+.related-products-grid .product-card .price-row del {
+  font-size: 0.9rem;
+  color: rgba(31, 31, 35, 0.38);
+}
+
+.related-products-grid .product-card .product-card__title a {
+  font-size: 14px;
+}
+
+.related-products-grid .product-card .category-line {
+  font-size: 0.8rem;
 }
 
 /* Responsive adjustments for related products */

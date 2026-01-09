@@ -762,7 +762,7 @@ function eshop_output_related_products_from_categories() {
     // Query products from same category and parent categories
     $args = array(
         'post_type' => 'product',
-        'posts_per_page' => 8, // Get 8 products for 2 rows of 4
+        'posts_per_page' => 10, // Get 10 products for related section
         'post__not_in' => array($product_id),
         'orderby' => 'rand'
     );
@@ -785,7 +785,7 @@ function eshop_output_related_products_from_categories() {
     if (!$related_query->have_posts()) {
         $args = array(
             'post_type' => 'product',
-            'posts_per_page' => 8,
+            'posts_per_page' => 10,
             'post__not_in' => array($product_id),
             'orderby' => 'rand'
         );
