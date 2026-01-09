@@ -873,14 +873,7 @@ function eshop_clean_short_description_wrapper($description) {
         }
     }
 
-    // Phase 2: Remove manual "Characteristics" list (Greek/English headings) to avoid duplication
-    // We target a specific pattern: Heading followed by a List.
-    // Matches: <tag>ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ</tag> ... <ul>...</ul>
-    // Note: We use force_balance_tags next, so simple structure assumption is okay here.
-    $char_pattern = '/<(h[1-6]|p|strong|b|div)[^>]*>\s*(ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ|Χαρακτηριστικά|Characteristics)\s*(:)?\s*<\/\1>\s*<ul[^>]*>.*?<\/ul>/is';
-    $description = preg_replace($char_pattern, '', $description);
-
-    // Phase 3: Ensure tags are balanced to prevent layout breaking (nested tabs issue)
+    // Phase 2: Ensure tags are balanced to prevent layout breaking (nested tabs issue)
     $description = force_balance_tags($description);
 
     return $description;

@@ -166,25 +166,6 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                     </div>
                     <?php endif; ?>
 
-                    <?php if ( $product->has_attributes() || $product->has_weight() || $product->has_dimensions() ) : ?>
-                    <!-- Characteristics Accordion (Attributes) -->
-                    <div class="detail-accordion">
-                        <button class="detail-accordion-trigger" type="button" aria-expanded="false">
-                            <span><?php _e('CHARACTERISTICS', 'eshop-theme'); ?></span>
-                            <span class="icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M6 9l6 6 6-6"></path>
-                                </svg>
-                            </span>
-                        </button>
-                        <div class="detail-accordion-panel" hidden>
-                            <div class="product-attributes-wrapper">
-                                <?php wc_display_product_attributes( $product ); ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
                     <div class="detail-accordion">
                         <button class="detail-accordion-trigger" type="button" aria-expanded="false">
                             <span>Shipping & Returns</span>
