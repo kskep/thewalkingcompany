@@ -813,8 +813,11 @@ function eshop_output_related_products_from_categories() {
                         // Set global product for template
                         $GLOBALS['product'] = $related_product;
 
+                        // Wrap product card in li for valid HTML
+                        echo '<li class="product-grid-item">';
                         // Use our custom product card component
                         get_template_part('template-parts/components/product-card');
+                        echo '</li>';
                     }
                     ?>
                 </ul>

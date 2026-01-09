@@ -859,6 +859,14 @@ button:focus-visible {
 /* Related products (archive-style grid on single page) */
 .related-products-section.magazine-related {
   margin-top: 72px;
+  padding: 0 64px 80px;
+  background: var(--pane-soft, #f9f4f7);
+}
+
+.related-products-section .magazine-container {
+  max-width: 1630px;
+  margin: 0 auto;
+  padding-top: 48px;
 }
 
 .related-products-heading {
@@ -866,7 +874,70 @@ button:focus-visible {
   font-size: clamp(1.6rem, 2.6vw, 2rem);
   font-weight: 500;
   color: var(--ink);
-  margin: 0 0 24px 0;
+  margin: 0 0 32px 0;
+  text-align: center;
+}
+
+/* Related Products Grid - Match Archive Page Layout */
+.related-products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Grid item wrapper for proper list structure */
+.related-products-grid .product-grid-item {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+.related-products-grid .product-card {
+  width: 100% !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+/* Responsive adjustments for related products */
+@media (max-width: 1200px) {
+  .related-products-section.magazine-related {
+    padding: 0 40px 60px;
+  }
+  
+  .related-products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .related-products-section.magazine-related {
+    padding: 0 24px 48px;
+  }
+  
+  .related-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .related-products-heading {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-products-section.magazine-related {
+    padding: 0 16px 40px;
+  }
+  
+  .related-products-grid {
+    gap: 12px;
+  }
 }
 
 /* New Product Header Layout (Title + Price) */
