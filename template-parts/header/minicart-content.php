@@ -36,7 +36,7 @@ $cart_count = WC()->cart->get_cart_contents_count();
                         ?>
                         <div class="minicart-item flex gap-4 group pb-4 border-b border-gray-50 last:border-b-0 last:pb-0" data-cart-item-key="<?php echo esc_attr($cart_item_key); ?>">
                             <!-- Image -->
-                            <div class="relative w-[84px] h-[104px] overflow-hidden rounded-md bg-gray-50 border border-gray-100 flex-shrink-0">
+                            <div class="eshop-minicart-thumb relative w-[84px] h-[104px] overflow-hidden rounded-md bg-gray-50 border border-gray-100 flex-shrink-0">
                                <?php
                                 $thumbnail = $_product->get_image('woocommerce_gallery_thumbnail', array('class' => 'w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500'));
                                 if (!$product_permalink) {

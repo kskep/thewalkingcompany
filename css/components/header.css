@@ -462,6 +462,30 @@
   border-radius: 4px;
 }
 
+/* Explicit Minicart Thumbnail Styles to prevent AJAX layout shift */
+.eshop-minicart-thumb {
+  width: 84px !important;
+  height: 104px !important;
+  flex-shrink: 0 !important;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.eshop-minicart-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.eshop-minicart-thumb a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* Mobile responsiveness for dropdowns */
 @media (max-width: 640px) {
   .wishlist-dropdown,
