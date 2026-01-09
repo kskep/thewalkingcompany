@@ -860,25 +860,32 @@ add_filter('woocommerce_short_description', 'eshop_remove_summary_from_short_des
  * This can happen if content is copy-pasted from a visual editor with its own wrappers.
  */
 function eshop_clean_short_description_wrapper($description) {
+    // Phase 1: Clean wrappers
     $wrapper_class = 'product_feautures_item_title features_title_place';
     $div_pattern = '/<div class="' . preg_quote($wrapper_class, '/') . '">/i';
 
     // If the wrapper is present multiple times, clean it up.
     if (preg_match_all($div_pattern, $description, $matches) && count($matches[0]) > 1) {
-        // This regex will find the content inside the deepest nested div.
         $content_pattern = '/(?:<div class="' . preg_quote($wrapper_class, '/') . '">\s*)+(.+?)(?:\s*<\/div>)+/is';
-        
         if (preg_match($content_pattern, $description, $content_match)) {
             $inner_content = trim($content_match[1]);
-            // Return the content wrapped in a single, clean div.
-            return '<div class="' . $wrapper_class . '">' . $inner_content . '</div>';
+            $description = '<div class="' . $wrapper_class . '">' . $inner_content . '</div>';
         }
     }
 
-    // If there's no duplication, return the description as is.
+    // Phase 2: Remove manual "Characteristics" list (Greek/English headings) to avoid duplication
+    // We target a specific pattern: Heading followed by a List.
+    // Matches: <tag>ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ</tag> ... <ul>...</ul>
+    // Note: We use force_balance_tags next, so simple structure assumption is okay here.
+    $char_pattern = '/<(h[1-6]|p|strong|b|div)[^>]*>\s*(ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ|Χαρακτηριστικά|Characteristics)\s*(:)?\s*<\/\1>\s*<ul[^>]*>.*?<\/ul>/is';
+    $description = preg_replace($char_pattern, '', $description);
+
+    // Phase 3: Ensure tags are balanced to prevent layout breaking (nested tabs issue)
+    $description = force_balance_tags($description);
+
     return $description;
 }
-add_filter('woocommerce_short_description', 'eshop_clean_short_description_wrapper', 1);
+add_filter('woocommerce_short_description', 'eshop_clean_short_description_wrapper', 100);
 
 /**
  * Ensure product context is properly set for single product pages
