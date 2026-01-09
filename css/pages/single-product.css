@@ -709,7 +709,8 @@ button:focus-visible {
 }
 
 .detail-accordions {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   border-top: 1px solid var(--pane-line);
   padding-top: 32px;
@@ -719,6 +720,7 @@ button:focus-visible {
   border: 1px solid var(--pane-line);
   border-radius: var(--radius);
   background: #fff;
+  overflow: hidden;
 }
 
 .detail-accordion-trigger {
@@ -753,28 +755,16 @@ button:focus-visible {
 }
 
 .detail-accordion-panel {
-  padding: 0 22px 22px;
+  padding: 22px;
   border-top: 1px solid var(--pane-line);
-  display: grid;
-  gap: 12px;
   color: var(--muted);
   font-size: 0.85rem;
   line-height: 1.7;
-  overflow: hidden;
 }
 
 /* Hide panel when collapsed */
 .detail-accordion-panel[hidden] {
-  display: none;
-  padding: 0;
-  border-top: none;
-}
-
-/* When accordion is collapsed, hide panel border */
-.detail-accordion-trigger[aria-expanded="false"] + .detail-accordion-panel {
-  display: none;
-  padding: 0;
-  border-top: none;
+  display: none !important;
 }
 
 @media (max-width: 1200px) {
