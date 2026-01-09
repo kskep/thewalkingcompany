@@ -1065,3 +1065,39 @@ button:focus-visible {
     align-items: flex-start;
   }
 }
+
+/* Attributes Accordion Styles */
+.product-attributes-wrapper table.shop_attributes {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.product-attributes-wrapper table.shop_attributes th,
+.product-attributes-wrapper table.shop_attributes td {
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--pane-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.product-attributes-wrapper table.shop_attributes tr:last-child th,
+.product-attributes-wrapper table.shop_attributes tr:last-child td {
+  border-bottom: none;
+}
+
+.product-attributes-wrapper table.shop_attributes th {
+  width: 120px;
+  font-weight: 500;
+  color: var(--ink);
+  padding-right: 16px;
+}
+
+.product-attributes-wrapper table.shop_attributes td {
+  color: var(--muted);
+}
+
+.product-attributes-wrapper table.shop_attributes p {
+  margin: 0;
+}
