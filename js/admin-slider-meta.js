@@ -63,6 +63,55 @@
 		const $container = $('#eshop-banner-rows-container');
 		if (!$container.length) return;
 
+		// Default image placeholder
+		const defaultImage = window.ajaxurl ? window.ajaxurl.replace('admin-ajax.php', 'images/media/default.png') : '';
+
+		// Build row HTML dynamically
+		function buildRowHtml(rowIndex) {
+			const rowNumber = rowIndex + 1;
+			return '<div class="eshop-banner-row" data-row-index="' + rowIndex + '">' +
+				'<div class="eshop-banner-row-header">' +
+					'<span class="dashicons dashicons-move row-handle"></span>' +
+					'<span class="row-label">Row ' + rowNumber + ' <em class="banner-count">(0 banners)</em></span>' +
+					'<div class="row-actions">' +
+						'<button type="button" class="button button-small add-banner-to-row">' +
+							'<span class="dashicons dashicons-plus-alt2"></span> Add Banner' +
+						'</button>' +
+						'<button type="button" class="button button-small button-link-delete remove-row">' +
+							'<span class="dashicons dashicons-trash"></span>' +
+						'</button>' +
+						'<button type="button" class="button button-small toggle-row">' +
+							'<span class="dashicons dashicons-arrow-down-alt2"></span>' +
+						'</button>' +
+					'</div>' +
+				'</div>' +
+				'<div class="eshop-banner-row-content">' +
+					'<div class="eshop-banners-grid columns-0">' +
+						'<p class="no-banners-message">Click "Add Banner" to add banners to this row.</p>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+		}
+
+		// Build banner HTML dynamically
+		function buildBannerHtml(rowIndex, bannerIndex) {
+			return '<div class="eshop-banner-item" data-banner-index="' + bannerIndex + '">' +
+				'<div class="banner-preview">' +
+					'<img src="' + defaultImage + '" alt="" />' +
+					'<button type="button" class="button-link remove-banner" title="Remove Banner">' +
+						'<span class="dashicons dashicons-no-alt"></span>' +
+					'</button>' +
+				'</div>' +
+				'<div class="banner-fields">' +
+					'<input type="hidden" class="banner-image-url" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][image_url]" value="" />' +
+					'<button type="button" class="button select-banner-image">Select Image</button>' +
+					'<input type="text" class="regular-text banner-alt" placeholder="Alt text" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][alt]" value="" />' +
+					'<input type="text" class="regular-text banner-title" placeholder="Title (hover text)" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][title]" value="" />' +
+					'<input type="url" class="regular-text banner-link" placeholder="Link URL" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][link]" value="" />' +
+				'</div>' +
+			'</div>';
+		}
+
 		// Make rows sortable
 		$container.sortable({
 			handle: '.row-handle',
@@ -88,11 +137,7 @@
 		// Add new row
 		$('#eshop-add-banner-row').on('click', function(){
 			const rowIndex = $container.find('.eshop-banner-row').length;
-			const rowNumber = rowIndex + 1;
-			const template = $('#tmpl-eshop-banner-row').html();
-			const html = template
-				.replace(/\{\{data\.rowIndex\}\}/g, rowIndex)
-				.replace(/\{\{data\.rowNumber\}\}/g, rowNumber);
+			const html = buildRowHtml(rowIndex);
 			$container.append(html);
 			
 			// Make the new row's grid sortable
@@ -122,10 +167,7 @@
 			
 			const rowIndex = $row.data('row-index');
 			const bannerIndex = bannerCount;
-			const template = $('#tmpl-eshop-banner-item').html();
-			const html = template
-				.replace(/\{\{data\.rowIndex\}\}/g, rowIndex)
-				.replace(/\{\{data\.bannerIndex\}\}/g, bannerIndex);
+			const html = buildBannerHtml(rowIndex, bannerIndex);
 			
 			$grid.append(html);
 			updateGridColumns($grid);

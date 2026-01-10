@@ -336,8 +336,8 @@ add_action('admin_enqueue_scripts', function($hook) {
     $screen = get_current_screen();
     if (!eshop_is_editing_front_page_screen($screen)) return;
 
-    wp_enqueue_style('eshop-admin-meta', get_template_directory_uri() . '/css/admin.meta.css', array(), '1.0.0');
+    wp_enqueue_style('eshop-admin-meta', get_template_directory_uri() . '/css/admin.meta.css', array(), filemtime(get_template_directory() . '/css/admin.meta.css'));
     wp_enqueue_media();
     wp_enqueue_script('jquery-ui-sortable');
-    wp_enqueue_script('eshop-admin-slider-meta', get_template_directory_uri() . '/js/admin-slider-meta.js', array('jquery','jquery-ui-sortable'), '1.0.0', true);
+    wp_enqueue_script('eshop-admin-slider-meta', get_template_directory_uri() . '/js/admin-slider-meta.js', array('jquery','jquery-ui-sortable'), filemtime(get_template_directory() . '/js/admin-slider-meta.js'), true);
 });
