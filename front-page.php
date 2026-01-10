@@ -14,8 +14,8 @@ get_header(); ?>
     ?>
     
     <?php 
-    // Display category grid section
-    get_template_part('template-parts/front/category-grid'); 
+    // Display flexible banner rows section
+    get_template_part('template-parts/front/banner-rows'); 
     ?>
     
     <?php 

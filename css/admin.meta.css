@@ -9,3 +9,197 @@
 .eshop-tiles-table .image-cell{ display:flex; align-items:center; gap:10px; }
 .eshop-tiles-table .thumb{ width:80px; height:60px; background:#f6f7f7; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; overflow:hidden; }
 .eshop-tiles-table .thumb img{ max-width:100%; height:auto; }
+
+/* Banner Rows UI */
+.eshop-meta.banner-rows { padding: 0; }
+
+.eshop-banner-row {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.eshop-banner-row-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border-bottom: 1px solid #dcdcde;
+    border-radius: 4px 4px 0 0;
+}
+
+.eshop-banner-row-header .row-handle {
+    cursor: move;
+    color: #787c82;
+}
+
+.eshop-banner-row-header .row-label {
+    flex: 1;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.eshop-banner-row-header .banner-count {
+    font-weight: 400;
+    color: #787c82;
+    font-style: normal;
+}
+
+.eshop-banner-row-header .row-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.eshop-banner-row-header .row-actions .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    vertical-align: middle;
+}
+
+.eshop-banner-row-header .button-link-delete {
+    color: #b32d2e;
+}
+
+.eshop-banner-row-header .button-link-delete:hover {
+    color: #a00;
+}
+
+.eshop-banner-row-content {
+    padding: 16px;
+}
+
+.eshop-banners-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.eshop-banners-grid.columns-0 { grid-template-columns: 1fr; }
+.eshop-banners-grid.columns-1 { grid-template-columns: 1fr; }
+.eshop-banners-grid.columns-2 { grid-template-columns: repeat(2, 1fr); }
+.eshop-banners-grid.columns-3 { grid-template-columns: repeat(3, 1fr); }
+.eshop-banners-grid.columns-4 { grid-template-columns: repeat(4, 1fr); }
+
+.eshop-banners-grid .no-banners-message {
+    color: #787c82;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background: #f6f7f7;
+    border: 2px dashed #c3c4c7;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.eshop-banner-item {
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+.eshop-banner-item .banner-preview {
+    position: relative;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+.eshop-banner-item .banner-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.eshop-banner-item .banner-preview .remove-banner {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.eshop-banner-item .banner-preview:hover .remove-banner {
+    opacity: 1;
+}
+
+.eshop-banner-item .banner-preview .remove-banner .dashicons {
+    color: #fff;
+    font-size: 18px;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+}
+
+.eshop-banner-item .banner-preview .remove-banner:hover {
+    background: #b32d2e;
+}
+
+.eshop-banner-item .banner-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.eshop-banner-item .banner-fields input[type="text"],
+.eshop-banner-item .banner-fields input[type="url"] {
+    width: 100%;
+}
+
+.eshop-banner-item .banner-fields .button {
+    align-self: flex-start;
+}
+
+/* Sortable placeholders */
+.eshop-row-placeholder {
+    height: 60px;
+    background: #e5f3ff;
+    border: 2px dashed #0073aa;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.eshop-banner-placeholder {
+    background: #e5f3ff;
+    border: 2px dashed #0073aa;
+    border-radius: 4px;
+    min-height: 150px;
+}
+
+/* Responsive for smaller admin screens */
+@media screen and (max-width: 1200px) {
+    .eshop-banners-grid.columns-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 782px) {
+    .eshop-banners-grid.columns-2,
+    .eshop-banners-grid.columns-3,
+    .eshop-banners-grid.columns-4 { 
+        grid-template-columns: 1fr; 
+    }
+    
+    .eshop-banner-row-header {
+        flex-wrap: wrap;
+    }
+    
+    .eshop-banner-row-header .row-actions {
+        width: 100%;
+        margin-top: 8px;
+        justify-content: flex-end;
+    }
+}

@@ -2,8 +2,145 @@
 /* Place homepage-specific tweaks here */
 .front-hero-spacing { margin-bottom: 2rem; }
 
+/* ========================================
+   Flexible Banner Rows Section
+   ======================================== */
+.banner-rows-section {
+    width: 100%;
+}
 
+.banner-row {
+    display: grid;
+    gap: 2px; /* Minimal gap between banners */
+    width: 100%;
+}
 
+/* Column layouts */
+.banner-row.banner-cols-1 {
+    grid-template-columns: 1fr;
+}
+
+.banner-row.banner-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.banner-row.banner-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.banner-row.banner-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.banner-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.banner-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.banner-link:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+}
+
+.banner-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Aspect ratios based on column count */
+.banner-cols-1 .banner-image-wrapper {
+    aspect-ratio: 21 / 9; /* Wide banner for full width */
+}
+
+.banner-cols-2 .banner-image-wrapper {
+    aspect-ratio: 16 / 9; /* Standard widescreen for 2 columns */
+}
+
+.banner-cols-3 .banner-image-wrapper {
+    aspect-ratio: 4 / 3; /* Slightly taller for 3 columns */
+}
+
+.banner-cols-4 .banner-image-wrapper {
+    aspect-ratio: 1 / 1; /* Square for 4 columns */
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+/* Hover effect */
+.banner-item:hover .banner-image {
+    transform: scale(1.03);
+}
+
+/* Custom cursor for banner items */
+.banner-item {
+    cursor: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .banner-row.banner-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .banner-cols-4 .banner-image-wrapper {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+@media (max-width: 768px) {
+    .banner-row.banner-cols-2,
+    .banner-row.banner-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .banner-row.banner-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .banner-cols-1 .banner-image-wrapper,
+    .banner-cols-2 .banner-image-wrapper,
+    .banner-cols-3 .banner-image-wrapper {
+        aspect-ratio: 16 / 9;
+    }
+    
+    /* Hide custom cursor on mobile */
+    .banner-item {
+        cursor: pointer;
+    }
+    
+    .custom-cursor {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner-row.banner-cols-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .banner-cols-4 .banner-image-wrapper {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+/* ========================================
+   Legacy Category Grid (kept for compatibility)
+   ======================================== */
 .category-grid {
     width: 100%;
     height: 100vh; /* Full viewport height */
