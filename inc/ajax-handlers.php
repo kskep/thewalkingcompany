@@ -220,9 +220,11 @@ function eshop_filter_products() {
     $orderby = isset($data['orderby']) ? sanitize_text_field($data['orderby']) : 'date';
 
     // Build WP_Query args
-    // Force 15 products per page for consistency across all categories
-    // This must match the value set in eshop_force_15_products_per_page() in functions.php
-    $computed_per_page = 15;
+    // Force products per page for consistency across all categories
+    // This must match the value set in functions.php
+    $computed_per_page = function_exists('eshop_get_catalog_products_per_page')
+        ? eshop_get_catalog_products_per_page()
+        : (wp_is_mobile() ? 14 : 15);
 
     $args = array(
         'post_type' => 'product',
@@ -364,14 +366,35 @@ function eshop_filter_products() {
     }
 
     // Attribute filters
+    $attribute_filters = array();
+
     foreach ($filters as $key => $values) {
         if (strpos($key, 'pa_') === 0 && !empty($values)) {
-            $args['tax_query'][] = array(
-                'taxonomy' => $key,
-                'field' => 'slug',
-                'terms' => $values,
-                'operator' => 'IN',
-            );
+            $sanitized_values = array_filter(array_map('sanitize_title', (array) $values));
+            if (!empty($sanitized_values)) {
+                $attribute_filters[$key] = $sanitized_values;
+                $args['tax_query'][] = array(
+                    'taxonomy' => $key,
+                    'field' => 'slug',
+                    'terms' => $sanitized_values,
+                    'operator' => 'IN',
+                );
+            }
+        }
+    }
+
+    if (!empty($attribute_filters) && class_exists('Eshop_Product_Filters')) {
+        $stock_filtered_ids = Eshop_Product_Filters::get_product_ids_for_attribute_filters($attribute_filters);
+
+        if (!empty($stock_filtered_ids)) {
+            if (!empty($args['post__in'])) {
+                $intersected = array_values(array_intersect($args['post__in'], $stock_filtered_ids));
+                $args['post__in'] = !empty($intersected) ? $intersected : array(-1);
+            } else {
+                $args['post__in'] = $stock_filtered_ids;
+            }
+        } else {
+            $args['post__in'] = array(-1);
         }
     }
 

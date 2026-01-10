@@ -38,30 +38,38 @@ if (function_exists('opcache_reset')) {
 add_filter('woocommerce_show_page_title', '__return_false');
 
 /**
- * Force 15 products per page for all product categories including clothing
+ * Catalog page size: desktop 15, mobile 14.
+ */
+function eshop_get_catalog_products_per_page() {
+    return wp_is_mobile() ? 14 : 15;
+}
+
+/**
+ * Force products per page for all product categories including clothing
  * Priority 999 to ensure it runs last and overrides everything else
  */
-function eshop_force_15_products_per_page($query) {
+function eshop_force_catalog_products_per_page($query) {
     if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
-        // Force 15 products per page, overriding any WooCommerce or other theme settings
-        $query->set('posts_per_page', 15);
+        $per_page = eshop_get_catalog_products_per_page();
+        // Force per-page size, overriding any WooCommerce or other theme settings
+        $query->set('posts_per_page', $per_page);
         
         // Also remove any potential pagination offset that might cause inconsistency
         if ($query->get('offset')) {
             $paged = max(1, absint($query->get('paged')));
-            $offset = ($paged - 1) * 15;
+            $offset = ($paged - 1) * $per_page;
             $query->set('offset', $offset);
         }
     }
 }
-add_action('pre_get_posts', 'eshop_force_15_products_per_page', 999);
+add_action('pre_get_posts', 'eshop_force_catalog_products_per_page', 999);
 
 /**
  * Override WooCommerce products per page setting to ensure consistency
  * Multiple filters to catch all possible WooCommerce pagination methods
  */
 function eshop_override_wc_products_per_page($cols) {
-    return 15;
+    return eshop_get_catalog_products_per_page();
 }
 add_filter('loop_shop_per_page', 'eshop_override_wc_products_per_page', 999);
 
@@ -70,7 +78,7 @@ add_filter('loop_shop_per_page', 'eshop_override_wc_products_per_page', 999);
  */
 function eshop_force_wc_catalog_per_page($value, $option) {
     if (is_shop() || is_product_category() || is_product_tag()) {
-        return 15;
+        return eshop_get_catalog_products_per_page();
     }
     return $value;
 }
@@ -81,7 +89,7 @@ add_filter('option_woocommerce_catalog_columns', '__return_false', 999);
  * Override the WooCommerce products per page completely
  */
 function eshop_force_catalog_page_size() {
-    return 15;
+    return eshop_get_catalog_products_per_page();
 }
 add_filter('loop_shop_per_page', 'eshop_force_catalog_page_size', 999);
 

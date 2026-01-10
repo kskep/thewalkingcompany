@@ -611,6 +611,11 @@
     gap: 16px;
   }
 
+  .toolbar__info {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   .toolbar__actions {
     width: 100%;
     justify-content: space-between;

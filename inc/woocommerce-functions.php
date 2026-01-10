@@ -379,7 +379,7 @@ function eshop_woocommerce_default_products_per_row() {
 add_filter('woocommerce_default_products_per_row', 'eshop_woocommerce_default_products_per_row');
 
 function eshop_woocommerce_default_product_rows_per_page() {
-    return 3; // 5 columns × 3 rows = 15 products
+    return 3; // Fallback rows; per-page count is forced elsewhere.
 }
 add_filter('woocommerce_default_product_rows_per_page', 'eshop_woocommerce_default_product_rows_per_page');
 

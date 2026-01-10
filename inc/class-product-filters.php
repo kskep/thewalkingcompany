@@ -83,16 +83,36 @@ class Eshop_Product_Filters {
             // Custom product attribute filters
             $your_attributes = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
             $tax_query = $query->get('tax_query', array());
+            $attribute_filters = array();
 
             foreach ($your_attributes as $attribute) {
                 if (isset($_GET[$attribute]) && !empty($_GET[$attribute])) {
-                    $terms = explode(',', sanitize_text_field($_GET[$attribute]));
-                    $tax_query[] = array(
-                        'taxonomy' => $attribute,
-                        'field' => 'slug',
-                        'terms' => $terms,
-                        'operator' => 'IN'
-                    );
+                    $terms = array_filter(array_map('sanitize_text_field', explode(',', wp_unslash($_GET[$attribute]))));
+                    if (!empty($terms)) {
+                        $attribute_filters[$attribute] = $terms;
+                        $tax_query[] = array(
+                            'taxonomy' => $attribute,
+                            'field' => 'slug',
+                            'terms' => $terms,
+                            'operator' => 'IN'
+                        );
+                    }
+                }
+            }
+
+            if (!empty($attribute_filters)) {
+                $in_stock_ids = self::get_product_ids_for_attribute_filters($attribute_filters);
+
+                if (!empty($in_stock_ids)) {
+                    $existing_post_in = $query->get('post__in');
+                    if (!empty($existing_post_in)) {
+                        $intersected = array_values(array_intersect($existing_post_in, $in_stock_ids));
+                        $query->set('post__in', !empty($intersected) ? $intersected : array(-1));
+                    } else {
+                        $query->set('post__in', $in_stock_ids);
+                    }
+                } else {
+                    $query->set('post__in', array(-1));
                 }
             }
 
@@ -104,6 +124,101 @@ class Eshop_Product_Filters {
                 $query->set('tax_query', $tax_query);
             }
         }
+    }
+
+    /**
+     * Return product IDs that have in-stock variations (or simple products) matching the given attribute filters.
+     * Each taxonomy in $attribute_filters must be matched by the same variation, ensuring accurate stock-aware filtering.
+     */
+    public static function get_product_ids_for_attribute_filters($attribute_filters) {
+        if (empty($attribute_filters) || !is_array($attribute_filters)) {
+            return array();
+        }
+
+        global $wpdb;
+
+        // Sanitize filter values
+        $sanitized_filters = array();
+        foreach ($attribute_filters as $taxonomy => $terms) {
+            $clean_terms = array_filter(array_map('sanitize_title', (array) $terms));
+            if (!empty($clean_terms)) {
+                $sanitized_filters[$taxonomy] = $clean_terms;
+            }
+        }
+
+        if (empty($sanitized_filters)) {
+            return array();
+        }
+
+        // Match variable products via their variations (same variation must satisfy all attribute filters)
+        $variation_joins = array(
+            "INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'",
+            "INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID AND p.post_type = 'product' AND p.post_status = 'publish'"
+        );
+        $variation_where = array(
+            "v.post_type = 'product_variation'",
+            "v.post_status = 'publish'",
+            "pm_stock.meta_value = 'instock'"
+        );
+        $variation_params = array();
+        $variation_attr_count = 0;
+
+        foreach ($sanitized_filters as $taxonomy => $terms) {
+            $variation_attr_count++;
+            $meta_key = 'attribute_' . $taxonomy;
+            $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_attr{$variation_attr_count} ON v.ID = pm_attr{$variation_attr_count}.post_id AND pm_attr{$variation_attr_count}.meta_key = '" . esc_sql($meta_key) . "'";
+            $placeholders = implode(',', array_fill(0, count($terms), '%s'));
+            $variation_where[] = "pm_attr{$variation_attr_count}.meta_value IN ({$placeholders})";
+            $variation_params = array_merge($variation_params, $terms);
+        }
+
+        $variation_ids = array();
+        if ($variation_attr_count > 0) {
+            $variation_sql = "
+                SELECT DISTINCT v.post_parent
+                FROM {$wpdb->posts} v
+                " . implode(' ', array_unique($variation_joins)) . "
+                WHERE " . implode(' AND ', $variation_where) . "
+            ";
+
+            $variation_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $variation_params));
+        }
+
+        // Match simple products that carry these attribute terms and are in stock
+        $simple_joins = array(
+            "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'"
+        );
+        $simple_where = array(
+            "p.post_type = 'product'",
+            "p.post_status = 'publish'",
+            "pm_stock.meta_value = 'instock'"
+        );
+        $simple_params = array();
+        $simple_attr_count = 0;
+
+        foreach ($sanitized_filters as $taxonomy => $terms) {
+            $simple_attr_count++;
+            $simple_joins[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$simple_attr_count} ON p.ID = tr_attr{$simple_attr_count}.object_id";
+            $simple_joins[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$simple_attr_count} ON tr_attr{$simple_attr_count}.term_taxonomy_id = tt_attr{$simple_attr_count}.term_taxonomy_id AND tt_attr{$simple_attr_count}.taxonomy = '" . esc_sql($taxonomy) . "'";
+            $simple_joins[] = "INNER JOIN {$wpdb->terms} t_attr{$simple_attr_count} ON tt_attr{$simple_attr_count}.term_id = t_attr{$simple_attr_count}.term_id";
+            $placeholders = implode(',', array_fill(0, count($terms), '%s'));
+            $simple_where[] = "t_attr{$simple_attr_count}.slug IN ({$placeholders})";
+            $simple_params = array_merge($simple_params, $terms);
+        }
+
+        $simple_ids = array();
+        if ($simple_attr_count > 0) {
+            $simple_sql = "
+                SELECT DISTINCT p.ID
+                FROM {$wpdb->posts} p
+                " . implode(' ', array_unique($simple_joins)) . "
+                WHERE " . implode(' AND ', $simple_where) . "
+            ";
+
+            $simple_ids = $wpdb->get_col($wpdb->prepare($simple_sql, $simple_params));
+        }
+
+        return array_values(array_unique(array_merge($variation_ids, $simple_ids)));
     }
 
     /**
@@ -309,17 +424,21 @@ class Eshop_Product_Filters {
         // Add attribute filters
         $your_attributes = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
         $attr_join_count = 0;
+        $attribute_filters = array();
 
         foreach ($your_attributes as $attr_taxonomy) {
             if (isset($_GET[$attr_taxonomy]) && !empty($_GET[$attr_taxonomy])) {
-                $attr_terms = explode(',', sanitize_text_field($_GET[$attr_taxonomy]));
-                $attr_placeholders = implode(',', array_fill(0, count($attr_terms), '%s'));
-                $attr_join_count++;
+                $attr_terms = array_filter(array_map('sanitize_text_field', explode(',', wp_unslash($_GET[$attr_taxonomy]))));
+                if (!empty($attr_terms)) {
+                    $attribute_filters[$attr_taxonomy] = $attr_terms;
+                    $attr_placeholders = implode(',', array_fill(0, count($attr_terms), '%s'));
+                    $attr_join_count++;
 
-                $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
-                $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
-                $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
-                $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
+                    $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
+                    $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
+                    $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
+                    $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
+                }
             }
         }
 
@@ -335,6 +454,11 @@ class Eshop_Product_Filters {
         ";
 
         $product_ids = $wpdb->get_col($sql);
+
+        if (!empty($attribute_filters)) {
+            $stock_filtered_ids = self::get_product_ids_for_attribute_filters($attribute_filters);
+            $product_ids = (!empty($product_ids) && !empty($stock_filtered_ids)) ? array_values(array_intersect($product_ids, $stock_filtered_ids)) : array();
+        }
 
         return $product_ids ? array_map('intval', $product_ids) : array();
     }

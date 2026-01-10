@@ -236,6 +236,12 @@
   cursor: not-allowed;
 }
 
+@media (max-width: 768px) {
+  .product-card .size-overlay {
+    display: none;
+  }
+}
+
 /* Product Information Section */
 .product-card__info {
   display: grid;
