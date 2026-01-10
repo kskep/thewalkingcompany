@@ -48,11 +48,18 @@
 }
 
 .eshop-banner-row-header .row-actions {
-    display: flex;
+    display: flex !important;
     gap: 6px;
     align-items: center;
-    visibility: visible;
-    opacity: 1;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static;
+}
+
+.eshop-banner-row-header .row-actions .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .eshop-banner-row-header .row-actions .dashicons {
