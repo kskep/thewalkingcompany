@@ -151,27 +151,16 @@ class Eshop_Product_Filters {
         }
 
         // Match variable products via their variations (same variation must satisfy all attribute filters)
+        // Trust WooCommerce's _stock_status as the source of truth for stock availability.
+        // WooCommerce syncs this value when stock changes.
         $variation_joins = array(
             "INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'",
-            "LEFT JOIN {$wpdb->postmeta} pm_manage ON v.ID = pm_manage.post_id AND pm_manage.meta_key = '_manage_stock'",
-            "LEFT JOIN {$wpdb->postmeta} pm_qty ON v.ID = pm_qty.post_id AND pm_qty.meta_key = '_stock'",
-            "LEFT JOIN {$wpdb->postmeta} pm_backorders ON v.ID = pm_backorders.post_id AND pm_backorders.meta_key = '_backorders'",
             "INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID AND p.post_type = 'product' AND p.post_status = 'publish'"
         );
         $variation_where = array(
             "v.post_type = 'product_variation'",
             "v.post_status = 'publish'",
-            "pm_stock.meta_value = 'instock'",
-            "(
-                (pm_manage.meta_value IS NULL OR pm_manage.meta_value = '' OR pm_manage.meta_value = 'no')
-                OR (
-                    pm_manage.meta_value = 'yes' 
-                    AND (
-                        CAST(COALESCE(pm_qty.meta_value, '0') AS SIGNED) > 0
-                        OR COALESCE(pm_backorders.meta_value, 'no') IN ('notify','yes')
-                    )
-                )
-            )"
+            "pm_stock.meta_value = 'instock'"
         );
         $variation_params = array();
         $variation_attr_count = 0;
@@ -198,26 +187,15 @@ class Eshop_Product_Filters {
         }
 
         // Match simple products that carry these attribute terms and are in stock
+        // Match simple products that carry these attribute terms and are in stock
+        // Trust WooCommerce's _stock_status as the source of truth
         $simple_joins = array(
-            "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'",
-            "LEFT JOIN {$wpdb->postmeta} pm_manage ON p.ID = pm_manage.post_id AND pm_manage.meta_key = '_manage_stock'",
-            "LEFT JOIN {$wpdb->postmeta} pm_qty ON p.ID = pm_qty.post_id AND pm_qty.meta_key = '_stock'",
-            "LEFT JOIN {$wpdb->postmeta} pm_backorders ON p.ID = pm_backorders.post_id AND pm_backorders.meta_key = '_backorders'"
+            "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'"
         );
         $simple_where = array(
             "p.post_type = 'product'",
             "p.post_status = 'publish'",
-            "pm_stock.meta_value = 'instock'",
-            "(
-                (pm_manage.meta_value IS NULL OR pm_manage.meta_value = '' OR pm_manage.meta_value = 'no')
-                OR (
-                    pm_manage.meta_value = 'yes' 
-                    AND (
-                        CAST(COALESCE(pm_qty.meta_value, '0') AS SIGNED) > 0
-                        OR COALESCE(pm_backorders.meta_value, 'no') IN ('notify','yes')
-                    )
-                )
-            )"
+            "pm_stock.meta_value = 'instock'"
         );
         $simple_params = array();
         $simple_attr_count = 0;
@@ -252,9 +230,7 @@ class Eshop_Product_Filters {
      * This gets terms only from products that match the current context
      * AND have in-stock variations for that attribute term
      * 
-     * Uses the same comprehensive stock checking as get_product_ids_for_attribute_filters:
-     * - _stock_status = 'instock'
-     * - AND (_manage_stock != 'yes' OR _stock > 0 OR _backorders IN ('notify', 'yes'))
+     * Relies on WooCommerce's _stock_status meta for stock availability.
      */
     public static function get_available_attribute_terms($taxonomy) {
         // First, get the product IDs that match the current context
@@ -269,60 +245,42 @@ class Eshop_Product_Filters {
         // Create placeholders for the product IDs
         $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
 
-        // Build the comprehensive stock condition used throughout the filters
-        // This ensures we only count variations that are truly available for purchase
-        $stock_condition = "(
-            pm_stock.meta_value = 'instock'
-            AND (
-                (pm_manage.meta_value IS NULL OR pm_manage.meta_value = '' OR pm_manage.meta_value = 'no')
-                OR (
-                    pm_manage.meta_value = 'yes' 
-                    AND (
-                        CAST(COALESCE(pm_qty.meta_value, '0') AS SIGNED) > 0
-                        OR COALESCE(pm_backorders.meta_value, 'no') IN ('notify','yes')
-                    )
-                )
-            )
-        )";
+        // Trust WooCommerce's _stock_status as the source of truth for stock availability
+        $stock_condition = "pm_stock.meta_value = 'instock'";
 
         // Query to get attribute terms from products in current context
-        // For simple products: use term_relationships with comprehensive stock check
-        // For variable products: use postmeta on variations with comprehensive stock check
+        // For simple products: use term_relationships
+        // For variable products: use postmeta on variations
         $sql = "
             SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT product_id) as count
             FROM (
-                -- Simple products with this attribute term (with comprehensive stock check)
+                -- Simple products with this attribute term
+                -- We exclude variable products here because their availability is determined 
+                -- by their variations (see second part of UNION)
                 SELECT p.ID as product_id, tr.term_taxonomy_id
                 FROM {$wpdb->posts} p
                 INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id 
                     AND pm_stock.meta_key = '_stock_status'
-                LEFT JOIN {$wpdb->postmeta} pm_manage ON p.ID = pm_manage.post_id 
-                    AND pm_manage.meta_key = '_manage_stock'
-                LEFT JOIN {$wpdb->postmeta} pm_qty ON p.ID = pm_qty.post_id 
-                    AND pm_qty.meta_key = '_stock'
-                LEFT JOIN {$wpdb->postmeta} pm_backorders ON p.ID = pm_backorders.post_id 
-                    AND pm_backorders.meta_key = '_backorders'
                 INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
                 INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
                     AND tt.taxonomy = %s
+                -- Join to check product type
+                LEFT JOIN {$wpdb->term_relationships} tr_type ON p.ID = tr_type.object_id
+                LEFT JOIN {$wpdb->term_taxonomy} tt_type ON tr_type.term_taxonomy_id = tt_type.term_taxonomy_id AND tt_type.taxonomy = 'product_type'
+                LEFT JOIN {$wpdb->terms} t_type ON tt_type.term_id = t_type.term_id
                 WHERE p.post_type = 'product' 
                     AND p.post_status = 'publish'
                     AND p.ID IN ($placeholders)
                     AND {$stock_condition}
+                    AND (t_type.slug IS NULL OR t_type.slug != 'variable')
                 
                 UNION
                 
-                -- Variable product variations with this attribute term (with comprehensive stock check)
+                -- Variable product variations with this attribute term
                 SELECT DISTINCT v.post_parent as product_id, tt2.term_taxonomy_id
                 FROM {$wpdb->posts} v
                 INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id 
                     AND pm_stock.meta_key = '_stock_status'
-                LEFT JOIN {$wpdb->postmeta} pm_manage ON v.ID = pm_manage.post_id 
-                    AND pm_manage.meta_key = '_manage_stock'
-                LEFT JOIN {$wpdb->postmeta} pm_qty ON v.ID = pm_qty.post_id 
-                    AND pm_qty.meta_key = '_stock'
-                LEFT JOIN {$wpdb->postmeta} pm_backorders ON v.ID = pm_backorders.post_id 
-                    AND pm_backorders.meta_key = '_backorders'
                 INNER JOIN {$wpdb->postmeta} pm_attr ON v.ID = pm_attr.post_id 
                     AND pm_attr.meta_key = %s
                 INNER JOIN {$wpdb->terms} t2 ON t2.slug = pm_attr.meta_value
@@ -539,3 +497,88 @@ function eshop_get_available_categories() {
 function eshop_get_current_context_product_ids() {
     return Eshop_Product_Filters::get_current_context_product_ids(); 
 }
+
+/**
+ * Force WooCommerce to re-sync stock status for all product variations.
+ * This fixes inconsistencies where _stock_status doesn't match actual stock quantity.
+ * 
+ * Run this via WP-CLI: wp eval "eshop_sync_variation_stock_status();"
+ * Or add ?sync_stock=1 to any admin page (requires admin privileges)
+ * 
+ * @param int|null $product_id Optional. Sync only a specific product.
+ * @return array Summary of synced variations
+ */
+function eshop_sync_variation_stock_status($product_id = null) {
+    if (!function_exists('wc_get_products')) {
+        return array('error' => 'WooCommerce not active');
+    }
+    
+    $synced = array('updated' => 0, 'skipped' => 0);
+    
+    $args = array(
+        'type' => 'variable',
+        'limit' => -1,
+        'return' => 'ids',
+    );
+    
+    if ($product_id) {
+        $args['include'] = array($product_id);
+    }
+    
+    $product_ids = wc_get_products($args);
+    
+    foreach ($product_ids as $pid) {
+        $product = wc_get_product($pid);
+        if (!$product || !$product->is_type('variable')) {
+            continue;
+        }
+        
+        $variations = $product->get_children();
+        foreach ($variations as $variation_id) {
+            $variation = wc_get_product($variation_id);
+            if (!$variation) {
+                continue;
+            }
+            
+            // Get current values
+            $manages_stock = $variation->get_manage_stock();
+            $stock_qty = $variation->get_stock_quantity();
+            $current_status = $variation->get_stock_status();
+            $backorders = $variation->get_backorders();
+            
+            // Determine correct status
+            if ($manages_stock) {
+                if ($stock_qty > 0 || $backorders !== 'no') {
+                    $correct_status = 'instock';
+                } else {
+                    $correct_status = 'outofstock';
+                }
+            } else {
+                // Not managing stock - inherit from parent or keep current
+                $correct_status = $current_status;
+            }
+            
+            // Update if needed
+            if ($current_status !== $correct_status) {
+                $variation->set_stock_status($correct_status);
+                $variation->save();
+                $synced['updated']++;
+            } else {
+                $synced['skipped']++;
+            }
+        }
+        
+        // Also trigger parent product sync
+        wc_delete_product_transients($pid);
+    }
+    
+    return $synced;
+}
+
+// Allow admin to trigger stock sync via URL parameter
+add_action('admin_init', function() {
+    if (isset($_GET['sync_stock']) && $_GET['sync_stock'] === '1' && current_user_can('manage_woocommerce')) {
+        $result = eshop_sync_variation_stock_status();
+        wp_die('Stock sync complete. Updated: ' . $result['updated'] . ', Skipped: ' . $result['skipped']);
+    }
+});

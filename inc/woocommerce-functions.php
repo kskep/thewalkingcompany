@@ -571,9 +571,8 @@ function eshop_require_instock_products_in_catalog($meta_query, $query) {
 
     return $meta_query;
 }
-// DISABLED: This global filter was forcing all products to appear as out-of-stock
-// Stock status should be handled by individual queries and WooCommerce natively
-// add_filter('woocommerce_product_query_meta_query', 'eshop_require_instock_products_in_catalog', 20, 2);
+// ENABLED: Hide out-of-stock items globally from catalog queries
+add_filter('woocommerce_product_query_meta_query', 'eshop_require_instock_products_in_catalog', 20, 2);
 
 
 
