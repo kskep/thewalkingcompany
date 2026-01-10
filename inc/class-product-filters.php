@@ -87,7 +87,7 @@ class Eshop_Product_Filters {
 
             foreach ($your_attributes as $attribute) {
                 if (isset($_GET[$attribute]) && !empty($_GET[$attribute])) {
-                    $terms = array_filter(array_map('sanitize_text_field', explode(',', wp_unslash($_GET[$attribute]))));
+                    $terms = array_filter(array_map('wc_clean', explode(',', wp_unslash($_GET[$attribute]))));
                     if (!empty($terms)) {
                         $attribute_filters[$attribute] = $terms;
                         $tax_query[] = array(
@@ -140,7 +140,7 @@ class Eshop_Product_Filters {
         // Sanitize filter values
         $sanitized_filters = array();
         foreach ($attribute_filters as $taxonomy => $terms) {
-            $clean_terms = array_filter(array_map('sanitize_title', (array) $terms));
+            $clean_terms = array_filter(array_map('wc_clean', (array) $terms));
             if (!empty($clean_terms)) {
                 $sanitized_filters[$taxonomy] = $clean_terms;
             }
@@ -153,12 +153,21 @@ class Eshop_Product_Filters {
         // Match variable products via their variations (same variation must satisfy all attribute filters)
         $variation_joins = array(
             "INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'",
+            "LEFT JOIN {$wpdb->postmeta} pm_manage ON v.ID = pm_manage.post_id AND pm_manage.meta_key = '_manage_stock'",
+            "LEFT JOIN {$wpdb->postmeta} pm_qty ON v.ID = pm_qty.post_id AND pm_qty.meta_key = '_stock'",
+            "LEFT JOIN {$wpdb->postmeta} pm_backorders ON v.ID = pm_backorders.post_id AND pm_backorders.meta_key = '_backorders'",
             "INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID AND p.post_type = 'product' AND p.post_status = 'publish'"
         );
         $variation_where = array(
             "v.post_type = 'product_variation'",
             "v.post_status = 'publish'",
-            "pm_stock.meta_value = 'instock'"
+            "pm_stock.meta_value = 'instock'",
+            "(
+                pm_manage.meta_value IS NULL
+                OR pm_manage.meta_value != 'yes'
+                OR CAST(pm_qty.meta_value AS SIGNED) > 0
+                OR pm_backorders.meta_value IN ('notify','yes')
+            )"
         );
         $variation_params = array();
         $variation_attr_count = 0;
@@ -186,12 +195,21 @@ class Eshop_Product_Filters {
 
         // Match simple products that carry these attribute terms and are in stock
         $simple_joins = array(
-            "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'"
+            "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'",
+            "LEFT JOIN {$wpdb->postmeta} pm_manage ON p.ID = pm_manage.post_id AND pm_manage.meta_key = '_manage_stock'",
+            "LEFT JOIN {$wpdb->postmeta} pm_qty ON p.ID = pm_qty.post_id AND pm_qty.meta_key = '_stock'",
+            "LEFT JOIN {$wpdb->postmeta} pm_backorders ON p.ID = pm_backorders.post_id AND pm_backorders.meta_key = '_backorders'"
         );
         $simple_where = array(
             "p.post_type = 'product'",
             "p.post_status = 'publish'",
-            "pm_stock.meta_value = 'instock'"
+            "pm_stock.meta_value = 'instock'",
+            "(
+                pm_manage.meta_value IS NULL
+                OR pm_manage.meta_value != 'yes'
+                OR CAST(pm_qty.meta_value AS SIGNED) > 0
+                OR pm_backorders.meta_value IN ('notify','yes')
+            )"
         );
         $simple_params = array();
         $simple_attr_count = 0;

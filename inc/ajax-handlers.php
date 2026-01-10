@@ -370,7 +370,7 @@ function eshop_filter_products() {
 
     foreach ($filters as $key => $values) {
         if (strpos($key, 'pa_') === 0 && !empty($values)) {
-            $sanitized_values = array_filter(array_map('sanitize_title', (array) $values));
+            $sanitized_values = array_filter(array_map('wc_clean', (array) $values));
             if (!empty($sanitized_values)) {
                 $attribute_filters[$key] = $sanitized_values;
                 $args['tax_query'][] = array(
