@@ -51,6 +51,8 @@
     display: flex;
     gap: 6px;
     align-items: center;
+    visibility: visible;
+    opacity: 1;
 }
 
 .eshop-banner-row-header .row-actions .dashicons {
