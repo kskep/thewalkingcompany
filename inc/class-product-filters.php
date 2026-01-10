@@ -163,10 +163,14 @@ class Eshop_Product_Filters {
             "v.post_status = 'publish'",
             "pm_stock.meta_value = 'instock'",
             "(
-                pm_manage.meta_value IS NULL
-                OR pm_manage.meta_value != 'yes'
-                OR CAST(pm_qty.meta_value AS SIGNED) > 0
-                OR pm_backorders.meta_value IN ('notify','yes')
+                (pm_manage.meta_value IS NULL OR pm_manage.meta_value = '' OR pm_manage.meta_value = 'no')
+                OR (
+                    pm_manage.meta_value = 'yes' 
+                    AND (
+                        CAST(COALESCE(pm_qty.meta_value, '0') AS SIGNED) > 0
+                        OR COALESCE(pm_backorders.meta_value, 'no') IN ('notify','yes')
+                    )
+                )
             )"
         );
         $variation_params = array();
@@ -205,10 +209,14 @@ class Eshop_Product_Filters {
             "p.post_status = 'publish'",
             "pm_stock.meta_value = 'instock'",
             "(
-                pm_manage.meta_value IS NULL
-                OR pm_manage.meta_value != 'yes'
-                OR CAST(pm_qty.meta_value AS SIGNED) > 0
-                OR pm_backorders.meta_value IN ('notify','yes')
+                (pm_manage.meta_value IS NULL OR pm_manage.meta_value = '' OR pm_manage.meta_value = 'no')
+                OR (
+                    pm_manage.meta_value = 'yes' 
+                    AND (
+                        CAST(COALESCE(pm_qty.meta_value, '0') AS SIGNED) > 0
+                        OR COALESCE(pm_backorders.meta_value, 'no') IN ('notify','yes')
+                    )
+                )
             )"
         );
         $simple_params = array();
@@ -266,10 +274,14 @@ class Eshop_Product_Filters {
         $stock_condition = "(
             pm_stock.meta_value = 'instock'
             AND (
-                pm_manage.meta_value IS NULL
-                OR pm_manage.meta_value != 'yes'
-                OR CAST(pm_qty.meta_value AS SIGNED) > 0
-                OR pm_backorders.meta_value IN ('notify','yes')
+                (pm_manage.meta_value IS NULL OR pm_manage.meta_value = '' OR pm_manage.meta_value = 'no')
+                OR (
+                    pm_manage.meta_value = 'yes' 
+                    AND (
+                        CAST(COALESCE(pm_qty.meta_value, '0') AS SIGNED) > 0
+                        OR COALESCE(pm_backorders.meta_value, 'no') IN ('notify','yes')
+                    )
+                )
             )
         )";
 
