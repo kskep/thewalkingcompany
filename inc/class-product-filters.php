@@ -243,6 +243,10 @@ class Eshop_Product_Filters {
      * Get available attribute terms from current query results
      * This gets terms only from products that match the current context
      * AND have in-stock variations for that attribute term
+     * 
+     * Uses the same comprehensive stock checking as get_product_ids_for_attribute_filters:
+     * - _stock_status = 'instock'
+     * - AND (_manage_stock != 'yes' OR _stock > 0 OR _backorders IN ('notify', 'yes'))
      */
     public static function get_available_attribute_terms($taxonomy) {
         // First, get the product IDs that match the current context
@@ -257,33 +261,56 @@ class Eshop_Product_Filters {
         // Create placeholders for the product IDs
         $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
 
+        // Build the comprehensive stock condition used throughout the filters
+        // This ensures we only count variations that are truly available for purchase
+        $stock_condition = "(
+            pm_stock.meta_value = 'instock'
+            AND (
+                pm_manage.meta_value IS NULL
+                OR pm_manage.meta_value != 'yes'
+                OR CAST(pm_qty.meta_value AS SIGNED) > 0
+                OR pm_backorders.meta_value IN ('notify','yes')
+            )
+        )";
+
         // Query to get attribute terms from products in current context
-        // For simple products: use term_relationships
-        // For variable products: use postmeta on variations
+        // For simple products: use term_relationships with comprehensive stock check
+        // For variable products: use postmeta on variations with comprehensive stock check
         $sql = "
             SELECT DISTINCT t.term_id, t.name, t.slug, COUNT(DISTINCT product_id) as count
             FROM (
-                -- Simple products with this attribute term
+                -- Simple products with this attribute term (with comprehensive stock check)
                 SELECT p.ID as product_id, tr.term_taxonomy_id
                 FROM {$wpdb->posts} p
                 INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id 
-                    AND pm_stock.meta_key = '_stock_status' 
-                    AND pm_stock.meta_value = 'instock'
+                    AND pm_stock.meta_key = '_stock_status'
+                LEFT JOIN {$wpdb->postmeta} pm_manage ON p.ID = pm_manage.post_id 
+                    AND pm_manage.meta_key = '_manage_stock'
+                LEFT JOIN {$wpdb->postmeta} pm_qty ON p.ID = pm_qty.post_id 
+                    AND pm_qty.meta_key = '_stock'
+                LEFT JOIN {$wpdb->postmeta} pm_backorders ON p.ID = pm_backorders.post_id 
+                    AND pm_backorders.meta_key = '_backorders'
                 INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
                 INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
                     AND tt.taxonomy = %s
                 WHERE p.post_type = 'product' 
                     AND p.post_status = 'publish'
                     AND p.ID IN ($placeholders)
+                    AND {$stock_condition}
                 
                 UNION
                 
-                -- Variable product variations with this attribute term (via postmeta)
+                -- Variable product variations with this attribute term (with comprehensive stock check)
                 SELECT DISTINCT v.post_parent as product_id, tt2.term_taxonomy_id
                 FROM {$wpdb->posts} v
                 INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id 
-                    AND pm_stock.meta_key = '_stock_status' 
-                    AND pm_stock.meta_value = 'instock'
+                    AND pm_stock.meta_key = '_stock_status'
+                LEFT JOIN {$wpdb->postmeta} pm_manage ON v.ID = pm_manage.post_id 
+                    AND pm_manage.meta_key = '_manage_stock'
+                LEFT JOIN {$wpdb->postmeta} pm_qty ON v.ID = pm_qty.post_id 
+                    AND pm_qty.meta_key = '_stock'
+                LEFT JOIN {$wpdb->postmeta} pm_backorders ON v.ID = pm_backorders.post_id 
+                    AND pm_backorders.meta_key = '_backorders'
                 INNER JOIN {$wpdb->postmeta} pm_attr ON v.ID = pm_attr.post_id 
                     AND pm_attr.meta_key = %s
                 INNER JOIN {$wpdb->terms} t2 ON t2.slug = pm_attr.meta_value
@@ -292,6 +319,7 @@ class Eshop_Product_Filters {
                 WHERE v.post_type = 'product_variation' 
                     AND v.post_status = 'publish'
                     AND v.post_parent IN ($placeholders)
+                    AND {$stock_condition}
             ) matched
             INNER JOIN {$wpdb->term_taxonomy} tt ON matched.term_taxonomy_id = tt.term_taxonomy_id
             INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
