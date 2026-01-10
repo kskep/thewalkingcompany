@@ -223,7 +223,7 @@ function eshop_render_front_banners_metabox($post) {
             <div class="eshop-banner-row" data-row-index="{{data.rowIndex}}">
                 <div class="eshop-banner-row-header">
                     <span class="dashicons dashicons-move row-handle"></span>
-                    <span class="row-label"><?php esc_html_e('Row', 'eshop-theme'); ?> {{data.rowIndex + 1}} 
+                    <span class="row-label"><?php esc_html_e('Row', 'eshop-theme'); ?> {{data.rowNumber}} 
                         <em class="banner-count">(0 <?php esc_html_e('banners', 'eshop-theme'); ?>)</em>
                     </span>
                     <div class="row-actions">

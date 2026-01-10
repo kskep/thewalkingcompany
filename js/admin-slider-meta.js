@@ -88,8 +88,11 @@
 		// Add new row
 		$('#eshop-add-banner-row').on('click', function(){
 			const rowIndex = $container.find('.eshop-banner-row').length;
+			const rowNumber = rowIndex + 1;
 			const template = $('#tmpl-eshop-banner-row').html();
-			const html = template.replace(/\{\{data\.rowIndex\}\}/g, rowIndex);
+			const html = template
+				.replace(/\{\{data\.rowIndex\}\}/g, rowIndex)
+				.replace(/\{\{data\.rowNumber\}\}/g, rowNumber);
 			$container.append(html);
 			
 			// Make the new row's grid sortable
