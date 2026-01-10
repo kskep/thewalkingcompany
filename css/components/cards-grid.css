@@ -35,7 +35,7 @@ ul.products-grid,
 
 @media (max-width: 720px) {
     .page-shell {
-        padding: 48px 24px 96px;
+        padding: 48px 10px 96px;
     }
 
     .products-grid,

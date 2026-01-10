@@ -240,6 +240,20 @@
   .product-card .size-overlay {
     display: none;
   }
+
+  .product-card .wishlist-button,
+  .product-card .add-to-wishlist {
+    width: 32px !important;
+    height: 32px !important;
+    top: 12px !important;
+    right: 12px !important;
+  }
+
+  .product-card .wishlist-button svg,
+  .product-card .add-to-wishlist svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
 }
 
 /* Product Information Section */
