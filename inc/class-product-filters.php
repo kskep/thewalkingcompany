@@ -18,27 +18,78 @@ class Eshop_Product_Filters {
      * Initialize hooks
      */
     public static function init() {
-        add_action('pre_get_posts', array(__CLASS__, 'handle_custom_filters'), 5);
+        // Use WooCommerce's product query hook instead of pre_get_posts
+        // This runs AFTER WooCommerce sets up its query, so our changes persist
+        add_action('woocommerce_product_query', array(__CLASS__, 'handle_wc_product_query'), 20);
         
         // Debug: Late hook to see final query state
-        add_action('pre_get_posts', array(__CLASS__, 'debug_final_query'), 9999);
+        add_action('woocommerce_product_query', array(__CLASS__, 'debug_final_query'), 9999);
+    }
+    
+    /**
+     * Handle WooCommerce product query - apply attribute filters
+     */
+    public static function handle_wc_product_query($query) {
+        $attribute_filters = self::get_attribute_filters_from_request($_GET);
+        
+        // DEBUG: Temporarily output to see what's happening
+        if (!empty($attribute_filters) && isset($_GET['filter_debug'])) {
+            global $wpdb;
+            echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:400px;overflow:auto;font-size:11px;">';
+            echo "Attribute filters from request:\n";
+            print_r($attribute_filters);
+            
+            $context_ids = self::get_base_context_product_ids();
+            echo "\nContext product IDs (category/page): " . count($context_ids) . "\n";
+        }
+        
+        // If we have attribute filters, get only products with IN-STOCK variations matching those filters
+        if (!empty($attribute_filters)) {
+            $in_stock_product_ids = self::get_products_with_instock_variations($attribute_filters);
+
+            if (!empty($in_stock_product_ids)) {
+                $existing_post_in = $query->get('post__in');
+                if (!empty($existing_post_in)) {
+                    $intersected = array_values(array_intersect($existing_post_in, $in_stock_product_ids));
+                    $query->set('post__in', !empty($intersected) ? $intersected : array(-1));
+                } else {
+                    $query->set('post__in', $in_stock_product_ids);
+                }
+                
+                // Debug: Show what post__in was set to
+                if (isset($_GET['filter_debug'])) {
+                    $final_post_in = $query->get('post__in');
+                    echo "Products with in-stock variations: " . count($in_stock_product_ids) . "\n";
+                    echo "IDs: " . implode(', ', array_slice($in_stock_product_ids, 0, 10)) . "...\n";
+                    echo '</pre>';
+                }
+            } else {
+                // No products with in-stock variations match
+                $query->set('post__in', array(-1));
+                
+                if (isset($_GET['filter_debug'])) {
+                    echo "No products found with in-stock variations\n";
+                    echo '</pre>';
+                }
+            }
+        } elseif (isset($_GET['filter_debug'])) {
+            echo '</pre>';
+        }
     }
     
     /**
      * Debug: Show what the final query looks like
      */
     public static function debug_final_query($query) {
-        if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
-            if (isset($_GET['filter_debug'])) {
-                $post_in = $query->get('post__in');
-                echo '<pre style="background:#fef;padding:10px;border:2px solid purple;position:fixed;bottom:0;left:0;z-index:99996;max-height:150px;overflow:auto;font-size:10px;">';
-                echo "FINAL QUERY STATE (priority 9999):\n";
-                echo "post__in count: " . (is_array($post_in) ? count($post_in) : 'not set') . "\n";
-                if (is_array($post_in) && !empty($post_in)) {
-                    echo "post__in IDs: " . implode(', ', array_slice($post_in, 0, 10)) . "...\n";
-                }
-                echo '</pre>';
+        if (isset($_GET['filter_debug'])) {
+            $post_in = $query->get('post__in');
+            echo '<pre style="background:#fef;padding:10px;border:2px solid purple;position:fixed;bottom:0;left:0;z-index:99996;max-height:150px;overflow:auto;font-size:10px;">';
+            echo "FINAL QUERY STATE (wc_product_query priority 9999):\n";
+            echo "post__in count: " . (is_array($post_in) ? count($post_in) : 'not set') . "\n";
+            if (is_array($post_in) && !empty($post_in)) {
+                echo "post__in IDs: " . implode(', ', array_slice($post_in, 0, 10)) . "...\n";
             }
+            echo '</pre>';
         }
     }
 
@@ -121,149 +172,6 @@ class Eshop_Product_Filters {
         }
 
         return $filters;
-    }
-
-    /**
-     * Handle custom filter parameters for WooCommerce
-     * Priority 5 to run early, before our products_per_page override
-     */
-    public static function handle_custom_filters($query) {
-        if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
-
-            $attribute_filters = self::get_attribute_filters_from_request($_GET);
-
-            // DEBUG: Temporarily output to see what's happening
-            if (!empty($attribute_filters) && isset($_GET['filter_debug'])) {
-                global $wpdb;
-                echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:400px;overflow:auto;font-size:11px;">';
-                echo "Attribute filters from request:\n";
-                print_r($attribute_filters);
-                
-                $context_ids = self::get_base_context_product_ids();
-                echo "\nContext product IDs (category/page): " . count($context_ids) . "\n";
-                
-                $ids = self::get_products_with_instock_variations($attribute_filters);
-                echo "Products with in-stock variations: " . count($ids) . "\n";
-                echo "IDs: " . implode(', ', array_slice($ids, 0, 10)) . (count($ids) > 10 ? '...' : '') . "\n";
-                
-                // Check a specific product to see its variations and stock
-                if (!empty($ids)) {
-                    $sample_id = $ids[0];
-                    echo "\n--- Sample product ID: {$sample_id} ---\n";
-                    
-                    // Get all variations with their stock and size
-                    $variations = $wpdb->get_results($wpdb->prepare("
-                        SELECT 
-                            v.ID,
-                            pm_stock.meta_value as stock_status,
-                            pm_size.meta_value as size_value
-                        FROM {$wpdb->posts} v
-                        LEFT JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'
-                        LEFT JOIN {$wpdb->postmeta} pm_size ON v.ID = pm_size.post_id AND pm_size.meta_key LIKE 'attribute_pa_%%size%%'
-                        WHERE v.post_parent = %d AND v.post_type = 'product_variation'
-                    ", $sample_id), ARRAY_A);
-                    
-                    echo "Variations:\n";
-                    foreach ($variations as $var) {
-                        echo "  ID: {$var['ID']}, Size: {$var['size_value']}, Stock: {$var['stock_status']}\n";
-                    }
-                }
-                
-                echo '</pre>';
-            }
-
-            $meta_query = $query->get('meta_query', array());
-            $tax_query = $query->get('tax_query', array());
-
-            // Price filter
-            if (isset($_GET['min_price']) && !empty($_GET['min_price'])) {
-                $meta_query[] = array(
-                    'key' => '_price',
-                    'value' => floatval($_GET['min_price']),
-                    'compare' => '>=',
-                    'type' => 'NUMERIC'
-                );
-            }
-
-            if (isset($_GET['max_price']) && !empty($_GET['max_price'])) {
-                $meta_query[] = array(
-                    'key' => '_price',
-                    'value' => floatval($_GET['max_price']),
-                    'compare' => '<=',
-                    'type' => 'NUMERIC'
-                );
-            }
-
-            if (!empty($meta_query)) {
-                $query->set('meta_query', $meta_query);
-            }
-
-            // Category filter
-            if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
-                $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
-                $tokens = array_filter(array_map('trim', explode(',', $raw)));
-                $all_numeric = !empty($tokens) && count(array_filter($tokens, 'is_numeric')) === count($tokens);
-                $terms = $all_numeric ? array_map('intval', $tokens) : array_map('sanitize_text_field', $tokens);
-                
-                $tax_query[] = array(
-                    'taxonomy' => 'product_cat',
-                    'field' => $all_numeric ? 'term_id' : 'slug',
-                    'terms' => $terms,
-                    'operator' => 'IN',
-                    'include_children' => true
-                );
-            }
-
-            // On sale filter
-            if (isset($_GET['on_sale']) && $_GET['on_sale'] === '1') {
-                $sale_ids = wc_get_product_ids_on_sale();
-                if (!empty($sale_ids)) {
-                    $existing_post_in = $query->get('post__in');
-                    if (!empty($existing_post_in)) {
-                        $intersected = array_values(array_intersect($existing_post_in, $sale_ids));
-                        $query->set('post__in', !empty($intersected) ? $intersected : array(-1));
-                    } else {
-                        $query->set('post__in', $sale_ids);
-                    }
-                } else {
-                    $query->set('post__in', array(-1));
-                }
-            }
-
-            // If we have attribute filters, get only products with IN-STOCK variations matching those filters
-            if (!empty($attribute_filters)) {
-                $in_stock_product_ids = self::get_products_with_instock_variations($attribute_filters);
-
-                if (!empty($in_stock_product_ids)) {
-                    $existing_post_in = $query->get('post__in');
-                    if (!empty($existing_post_in)) {
-                        $intersected = array_values(array_intersect($existing_post_in, $in_stock_product_ids));
-                        $query->set('post__in', !empty($intersected) ? $intersected : array(-1));
-                    } else {
-                        $query->set('post__in', $in_stock_product_ids);
-                    }
-                    
-                    // Debug: Show what post__in was set to
-                    if (isset($_GET['filter_debug'])) {
-                        $final_post_in = $query->get('post__in');
-                        echo '<pre style="background:#efe;padding:10px;border:2px solid green;position:fixed;top:750px;left:0;z-index:99997;max-height:150px;overflow:auto;font-size:10px;">';
-                        echo "Final post__in set: " . count($final_post_in) . " products\n";
-                        echo "IDs: " . implode(', ', array_slice($final_post_in, 0, 10)) . "...\n";
-                        echo '</pre>';
-                    }
-                } else {
-                    // No products with in-stock variations match
-                    $query->set('post__in', array(-1));
-                }
-            }
-
-            if (!empty($tax_query)) {
-                if (count($tax_query) > 1 && !isset($tax_query['relation'])) {
-                    $tax_query['relation'] = 'AND';
-                }
-                $query->set('tax_query', $tax_query);
-            }
-        }
     }
 
     /**
