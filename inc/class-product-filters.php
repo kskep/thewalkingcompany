@@ -452,7 +452,12 @@ class Eshop_Product_Filters {
         ";
 
         $params = array_merge(array($attr_meta_key, $taxonomy), $context_product_ids);
-        $variation_results = $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
+        
+        // DEBUG: Log the prepared SQL
+        $prepared_sql = $wpdb->prepare($sql, $params);
+        error_log("FILTER DEBUG - get_available_attribute_terms SQL for {$taxonomy}: " . substr($prepared_sql, 0, 500));
+        
+        $variation_results = $wpdb->get_results($prepared_sql, ARRAY_A);
 
         // DEBUG: Log query results
         error_log("FILTER DEBUG - Variation results count: " . count($variation_results ?: array()));
