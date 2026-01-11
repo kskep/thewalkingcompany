@@ -266,6 +266,34 @@ SVG;
                             // On a subcategory page: show siblings (other subcategories of same parent)
                             // On shop page: show top-level categories
                             
+                            $available_categories = function_exists('eshop_get_available_categories')
+                                ? eshop_get_available_categories()
+                                : array();
+                            $category_counts = array();
+                            foreach ($available_categories as $row) {
+                                if (!is_array($row)) {
+                                    continue;
+                                }
+                                $term_id = isset($row['term_id']) ? (int) $row['term_id'] : 0;
+                                $count = isset($row['count']) ? (int) $row['count'] : 0;
+                                if ($term_id > 0) {
+                                    $category_counts[$term_id] = $count;
+                                }
+                            }
+                            $aggregate_count = function($term_id) use ($category_counts) {
+                                $sum = isset($category_counts[$term_id]) ? $category_counts[$term_id] : 0;
+                                $descendant_ids = get_term_children($term_id, 'product_cat');
+                                if (!empty($descendant_ids) && !is_wp_error($descendant_ids)) {
+                                    foreach ($descendant_ids as $did) {
+                                        $did = (int) $did;
+                                        if (isset($category_counts[$did])) {
+                                            $sum += $category_counts[$did];
+                                        }
+                                    }
+                                }
+                                return (int) $sum;
+                            };
+
                             $selected_cat_slugs = array();
                             if (isset($_GET['product_cat']) && !empty($_GET['product_cat'])) {
                                 $raw = sanitize_text_field(wp_unslash($_GET['product_cat']));
@@ -297,11 +325,18 @@ SVG;
                                     $children_of_current = get_terms(array(
                                         'taxonomy' => 'product_cat',
                                         'parent' => $current_category_obj->term_id,
-                                        'hide_empty' => true,
+                                        'hide_empty' => false,
                                         'exclude' => $excluded_ids,
                                     ));
-                                    
-                                    if (!empty($children_of_current) && !is_wp_error($children_of_current)) {
+
+                                    $children_with_stock = array_filter((array) $children_of_current, function($term) use ($aggregate_count) {
+                                        if (!($term instanceof WP_Term)) {
+                                            return false;
+                                        }
+                                        return $aggregate_count((int) $term->term_id) > 0;
+                                    });
+
+                                    if (!empty($children_with_stock) && !is_wp_error($children_of_current)) {
                                         // Current category has children, show them
                                         $parent_id_to_use = $current_category_obj->term_id;
                                     } else {
@@ -316,7 +351,7 @@ SVG;
                             $top_level = get_terms(array(
                                 'taxonomy' => 'product_cat',
                                 'parent' => $parent_id_to_use,
-                                'hide_empty' => true,
+                                'hide_empty' => false,
                                 'exclude' => $excluded_ids,
                                 'orderby' => 'menu_order',
                                 'order' => 'ASC',
@@ -324,36 +359,31 @@ SVG;
                             if (!empty($top_level) && !is_wp_error($top_level)):
                                 echo '<div class="category-tree">';
 
-                                // Helper: aggregated count = term's own count + all descendants' counts
-                                $aggregate_count = function($term_id) {
-                                    $sum = 0;
-                                    $self = get_term($term_id, 'product_cat');
-                                    if ($self && !is_wp_error($self)) {
-                                        $sum += (int) $self->count;
-                                    }
-                                    $descendant_ids = get_terms(array(
+                                $has_instock_children = function($term_id) use ($aggregate_count, $excluded_ids) {
+                                    $children = get_terms(array(
                                         'taxonomy' => 'product_cat',
-                                        'child_of' => $term_id,
-                                        'hide_empty' => true,
+                                        'parent' => $term_id,
+                                        'hide_empty' => false,
+                                        'exclude' => $excluded_ids,
                                         'fields' => 'ids',
                                     ));
-                                    if (!empty($descendant_ids) && !is_wp_error($descendant_ids)) {
-                                        foreach ($descendant_ids as $did) {
-                                            $t = get_term((int)$did, 'product_cat');
-                                            if ($t && !is_wp_error($t)) {
-                                                $sum += (int) $t->count;
-                                            }
+                                    if (empty($children) || is_wp_error($children)) {
+                                        return false;
+                                    }
+                                    foreach ($children as $child_id) {
+                                        if ($aggregate_count((int) $child_id) > 0) {
+                                            return true;
                                         }
                                     }
-                                    return $sum;
+                                    return false;
                                 };
 
-                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_terms, $aggregate_count, $excluded_ids) {
+                                $render_branch = function($parent_term, $level) use (&$render_branch, $selected_terms, $aggregate_count, $has_instock_children, $excluded_ids) {
                                     $parent_id = ($parent_term instanceof WP_Term) ? $parent_term->term_id : (int) $parent_term;
                                     $children = get_terms(array(
                                         'taxonomy' => 'product_cat',
                                         'parent' => $parent_id,
-                                        'hide_empty' => true,
+                                        'hide_empty' => false,
                                         'orderby' => 'menu_order',
                                         'order' => 'ASC',
                                     ));
@@ -401,14 +431,7 @@ SVG;
                                         // Skip if count is 0
                                         if ($display_count === 0) continue;
 
-                                        $term_has_children = get_terms(array(
-                                            'taxonomy' => 'product_cat',
-                                            'parent' => $term->term_id,
-                                            'hide_empty' => true,
-                                            'exclude' => $excluded_ids,
-                                            'number' => 1,
-                                        ));
-                                        $has_kids = !empty($term_has_children) && !is_wp_error($term_has_children);
+                                        $has_kids = $has_instock_children($term->term_id);
                                         $is_selected = false;
                                         $is_ancestor = false;
                                         if (!empty($selected_terms)) {
@@ -451,14 +474,7 @@ SVG;
                                                     $child_count = (int) $aggregate_count($child->term_id);
                                                     if ($child_count === 0) continue;
 
-                                                    $child_has_kids = get_terms(array(
-                                                        'taxonomy' => 'product_cat',
-                                                        'parent' => $child->term_id,
-                                                        'hide_empty' => true,
-                                                        'exclude' => $excluded_ids,
-                                                        'number' => 1,
-                                                    ));
-                                                    $child_has_children = !empty($child_has_kids) && !is_wp_error($child_has_kids);
+                                                    $child_has_children = $has_instock_children($child->term_id);
                                                     $child_selected = false; $child_ancestor = false;
                                                     if (!empty($selected_terms)) {
                                                         foreach ($selected_terms as $sel) {
@@ -512,12 +528,32 @@ SVG;
                             
                             // Try to get actual price range
                             global $wpdb;
-                            $price_data = $wpdb->get_row("
-                                SELECT MIN(CAST(meta_value AS DECIMAL(10,2))) as min_price, 
-                                       MAX(CAST(meta_value AS DECIMAL(10,2))) as max_price
-                                FROM {$wpdb->postmeta}
-                                WHERE meta_key = '_price' AND meta_value != ''
-                            ");
+                            $context_product_ids = function_exists('eshop_get_current_context_product_ids')
+                                ? eshop_get_current_context_product_ids()
+                                : array();
+                            $price_data = null;
+                            if (!empty($context_product_ids)) {
+                                $placeholders = implode(',', array_fill(0, count($context_product_ids), '%d'));
+                                $sql = "
+                                    SELECT MIN(CAST(pm.meta_value AS DECIMAL(10,2))) as min_price, 
+                                           MAX(CAST(pm.meta_value AS DECIMAL(10,2))) as max_price
+                                    FROM {$wpdb->postmeta} pm
+                                    INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+                                    WHERE pm.meta_key = '_price'
+                                      AND pm.meta_value != ''
+                                      AND p.post_type = 'product'
+                                      AND p.post_status = 'publish'
+                                      AND p.ID IN ($placeholders)
+                                ";
+                                $price_data = $wpdb->get_row($wpdb->prepare($sql, $context_product_ids));
+                            } else {
+                                $price_data = $wpdb->get_row("
+                                    SELECT MIN(CAST(meta_value AS DECIMAL(10,2))) as min_price, 
+                                           MAX(CAST(meta_value AS DECIMAL(10,2))) as max_price
+                                    FROM {$wpdb->postmeta}
+                                    WHERE meta_key = '_price' AND meta_value != ''
+                                ");
+                            }
                             if ($price_data) {
                                 $price_min = floor(floatval($price_data->min_price));
                                 $price_max = ceil(floatval($price_data->max_price));
