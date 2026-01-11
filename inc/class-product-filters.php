@@ -409,15 +409,32 @@ class Eshop_Product_Filters {
     public static function get_available_attribute_terms($taxonomy) {
         global $wpdb;
 
+        // Generate unique call ID to trace multiple calls
+        static $call_count = 0;
+        $call_count++;
+        $call_id = "CALL#{$call_count}";
+
         // Get base product IDs from current context (category page, other filters, etc.)
         $context_product_ids = self::get_base_context_product_ids();
 
         // DEBUG: Log to error_log
-        error_log("FILTER DEBUG - get_available_attribute_terms({$taxonomy})");
-        error_log("FILTER DEBUG - Context product IDs count: " . count($context_product_ids));
+        error_log("FILTER DEBUG [{$call_id}] - get_available_attribute_terms({$taxonomy})");
+        error_log("FILTER DEBUG [{$call_id}] - Context product IDs count: " . count($context_product_ids));
+        
+        // Log backtrace to see where this is being called from
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+        $caller_info = array();
+        foreach ($backtrace as $i => $trace) {
+            if ($i === 0) continue; // skip self
+            $file = isset($trace['file']) ? basename($trace['file']) : 'unknown';
+            $line = isset($trace['line']) ? $trace['line'] : '?';
+            $func = isset($trace['function']) ? $trace['function'] : '?';
+            $caller_info[] = "{$file}:{$line} -> {$func}()";
+        }
+        error_log("FILTER DEBUG [{$call_id}] - Called from: " . implode(' <- ', $caller_info));
 
         if (empty($context_product_ids)) {
-            error_log("FILTER DEBUG - No context product IDs, returning empty");
+            error_log("FILTER DEBUG [{$call_id}] - No context product IDs, returning empty");
             return array();
         }
 
