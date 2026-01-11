@@ -383,17 +383,19 @@ function eshop_filter_products() {
         }
     }
 
+    // If we have attribute filters, get only products with IN-STOCK variations matching those filters
     if (!empty($attribute_filters) && class_exists('Eshop_Product_Filters')) {
-        $stock_filtered_ids = Eshop_Product_Filters::get_product_ids_for_attribute_filters($attribute_filters);
+        $in_stock_product_ids = Eshop_Product_Filters::get_products_with_instock_variations($attribute_filters);
 
-        if (!empty($stock_filtered_ids)) {
+        if (!empty($in_stock_product_ids)) {
             if (!empty($args['post__in'])) {
-                $intersected = array_values(array_intersect($args['post__in'], $stock_filtered_ids));
+                $intersected = array_values(array_intersect($args['post__in'], $in_stock_product_ids));
                 $args['post__in'] = !empty($intersected) ? $intersected : array(-1);
             } else {
-                $args['post__in'] = $stock_filtered_ids;
+                $args['post__in'] = $in_stock_product_ids;
             }
         } else {
+            // No products with in-stock variations match
             $args['post__in'] = array(-1);
         }
     }
