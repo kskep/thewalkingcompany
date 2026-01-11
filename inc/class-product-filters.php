@@ -398,7 +398,12 @@ class Eshop_Product_Filters {
         // Get base product IDs from current context (category page, other filters, etc.)
         $context_product_ids = self::get_base_context_product_ids();
 
+        // DEBUG: Log to error_log
+        error_log("FILTER DEBUG - get_available_attribute_terms({$taxonomy})");
+        error_log("FILTER DEBUG - Context product IDs count: " . count($context_product_ids));
+
         if (empty($context_product_ids)) {
+            error_log("FILTER DEBUG - No context product IDs, returning empty");
             return array();
         }
 
@@ -434,6 +439,12 @@ class Eshop_Product_Filters {
 
         $params = array_merge(array($attr_meta_key, $taxonomy), $context_product_ids);
         $variation_results = $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
+
+        // DEBUG: Log query results
+        error_log("FILTER DEBUG - Variation results count: " . count($variation_results ?: array()));
+        if (!empty($variation_results)) {
+            error_log("FILTER DEBUG - First few variation results: " . print_r(array_slice($variation_results, 0, 3), true));
+        }
 
         // Also get terms from simple products that are in stock
         $simple_sql = "
