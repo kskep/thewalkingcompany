@@ -19,6 +19,27 @@ class Eshop_Product_Filters {
      */
     public static function init() {
         add_action('pre_get_posts', array(__CLASS__, 'handle_custom_filters'), 5);
+        
+        // Debug: Late hook to see final query state
+        add_action('pre_get_posts', array(__CLASS__, 'debug_final_query'), 9999);
+    }
+    
+    /**
+     * Debug: Show what the final query looks like
+     */
+    public static function debug_final_query($query) {
+        if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
+            if (isset($_GET['filter_debug'])) {
+                $post_in = $query->get('post__in');
+                echo '<pre style="background:#fef;padding:10px;border:2px solid purple;position:fixed;bottom:0;left:0;z-index:99996;max-height:150px;overflow:auto;font-size:10px;">';
+                echo "FINAL QUERY STATE (priority 9999):\n";
+                echo "post__in count: " . (is_array($post_in) ? count($post_in) : 'not set') . "\n";
+                if (is_array($post_in) && !empty($post_in)) {
+                    echo "post__in IDs: " . implode(', ', array_slice($post_in, 0, 10)) . "...\n";
+                }
+                echo '</pre>';
+            }
+        }
     }
 
     /**
