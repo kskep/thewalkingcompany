@@ -705,17 +705,6 @@ SVG;
                                 $attr_name = 'pa_' . $taxonomy->attribute_name;
                                 $terms = function_exists('eshop_get_available_attribute_terms') ? eshop_get_available_attribute_terms($attr_name) : array();
                                 
-                                // DEBUG: Output what we received
-                                if ($attr_name === 'pa_size-selection' && !empty($terms)) {
-                                    echo '<!-- DEBUG pa_size-selection terms: ';
-                                    foreach ($terms as $t) {
-                                        $ts = is_array($t) ? $t['slug'] : $t->slug;
-                                        $tc = is_array($t) ? $t['count'] : $t->count;
-                                        echo "{$ts}={$tc} ";
-                                    }
-                                    echo ' -->';
-                                }
-                                
                                 if (!empty($terms)):
                             ?>
                                 <div class="filter-subsection">

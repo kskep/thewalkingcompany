@@ -109,11 +109,7 @@ class Eshop_Product_Filters {
     public static function handle_custom_filters($query) {
         if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
 
-            // DEBUG: Log when filters are applied
             $attribute_filters = self::get_attribute_filters_from_request($_GET);
-            error_log("FILTER DEBUG - handle_custom_filters called");
-            error_log("FILTER DEBUG - GET params: " . print_r($_GET, true));
-            error_log("FILTER DEBUG - Attribute filters parsed: " . print_r($attribute_filters, true));
 
             $meta_query = $query->get('meta_query', array());
             $tax_query = $query->get('tax_query', array());
@@ -173,14 +169,9 @@ class Eshop_Product_Filters {
                 }
             }
 
-            // Get attribute filters
-            $attribute_filters = self::get_attribute_filters_from_request($_GET);
-
             // If we have attribute filters, get only products with IN-STOCK variations matching those filters
             if (!empty($attribute_filters)) {
-                error_log("FILTER DEBUG - Calling get_products_with_instock_variations with: " . print_r($attribute_filters, true));
                 $in_stock_product_ids = self::get_products_with_instock_variations($attribute_filters);
-                error_log("FILTER DEBUG - Got in_stock_product_ids: " . print_r($in_stock_product_ids, true));
 
                 if (!empty($in_stock_product_ids)) {
                     $existing_post_in = $query->get('post__in');
@@ -302,12 +293,7 @@ class Eshop_Product_Filters {
                 " . implode("\n", $variation_joins) . "
                 WHERE " . implode("\n AND ", $variation_where);
 
-            // DEBUG: Log the actual SQL query
-            $prepared_sql = $wpdb->prepare($variation_sql, $variation_params);
-            error_log("FILTER DEBUG - Variation SQL: " . $prepared_sql);
-
-            $variable_product_ids = $wpdb->get_col($prepared_sql);
-            error_log("FILTER DEBUG - Variable product IDs returned: " . count($variable_product_ids));
+            $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $variation_params));
         }
 
         // Also check simple products that have these attribute terms and are in stock
@@ -345,11 +331,15 @@ class Eshop_Product_Filters {
         $joins[] = "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'";
         $where[] = "pm_stock.meta_value = 'instock'";
 
-        // Must be a simple product (not variable)
-        $joins[] = "LEFT JOIN {$wpdb->term_relationships} tr_type ON p.ID = tr_type.object_id";
-        $joins[] = "LEFT JOIN {$wpdb->term_taxonomy} tt_type ON tr_type.term_taxonomy_id = tt_type.term_taxonomy_id AND tt_type.taxonomy = 'product_type'";
-        $joins[] = "LEFT JOIN {$wpdb->terms} t_type ON tt_type.term_id = t_type.term_id";
-        $where[] = "(t_type.slug IS NULL OR t_type.slug = 'simple')";
+        // Must NOT be a variable product (use NOT EXISTS for reliability)
+        $where[] = "NOT EXISTS (
+            SELECT 1 FROM {$wpdb->term_relationships} tr_type
+            INNER JOIN {$wpdb->term_taxonomy} tt_type ON tr_type.term_taxonomy_id = tt_type.term_taxonomy_id
+            INNER JOIN {$wpdb->terms} t_type ON tt_type.term_id = t_type.term_id
+            WHERE tr_type.object_id = p.ID
+            AND tt_type.taxonomy = 'product_type'
+            AND t_type.slug = 'variable'
+        )";
 
         // Add attribute term joins
         $attr_index = 0;
@@ -409,32 +399,10 @@ class Eshop_Product_Filters {
     public static function get_available_attribute_terms($taxonomy) {
         global $wpdb;
 
-        // Generate unique call ID to trace multiple calls
-        static $call_count = 0;
-        $call_count++;
-        $call_id = "CALL#{$call_count}";
-
         // Get base product IDs from current context (category page, other filters, etc.)
         $context_product_ids = self::get_base_context_product_ids();
 
-        // DEBUG: Log to error_log
-        error_log("FILTER DEBUG [{$call_id}] - get_available_attribute_terms({$taxonomy})");
-        error_log("FILTER DEBUG [{$call_id}] - Context product IDs count: " . count($context_product_ids));
-        
-        // Log backtrace to see where this is being called from
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
-        $caller_info = array();
-        foreach ($backtrace as $i => $trace) {
-            if ($i === 0) continue; // skip self
-            $file = isset($trace['file']) ? basename($trace['file']) : 'unknown';
-            $line = isset($trace['line']) ? $trace['line'] : '?';
-            $func = isset($trace['function']) ? $trace['function'] : '?';
-            $caller_info[] = "{$file}:{$line} -> {$func}()";
-        }
-        error_log("FILTER DEBUG [{$call_id}] - Called from: " . implode(' <- ', $caller_info));
-
         if (empty($context_product_ids)) {
-            error_log("FILTER DEBUG [{$call_id}] - No context product IDs, returning empty");
             return array();
         }
 
@@ -469,45 +437,10 @@ class Eshop_Product_Filters {
         ";
 
         $params = array_merge(array($attr_meta_key, $taxonomy), $context_product_ids);
-        
-        // DEBUG: Log the prepared SQL
-        $prepared_sql = $wpdb->prepare($sql, $params);
-        error_log("FILTER DEBUG - get_available_attribute_terms SQL for {$taxonomy}: " . substr($prepared_sql, 0, 500));
-        
-        $variation_results = $wpdb->get_results($prepared_sql, ARRAY_A);
-
-        // DEBUG: Log query results
-        error_log("FILTER DEBUG - Variation results count: " . count($variation_results ?: array()));
-        if (!empty($variation_results)) {
-            error_log("FILTER DEBUG - First few variation results: " . print_r(array_slice($variation_results, 0, 3), true));
-        }
-
-        // DEBUG: Check what stock status values actually exist for size 38 variations
-        if ($taxonomy === 'pa_size-selection' || $taxonomy === 'pa_select-size') {
-            $stock_check_sql = "
-                SELECT 
-                    v.ID as variation_id,
-                    v.post_parent as product_id,
-                    pm_stock.meta_value as stock_status,
-                    pm_qty.meta_value as stock_qty,
-                    pm_attr.meta_value as size_value
-                FROM {$wpdb->posts} v
-                INNER JOIN {$wpdb->postmeta} pm_attr ON v.ID = pm_attr.post_id 
-                    AND pm_attr.meta_key = %s
-                LEFT JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id 
-                    AND pm_stock.meta_key = '_stock_status'
-                LEFT JOIN {$wpdb->postmeta} pm_qty ON v.ID = pm_qty.post_id 
-                    AND pm_qty.meta_key = '_stock'
-                WHERE v.post_type = 'product_variation'
-                    AND v.post_status = 'publish'
-                    AND pm_attr.meta_value = '38'
-                LIMIT 10
-            ";
-            $stock_debug = $wpdb->get_results($wpdb->prepare($stock_check_sql, $attr_meta_key), ARRAY_A);
-            error_log("FILTER DEBUG - Size 38 variations stock check: " . print_r($stock_debug, true));
-        }
+        $variation_results = $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
 
         // Also get terms from simple products that are in stock
+        // Use a subquery to properly identify simple products (not variable products)
         $simple_sql = "
             SELECT 
                 t.term_id,
@@ -521,15 +454,18 @@ class Eshop_Product_Filters {
             INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
                 AND tt.taxonomy = %s
             INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
-            LEFT JOIN {$wpdb->term_relationships} tr_type ON p.ID = tr_type.object_id
-            LEFT JOIN {$wpdb->term_taxonomy} tt_type ON tr_type.term_taxonomy_id = tt_type.term_taxonomy_id 
-                AND tt_type.taxonomy = 'product_type'
-            LEFT JOIN {$wpdb->terms} t_type ON tt_type.term_id = t_type.term_id
             WHERE p.post_type = 'product'
                 AND p.post_status = 'publish'
                 AND p.ID IN ({$product_placeholders})
                 AND pm_stock.meta_value = 'instock'
-                AND (t_type.slug IS NULL OR t_type.slug = 'simple')
+                AND NOT EXISTS (
+                    SELECT 1 FROM {$wpdb->term_relationships} tr_type
+                    INNER JOIN {$wpdb->term_taxonomy} tt_type ON tr_type.term_taxonomy_id = tt_type.term_taxonomy_id
+                    INNER JOIN {$wpdb->terms} t_type ON tt_type.term_id = t_type.term_id
+                    WHERE tr_type.object_id = p.ID
+                    AND tt_type.taxonomy = 'product_type'
+                    AND t_type.slug = 'variable'
+                )
             GROUP BY t.term_id, t.name, t.slug
             HAVING count > 0
         ";
@@ -627,19 +563,6 @@ class Eshop_Product_Filters {
     public static function get_base_context_product_ids() {
         global $wpdb;
 
-        // DEBUG: Check what context we're in
-        error_log("FILTER DEBUG - get_base_context_product_ids called");
-        error_log("FILTER DEBUG - is_shop(): " . (is_shop() ? 'true' : 'false'));
-        error_log("FILTER DEBUG - is_product_category(): " . (is_product_category() ? 'true' : 'false'));
-        error_log("FILTER DEBUG - is_product_tag(): " . (is_product_tag() ? 'true' : 'false'));
-        
-        $queried_object = get_queried_object();
-        if ($queried_object) {
-            error_log("FILTER DEBUG - Queried object: " . print_r($queried_object, true));
-        } else {
-            error_log("FILTER DEBUG - Queried object is NULL");
-        }
-
         $where = array(
             "p.post_type = 'product'",
             "p.post_status = 'publish'"
@@ -663,8 +586,6 @@ class Eshop_Product_Filters {
                 if (!empty($child_categories) && !is_wp_error($child_categories)) {
                     $category_ids = array_merge($category_ids, $child_categories);
                 }
-
-                error_log("FILTER DEBUG - Category IDs to filter by: " . print_r($category_ids, true));
 
                 $cat_placeholders = implode(',', array_fill(0, count($category_ids), '%d'));
                 $joins[] = "INNER JOIN {$wpdb->term_relationships} tr_cat ON p.ID = tr_cat.object_id";
@@ -720,18 +641,11 @@ class Eshop_Product_Filters {
             " . implode("\n", $joins) . "
             WHERE " . implode("\n AND ", $where);
 
-        error_log("FILTER DEBUG - get_base_context SQL: " . $sql);
-        error_log("FILTER DEBUG - get_base_context params: " . print_r($params, true));
-
         if (!empty($params)) {
-            $prepared_sql = $wpdb->prepare($sql, $params);
-            error_log("FILTER DEBUG - get_base_context prepared SQL: " . $prepared_sql);
-            $product_ids = $wpdb->get_col($prepared_sql);
+            $product_ids = $wpdb->get_col($wpdb->prepare($sql, $params));
         } else {
             $product_ids = $wpdb->get_col($sql);
         }
-
-        error_log("FILTER DEBUG - get_base_context returned " . count($product_ids) . " products");
 
         return $product_ids ? array_map('intval', $product_ids) : array();
     }
