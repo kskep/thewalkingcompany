@@ -111,6 +111,17 @@ class Eshop_Product_Filters {
 
             $attribute_filters = self::get_attribute_filters_from_request($_GET);
 
+            // DEBUG: Temporarily output to see what's happening
+            if (!empty($attribute_filters) && isset($_GET['filter_debug'])) {
+                echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:300px;overflow:auto;">';
+                echo "Attribute filters from request:\n";
+                print_r($attribute_filters);
+                $ids = self::get_products_with_instock_variations($attribute_filters);
+                echo "\nProducts with in-stock variations: " . count($ids) . "\n";
+                echo "IDs: " . implode(', ', array_slice($ids, 0, 20)) . (count($ids) > 20 ? '...' : '') . "\n";
+                echo '</pre>';
+            }
+
             $meta_query = $query->get('meta_query', array());
             $tax_query = $query->get('tax_query', array());
 
