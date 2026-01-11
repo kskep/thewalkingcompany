@@ -116,8 +116,10 @@ class Eshop_Product_Filters {
                 echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:300px;overflow:auto;">';
                 echo "Attribute filters from request:\n";
                 print_r($attribute_filters);
+                $context_ids = self::get_base_context_product_ids();
+                echo "\nContext product IDs (category/page): " . count($context_ids) . "\n";
                 $ids = self::get_products_with_instock_variations($attribute_filters);
-                echo "\nProducts with in-stock variations: " . count($ids) . "\n";
+                echo "Products with in-stock variations: " . count($ids) . "\n";
                 echo "IDs: " . implode(', ', array_slice($ids, 0, 20)) . (count($ids) > 20 ? '...' : '') . "\n";
                 echo '</pre>';
             }
@@ -215,14 +217,25 @@ class Eshop_Product_Filters {
      * that have a variation with BOTH color=red AND size=38 AND that variation is in stock.
      *
      * @param array $attribute_filters Array of taxonomy => terms filters
+     * @param array|null $context_product_ids Optional. Limit to these product IDs. If null, uses current page context.
      * @return array Product IDs
      */
-    public static function get_products_with_instock_variations($attribute_filters) {
+    public static function get_products_with_instock_variations($attribute_filters, $context_product_ids = null) {
         if (empty($attribute_filters) || !is_array($attribute_filters)) {
             return array();
         }
 
         global $wpdb;
+
+        // Get context product IDs if not provided (from current page context like category)
+        if ($context_product_ids === null) {
+            $context_product_ids = self::get_base_context_product_ids();
+        }
+        
+        // If context is empty, no products to filter
+        if (empty($context_product_ids)) {
+            return array();
+        }
 
         // Sanitize and prepare filters
         $sanitized_filters = array();
@@ -253,6 +266,11 @@ class Eshop_Product_Filters {
             "p.post_status = 'publish'"
         );
         $variation_params = array();
+
+        // Limit to context products (e.g., current category)
+        $context_placeholders = implode(',', array_fill(0, count($context_product_ids), '%d'));
+        $variation_where[] = "v.post_parent IN ({$context_placeholders})";
+        $variation_params = array_merge($variation_params, $context_product_ids);
 
         // Join to parent product
         $variation_joins[] = "INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID";
@@ -308,7 +326,7 @@ class Eshop_Product_Filters {
         }
 
         // Also check simple products that have these attribute terms and are in stock
-        $simple_product_ids = self::get_simple_products_with_attributes($sanitized_filters, $size_terms, $size_aliases);
+        $simple_product_ids = self::get_simple_products_with_attributes($sanitized_filters, $size_terms, $size_aliases, $context_product_ids);
 
         return array_values(array_unique(array_merge(
             $variable_product_ids ? $variable_product_ids : array(),
@@ -322,10 +340,15 @@ class Eshop_Product_Filters {
      * @param array $filters Taxonomy => terms filters
      * @param array $size_terms Size terms to check
      * @param array $size_aliases Size taxonomy aliases
+     * @param array $context_product_ids Product IDs to limit search to
      * @return array Product IDs
      */
-    private static function get_simple_products_with_attributes($filters, $size_terms, $size_aliases) {
+    private static function get_simple_products_with_attributes($filters, $size_terms, $size_aliases, $context_product_ids = array()) {
         if (empty($filters) && empty($size_terms)) {
+            return array();
+        }
+        
+        if (empty($context_product_ids)) {
             return array();
         }
 
@@ -337,6 +360,11 @@ class Eshop_Product_Filters {
             "p.post_status = 'publish'"
         );
         $params = array();
+
+        // Limit to context products
+        $context_placeholders = implode(',', array_fill(0, count($context_product_ids), '%d'));
+        $where[] = "p.ID IN ({$context_placeholders})";
+        $params = array_merge($params, $context_product_ids);
 
         // Must be in stock
         $joins[] = "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'";
