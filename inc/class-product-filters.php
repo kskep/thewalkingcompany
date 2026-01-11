@@ -269,8 +269,8 @@ class Eshop_Product_Filters {
             $variation_params[] = $meta_key;
             
             $placeholders = implode(',', array_fill(0, count($terms), '%s'));
-            // Also allow empty meta value (means "any" for that attribute)
-            $variation_where[] = "(pm_attr{$attr_index}.meta_value IN ({$placeholders}) OR pm_attr{$attr_index}.meta_value = '')";
+            // FIXED: Do NOT allow empty meta value - we need exact matches
+            $variation_where[] = "pm_attr{$attr_index}.meta_value IN ({$placeholders})";
             $variation_params = array_merge($variation_params, $terms);
         }
 
@@ -288,7 +288,8 @@ class Eshop_Product_Filters {
             $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_attr{$attr_index} ON v.ID = pm_attr{$attr_index}.post_id AND (" . implode(' OR ', $size_meta_conditions) . ")";
             
             $placeholders = implode(',', array_fill(0, count($size_terms), '%s'));
-            $variation_where[] = "(pm_attr{$attr_index}.meta_value IN ({$placeholders}) OR pm_attr{$attr_index}.meta_value = '')";
+            // FIXED: Do NOT allow empty meta value - we need exact matches for size
+            $variation_where[] = "pm_attr{$attr_index}.meta_value IN ({$placeholders})";
             $variation_params = array_merge($variation_params, $size_terms);
         }
 
@@ -301,7 +302,12 @@ class Eshop_Product_Filters {
                 " . implode("\n", $variation_joins) . "
                 WHERE " . implode("\n AND ", $variation_where);
 
-            $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $variation_params));
+            // DEBUG: Log the actual SQL query
+            $prepared_sql = $wpdb->prepare($variation_sql, $variation_params);
+            error_log("FILTER DEBUG - Variation SQL: " . $prepared_sql);
+
+            $variable_product_ids = $wpdb->get_col($prepared_sql);
+            error_log("FILTER DEBUG - Variable product IDs returned: " . count($variable_product_ids));
         }
 
         // Also check simple products that have these attribute terms and are in stock
