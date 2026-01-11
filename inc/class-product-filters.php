@@ -109,6 +109,12 @@ class Eshop_Product_Filters {
     public static function handle_custom_filters($query) {
         if (!is_admin() && $query->is_main_query() && (is_shop() || is_product_category() || is_product_tag())) {
 
+            // DEBUG: Log when filters are applied
+            $attribute_filters = self::get_attribute_filters_from_request($_GET);
+            error_log("FILTER DEBUG - handle_custom_filters called");
+            error_log("FILTER DEBUG - GET params: " . print_r($_GET, true));
+            error_log("FILTER DEBUG - Attribute filters parsed: " . print_r($attribute_filters, true));
+
             $meta_query = $query->get('meta_query', array());
             $tax_query = $query->get('tax_query', array());
 
@@ -172,7 +178,9 @@ class Eshop_Product_Filters {
 
             // If we have attribute filters, get only products with IN-STOCK variations matching those filters
             if (!empty($attribute_filters)) {
+                error_log("FILTER DEBUG - Calling get_products_with_instock_variations with: " . print_r($attribute_filters, true));
                 $in_stock_product_ids = self::get_products_with_instock_variations($attribute_filters);
+                error_log("FILTER DEBUG - Got in_stock_product_ids: " . print_r($in_stock_product_ids, true));
 
                 if (!empty($in_stock_product_ids)) {
                     $existing_post_in = $query->get('post__in');
