@@ -55,6 +55,13 @@ class Eshop_Product_Filters {
     }
 
     /**
+     * Attribute taxonomies that represent size (aliases across catalog data).
+     */
+    public static function get_size_attribute_aliases() {
+        return array('pa_size', 'pa_select-size', 'pa_size-selection');
+    }
+
+    /**
      * Parse attribute filters from the request, supporting any pa_* taxonomy.
      */
     public static function get_attribute_filters_from_request($request) {
@@ -63,6 +70,9 @@ class Eshop_Product_Filters {
         }
 
         $filters = array();
+        $size_aliases = self::get_size_attribute_aliases();
+        $size_terms = array();
+
         foreach ($request as $key => $value) {
             if (strpos($key, 'pa_') !== 0) {
                 continue;
@@ -76,8 +86,16 @@ class Eshop_Product_Filters {
                 $terms = array_filter(array_map('wc_clean', explode(',', wp_unslash($value))));
             }
             if (!empty($terms)) {
-                $filters[$key] = $terms;
+                if (in_array($key, $size_aliases, true)) {
+                    $size_terms = array_merge($size_terms, $terms);
+                } else {
+                    $filters[$key] = $terms;
+                }
             }
+        }
+
+        if (!empty($size_terms)) {
+            $filters['__size_alias'] = array_values(array_unique($size_terms));
         }
 
         return $filters;
@@ -147,6 +165,9 @@ class Eshop_Product_Filters {
             $tax_query = $query->get('tax_query', array());
             $attribute_filters = self::get_attribute_filters_from_request($_GET);
             foreach ($attribute_filters as $attribute => $terms) {
+                if ($attribute === '__size_alias') {
+                    continue;
+                }
                 $tax_query[] = array(
                     'taxonomy' => $attribute,
                     'field' => 'slug',
@@ -196,14 +217,20 @@ class Eshop_Product_Filters {
         $sanitized_filters = array();
         foreach ($attribute_filters as $taxonomy => $terms) {
             $clean_terms = array_filter(array_map('wc_clean', (array) $terms));
-            if (!empty($clean_terms)) {
-                $sanitized_filters[$taxonomy] = $clean_terms;
+            if (empty($clean_terms)) {
+                continue;
             }
+            $sanitized_filters[$taxonomy] = $clean_terms;
         }
 
         if (empty($sanitized_filters)) {
             return array();
         }
+
+        $size_alias_key = '__size_alias';
+        $size_aliases = self::get_size_attribute_aliases();
+        $size_terms = isset($sanitized_filters[$size_alias_key]) ? $sanitized_filters[$size_alias_key] : array();
+        unset($sanitized_filters[$size_alias_key]);
 
         // Match variable products via their variations (same variation must satisfy all attribute filters)
         // Trust WooCommerce's _stock_status as the source of truth for stock availability.
@@ -227,6 +254,19 @@ class Eshop_Product_Filters {
             $placeholders = implode(',', array_fill(0, count($terms), '%s'));
             $variation_where[] = "pm_attr{$variation_attr_count}.meta_value IN ({$placeholders})";
             $variation_params = array_merge($variation_params, $terms);
+        }
+
+        if (!empty($size_terms)) {
+            $variation_attr_count++;
+            $meta_keys = array();
+            foreach ($size_aliases as $alias) {
+                $meta_keys[] = "'attribute_" . esc_sql($alias) . "'";
+            }
+            $meta_key_list = implode(',', $meta_keys);
+            $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_attr{$variation_attr_count} ON v.ID = pm_attr{$variation_attr_count}.post_id AND pm_attr{$variation_attr_count}.meta_key IN ({$meta_key_list})";
+            $placeholders = implode(',', array_fill(0, count($size_terms), '%s'));
+            $variation_where[] = "pm_attr{$variation_attr_count}.meta_value IN ({$placeholders})";
+            $variation_params = array_merge($variation_params, $size_terms);
         }
 
         $variation_ids = array();
@@ -263,6 +303,17 @@ class Eshop_Product_Filters {
             $placeholders = implode(',', array_fill(0, count($terms), '%s'));
             $simple_where[] = "t_attr{$simple_attr_count}.slug IN ({$placeholders})";
             $simple_params = array_merge($simple_params, $terms);
+        }
+
+        if (!empty($size_terms)) {
+            $simple_attr_count++;
+            $tax_placeholders = implode(',', array_fill(0, count($size_aliases), '%s'));
+            $simple_joins[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$simple_attr_count} ON p.ID = tr_attr{$simple_attr_count}.object_id";
+            $simple_joins[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$simple_attr_count} ON tr_attr{$simple_attr_count}.term_taxonomy_id = tt_attr{$simple_attr_count}.term_taxonomy_id AND tt_attr{$simple_attr_count}.taxonomy IN ({$tax_placeholders})";
+            $simple_joins[] = "INNER JOIN {$wpdb->terms} t_attr{$simple_attr_count} ON tt_attr{$simple_attr_count}.term_id = t_attr{$simple_attr_count}.term_id";
+            $placeholders = implode(',', array_fill(0, count($size_terms), '%s'));
+            $simple_where[] = "t_attr{$simple_attr_count}.slug IN ({$placeholders})";
+            $simple_params = array_merge($simple_params, $size_aliases, $size_terms);
         }
 
         $simple_ids = array();
@@ -495,8 +546,12 @@ class Eshop_Product_Filters {
         // Add attribute filters
         $attr_join_count = 0;
         $attribute_filters = self::get_attribute_filters_from_request($_GET);
+        $size_aliases = self::get_size_attribute_aliases();
 
         foreach ($attribute_filters as $attr_taxonomy => $attr_terms) {
+            if ($attr_taxonomy === '__size_alias') {
+                continue;
+            }
             $attr_terms = array_filter(array_map('sanitize_text_field', (array) $attr_terms));
             if (empty($attr_terms)) {
                 continue;
@@ -510,6 +565,19 @@ class Eshop_Product_Filters {
             $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
             $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
             $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
+        }
+
+        if (isset($attribute_filters['__size_alias']) && !empty($attribute_filters['__size_alias'])) {
+            $size_terms = array_filter(array_map('sanitize_text_field', (array) $attribute_filters['__size_alias']));
+            if (!empty($size_terms)) {
+                $attr_join_count++;
+                $tax_placeholders = implode(',', array_fill(0, count($size_aliases), '%s'));
+                $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
+                $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy IN ({$tax_placeholders})";
+                $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
+                $attr_placeholders = implode(',', array_fill(0, count($size_terms), '%s'));
+                $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", array_merge($size_aliases, $size_terms));
+            }
         }
 
         // Build and execute the query to get product IDs
