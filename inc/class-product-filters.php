@@ -642,6 +642,8 @@ class Eshop_Product_Filters {
                     $category_ids = array_merge($category_ids, $child_categories);
                 }
 
+                error_log("FILTER DEBUG - Category IDs to filter by: " . print_r($category_ids, true));
+
                 $cat_placeholders = implode(',', array_fill(0, count($category_ids), '%d'));
                 $joins[] = "INNER JOIN {$wpdb->term_relationships} tr_cat ON p.ID = tr_cat.object_id";
                 $joins[] = "INNER JOIN {$wpdb->term_taxonomy} tt_cat ON tr_cat.term_taxonomy_id = tt_cat.term_taxonomy_id AND tt_cat.taxonomy = 'product_cat'";
@@ -696,11 +698,18 @@ class Eshop_Product_Filters {
             " . implode("\n", $joins) . "
             WHERE " . implode("\n AND ", $where);
 
+        error_log("FILTER DEBUG - get_base_context SQL: " . $sql);
+        error_log("FILTER DEBUG - get_base_context params: " . print_r($params, true));
+
         if (!empty($params)) {
-            $product_ids = $wpdb->get_col($wpdb->prepare($sql, $params));
+            $prepared_sql = $wpdb->prepare($sql, $params);
+            error_log("FILTER DEBUG - get_base_context prepared SQL: " . $prepared_sql);
+            $product_ids = $wpdb->get_col($prepared_sql);
         } else {
             $product_ids = $wpdb->get_col($sql);
         }
+
+        error_log("FILTER DEBUG - get_base_context returned " . count($product_ids) . " products");
 
         return $product_ids ? array_map('intval', $product_ids) : array();
     }
