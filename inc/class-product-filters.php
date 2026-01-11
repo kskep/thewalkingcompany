@@ -292,12 +292,15 @@ class Eshop_Product_Filters {
             "p.post_type = 'product'",
             "p.post_status = 'publish'"
         );
-        $variation_params = array();
+        
+        // Separate params for JOINs and WHERE to maintain correct order
+        $join_params = array();
+        $where_params = array();
 
         // Limit to context products (e.g., current category)
         $context_placeholders = implode(',', array_fill(0, count($context_product_ids), '%d'));
         $variation_where[] = "v.post_parent IN ({$context_placeholders})";
-        $variation_params = array_merge($variation_params, $context_product_ids);
+        $where_params = array_merge($where_params, $context_product_ids);
 
         // Join to parent product
         $variation_joins[] = "INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID";
@@ -313,34 +316,29 @@ class Eshop_Product_Filters {
             $meta_key = 'attribute_' . $taxonomy;
             
             $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_attr{$attr_index} ON v.ID = pm_attr{$attr_index}.post_id AND pm_attr{$attr_index}.meta_key = %s";
-            $variation_params[] = $meta_key;
+            $join_params[] = $meta_key;
             
             $placeholders = implode(',', array_fill(0, count($terms), '%s'));
-            // FIXED: Do NOT allow empty meta value - we need exact matches
             $variation_where[] = "pm_attr{$attr_index}.meta_value IN ({$placeholders})";
-            $variation_params = array_merge($variation_params, $terms);
+            $where_params = array_merge($where_params, $terms);
         }
 
         // Handle size aliases - check any of the size attribute meta keys
         if (!empty($size_terms)) {
             $attr_index++;
             $size_meta_conditions = array();
-            $size_meta_params = array();
             
             foreach ($size_aliases as $alias) {
                 $meta_key = 'attribute_' . $alias;
                 $size_meta_conditions[] = "pm_attr{$attr_index}.meta_key = %s";
-                $size_meta_params[] = $meta_key;
+                $join_params[] = $meta_key;
             }
             
             $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_attr{$attr_index} ON v.ID = pm_attr{$attr_index}.post_id AND (" . implode(' OR ', $size_meta_conditions) . ")";
-            // Add meta key params right after the join is defined
-            $variation_params = array_merge($variation_params, $size_meta_params);
             
             $placeholders = implode(',', array_fill(0, count($size_terms), '%s'));
-            // FIXED: Do NOT allow empty meta value - we need exact matches for size
             $variation_where[] = "pm_attr{$attr_index}.meta_value IN ({$placeholders})";
-            $variation_params = array_merge($variation_params, $size_terms);
+            $where_params = array_merge($where_params, $size_terms);
         }
 
         // Execute query for variable products
@@ -352,16 +350,19 @@ class Eshop_Product_Filters {
                 " . implode("\n", $variation_joins) . "
                 WHERE " . implode("\n AND ", $variation_where);
 
+            // Combine params in correct order: JOINs first, then WHERE
+            $all_params = array_merge($join_params, $where_params);
+
             // Debug: output the SQL
             if (isset($_GET['filter_debug'])) {
                 echo '<pre style="background:#ffe;padding:10px;border:2px solid orange;position:fixed;top:420px;left:0;z-index:99998;max-height:300px;overflow:auto;font-size:10px;">';
                 echo "SQL Query:\n" . $variation_sql . "\n\n";
                 echo "Params:\n";
-                print_r($variation_params);
+                print_r($all_params);
                 echo '</pre>';
             }
 
-            $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $variation_params));
+            $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $all_params));
         }
 
         // Also check simple products that have these attribute terms and are in stock
