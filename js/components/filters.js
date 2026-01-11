@@ -168,10 +168,17 @@
                 url.searchParams.delete('on_sale');
             }
 
-            // Your custom attribute filters
-            var yourAttributes = ['pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection'];
+            // Product attribute filters (pa_*)
+            var attributeNames = [];
+            $('input[type="checkbox"][name^="pa_"]').each(function() {
+                var rawName = $(this).attr('name') || '';
+                var baseName = rawName.replace(/\[\]$/, '');
+                if (baseName && attributeNames.indexOf(baseName) === -1) {
+                    attributeNames.push(baseName);
+                }
+            });
 
-            yourAttributes.forEach(function(attribute) {
+            attributeNames.forEach(function(attribute) {
                 var selectedValues = [];
                 $('input[name="' + attribute + '[]"]:checked').each(function() {
                     selectedValues.push($(this).val());
@@ -201,7 +208,8 @@
 
             // Clear form inputs
             $('#min-price, #max-price').val('');
-            $('input[name="product_cat[]"], input[name="on_sale"], input[name="pa_box[]"], input[name="pa_color[]"], input[name="pa_pick-pattern[]"], input[name="pa_select-size[]"], input[name="pa_size-selection[]"]').prop('checked', false);
+            $('input[name="product_cat[]"], input[name="on_sale"]').prop('checked', false);
+            $('input[type="checkbox"][name^="pa_"]').prop('checked', false);
 
             // Reset visual states for size grids
             $('.size-label').removeClass('bg-primary text-white border-primary')
@@ -221,11 +229,12 @@
             url.searchParams.delete('max_price');
             url.searchParams.delete('product_cat');
             url.searchParams.delete('on_sale');
-            url.searchParams.delete('pa_box');
-            url.searchParams.delete('pa_color');
-            url.searchParams.delete('pa_pick-pattern');
-            url.searchParams.delete('pa_select-size');
-            url.searchParams.delete('pa_size-selection');
+            // Remove all attribute params (pa_*)
+            Array.from(url.searchParams.keys()).forEach(function(key) {
+                if (key.indexOf('pa_') === 0) {
+                    url.searchParams.delete(key);
+                }
+            });
 
             console.log('SimpleFilters: Redirecting to clean URL:', url.toString());
             window.location.href = url.toString();
@@ -330,10 +339,17 @@
                 $('input[name="on_sale"]').prop('checked', true);
             }
 
-            // Your custom attribute filters
-            var yourAttributes = ['pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection'];
+            // Product attribute filters (pa_*)
+            var attributeNames = [];
+            $('input[type="checkbox"][name^="pa_"]').each(function() {
+                var rawName = $(this).attr('name') || '';
+                var baseName = rawName.replace(/\[\]$/, '');
+                if (baseName && attributeNames.indexOf(baseName) === -1) {
+                    attributeNames.push(baseName);
+                }
+            });
 
-            yourAttributes.forEach(function(attribute) {
+            attributeNames.forEach(function(attribute) {
                 var attrValue = url.searchParams.get(attribute);
                 if (attrValue) {
                     var values = attrValue.split(',');

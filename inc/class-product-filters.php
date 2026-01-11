@@ -21,6 +21,40 @@ class Eshop_Product_Filters {
     }
 
     /**
+     * Get all product attribute taxonomies (pa_*) available for filtering.
+     */
+    public static function get_filterable_attribute_taxonomies() {
+        static $cached = null;
+
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        $fallback = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
+        if (!function_exists('wc_get_attribute_taxonomies')) {
+            $cached = $fallback;
+            return $cached;
+        }
+
+        $taxonomies = wc_get_attribute_taxonomies();
+        if (empty($taxonomies)) {
+            $cached = $fallback;
+            return $cached;
+        }
+
+        $names = array();
+        foreach ($taxonomies as $taxonomy) {
+            if (empty($taxonomy->attribute_name)) {
+                continue;
+            }
+            $names[] = 'pa_' . $taxonomy->attribute_name;
+        }
+
+        $cached = !empty($names) ? $names : $fallback;
+        return $cached;
+    }
+
+    /**
      * Handle custom filter parameters for WooCommerce
      * Priority 5 to run early, before our products_per_page override
      */
@@ -81,7 +115,7 @@ class Eshop_Product_Filters {
             }
 
             // Custom product attribute filters
-            $your_attributes = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
+            $your_attributes = self::get_filterable_attribute_taxonomies();
             $tax_query = $query->get('tax_query', array());
             $attribute_filters = array();
 
@@ -438,7 +472,7 @@ class Eshop_Product_Filters {
         }
 
         // Add attribute filters
-        $your_attributes = array('pa_box', 'pa_color', 'pa_pick-pattern', 'pa_select-size', 'pa_size-selection');
+        $your_attributes = self::get_filterable_attribute_taxonomies();
         $attr_join_count = 0;
         $attribute_filters = array();
 
