@@ -113,14 +113,41 @@ class Eshop_Product_Filters {
 
             // DEBUG: Temporarily output to see what's happening
             if (!empty($attribute_filters) && isset($_GET['filter_debug'])) {
-                echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:300px;overflow:auto;">';
+                global $wpdb;
+                echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:400px;overflow:auto;font-size:11px;">';
                 echo "Attribute filters from request:\n";
                 print_r($attribute_filters);
+                
                 $context_ids = self::get_base_context_product_ids();
                 echo "\nContext product IDs (category/page): " . count($context_ids) . "\n";
+                
                 $ids = self::get_products_with_instock_variations($attribute_filters);
                 echo "Products with in-stock variations: " . count($ids) . "\n";
-                echo "IDs: " . implode(', ', array_slice($ids, 0, 20)) . (count($ids) > 20 ? '...' : '') . "\n";
+                echo "IDs: " . implode(', ', array_slice($ids, 0, 10)) . (count($ids) > 10 ? '...' : '') . "\n";
+                
+                // Check a specific product to see its variations and stock
+                if (!empty($ids)) {
+                    $sample_id = $ids[0];
+                    echo "\n--- Sample product ID: {$sample_id} ---\n";
+                    
+                    // Get all variations with their stock and size
+                    $variations = $wpdb->get_results($wpdb->prepare("
+                        SELECT 
+                            v.ID,
+                            pm_stock.meta_value as stock_status,
+                            pm_size.meta_value as size_value
+                        FROM {$wpdb->posts} v
+                        LEFT JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'
+                        LEFT JOIN {$wpdb->postmeta} pm_size ON v.ID = pm_size.post_id AND pm_size.meta_key LIKE 'attribute_pa_%%size%%'
+                        WHERE v.post_parent = %d AND v.post_type = 'product_variation'
+                    ", $sample_id), ARRAY_A);
+                    
+                    echo "Variations:\n";
+                    foreach ($variations as $var) {
+                        echo "  ID: {$var['ID']}, Size: {$var['size_value']}, Stock: {$var['stock_status']}\n";
+                    }
+                }
+                
                 echo '</pre>';
             }
 
