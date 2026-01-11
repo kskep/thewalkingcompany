@@ -605,6 +605,19 @@ class Eshop_Product_Filters {
     public static function get_base_context_product_ids() {
         global $wpdb;
 
+        // DEBUG: Check what context we're in
+        error_log("FILTER DEBUG - get_base_context_product_ids called");
+        error_log("FILTER DEBUG - is_shop(): " . (is_shop() ? 'true' : 'false'));
+        error_log("FILTER DEBUG - is_product_category(): " . (is_product_category() ? 'true' : 'false'));
+        error_log("FILTER DEBUG - is_product_tag(): " . (is_product_tag() ? 'true' : 'false'));
+        
+        $queried_object = get_queried_object();
+        if ($queried_object) {
+            error_log("FILTER DEBUG - Queried object: " . print_r($queried_object, true));
+        } else {
+            error_log("FILTER DEBUG - Queried object is NULL");
+        }
+
         $where = array(
             "p.post_type = 'product'",
             "p.post_status = 'publish'"
