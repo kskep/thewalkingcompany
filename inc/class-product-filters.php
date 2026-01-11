@@ -325,14 +325,17 @@ class Eshop_Product_Filters {
         if (!empty($size_terms)) {
             $attr_index++;
             $size_meta_conditions = array();
+            $size_meta_params = array();
             
             foreach ($size_aliases as $alias) {
                 $meta_key = 'attribute_' . $alias;
                 $size_meta_conditions[] = "pm_attr{$attr_index}.meta_key = %s";
-                $variation_params[] = $meta_key;
+                $size_meta_params[] = $meta_key;
             }
             
             $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_attr{$attr_index} ON v.ID = pm_attr{$attr_index}.post_id AND (" . implode(' OR ', $size_meta_conditions) . ")";
+            // Add meta key params right after the join is defined
+            $variation_params = array_merge($variation_params, $size_meta_params);
             
             $placeholders = implode(',', array_fill(0, count($size_terms), '%s'));
             // FIXED: Do NOT allow empty meta value - we need exact matches for size
@@ -348,6 +351,15 @@ class Eshop_Product_Filters {
                 FROM {$wpdb->posts} v
                 " . implode("\n", $variation_joins) . "
                 WHERE " . implode("\n AND ", $variation_where);
+
+            // Debug: output the SQL
+            if (isset($_GET['filter_debug'])) {
+                echo '<pre style="background:#ffe;padding:10px;border:2px solid orange;position:fixed;top:420px;left:0;z-index:99998;max-height:300px;overflow:auto;font-size:10px;">';
+                echo "SQL Query:\n" . $variation_sql . "\n\n";
+                echo "Params:\n";
+                print_r($variation_params);
+                echo '</pre>';
+            }
 
             $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $variation_params));
         }
