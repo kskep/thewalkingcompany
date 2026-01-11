@@ -221,6 +221,15 @@ class Eshop_Product_Filters {
                     } else {
                         $query->set('post__in', $in_stock_product_ids);
                     }
+                    
+                    // Debug: Show what post__in was set to
+                    if (isset($_GET['filter_debug'])) {
+                        $final_post_in = $query->get('post__in');
+                        echo '<pre style="background:#efe;padding:10px;border:2px solid green;position:fixed;top:750px;left:0;z-index:99997;max-height:150px;overflow:auto;font-size:10px;">';
+                        echo "Final post__in set: " . count($final_post_in) . " products\n";
+                        echo "IDs: " . implode(', ', array_slice($final_post_in, 0, 10)) . "...\n";
+                        echo '</pre>';
+                    }
                 } else {
                     // No products with in-stock variations match
                     $query->set('post__in', array(-1));
