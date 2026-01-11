@@ -55,6 +55,35 @@ class Eshop_Product_Filters {
     }
 
     /**
+     * Parse attribute filters from the request, supporting any pa_* taxonomy.
+     */
+    public static function get_attribute_filters_from_request($request) {
+        if (empty($request) || !is_array($request)) {
+            return array();
+        }
+
+        $filters = array();
+        foreach ($request as $key => $value) {
+            if (strpos($key, 'pa_') !== 0) {
+                continue;
+            }
+            if (!taxonomy_exists($key)) {
+                continue;
+            }
+            if (is_array($value)) {
+                $terms = array_filter(array_map('wc_clean', $value));
+            } else {
+                $terms = array_filter(array_map('wc_clean', explode(',', wp_unslash($value))));
+            }
+            if (!empty($terms)) {
+                $filters[$key] = $terms;
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
      * Handle custom filter parameters for WooCommerce
      * Priority 5 to run early, before our products_per_page override
      */
@@ -115,23 +144,15 @@ class Eshop_Product_Filters {
             }
 
             // Custom product attribute filters
-            $your_attributes = self::get_filterable_attribute_taxonomies();
             $tax_query = $query->get('tax_query', array());
-            $attribute_filters = array();
-
-            foreach ($your_attributes as $attribute) {
-                if (isset($_GET[$attribute]) && !empty($_GET[$attribute])) {
-                    $terms = array_filter(array_map('wc_clean', explode(',', wp_unslash($_GET[$attribute]))));
-                    if (!empty($terms)) {
-                        $attribute_filters[$attribute] = $terms;
-                        $tax_query[] = array(
-                            'taxonomy' => $attribute,
-                            'field' => 'slug',
-                            'terms' => $terms,
-                            'operator' => 'IN'
-                        );
-                    }
-                }
+            $attribute_filters = self::get_attribute_filters_from_request($_GET);
+            foreach ($attribute_filters as $attribute => $terms) {
+                $tax_query[] = array(
+                    'taxonomy' => $attribute,
+                    'field' => 'slug',
+                    'terms' => $terms,
+                    'operator' => 'IN'
+                );
             }
 
             if (!empty($attribute_filters)) {
@@ -472,24 +493,23 @@ class Eshop_Product_Filters {
         }
 
         // Add attribute filters
-        $your_attributes = self::get_filterable_attribute_taxonomies();
         $attr_join_count = 0;
-        $attribute_filters = array();
+        $attribute_filters = self::get_attribute_filters_from_request($_GET);
 
-        foreach ($your_attributes as $attr_taxonomy) {
-            if (isset($_GET[$attr_taxonomy]) && !empty($_GET[$attr_taxonomy])) {
-                $attr_terms = array_filter(array_map('sanitize_text_field', explode(',', wp_unslash($_GET[$attr_taxonomy]))));
-                if (!empty($attr_terms)) {
-                    $attribute_filters[$attr_taxonomy] = $attr_terms;
-                    $attr_placeholders = implode(',', array_fill(0, count($attr_terms), '%s'));
-                    $attr_join_count++;
-
-                    $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
-                    $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
-                    $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
-                    $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
-                }
+        foreach ($attribute_filters as $attr_taxonomy => $attr_terms) {
+            $attr_terms = array_filter(array_map('sanitize_text_field', (array) $attr_terms));
+            if (empty($attr_terms)) {
+                continue;
             }
+
+            $attribute_filters[$attr_taxonomy] = $attr_terms;
+            $attr_placeholders = implode(',', array_fill(0, count($attr_terms), '%s'));
+            $attr_join_count++;
+
+            $join_clauses[] = "INNER JOIN {$wpdb->term_relationships} tr_attr{$attr_join_count} ON p.ID = tr_attr{$attr_join_count}.object_id";
+            $join_clauses[] = "INNER JOIN {$wpdb->term_taxonomy} tt_attr{$attr_join_count} ON tr_attr{$attr_join_count}.term_taxonomy_id = tt_attr{$attr_join_count}.term_taxonomy_id AND tt_attr{$attr_join_count}.taxonomy = '{$attr_taxonomy}'";
+            $join_clauses[] = "INNER JOIN {$wpdb->terms} t_attr{$attr_join_count} ON tt_attr{$attr_join_count}.term_id = t_attr{$attr_join_count}.term_id";
+            $where_clauses[] = $wpdb->prepare("t_attr{$attr_join_count}.slug IN ($attr_placeholders)", $attr_terms);
         }
 
         // Build and execute the query to get product IDs
