@@ -446,6 +446,31 @@ class Eshop_Product_Filters {
             error_log("FILTER DEBUG - First few variation results: " . print_r(array_slice($variation_results, 0, 3), true));
         }
 
+        // DEBUG: Check what stock status values actually exist for size 38 variations
+        if ($taxonomy === 'pa_size-selection' || $taxonomy === 'pa_select-size') {
+            $stock_check_sql = "
+                SELECT 
+                    v.ID as variation_id,
+                    v.post_parent as product_id,
+                    pm_stock.meta_value as stock_status,
+                    pm_qty.meta_value as stock_qty,
+                    pm_attr.meta_value as size_value
+                FROM {$wpdb->posts} v
+                INNER JOIN {$wpdb->postmeta} pm_attr ON v.ID = pm_attr.post_id 
+                    AND pm_attr.meta_key = %s
+                LEFT JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id 
+                    AND pm_stock.meta_key = '_stock_status'
+                LEFT JOIN {$wpdb->postmeta} pm_qty ON v.ID = pm_qty.post_id 
+                    AND pm_qty.meta_key = '_stock'
+                WHERE v.post_type = 'product_variation'
+                    AND v.post_status = 'publish'
+                    AND pm_attr.meta_value = '38'
+                LIMIT 10
+            ";
+            $stock_debug = $wpdb->get_results($wpdb->prepare($stock_check_sql, $attr_meta_key), ARRAY_A);
+            error_log("FILTER DEBUG - Size 38 variations stock check: " . print_r($stock_debug, true));
+        }
+
         // Also get terms from simple products that are in stock
         $simple_sql = "
             SELECT 
