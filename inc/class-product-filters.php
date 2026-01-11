@@ -21,9 +21,6 @@ class Eshop_Product_Filters {
         // Use WooCommerce's product query hook instead of pre_get_posts
         // This runs AFTER WooCommerce sets up its query, so our changes persist
         add_action('woocommerce_product_query', array(__CLASS__, 'handle_wc_product_query'), 20);
-        
-        // Debug: Late hook to see final query state
-        add_action('woocommerce_product_query', array(__CLASS__, 'debug_final_query'), 9999);
     }
     
     /**
@@ -31,17 +28,6 @@ class Eshop_Product_Filters {
      */
     public static function handle_wc_product_query($query) {
         $attribute_filters = self::get_attribute_filters_from_request($_GET);
-        
-        // DEBUG: Temporarily output to see what's happening
-        if (!empty($attribute_filters) && isset($_GET['filter_debug'])) {
-            global $wpdb;
-            echo '<pre style="background:#fff;padding:10px;border:2px solid red;position:fixed;top:0;left:0;z-index:99999;max-height:400px;overflow:auto;font-size:11px;">';
-            echo "Attribute filters from request:\n";
-            print_r($attribute_filters);
-            
-            $context_ids = self::get_base_context_product_ids();
-            echo "\nContext product IDs (category/page): " . count($context_ids) . "\n";
-        }
         
         // If we have attribute filters, get only products with IN-STOCK variations matching those filters
         if (!empty($attribute_filters)) {
@@ -55,41 +41,10 @@ class Eshop_Product_Filters {
                 } else {
                     $query->set('post__in', $in_stock_product_ids);
                 }
-                
-                // Debug: Show what post__in was set to
-                if (isset($_GET['filter_debug'])) {
-                    $final_post_in = $query->get('post__in');
-                    echo "Products with in-stock variations: " . count($in_stock_product_ids) . "\n";
-                    echo "IDs: " . implode(', ', array_slice($in_stock_product_ids, 0, 10)) . "...\n";
-                    echo '</pre>';
-                }
             } else {
                 // No products with in-stock variations match
                 $query->set('post__in', array(-1));
-                
-                if (isset($_GET['filter_debug'])) {
-                    echo "No products found with in-stock variations\n";
-                    echo '</pre>';
-                }
             }
-        } elseif (isset($_GET['filter_debug'])) {
-            echo '</pre>';
-        }
-    }
-    
-    /**
-     * Debug: Show what the final query looks like
-     */
-    public static function debug_final_query($query) {
-        if (isset($_GET['filter_debug'])) {
-            $post_in = $query->get('post__in');
-            echo '<pre style="background:#fef;padding:10px;border:2px solid purple;position:fixed;bottom:0;left:0;z-index:99996;max-height:150px;overflow:auto;font-size:10px;">';
-            echo "FINAL QUERY STATE (wc_product_query priority 9999):\n";
-            echo "post__in count: " . (is_array($post_in) ? count($post_in) : 'not set') . "\n";
-            if (is_array($post_in) && !empty($post_in)) {
-                echo "post__in IDs: " . implode(', ', array_slice($post_in, 0, 10)) . "...\n";
-            }
-            echo '</pre>';
         }
     }
 
@@ -290,15 +245,6 @@ class Eshop_Product_Filters {
 
             // Combine params in correct order: JOINs first, then WHERE
             $all_params = array_merge($join_params, $where_params);
-
-            // Debug: output the SQL
-            if (isset($_GET['filter_debug'])) {
-                echo '<pre style="background:#ffe;padding:10px;border:2px solid orange;position:fixed;top:420px;left:0;z-index:99998;max-height:300px;overflow:auto;font-size:10px;">';
-                echo "SQL Query:\n" . $variation_sql . "\n\n";
-                echo "Params:\n";
-                print_r($all_params);
-                echo '</pre>';
-            }
 
             $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $all_params));
         }
