@@ -141,7 +141,10 @@ if (!function_exists('eshop_fill_empty_nav_menu_item_title')) {
                 $url_path = trim((string) $url_path, '/');
                 $last_segment = $url_path !== '' ? basename($url_path) : '';
                 if ($last_segment !== '') {
-                    $fallback_title = ucwords(str_replace(array('-', '_'), ' ', $last_segment));
+                    $decoded_segment = rawurldecode($last_segment);
+                    $decoded_segment = str_replace(array('-', '_'), ' ', $decoded_segment);
+                    $decoded_segment = preg_replace('/\s+/', ' ', $decoded_segment);
+                    $fallback_title = trim((string) $decoded_segment);
                 }
             }
         }
