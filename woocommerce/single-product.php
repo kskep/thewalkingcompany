@@ -168,7 +168,7 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
 
                     <div class="detail-accordion">
                         <button class="detail-accordion-trigger" type="button" aria-expanded="false">
-                            <span>Shipping & Returns</span>
+                            <span>Αποστολή & Επιστροφές</span>
                             <span class="icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M6 9l6 6 6-6"></path>
@@ -176,14 +176,20 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             </span>
                         </button>
                         <div class="detail-accordion-panel" hidden>
-                            <p>Complimentary carbon-neutral delivery across Greece within 2 business days. EU orders arrive in 3–5 days.</p>
-                            <p>We offer free exchanges within 30 days. Returns remain effortless—use the enclosed prepaid label or visit a Walking Company boutique.</p>
+                            <p>Ελλάδα: δωρεάν αποστολή άνω των 50€ (κάτω από 50€ κόστος 3,50€), παράδοση σε 1-5 εργάσιμες.</p>
+                            <p>Κύπρος: δωρεάν αποστολή άνω των 100€ (κάτω από 100€ κόστος 8€), παράδοση σε 7-12 ημέρες.</p>
+                            <p>Αλλαγές/επιστροφές εντός 15 ημερών, με το προϊόν στην αρχική του κατάσταση.</p>
+                            <p>
+                                <a href="https://walk.thewebplace.gr/%cf%84%cf%81%cf%8c%cf%80%ce%bf%ce%b9-%ce%b1%cf%80%ce%bf%cf%83%cf%84%ce%bf%ce%bb%ce%ae%cf%82/" target="_blank" rel="noopener noreferrer">Τρόποι Αποστολής</a>
+                                |
+                                <a href="https://walk.thewebplace.gr/%cf%80%ce%bf%ce%bb%ce%b9%cf%84%ce%b9%ce%ba%ce%ae-%ce%b5%cf%80%ce%b9%cf%83%cf%84%cf%81%ce%bf%cf%86%cf%8e%ce%bd/" target="_blank" rel="noopener noreferrer">Πολιτική Επιστροφών</a>
+                            </p>
                         </div>
                     </div>
 
                     <div class="detail-accordion">
                         <button class="detail-accordion-trigger" type="button" aria-expanded="false">
-                            <span>Payment Options</span>
+                            <span>Τρόποι Πληρωμής</span>
                             <span class="icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M6 9l6 6 6-6"></path>
@@ -191,8 +197,9 @@ if ( isset($GLOBALS['product']) && is_a($GLOBALS['product'], 'WC_Product') ) {
                             </span>
                         </button>
                         <div class="detail-accordion-panel" hidden>
-                            <p>Secure checkout supports Visa, Mastercard, Amex, and Apple Pay. Klarna instalments are available for purchases above €180.</p>
-                            <p>Your card is only charged once the pair leaves our atelier.</p>
+                            <p>Πληρωμή με πιστωτική/χρεωστική κάρτα, αντικαταβολή (+3€) ή τραπεζική κατάθεση.</p>
+                            <p>Τυχόν έξοδα εμβάσματος επιβαρύνουν τον πελάτη.</p>
+                            <p><a href="https://walk.thewebplace.gr/%cf%84%cf%81%cf%8c%cf%80%ce%bf%ce%b9-%cf%80%ce%bb%ce%b7%cf%81%cf%89%ce%bc%ce%ae%cf%82/" target="_blank" rel="noopener noreferrer">Δες όλους τους τρόπους πληρωμής</a></p>
                         </div>
                     </div>
                 </div>

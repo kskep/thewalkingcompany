@@ -168,6 +168,7 @@ do_action('woocommerce_before_cart'); ?>
                 <div class="cart-totals-section">
                     <div class="cart-totals bg-gray-50 p-6 sticky top-4">
                         <h3 class="text-xl font-bold text-dark mb-4"><?php _e('Order Summary', 'eshop-theme'); ?></h3>
+                        <?php echo eshop_get_free_shipping_notice_markup(array('context' => 'cart-page')); ?>
                         
                         <?php do_action('woocommerce_before_cart_totals'); ?>
                         

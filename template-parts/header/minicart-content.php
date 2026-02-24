@@ -111,6 +111,7 @@ $cart_count = WC()->cart->get_cart_contents_count();
     <!-- Footer Actions -->
     <?php if ($cart_count > 0) : ?>
         <div class="mt-6 pt-5 border-t border-gray-100 space-y-4 flex-shrink-0 bg-white z-10">
+            <?php echo eshop_get_free_shipping_notice_markup(array('context' => 'minicart')); ?>
              <div class="flex justify-between items-end gap-4">
                 <span class="text-sm text-gray-500 font-medium"><?php _e('Subtotal', 'eshop-theme'); ?></span>
                 <div class="text-right">

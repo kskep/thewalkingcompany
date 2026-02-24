@@ -14,6 +14,104 @@ if (!defined('ABSPATH')) {
  * Enhanced Cart Functions
  */
 
+/**
+ * Build free-shipping progress data for cart UIs.
+ *
+ * @return array|null
+ */
+function eshop_get_free_shipping_notice_data() {
+    if (!class_exists('WooCommerce') || !WC()->cart) {
+        return null;
+    }
+
+    $free_shipping_threshold = (float) eshop_get_free_shipping_threshold();
+    if ($free_shipping_threshold <= 0) {
+        return null;
+    }
+
+    $cart_total = (float) WC()->cart->get_cart_contents_total();
+    $remaining_for_free_shipping = max(0, $free_shipping_threshold - $cart_total);
+    $progress_percentage = min(100, max(0, ($cart_total / $free_shipping_threshold) * 100));
+
+    return array(
+        'cart_total' => $cart_total,
+        'threshold' => $free_shipping_threshold,
+        'remaining' => $remaining_for_free_shipping,
+        'progress' => $progress_percentage,
+        'qualified' => $remaining_for_free_shipping <= 0,
+    );
+}
+
+/**
+ * Render a reusable free-shipping notice for any cart context.
+ *
+ * @param array $args Optional arguments.
+ * @return string
+ */
+function eshop_get_free_shipping_notice_markup($args = array()) {
+    $shipping_data = eshop_get_free_shipping_notice_data();
+    if (empty($shipping_data)) {
+        return '';
+    }
+
+    $args = wp_parse_args(
+        $args,
+        array(
+            'context' => '',
+            'show_progress' => true,
+            'extra_classes' => array(),
+        )
+    );
+
+    $classes = array('shipping-info', 'eshop-free-shipping-notice');
+
+    if (!empty($args['context'])) {
+        $classes[] = 'eshop-free-shipping-notice--' . sanitize_html_class($args['context']);
+    }
+
+    $extra_classes = is_array($args['extra_classes']) ? $args['extra_classes'] : preg_split('/\s+/', (string) $args['extra_classes']);
+    foreach ($extra_classes as $extra_class) {
+        $extra_class = sanitize_html_class($extra_class);
+        if (!empty($extra_class)) {
+            $classes[] = $extra_class;
+        }
+    }
+
+    if ($shipping_data['qualified']) {
+        $classes[] = 'free-shipping-achieved';
+        $message = __('Congratulations! You qualify for FREE shipping!', 'eshop-theme');
+        $icon = 'fa-check-circle';
+    } else {
+        $message = sprintf(
+            __('Only %s left to unlock FREE shipping!', 'eshop-theme'),
+            wc_price($shipping_data['remaining'])
+        );
+        $icon = 'fa-truck';
+    }
+
+    ob_start();
+    ?>
+    <div class="<?php echo esc_attr(implode(' ', array_unique($classes))); ?>">
+        <div class="shipping-message">
+            <i class="fas <?php echo esc_attr($icon); ?> shipping-icon"></i>
+            <span class="shipping-text"><?php echo wp_kses_post($message); ?></span>
+        </div>
+        <?php if (!$shipping_data['qualified'] && !empty($args['show_progress'])) : ?>
+            <div class="shipping-progress">
+                <div class="shipping-progress-bar">
+                    <div
+                        class="shipping-progress-fill"
+                        style="width: <?php echo esc_attr(number_format((float) $shipping_data['progress'], 2, '.', '')); ?>%;"
+                    ></div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php
+
+    return ob_get_clean();
+}
+
 // Get cart fragment for AJAX updates
 function eshop_cart_fragment($fragments) {
     ob_start();
@@ -48,35 +146,16 @@ function eshop_cart_fragment($fragments) {
     <?php
     $fragments['.cart-total-amount'] = ob_get_clean();
 
-    // Flying cart shipping information
-    $cart_total = WC()->cart->get_cart_contents_total();
-    $free_shipping_threshold = eshop_get_free_shipping_threshold();
-    $remaining_for_free_shipping = max(0, $free_shipping_threshold - $cart_total);
-
-    ob_start();
-    if ($remaining_for_free_shipping > 0) : ?>
-        <div class="shipping-info">
-            <div class="shipping-message">
-                <i class="fas fa-truck shipping-icon"></i>
-                <span class="shipping-text">
-                    <?php echo sprintf(__('Add %s more for FREE shipping!', 'eshop-theme'), wc_price($remaining_for_free_shipping)); ?>
-                </span>
-            </div>
-            <div class="shipping-progress">
-                <div class="shipping-progress-bar">
-                    <div class="shipping-progress-fill" style="width: <?php echo min(100, ($cart_total / $free_shipping_threshold) * 100); ?>%"></div>
-                </div>
-            </div>
-        </div>
-    <?php else : ?>
-        <div class="shipping-info free-shipping-achieved">
-            <div class="shipping-message">
-                <i class="fas fa-check-circle shipping-icon"></i>
-                <span class="shipping-text"><?php _e('Congratulations! You qualify for FREE shipping!', 'eshop-theme'); ?></span>
-            </div>
-        </div>
-    <?php endif;
-    $fragments['.shipping-info'] = ob_get_clean();
+    // Free shipping notices (context-specific selectors)
+    $fragments['.eshop-free-shipping-notice--flying-cart'] = eshop_get_free_shipping_notice_markup(array(
+        'context' => 'flying-cart',
+    ));
+    $fragments['.eshop-free-shipping-notice--minicart'] = eshop_get_free_shipping_notice_markup(array(
+        'context' => 'minicart',
+    ));
+    $fragments['.eshop-free-shipping-notice--cart-page'] = eshop_get_free_shipping_notice_markup(array(
+        'context' => 'cart-page',
+    ));
     
     // Update entire minicart content
     ob_start();

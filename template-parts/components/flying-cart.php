@@ -125,36 +125,7 @@ if ($is_cart_empty) {
 
                 <!-- Cart Actions -->
                 <div class="cart-panel-actions">
-                    <?php
-                    // Calculate shipping info
-                    $cart_total = WC()->cart->get_cart_contents_total();
-                    $free_shipping_threshold = eshop_get_free_shipping_threshold();
-                    $remaining_for_free_shipping = max(0, $free_shipping_threshold - $cart_total);
-                    ?>
-
-                    <!-- Shipping Information -->
-                    <?php if ($remaining_for_free_shipping > 0) : ?>
-                        <div class="shipping-info">
-                            <div class="shipping-message">
-                                <i class="fas fa-truck shipping-icon"></i>
-                                <span class="shipping-text">
-                                    <?php echo sprintf(__('Add %s more for FREE shipping!', 'eshop-theme'), wc_price($remaining_for_free_shipping)); ?>
-                                </span>
-                            </div>
-                            <div class="shipping-progress">
-                                <div class="shipping-progress-bar">
-                                    <div class="shipping-progress-fill" style="width: <?php echo min(100, ($cart_total / $free_shipping_threshold) * 100); ?>%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php else : ?>
-                        <div class="shipping-info free-shipping-achieved">
-                            <div class="shipping-message">
-                                <i class="fas fa-check-circle shipping-icon"></i>
-                                <span class="shipping-text"><?php _e('Congratulations! You qualify for FREE shipping!', 'eshop-theme'); ?></span>
-                            </div>
-                        </div>
-                    <?php endif; ?>
+                    <?php echo eshop_get_free_shipping_notice_markup(array('context' => 'flying-cart')); ?>
 
                     <div class="cart-total-summary">
                         <div class="cart-subtotal">
