@@ -256,13 +256,13 @@
         }
 
         /**
-         * Check if product is new (added within last 30 days)
+         * Check if product is new (added within last 3 weeks)
          */
         isNewProduct() {
             const product = this.card;
             const dateAdded = new Date(product.dataset.dateAdded || Date.now());
-            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-            return dateAdded > thirtyDaysAgo;
+            const threeWeeksAgo = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000);
+            return dateAdded > threeWeeksAgo;
         }
 
         /**

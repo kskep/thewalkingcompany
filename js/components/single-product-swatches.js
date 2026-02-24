@@ -7,7 +7,6 @@
  * - Add to cart functionality
  * - Variation price updates
  * - Form validation and WooCommerce integration
- * - Quantity controls
  * - Wishlist functionality
  * 
  * Consolidates functionality from:
@@ -28,7 +27,6 @@
         init() {
             this.bindAttributeEvents();
             this.bindVariationFormEvents();
-            this.bindQuantityEvents();
             this.bindWishlistEvents();
 
             // Delay initial sync to allow Woo scripts to hydrate the variation form.
@@ -70,7 +68,6 @@
                 this.syncSelectedAttributes(form);
                 this.updateStockInfo(variation);
                 this.updatePrice(variation);
-                this.initializeQuantityControls($(form));
             });
 
             $(document).on('reset_data', '.variations_form', (event) => {
@@ -80,24 +77,6 @@
                 this.resetPrice();
             });
 
-            $(document).on('updated_wc_div found_variation show_variation', () => {
-                this.initializeQuantityControls($(document));
-            });
-        }
-
-        bindQuantityEvents() {
-            if (!window.jQuery) {
-                return;
-            }
-
-            const $ = window.jQuery;
-            // Initialize quantity controls
-            this.initializeQuantityControls($(document));
-
-            // Re-initialize when variation form updates
-            $(document.body).on('updated_wc_div found_variation show_variation', () => {
-                this.initializeQuantityControls($(document));
-            });
         }
 
         bindWishlistEvents() {
@@ -439,77 +418,6 @@
             }
         }
 
-        initializeQuantityControls($scope) {
-            if (!window.jQuery) {
-                return;
-            }
-
-            const $ = window.jQuery;
-            const $containers = ($scope && $scope.length ? $scope : $(document)).find('.cart .quantity');
-
-            $containers.each(function() {
-                const $q = $(this);
-                if ($q.data('enhanced')) { return; }
-                const $input = $q.find('input.qty');
-                if ($input.length === 0) { return; }
-
-                // Insert buttons
-                const $minus = $('<button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">&minus;</button>');
-                const $plus = $('<button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">+</button>');
-
-                // If not already injected, prepend/append
-                if ($q.children('.qty-minus').length === 0) { $q.prepend($minus); }
-                if ($q.children('.qty-plus').length === 0) { $q.append($plus); }
-
-                function clamp(val, min, max, step) {
-                    let n = parseFloat(val);
-                    if (isNaN(n)) n = min || 1;
-                    if (!isNaN(min)) n = Math.max(n, min);
-                    if (!isNaN(max) && max > 0) n = Math.min(n, max);
-                    if (!isNaN(step) && step > 0) {
-                        // Snap to nearest step
-                        const base = (!isNaN(min) ? min : 0);
-                        n = Math.round((n - base) / step) * step + base;
-                    }
-                    return n;
-                }
-
-                function readBounds() {
-                    return {
-                        min: parseFloat($input.attr('min')) || 1,
-                        max: parseFloat($input.attr('max')) || null,
-                        step: parseFloat($input.attr('step')) || 1
-                    };
-                }
-
-                $minus.on('click', function() {
-                    const b = readBounds();
-                    const curr = parseFloat($input.val()) || b.min;
-                    let next = curr - b.step;
-                    next = clamp(next, b.min, b.max, b.step);
-                    $input.val(next).trigger('change');
-                });
-
-                $plus.on('click', function() {
-                    const b = readBounds();
-                    const curr = parseFloat($input.val()) || b.min;
-                    let next = curr + b.step;
-                    next = clamp(next, b.min, b.max, b.step);
-                    $input.val(next).trigger('change');
-                });
-
-                $input.on('change input blur', function() {
-                    const b = readBounds();
-                    const curr = parseFloat($input.val());
-                    const fixed = clamp(curr, b.min, b.max, b.step);
-                    if (fixed !== curr) {
-                        $input.val(fixed);
-                    }
-                });
-
-                $q.data('enhanced', true);
-            });
-        }
     }
 
     // Initialize the class when DOM is ready

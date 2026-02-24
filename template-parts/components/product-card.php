@@ -124,7 +124,7 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
          data-regular-price="<?php echo $product->get_regular_price(); ?>">
     <div class="product-card__media">
         <a href="<?php echo esc_url( get_permalink() ); ?>">
-            <?php echo woocommerce_get_product_thumbnail(); ?>
+            <?php echo woocommerce_get_product_thumbnail('full'); ?>
         </a>
         <div class="badge-stack">
             <?php if ($is_on_sale) :
@@ -138,10 +138,10 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
                 }
             endif; ?>
             <?php
-            // Add "New" badge for products created within last 30 days
+            // Add "New" badge for products created within the last 3 weeks
             $date_created_timestamp = strtotime($date_created);
-            $thirty_days_ago = strtotime('-30 days');
-            if ($date_created_timestamp > $thirty_days_ago) {
+            $three_weeks_ago = strtotime('-3 weeks');
+            if ($date_created_timestamp > $three_weeks_ago) {
                 echo '<span class="badge">New</span>';
             }
             ?>

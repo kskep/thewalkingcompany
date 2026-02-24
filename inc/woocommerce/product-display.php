@@ -132,9 +132,9 @@ function eshop_get_product_badges($product) {
         $badges[] = array('text' => __('OUT OF STOCK', 'eshop-theme'), 'class' => 'badge-out-of-stock', 'style' => 'background-color: #6b7280; color: white;');
     }
 
-    // New in last 30 days
+    // New in last 3 weeks
     $created_date = $product->get_date_created();
-    if ($created_date && $created_date->getTimestamp() > strtotime('-30 days')) {
+    if ($created_date && $created_date->getTimestamp() > strtotime('-3 weeks')) {
         $badges[] = array('text' => __('NEW', 'eshop-theme'), 'class' => 'badge-new', 'style' => 'background-color: #16a34a; color: white;');
     }
 
