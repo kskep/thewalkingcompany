@@ -136,15 +136,78 @@ if (!function_exists('eshop_fill_empty_nav_menu_item_title')) {
         }
 
         if ($fallback_title === '' && !empty($item->url)) {
-            $url_path = wp_parse_url((string) $item->url, PHP_URL_PATH);
-            if (!empty($url_path)) {
-                $url_path = trim((string) $url_path, '/');
-                $last_segment = $url_path !== '' ? basename($url_path) : '';
-                if ($last_segment !== '') {
-                    $decoded_segment = rawurldecode($last_segment);
-                    $decoded_segment = str_replace(array('-', '_'), ' ', $decoded_segment);
-                    $decoded_segment = preg_replace('/\s+/', ' ', $decoded_segment);
-                    $fallback_title = trim((string) $decoded_segment);
+            $item_url = (string) $item->url;
+
+            // Prefer the actual linked post/page title when URL points to a WP object.
+            $linked_post_id = function_exists('url_to_postid') ? (int) url_to_postid($item_url) : 0;
+            if ($linked_post_id > 0) {
+                $linked_post_title = get_the_title($linked_post_id);
+                if (!empty($linked_post_title)) {
+                    $fallback_title = $linked_post_title;
+                }
+            }
+
+            $url_path = wp_parse_url($item_url, PHP_URL_PATH);
+            if ($fallback_title === '' && !empty($url_path)) {
+                $decoded_path = trim((string) rawurldecode((string) $url_path), '/');
+
+                if ($decoded_path !== '') {
+                    // Attempt page title lookup by full path and common variants.
+                    $candidate_paths = array($decoded_path);
+                    if (strpos($decoded_path, '/') !== false) {
+                        $segments = array_values(array_filter(explode('/', $decoded_path), 'strlen'));
+                        if (!empty($segments)) {
+                            $candidate_paths[] = end($segments); // last segment only
+                            if (count($segments) > 1) {
+                                $candidate_paths[] = implode('/', array_slice($segments, 1)); // strip language-like prefix
+                            }
+                        }
+                    }
+
+                    foreach (array_unique($candidate_paths) as $candidate_path) {
+                        $linked_page = get_page_by_path($candidate_path, OBJECT, 'page');
+                        if ($linked_page instanceof WP_Post && !empty($linked_page->post_title)) {
+                            $fallback_title = $linked_page->post_title;
+                            break;
+                        }
+                    }
+
+                    // Attempt taxonomy term name lookup for common taxonomy URL bases.
+                    if ($fallback_title === '') {
+                        $path_segments = array_values(array_filter(explode('/', $decoded_path), 'strlen'));
+                        if (count($path_segments) >= 2) {
+                            $taxonomy_base = sanitize_title($path_segments[0]);
+                            $taxonomy_map = array(
+                                'product-category' => 'product_cat',
+                                'product-tag'      => 'product_tag',
+                                'category'         => 'category',
+                            );
+
+                            if (isset($taxonomy_map[$taxonomy_base])) {
+                                $term_slug = sanitize_title(end($path_segments));
+                                $term = get_term_by('slug', $term_slug, $taxonomy_map[$taxonomy_base]);
+                                if ($term && !is_wp_error($term) && !empty($term->name)) {
+                                    $fallback_title = $term->name;
+                                }
+                            }
+                        }
+                    }
+
+                    // Last resort: humanized slug text.
+                    if ($fallback_title === '') {
+                        $last_segment = basename($decoded_path);
+                        if ($last_segment !== '') {
+                            $decoded_segment = str_replace(array('-', '_'), ' ', $last_segment);
+                            $decoded_segment = preg_replace('/\s+/', ' ', $decoded_segment);
+                            $decoded_segment = trim((string) $decoded_segment);
+
+                            if ($decoded_segment !== '' && preg_match('/^[a-z0-9\s]+$/i', $decoded_segment)) {
+                                $decoded_segment = ucwords(strtolower($decoded_segment));
+                            }
+
+                            $fallback_title = $decoded_segment;
+                        }
+                    }
                 }
             }
         }
