@@ -169,8 +169,11 @@ function eshop_set_gift_wrap_qty_ajax() {
         ));
     }
 
-    $qty = isset($_POST['gift_wrap_qty']) ? absint($_POST['gift_wrap_qty']) : 0;
-    WC()->session->set('eshop_gift_wrap_qty', $qty);
+    $gift_wrap_qty = isset($_POST['gift_wrap_qty']) ? absint($_POST['gift_wrap_qty']) : 0;
+    $gift_extra_bag_qty = isset($_POST['gift_extra_bag_qty']) ? absint($_POST['gift_extra_bag_qty']) : 0;
+
+    WC()->session->set('eshop_gift_wrap_qty', $gift_wrap_qty);
+    WC()->session->set('eshop_gift_extra_bag_qty', $gift_extra_bag_qty);
 
     if (WC()->cart) {
         WC()->cart->calculate_totals();

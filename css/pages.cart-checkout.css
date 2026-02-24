@@ -148,6 +148,11 @@
   object-fit: cover;
 }
 
+.gift-wrap-thumb i {
+  font-size: 18px;
+  color: #6b7280;
+}
+
 .gift-wrap-info {
   display: flex;
   flex-direction: column;

@@ -171,7 +171,8 @@
         function scheduleGiftWrapUpdate() {
             clearTimeout(giftWrapUpdateTimer);
             giftWrapUpdateTimer = setTimeout(function () {
-                var qty = parseInt($('.gift-wrap-input').first().val()) || 0;
+                var giftWrapQty = parseInt($('input[name="gift_wrap_qty"]').first().val()) || 0;
+                var giftExtraBagQty = parseInt($('input[name="gift_extra_bag_qty"]').first().val()) || 0;
                 if (typeof eshop_ajax !== 'undefined') {
                     $.ajax({
                         url: eshop_ajax.ajax_url,
@@ -179,7 +180,8 @@
                         dataType: 'json',
                         data: {
                             action: 'set_gift_wrap_qty',
-                            gift_wrap_qty: qty,
+                            gift_wrap_qty: giftWrapQty,
+                            gift_extra_bag_qty: giftExtraBagQty,
                             nonce: eshop_ajax.nonce
                         },
                         success: function (response) {

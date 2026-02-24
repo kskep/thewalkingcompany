@@ -159,6 +159,12 @@ function eshop_cart_fragment($fragments) {
     $fragments['.eshop-free-shipping-notice--cart-block'] = eshop_get_free_shipping_notice_markup(array(
         'context' => 'cart-block',
     ));
+    $fragments['.eshop-free-shipping-notice--checkout-page'] = eshop_get_free_shipping_notice_markup(array(
+        'context' => 'checkout-page',
+    ));
+    $fragments['.eshop-free-shipping-notice--checkout-block'] = eshop_get_free_shipping_notice_markup(array(
+        'context' => 'checkout-block',
+    ));
     
     // Update entire minicart content
     ob_start();
@@ -173,17 +179,25 @@ add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
  * Gift wrap helpers and checkout fee.
  */
 function eshop_get_gift_wrap_price() {
-    return (float) apply_filters('eshop_gift_wrap_price', 1.5);
+    return (float) apply_filters('eshop_gift_wrap_price', 2.0);
+}
+
+function eshop_get_gift_extra_bag_price() {
+    return (float) apply_filters('eshop_gift_extra_bag_price', 0.5);
 }
 
 function eshop_get_gift_wrap_title() {
-    return apply_filters('eshop_gift_wrap_title', __('Επαναχρησιμοποιήσιμη Τσάντα LUIGI 38x49x14cm', 'eshop-theme'));
+    return apply_filters('eshop_gift_wrap_title', __('Επιλογή σε συσκευασία δώρου', 'eshop-theme'));
+}
+
+function eshop_get_gift_extra_bag_title() {
+    return apply_filters('eshop_gift_extra_bag_title', __('Προσθήκη πλαστικής σακούλας', 'eshop-theme'));
 }
 
 function eshop_get_gift_wrap_description() {
     return apply_filters(
         'eshop_gift_wrap_description',
-        __('Η συσκευασία δώρου που έχετε επιλέξει, συσκευάζεται στην παραγγελία σας μαζί με τα προϊόντα. Δεν παραλαμβάνετε τα προϊόντα συσκευασμένα, προκειμένου να αποτρέπεται η φθορά της συσκευασίας κατά τη μεταφορά του δέματος.', 'eshop-theme')
+        __('Επιλέξτε συσκευασία δώρου για την παραγγελία σας και προαιρετικά προσθέστε έξτρα πλαστική σακούλα.', 'eshop-theme')
     );
 }
 
@@ -193,19 +207,23 @@ function eshop_get_gift_wrap_image_url() {
 
 function eshop_get_gift_wrap_markup() {
     $gift_wrap_qty = 0;
+    $gift_extra_bag_qty = 0;
     if (function_exists('WC') && WC()->session) {
         $gift_wrap_qty = (int) WC()->session->get('eshop_gift_wrap_qty', 0);
+        $gift_extra_bag_qty = (int) WC()->session->get('eshop_gift_extra_bag_qty', 0);
     }
     $gift_wrap_price = eshop_get_gift_wrap_price();
+    $gift_extra_bag_price = eshop_get_gift_extra_bag_price();
     $gift_wrap_image = eshop_get_gift_wrap_image_url();
     $gift_wrap_title = eshop_get_gift_wrap_title();
+    $gift_extra_bag_title = eshop_get_gift_extra_bag_title();
     $gift_wrap_desc = eshop_get_gift_wrap_description();
 
     ob_start();
     ?>
     <div class="gift-wrap-section mb-6">
         <button type="button" class="gift-wrap-toggle w-full flex items-center justify-between text-left">
-            <span class="gift-wrap-toggle-text"><?php _e('ΕΠΙΛΕΞΤΕ ΣΥΣΚΕΥΑΣΙΑ ΔΩΡΟΥ', 'eshop-theme'); ?></span>
+            <span class="gift-wrap-toggle-text"><?php _e('ΕΠΙΛΟΓΕΣ ΣΥΣΚΕΥΑΣΙΑΣ', 'eshop-theme'); ?></span>
             <i class="fas fa-chevron-down gift-wrap-toggle-icon"></i>
         </button>
         <div class="gift-wrap-panel mt-3">
@@ -228,6 +246,24 @@ function eshop_get_gift_wrap_markup() {
                     </button>
                 </div>
             </div>
+            <div class="gift-wrap-item mt-3">
+                <div class="gift-wrap-thumb">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="gift-wrap-info">
+                    <div class="gift-wrap-name"><?php echo esc_html($gift_extra_bag_title); ?></div>
+                    <div class="gift-wrap-price"><?php echo wc_price($gift_extra_bag_price); ?></div>
+                </div>
+                <div class="gift-wrap-qty">
+                    <button type="button" class="gift-wrap-qty-btn gift-wrap-minus" aria-label="<?php esc_attr_e('Decrease extra bag quantity', 'eshop-theme'); ?>">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <input type="number" name="gift_extra_bag_qty" class="gift-wrap-input" min="0" max="99" step="1" value="<?php echo esc_attr($gift_extra_bag_qty); ?>">
+                    <button type="button" class="gift-wrap-qty-btn gift-wrap-plus" aria-label="<?php esc_attr_e('Increase extra bag quantity', 'eshop-theme'); ?>">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <?php
@@ -241,8 +277,11 @@ function eshop_capture_gift_wrap_qty($posted_data) {
 
     $data = array();
     parse_str($posted_data, $data);
-    $qty = isset($data['gift_wrap_qty']) ? absint($data['gift_wrap_qty']) : 0;
-    WC()->session->set('eshop_gift_wrap_qty', $qty);
+    $gift_wrap_qty = isset($data['gift_wrap_qty']) ? absint($data['gift_wrap_qty']) : 0;
+    $gift_extra_bag_qty = isset($data['gift_extra_bag_qty']) ? absint($data['gift_extra_bag_qty']) : 0;
+
+    WC()->session->set('eshop_gift_wrap_qty', $gift_wrap_qty);
+    WC()->session->set('eshop_gift_extra_bag_qty', $gift_extra_bag_qty);
 }
 add_action('woocommerce_checkout_update_order_review', 'eshop_capture_gift_wrap_qty');
 
@@ -255,18 +294,23 @@ function eshop_apply_gift_wrap_fee($cart) {
         return;
     }
 
-    $qty = absint(WC()->session->get('eshop_gift_wrap_qty', 0));
-    if ($qty < 1) {
-        return;
+    $gift_wrap_qty = absint(WC()->session->get('eshop_gift_wrap_qty', 0));
+    if ($gift_wrap_qty > 0) {
+        $gift_wrap_price = eshop_get_gift_wrap_price();
+        if ($gift_wrap_price > 0) {
+            $gift_wrap_label = sprintf(__('Επιλογή σε συσκευασία δώρου (%d)', 'eshop-theme'), $gift_wrap_qty);
+            $cart->add_fee($gift_wrap_label, $gift_wrap_price * $gift_wrap_qty, false);
+        }
     }
 
-    $price = eshop_get_gift_wrap_price();
-    if ($price <= 0) {
-        return;
+    $gift_extra_bag_qty = absint(WC()->session->get('eshop_gift_extra_bag_qty', 0));
+    if ($gift_extra_bag_qty > 0) {
+        $gift_extra_bag_price = eshop_get_gift_extra_bag_price();
+        if ($gift_extra_bag_price > 0) {
+            $gift_extra_bag_label = sprintf(__('Προσθήκη πλαστικής σακούλας (%d)', 'eshop-theme'), $gift_extra_bag_qty);
+            $cart->add_fee($gift_extra_bag_label, $gift_extra_bag_price * $gift_extra_bag_qty, false);
+        }
     }
-
-    $label = sprintf(__('Συσκευασία δώρου (%d)', 'eshop-theme'), $qty);
-    $cart->add_fee($label, $price * $qty, false);
 }
 add_action('woocommerce_cart_calculate_fees', 'eshop_apply_gift_wrap_fee', 20, 1);
 
@@ -307,6 +351,57 @@ function eshop_is_checkout_block_context() {
 
     return false;
 }
+
+function eshop_render_checkout_free_shipping_notice() {
+    if (!class_exists('WooCommerce') || !WC()->cart || WC()->cart->is_empty()) {
+        return;
+    }
+
+    if (!empty($GLOBALS['eshop_has_checkout_free_shipping_notice'])) {
+        return;
+    }
+
+    echo eshop_get_free_shipping_notice_markup(array('context' => 'checkout-page'));
+    $GLOBALS['eshop_has_checkout_free_shipping_notice'] = true;
+}
+add_action('woocommerce_review_order_before_cart_contents', 'eshop_render_checkout_free_shipping_notice', 1);
+
+function eshop_inject_free_shipping_into_checkout_blocks($block_content, $block) {
+    if (empty($block['blockName'])) {
+        return $block_content;
+    }
+
+    if (!eshop_is_checkout_block_context()) {
+        return $block_content;
+    }
+
+    if (!class_exists('WooCommerce') || !WC()->cart || WC()->cart->is_empty()) {
+        return $block_content;
+    }
+
+    if (!empty($GLOBALS['eshop_has_checkout_free_shipping_notice'])) {
+        return $block_content;
+    }
+
+    $block_name = (string) $block['blockName'];
+    $matches_summary = strpos($block_name, 'woocommerce/checkout-order-summary') !== false;
+    $matches_totals = strpos($block_name, 'woocommerce/checkout-totals') !== false;
+    $matches_root = $block_name === 'woocommerce/checkout';
+
+    if (!$matches_summary && !$matches_totals && !$matches_root) {
+        return $block_content;
+    }
+
+    $markup = eshop_get_free_shipping_notice_markup(array('context' => 'checkout-block'));
+    if ($markup === '') {
+        return $block_content;
+    }
+
+    $GLOBALS['eshop_has_checkout_free_shipping_notice'] = true;
+
+    return $markup . $block_content;
+}
+add_filter('render_block', 'eshop_inject_free_shipping_into_checkout_blocks', 15, 2);
 
 function eshop_inject_gift_wrap_into_blocks($block_content, $block) {
     if (empty($block['blockName'])) {
@@ -415,9 +510,14 @@ function eshop_save_gift_wrap_meta($order, $data) {
         return;
     }
 
-    $qty = absint(WC()->session->get('eshop_gift_wrap_qty', 0));
-    if ($qty > 0) {
-        $order->update_meta_data('_eshop_gift_wrap_qty', $qty);
+    $gift_wrap_qty = absint(WC()->session->get('eshop_gift_wrap_qty', 0));
+    if ($gift_wrap_qty > 0) {
+        $order->update_meta_data('_eshop_gift_wrap_qty', $gift_wrap_qty);
+    }
+
+    $gift_extra_bag_qty = absint(WC()->session->get('eshop_gift_extra_bag_qty', 0));
+    if ($gift_extra_bag_qty > 0) {
+        $order->update_meta_data('_eshop_gift_extra_bag_qty', $gift_extra_bag_qty);
     }
 }
 add_action('woocommerce_checkout_create_order', 'eshop_save_gift_wrap_meta', 20, 2);
@@ -425,6 +525,7 @@ add_action('woocommerce_checkout_create_order', 'eshop_save_gift_wrap_meta', 20,
 function eshop_clear_gift_wrap_session($order_id) {
     if (class_exists('WooCommerce') && WC()->session) {
         WC()->session->__unset('eshop_gift_wrap_qty');
+        WC()->session->__unset('eshop_gift_extra_bag_qty');
     }
 }
 add_action('woocommerce_checkout_order_processed', 'eshop_clear_gift_wrap_session', 20, 1);
