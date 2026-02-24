@@ -855,6 +855,17 @@ button:focus-visible {
   .cart-actions-wrapper .wishlist-action-btn {
     width: 100%;
   }
+
+  /* Prevent oversized CTA on stacked mobile layout */
+  .cart-actions-wrapper .single_add_to_cart_button {
+    flex: 0 0 auto;
+    min-height: 44px;
+  }
+
+  .cart-actions-wrapper .wishlist-action-btn {
+    flex: 0 0 auto;
+    min-height: 44px;
+  }
 }
 
 /* Related products (archive-style grid on single page) */
@@ -956,6 +967,7 @@ button:focus-visible {
   }
   
   .related-products-grid {
+    grid-template-columns: 1fr;
     gap: 12px;
   }
 }

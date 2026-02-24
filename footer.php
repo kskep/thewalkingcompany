@@ -38,17 +38,26 @@ if (!defined('ABSPATH')) {
                 <div class="footer-nav">
                     <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('ΠΛΗΡΟΦΟΡΙΕΣ', 'eshop-theme'); ?></h3>
                     <?php
+                    $footer_main_markup = '';
                     if (has_nav_menu('footer-main')) {
-                        wp_nav_menu(array(
+                        $footer_main_markup = wp_nav_menu(array(
                             'theme_location' => 'footer-main',
                             'container' => false,
                             'menu_class' => 'space-y-3 text-sm text-gray-600',
                             'fallback_cb' => false,
                             'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                            'echo' => false,
                         ));
+                    }
+
+                    if (!empty($footer_main_markup) && strpos($footer_main_markup, '<li') !== false) {
+                        echo $footer_main_markup;
                     } else {
-                        // Fallback if no menu assigned
-                        echo '<p class="text-sm text-gray-500">' . __('Please assign a menu to "Footer Main Menu" location.', 'eshop-theme') . '</p>';
+                        echo '<ul class="space-y-3 text-sm text-gray-600">';
+                        echo '<li><a href="' . esc_url(home_url('/shop/')) . '">' . esc_html__('Shop', 'eshop-theme') . '</a></li>';
+                        echo '<li><a href="' . esc_url(home_url('/contact/')) . '">' . esc_html__('Contact', 'eshop-theme') . '</a></li>';
+                        echo '<li><a href="' . esc_url(home_url('/my-account/')) . '">' . esc_html__('My Account', 'eshop-theme') . '</a></li>';
+                        echo '</ul>';
                     }
                     ?>
                 </div>
@@ -57,17 +66,26 @@ if (!defined('ABSPATH')) {
                 <div class="footer-nav">
                     <h3 class="text-lg font-bold mb-6 uppercase tracking-wide text-gray-900"><?php _e('ΛΟΓΑΡΙΑΣΜΟΣ', 'eshop-theme'); ?></h3>
                     <?php
+                    $footer_account_markup = '';
                     if (has_nav_menu('footer-account')) {
-                        wp_nav_menu(array(
+                        $footer_account_markup = wp_nav_menu(array(
                             'theme_location' => 'footer-account',
                             'container' => false,
                             'menu_class' => 'space-y-3 text-sm text-gray-600',
                             'fallback_cb' => false,
                             'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+                            'echo' => false,
                         ));
+                    }
+
+                    if (!empty($footer_account_markup) && strpos($footer_account_markup, '<li') !== false) {
+                        echo $footer_account_markup;
                     } else {
-                         // Fallback if no menu assigned
-                         echo '<p class="text-sm text-gray-500">' . __('Please assign a menu to "Footer Account Menu" location.', 'eshop-theme') . '</p>';
+                        echo '<ul class="space-y-3 text-sm text-gray-600">';
+                        echo '<li><a href="' . esc_url(home_url('/my-account/')) . '">' . esc_html__('My Account', 'eshop-theme') . '</a></li>';
+                        echo '<li><a href="' . esc_url(home_url('/cart/')) . '">' . esc_html__('Cart', 'eshop-theme') . '</a></li>';
+                        echo '<li><a href="' . esc_url(home_url('/checkout/')) . '">' . esc_html__('Checkout', 'eshop-theme') . '</a></li>';
+                        echo '</ul>';
                     }
                     ?>
                 </div>

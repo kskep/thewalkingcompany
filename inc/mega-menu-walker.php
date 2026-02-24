@@ -28,6 +28,8 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
     function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
         $classes = empty($item->classes) ? array() : (array) $item->classes;
         $classes[] = 'menu-item-' . $item->ID;
+        $raw_title = apply_filters('the_title', $item->title, $item->ID);
+        $item_title = apply_filters('nav_menu_item_title', $raw_title, $item, $args, $depth);
 
         if ($depth === 0) {
             // Top level menu item
@@ -37,7 +39,7 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
 
             $output .= '<li' . $class_names . '>';
             $output .= '<a href="' . esc_url($item->url) . '" class="nav-link">';
-            $output .= esc_html($item->title);
+            $output .= esc_html($item_title);
             $output .= '</a>';
 
         } elseif ($depth === 1) {
@@ -59,7 +61,7 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
 
             $output .= '</div>';
             $output .= '<div class="mega-menu-title">';
-            $output .= esc_html($item->title);
+            $output .= esc_html($item_title);
             $output .= '</div>';
             $output .= '</a>';
             $output .= '</div>';
