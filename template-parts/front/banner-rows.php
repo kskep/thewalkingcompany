@@ -63,9 +63,6 @@ if (empty($banner_rows)) {
                     <?php if (!empty($title)) : ?>
                     <!-- Hidden title for SEO -->
                     <h3 class="sr-only"><?php echo esc_html($title); ?></h3>
-                    
-                    <!-- Data attribute for custom cursor -->
-                    <span class="cursor-title" data-title="<?php echo esc_attr($title); ?>"></span>
                     <?php endif; ?>
                 </div>
             </a>
@@ -74,37 +71,3 @@ if (empty($banner_rows)) {
     </div>
     <?php endforeach; ?>
 </section>
-
-<!-- Custom cursor element -->
-<div class="custom-cursor" id="customCursor"></div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cursor = document.getElementById('customCursor');
-    const bannerItems = document.querySelectorAll('.banner-item');
-
-    // Track mouse movement
-    document.addEventListener('mousemove', function(e) {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-
-    // Handle banner item hover
-    bannerItems.forEach(function(item) {
-        const cursorTitle = item.querySelector('.cursor-title');
-        const title = cursorTitle ? cursorTitle.getAttribute('data-title') : '';
-
-        item.addEventListener('mouseenter', function() {
-            if (title) {
-                cursor.textContent = title;
-                cursor.classList.add('active');
-            }
-        });
-
-        item.addEventListener('mouseleave', function() {
-            cursor.classList.remove('active');
-            cursor.textContent = '';
-        });
-    });
-});
-</script>
