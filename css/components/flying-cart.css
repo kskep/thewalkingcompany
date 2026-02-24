@@ -376,6 +376,10 @@
   font-size: 13px;
 }
 
+.eshop-free-shipping-notice--cart-block {
+  margin-bottom: 16px;
+}
+
 .shipping-info.free-shipping-achieved {
   background: #d1f2eb;
   border-color: #7dcea0;

@@ -156,6 +156,9 @@ function eshop_cart_fragment($fragments) {
     $fragments['.eshop-free-shipping-notice--cart-page'] = eshop_get_free_shipping_notice_markup(array(
         'context' => 'cart-page',
     ));
+    $fragments['.eshop-free-shipping-notice--cart-block'] = eshop_get_free_shipping_notice_markup(array(
+        'context' => 'cart-block',
+    ));
     
     // Update entire minicart content
     ob_start();
@@ -345,6 +348,67 @@ function eshop_output_gift_wrap_template() {
     echo '<template id="eshop-gift-wrap-template">' . eshop_get_gift_wrap_markup() . '</template>';
 }
 add_action('wp_footer', 'eshop_output_gift_wrap_template', 20);
+
+/**
+ * Determine if we are inside Cart Block context.
+ *
+ * @return bool
+ */
+function eshop_is_cart_block_context() {
+    if (function_exists('is_cart') && is_cart()) {
+        return true;
+    }
+
+    if (function_exists('has_block')) {
+        return has_block('woocommerce/cart') || has_block('woocommerce/cart-block');
+    }
+
+    return false;
+}
+
+/**
+ * Inject free-shipping notice into WooCommerce Cart Blocks output.
+ *
+ * @param string $block_content Block HTML.
+ * @param array  $block Parsed block data.
+ * @return string
+ */
+function eshop_inject_free_shipping_into_cart_blocks($block_content, $block) {
+    if (empty($block['blockName'])) {
+        return $block_content;
+    }
+
+    if (!eshop_is_cart_block_context()) {
+        return $block_content;
+    }
+
+    if (!class_exists('WooCommerce') || !WC()->cart || WC()->cart->is_empty()) {
+        return $block_content;
+    }
+
+    if (!empty($GLOBALS['eshop_has_cart_free_shipping_notice'])) {
+        return $block_content;
+    }
+
+    $block_name = (string) $block['blockName'];
+    $matches_order_summary = strpos($block_name, 'woocommerce/cart-order-summary') !== false;
+    $matches_totals = strpos($block_name, 'woocommerce/cart-totals') !== false;
+    $matches_root = $block_name === 'woocommerce/cart';
+
+    if (!$matches_order_summary && !$matches_totals && !$matches_root) {
+        return $block_content;
+    }
+
+    $markup = eshop_get_free_shipping_notice_markup(array('context' => 'cart-block'));
+    if ($markup === '') {
+        return $block_content;
+    }
+
+    $GLOBALS['eshop_has_cart_free_shipping_notice'] = true;
+
+    return $markup . $block_content;
+}
+add_filter('render_block', 'eshop_inject_free_shipping_into_cart_blocks', 20, 2);
 
 function eshop_save_gift_wrap_meta($order, $data) {
     if (!class_exists('WooCommerce') || !WC()->session) {
