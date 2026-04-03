@@ -17,17 +17,17 @@ if (!defined('ABSPATH')) {
                 <input type="search"
                        name="s"
                        class="search-modal__input"
-                       placeholder="<?php esc_attr_e('Search products, brands, categories...', 'eshop-theme'); ?>"
+                       placeholder="<?php esc_attr_e('Anazitisi proionton, markon, kigorion...', 'eshop-theme'); ?>"
                        autocomplete="off"
-                       aria-label="<?php esc_attr_e('Search products', 'eshop-theme'); ?>" />
-                <button type="button" class="search-modal__close" aria-label="<?php esc_attr_e('Close search', 'eshop-theme'); ?>">
+                       aria-label="<?php esc_attr_e('Anazitisi proionton', 'eshop-theme'); ?>" />
+                <button type="button" class="search-modal__close" aria-label="<?php esc_attr_e('Kleisimo anazitisis', 'eshop-theme'); ?>">
                     <i class="fas fa-times"></i>
                 </button>
             </form>
         </div>
         <div class="search-modal__results">
             <div class="search-modal__empty">
-                <p class="search-modal__hint"><?php _e('Start typing to search products...', 'eshop-theme'); ?></p>
+                <p class="search-modal__hint"><?php _e('Eisagete keimeno gia anazitisi proionton...', 'eshop-theme'); ?></p>
             </div>
         </div>
     </div>

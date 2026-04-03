@@ -2,6 +2,26 @@
  * Search Modal & Mobile Search Bar Styles
  */
 
+/* ===== Search Toggle Button (desktop header) ===== */
+.search-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+}
+
+.search-toggle i {
+  font-size: 1rem;
+  color: inherit;
+  display: inline-block;
+  width: auto;
+  height: auto;
+}
+
 /* ===== Desktop Fullscreen Search Modal ===== */
 .search-modal {
   position: fixed;
@@ -23,6 +43,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 
@@ -73,21 +94,34 @@
   flex-shrink: 0;
   width: 36px;
   height: 36px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--primary-pink, #ee81b3);
+  background-color: #ee81b3;
   border: none;
   cursor: pointer;
   color: #fff;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease;
   border-radius: 50%;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
 }
 
 .search-modal__close:hover {
-  background: var(--primary-pink-dark, #d66a9c);
+  background: var(--primary-pink-dark, #e55a9f);
+  background-color: #e55a9f;
   color: #fff;
+}
+
+.search-modal__close i {
+  color: #fff;
+  font-style: normal;
+  display: inline-block;
+  width: auto;
+  height: auto;
 }
 
 /* Results area */

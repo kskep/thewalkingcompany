@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     
     <!-- Search -->
     <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
-        <i class="fas fa-search text-xl"></i>
+        <i class="fas fa-search" style="font-size: 1rem;"></i>
     </button>
     
     <!-- Wishlist -->

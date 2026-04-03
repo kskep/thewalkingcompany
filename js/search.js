@@ -19,49 +19,7 @@
         $modal.removeClass('hidden');
         $('body').css('overflow', 'hidden');
         $input.val('');
-        $results.html('<div class="search-modal__empty"><p class="search-modal__hint">Start typing to search products...</p></div>');
-        selectedIndex = -1;
-        setTimeout(function () {
-            $input.trigger('focus');
-        }, 50);
-    }
-
-    function closeModal() {
-        $modal.addClass('hidden');
-        $('body').css('overflow', '');
-        if (ajaxRequest) {
-            ajaxRequest.abort();
-            ajaxRequest = null;
-        }
-        if (debounceTimer) {
-            clearTimeout(debounceTimer);
-            debounceTimer = null;
-        }
-    }
-
-    // Bind open to desktop search toggle
-    $(document).on('click', '.search-toggle', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        // Close any header dropdowns
-        $('.wishlist-dropdown, .account-dropdown, .minicart-dropdown').addClass('hidden');
-        openModal();
-    });
-
-    // Close handlers
-    $close.on('click', closeModal);
-    $overlay.on('click', closeModal);
-    $(document).on('keydown', function (e) {
-        if (e.key === 'Escape' && !$modal.hasClass('hidden')) {
-            closeModal();
-        }
-    });
-
-    // --- Live Search ---
-
-    function performSearch(keyword) {
-        if (keyword.length < 2) {
-            $results.html('<div class="search-modal__empty"><p class="search-modal__hint">Start typing to search products...</p></div>');
+        $results.html('<div class="search-modal__empty"><p class="search-modal__hint">Eisagete keimeno gia anazitisi proionton...</p></div>');
             selectedIndex = -1;
             return;
         }
@@ -70,7 +28,7 @@
             ajaxRequest.abort();
         }
 
-        $results.html('<div class="search-modal__loading"><i class="fas fa-spinner fa-spin"></i> Searching...</div>');
+        $results.html('<div class="search-modal__loading"><i class="fas fa-spinner fa-spin"></i> Anazitisi...</div>');
 
         ajaxRequest = $.ajax({
             url: eshop_ajax.ajax_url,
@@ -86,13 +44,13 @@
                 if (response.success && response.data) {
                     renderResults(response.data, keyword);
                 } else {
-                    $results.html('<div class="search-modal__no-results">No products found.</div>');
+                    $results.html('<div class="search-modal__no-results">Den vrethikan proionta.</div>');
                 }
             },
             error: function (xhr) {
                 ajaxRequest = null;
                 if (xhr.statusText !== 'abort') {
-                    $results.html('<div class="search-modal__no-results">Something went wrong. Please try again.</div>');
+                    $results.html('<div class="search-modal__no-results">Kati pige strava. Parakaloume dokimaste ksana.</div>');
                 }
             }
         });
@@ -106,10 +64,10 @@
         if (products.length === 0) {
             $results.html(
                 '<div class="search-modal__no-results">' +
-                    '<p>No products found for "<strong>' + escapeHtml(keyword) + '</strong>"</p>' +
+                    '<p>Den vrethikan proionta gia "<strong>' + escapeHtml(keyword) + '</strong>"</p>' +
                 '</div>' +
                 '<a href="' + escapeHtml(eshop_ajax.home_url || '/') + '?s=' + encodeURIComponent(keyword) + '" class="search-modal__view-all">' +
-                    'View all results' +
+                    'Deite oles tis eggrafes' +
                 '</a>'
             );
             return;
@@ -118,7 +76,7 @@
         var html = '';
 
         if (totalCount > products.length) {
-            html += '<div class="search-modal__count">Showing ' + products.length + ' of ' + totalCount + ' results</div>';
+            html += '<div class="search-modal__count">Emfanizontai ' + products.length + ' apo ' + totalCount + ' apotelesmata</div>';
         }
 
         for (var i = 0; i < products.length; i++) {
@@ -136,7 +94,7 @@
 
         html +=
             '<a href="' + escapeHtml(eshop_ajax.home_url || '/') + '?s=' + encodeURIComponent(keyword) + '" class="search-modal__view-all">' +
-                'View all ' + totalCount + ' results' +
+                'Deite ola ta ' + totalCount + ' apotelesmata' +
             '</a>';
 
         $results.html(html);
