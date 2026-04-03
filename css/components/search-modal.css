@@ -76,18 +76,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
+  background: var(--primary-pink, #ee81b3);
   border: none;
   cursor: pointer;
-  color: #6b7280;
+  color: #fff;
   font-size: 14px;
   transition: all 0.2s ease;
   border-radius: 50%;
 }
 
 .search-modal__close:hover {
-  background: #e5e7eb;
-  color: #1f2937;
+  background: var(--primary-pink-dark, #d66a9c);
+  color: #fff;
 }
 
 /* Results area */

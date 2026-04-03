@@ -3,7 +3,6 @@
  * Product Filters Class
  * 
  * Handles custom filtering logic for WooCommerce products.
- * Only shows and counts products/variations that are actually in stock.
  * 
  * @package E-Shop Theme
  */
@@ -29,20 +28,20 @@ class Eshop_Product_Filters {
     public static function handle_wc_product_query($query) {
         $attribute_filters = self::get_attribute_filters_from_request($_GET);
         
-        // If we have attribute filters, get only products with IN-STOCK variations matching those filters
+        // If we have attribute filters, get only products with matching variations
         if (!empty($attribute_filters)) {
-            $in_stock_product_ids = self::get_products_with_instock_variations($attribute_filters);
+            $matching_product_ids = self::get_products_with_instock_variations($attribute_filters);
 
-            if (!empty($in_stock_product_ids)) {
+            if (!empty($matching_product_ids)) {
                 $existing_post_in = $query->get('post__in');
                 if (!empty($existing_post_in)) {
-                    $intersected = array_values(array_intersect($existing_post_in, $in_stock_product_ids));
+                    $intersected = array_values(array_intersect($existing_post_in, $matching_product_ids));
                     $query->set('post__in', !empty($intersected) ? $intersected : array(-1));
                 } else {
-                    $query->set('post__in', $in_stock_product_ids);
+                    $query->set('post__in', $matching_product_ids);
                 }
             } else {
-                // No products with in-stock variations match
+                // No products with matching variations match
                 $query->set('post__in', array(-1));
             }
         }
@@ -130,11 +129,11 @@ class Eshop_Product_Filters {
     }
 
     /**
-     * Get product IDs that have IN-STOCK variations matching ALL the given attribute filters.
-     * Each filter must be satisfied by the SAME variation that is in stock.
+     * Get product IDs that have variations matching ALL the given attribute filters.
+     * Each filter must be satisfied by the SAME variation.
      * 
      * For example: If filtering by color=red AND size=38, we only return products
-     * that have a variation with BOTH color=red AND size=38 AND that variation is in stock.
+     * that have a variation with BOTH color=red AND size=38.
      *
      * @param array $attribute_filters Array of taxonomy => terms filters
      * @param array|null $context_product_ids Optional. Limit to these product IDs. If null, uses current page context.
@@ -177,7 +176,7 @@ class Eshop_Product_Filters {
         unset($sanitized_filters[$size_alias_key]);
 
         // Build query for variable products via their variations
-        // The key: SAME variation must satisfy ALL attribute filters AND be in stock
+        // The key: SAME variation must satisfy ALL attribute filters
         $variation_joins = array();
         $variation_where = array(
             "v.post_type = 'product_variation'",
@@ -197,10 +196,6 @@ class Eshop_Product_Filters {
 
         // Join to parent product
         $variation_joins[] = "INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID";
-
-        // Join to stock status - must be in stock
-        $variation_joins[] = "INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'";
-        $variation_where[] = "pm_stock.meta_value = 'instock'";
 
         // Add joins for each attribute filter - all must match on the SAME variation
         $attr_index = 0;
@@ -249,7 +244,7 @@ class Eshop_Product_Filters {
             $variable_product_ids = $wpdb->get_col($wpdb->prepare($variation_sql, $all_params));
         }
 
-        // Also check simple products that have these attribute terms and are in stock
+        // Also check simple products that have these attribute terms
         $simple_product_ids = self::get_simple_products_with_attributes($sanitized_filters, $size_terms, $size_aliases, $context_product_ids);
 
         return array_values(array_unique(array_merge(
@@ -259,7 +254,7 @@ class Eshop_Product_Filters {
     }
 
     /**
-     * Get simple products that have the given attribute terms and are in stock.
+     * Get simple products that have the given attribute terms.
      *
      * @param array $filters Taxonomy => terms filters
      * @param array $size_terms Size terms to check
@@ -289,10 +284,6 @@ class Eshop_Product_Filters {
         $context_placeholders = implode(',', array_fill(0, count($context_product_ids), '%d'));
         $where[] = "p.ID IN ({$context_placeholders})";
         $params = array_merge($params, $context_product_ids);
-
-        // Must be in stock
-        $joins[] = "INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id AND pm_stock.meta_key = '_stock_status'";
-        $where[] = "pm_stock.meta_value = 'instock'";
 
         // Must NOT be a variable product (use NOT EXISTS for reliability)
         $where[] = "NOT EXISTS (
@@ -351,10 +342,10 @@ class Eshop_Product_Filters {
     /**
      * Get available attribute terms for the filter UI.
      * 
-     * CRITICAL: Only returns terms that have AT LEAST ONE in-stock product/variation
+     * Only returns terms that have AT LEAST ONE matching product/variation
      * within the current context (category, other active filters).
      * 
-     * The count represents how many products have an IN-STOCK variation with that term.
+     * The count represents how many products have a matching variation with that term.
      *
      * @param string $taxonomy The attribute taxonomy (e.g., 'pa_color', 'pa_select-size')
      * @return array Array of term data with term_id, name, slug, count, and optionally color
@@ -372,7 +363,7 @@ class Eshop_Product_Filters {
         $product_placeholders = implode(',', array_fill(0, count($context_product_ids), '%d'));
         $attr_meta_key = 'attribute_' . $taxonomy;
 
-        // Get terms from IN-STOCK variations of products in the current context
+        // Get terms from variations of products in the current context
         // Each term is only counted once per parent product, even if multiple variations have it
         $sql = "
             SELECT 
@@ -382,8 +373,6 @@ class Eshop_Product_Filters {
                 COUNT(DISTINCT v.post_parent) as count
             FROM {$wpdb->posts} v
             INNER JOIN {$wpdb->posts} p ON v.post_parent = p.ID
-            INNER JOIN {$wpdb->postmeta} pm_stock ON v.ID = pm_stock.post_id 
-                AND pm_stock.meta_key = '_stock_status'
             INNER JOIN {$wpdb->postmeta} pm_attr ON v.ID = pm_attr.post_id 
                 AND pm_attr.meta_key = %s
             INNER JOIN {$wpdb->terms} t ON t.slug = pm_attr.meta_value AND pm_attr.meta_value != ''
@@ -393,7 +382,6 @@ class Eshop_Product_Filters {
                 AND p.post_type = 'product'
                 AND p.post_status = 'publish'
                 AND v.post_parent IN ({$product_placeholders})
-                AND pm_stock.meta_value = 'instock'
             GROUP BY t.term_id, t.name, t.slug
             HAVING count > 0
             ORDER BY t.name ASC
@@ -402,7 +390,7 @@ class Eshop_Product_Filters {
         $params = array_merge(array($attr_meta_key, $taxonomy), $context_product_ids);
         $variation_results = $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
 
-        // Also get terms from simple products that are in stock
+        // Also get terms from simple products
         // Use a subquery to properly identify simple products (not variable products)
         $simple_sql = "
             SELECT 
@@ -411,8 +399,6 @@ class Eshop_Product_Filters {
                 t.slug,
                 COUNT(DISTINCT p.ID) as count
             FROM {$wpdb->posts} p
-            INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id 
-                AND pm_stock.meta_key = '_stock_status'
             INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
             INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
                 AND tt.taxonomy = %s
@@ -420,7 +406,6 @@ class Eshop_Product_Filters {
             WHERE p.post_type = 'product'
                 AND p.post_status = 'publish'
                 AND p.ID IN ({$product_placeholders})
-                AND pm_stock.meta_value = 'instock'
                 AND NOT EXISTS (
                     SELECT 1 FROM {$wpdb->term_relationships} tr_type
                     INNER JOIN {$wpdb->term_taxonomy} tt_type ON tr_type.term_taxonomy_id = tt_type.term_taxonomy_id
@@ -469,7 +454,7 @@ class Eshop_Product_Filters {
 
     /**
      * Get available categories from current query results.
-     * Only counts products that are in stock.
+     * Counts products in the current context regardless of stock status.
      *
      * @return array Array of category data
      */
@@ -490,7 +475,7 @@ class Eshop_Product_Filters {
 
         $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
 
-        // Get categories from products that are in stock
+        // Get categories from products in the current context
         $sql = "
             SELECT DISTINCT 
                 t.term_id, 
@@ -498,14 +483,11 @@ class Eshop_Product_Filters {
                 t.slug, 
                 COUNT(DISTINCT p.ID) as count
             FROM {$wpdb->posts} p
-            INNER JOIN {$wpdb->postmeta} pm_stock ON p.ID = pm_stock.post_id 
-                AND pm_stock.meta_key = '_stock_status'
             INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
             INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id 
                 AND tt.taxonomy = 'product_cat'
             INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
             WHERE p.ID IN ({$placeholders})
-                AND pm_stock.meta_value = 'instock'
             GROUP BY t.term_id, t.name, t.slug
             HAVING count > 0
             ORDER BY t.name ASC
