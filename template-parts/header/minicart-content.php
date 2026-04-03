@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$cart_count = WC()->cart->get_cart_contents_count();
+$cart = (class_exists('WooCommerce') && function_exists('WC') && WC()->cart) ? WC()->cart : null;
+$cart_count = $cart ? (int) $cart->get_cart_contents_count() : 0;
 ?>
 <div class="eshop-minicart-inner p-6 sm:p-7 bg-white text-left h-full flex flex-col">
     <!-- Header -->
@@ -27,7 +28,7 @@ $cart_count = WC()->cart->get_cart_contents_count();
     <div class="minicart-items flex-1 overflow-y-auto pr-2 -mr-2 min-h-[160px] max-h-[420px] custom-scrollbar">
         <?php if ($cart_count > 0) : ?>
             <div class="space-y-4">
-                <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) :
+                <?php foreach ($cart->get_cart() as $cart_item_key => $cart_item) :
                     $_product   = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
                     $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                     
@@ -72,7 +73,7 @@ $cart_count = WC()->cart->get_cart_contents_count();
                                 <div class="flex items-center justify-between mt-3">
                                     <!-- Price Single -->
                                     <div class="text-sm font-semibold text-gray-900">
-                                        <?php echo apply_filters('woocommerce_cart_item_price', WC()->cart->get_product_price($_product), $cart_item, $cart_item_key); ?>
+                                        <?php echo apply_filters('woocommerce_cart_item_price', $cart->get_product_price($_product), $cart_item, $cart_item_key); ?>
                                     </div>
 
                                     <!-- Qty Controls -->
@@ -115,7 +116,7 @@ $cart_count = WC()->cart->get_cart_contents_count();
              <div class="flex justify-between items-end gap-4">
                 <span class="text-sm text-gray-500 font-medium"><?php _e('Subtotal', 'eshop-theme'); ?></span>
                 <div class="text-right">
-                    <span class="block text-xl font-bold text-gray-900 leading-none"><?php echo WC()->cart->get_cart_subtotal(); ?></span>
+                    <span class="block text-xl font-bold text-gray-900 leading-none"><?php echo $cart ? $cart->get_cart_subtotal() : ''; ?></span>
                     <span class="text-xs text-gray-400 mt-1 block"><?php _e('Shipping & taxes calculated at checkout', 'eshop-theme'); ?></span>
                 </div>
             </div>

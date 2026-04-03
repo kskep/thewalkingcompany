@@ -551,10 +551,7 @@
   }
 }
 
-/* Hide search form when search button is disabled */
-#search-form {
-  display: none;
-}
+/* Old search form removed — search now uses fullscreen modal */
 
 /* Mobile Language Switcher Styling */
 .mobile-language-switcher a {

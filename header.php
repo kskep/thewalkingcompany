@@ -12,6 +12,10 @@
 <?php wp_body_open(); ?>
 
 <div id="page" class="site">
+    <?php
+    $eshop_has_wc_cart = class_exists('WooCommerce') && function_exists('WC') && WC()->cart;
+    $eshop_cart_count = $eshop_has_wc_cart ? (int) WC()->cart->get_cart_contents_count() : 0;
+    ?>
     
     <!-- Header -->
     <header id="masthead" class="site-header">
@@ -73,6 +77,15 @@
         <nav id="mobile-navigation" class="mobile-navigation lg:hidden hidden">
             <div class="mobile-menu-wrapper bg-white border-t border-gray-200 py-4">
                 <div class="container mx-auto px-4">
+                    <!-- Mobile Search Bar -->
+                    <div class="mobile-search-bar">
+                        <form role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+                            <i class="fas fa-search"></i>
+                            <input type="search" name="s" placeholder="Search..." class="mobile-search-input"
+                                   value="<?php echo esc_attr(get_search_query()); ?>" />
+                        </form>
+                    </div>
+
                     <!-- Main Menu Items -->
                     <?php
                     wp_nav_menu(array(
@@ -131,9 +144,9 @@
                                 <span class="flex-1">
                                     <?php _e('SHOPPING CART', 'eshop-theme'); ?>
                                 </span>
-                                <?php if (WC()->cart->get_cart_contents_count() > 0) : ?>
+                                <?php if ($eshop_cart_count > 0) : ?>
                                     <span class="bg-primary text-white text-xs rounded-full px-2 py-1 font-semibold">
-                                        <?php echo WC()->cart->get_cart_contents_count(); ?>
+                                        <?php echo esc_html($eshop_cart_count); ?>
                                     </span>
                                 <?php endif; ?>
                             </a>
@@ -149,28 +162,13 @@
                 </div>
             </div>
         </nav>
-            
-            <!-- Search Form -->
-            <div id="search-form" class="search-form-wrapper hidden">
-                <div class="search-form-container bg-white border-t border-gray-200 py-4">
-                    <form role="search" method="get" class="search-form flex" action="<?php echo home_url('/'); ?>">
-                        <div class="flex-1 relative">
-                            <input type="search" 
-                                   class="search-field w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-primary" 
-                                   placeholder="<?php echo esc_attr_x('Search products, posts...', 'placeholder', 'eshop-theme'); ?>" 
-                                   value="<?php echo get_search_query(); ?>" 
-                                   name="s" />
-                        </div>
-                        <button type="submit" class="search-submit bg-primary text-white px-6 py-2 hover:bg-primary-dark transition-colors duration-200">
-                            <i class="fas fa-search icon-sm"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+
     </header>
 
     <?php
+    // Search modal (desktop fullscreen)
+    get_template_part('template-parts/components/search-modal');
+
     // Include authentication modal for logged-out users
     if (!is_user_logged_in()) {
         get_template_part('template-parts/components/auth-modal');

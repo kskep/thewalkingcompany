@@ -176,9 +176,30 @@ function eshop_theme_scripts() {
     if (class_exists('WooCommerce')) {
         wp_enqueue_style('eshop-flying-cart', get_template_directory_uri() . '/css/components/flying-cart.css', array(), '1.0.0');
         wp_enqueue_script('eshop-flying-cart', get_template_directory_uri() . '/js/components/flying-cart.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
-        
+
         // Wishlist Component
         wp_enqueue_style('eshop-wishlist', get_template_directory_uri() . '/css/components/wishlist.css', array('eshop-theme-style'), '1.0.0');
+    }
+
+    // Search Modal (loaded globally — header is on every page)
+    $search_modal_css_path = get_template_directory() . '/css/components/search-modal.css';
+    $search_modal_css_ver = file_exists($search_modal_css_path) ? filemtime($search_modal_css_path) : '1.0.0';
+    wp_enqueue_style('eshop-search-modal', get_template_directory_uri() . '/css/components/search-modal.css', array('eshop-theme-style'), $search_modal_css_ver);
+
+    $search_js_path = get_template_directory() . '/js/search.js';
+    $search_js_ver = file_exists($search_js_path) ? filemtime($search_js_path) : '1.0.0';
+    wp_enqueue_script('eshop-search', get_template_directory_uri() . '/js/search.js', array('jquery', 'eshop-theme-script'), $search_js_ver, true);
+
+    // Search results page: load product card styles
+    if (is_search()) {
+        $product_card_css_path = get_template_directory() . '/css/components/product-card.css';
+        if (file_exists($product_card_css_path)) {
+            wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime($product_card_css_path));
+        }
+        $cards_grid_css_path = get_template_directory() . '/css/components/cards-grid.css';
+        if (file_exists($cards_grid_css_path)) {
+            wp_enqueue_style('eshop-cards-grid', get_template_directory_uri() . '/css/components/cards-grid.css', array('eshop-theme-style'), filemtime($cards_grid_css_path));
+        }
     }
 
     // Filter component JavaScript (full version)
@@ -228,7 +249,8 @@ function eshop_theme_scripts() {
         'nonce' => wp_create_nonce('eshop_nonce'),
         'context_taxonomy' => $context_taxonomy,
         'context_terms' => $context_terms,
-        'shop_url' => function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop/')
+        'shop_url' => function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop/'),
+        'home_url' => home_url('/'),
     ));
     
     // Add custom script for related products initialization

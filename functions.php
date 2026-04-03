@@ -25,6 +25,7 @@ require_once get_template_directory() . '/inc/woocommerce/size-transformation.ph
 require_once get_template_directory() . '/inc/mega-menu-walker.php';
 require_once get_template_directory() . '/inc/color-grouping-functions.php';
 require_once get_template_directory() . '/inc/auth-functions.php';
+require_once get_template_directory() . '/inc/search-functions.php';
 require_once get_template_directory() . '/inc/front-fields.php';
 require_once get_template_directory() . '/inc/front-page-meta.php';
 require_once get_template_directory() . '/inc/contact-form.php';

@@ -50,13 +50,7 @@
 
 
 
-        // Search Toggle
-        $('.search-toggle').on('click', function () {
-            $('#search-form').toggleClass('hidden');
-            if (!$('#search-form').hasClass('hidden')) {
-                $('#search-form .search-field').focus();
-            }
-        });
+        // Search Toggle — handled by js/search.js (opens fullscreen modal)
 
         // Back to Top Button
         var $backToTop = $('#back-to-top');
@@ -308,12 +302,7 @@
             }
         });
 
-        // Close search form when clicking outside
-        $(document).on('click', function (e) {
-            if (!$(e.target).closest('.search-toggle, #search-form').length) {
-                $('#search-form').addClass('hidden');
-            }
-        });
+        // Close search — handled by js/search.js
 
         // Header Dropdowns
         $('.wishlist-toggle').on('click', function (e) {

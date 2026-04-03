@@ -11,11 +11,15 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="header-actions hidden lg:flex items-center space-x-2">
+    <?php
+    $eshop_has_wc_cart = class_exists('WooCommerce') && function_exists('WC') && WC()->cart;
+    $eshop_cart_count = $eshop_has_wc_cart ? (int) WC()->cart->get_cart_contents_count() : 0;
+    ?>
     
-    <!-- Search - Temporarily hidden but keeping functionality -->
-    <!-- <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
+    <!-- Search -->
+    <button class="search-toggle p-2 text-dark hover:text-primary transition-colors duration-200" aria-label="Search">
         <i class="fas fa-search icon"></i>
-    </button> -->
+    </button>
     
     <!-- Wishlist -->
     <?php if (class_exists('WooCommerce')) : ?>
@@ -85,8 +89,8 @@ if (!defined('ABSPATH')) {
     <div class="minicart-wrapper relative">
         <button class="minicart-toggle p-2 text-dark hover:text-primary transition-colors duration-200 relative" aria-label="Shopping Cart">
             <i class="fas fa-shopping-bag icon"></i>
-            <span class="cart-count absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center <?php echo WC()->cart->get_cart_contents_count() > 0 ? '' : 'hidden'; ?>">
-                <?php echo WC()->cart->get_cart_contents_count(); ?>
+            <span class="cart-count absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center <?php echo $eshop_cart_count > 0 ? '' : 'hidden'; ?>">
+                <?php echo esc_html($eshop_cart_count); ?>
             </span>
         </button>
         
