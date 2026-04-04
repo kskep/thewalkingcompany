@@ -204,11 +204,23 @@
 }
 
 .size-overlay--status {
+  inset: auto 0 0;
+  padding: 0;
+  background: transparent;
   justify-content: center;
 }
 
 .size-overlay--status .size-chip {
   min-width: 100%;
+  border: 0;
+  border-radius: 0;
+  padding: 16px 12px;
+  background: #111;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
 }
 
 .size-chip {
@@ -236,9 +248,18 @@
   cursor: not-allowed;
 }
 
+.size-overlay--status .size-chip.is-out {
+  border-style: solid;
+  color: #fff;
+}
+
 @media (max-width: 768px) {
   .product-card .size-overlay {
     display: none;
+  }
+
+  .product-card .size-overlay--status {
+    display: flex;
   }
 
   .product-card .wishlist-button,
@@ -359,6 +380,19 @@
   font-family: "Inter", sans-serif;
   font-weight: 600;
   color: var(--ink);
+}
+
+.price-row .price ins {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--pink);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 2px;
+}
+
+.price-row .price ins .amount {
+  color: inherit;
 }
 
 .price-row .price del {

@@ -15,6 +15,9 @@ $is_on_sale = $product->is_on_sale();
 $is_variable = $product->is_type('variable');
 $is_simple_out_of_stock = !$is_variable && !$product->is_in_stock();
 $date_created = get_the_date('c', $product_id);
+$date_created_timestamp = strtotime($date_created);
+$three_weeks_ago = strtotime('-3 weeks');
+$is_new = $date_created_timestamp > $three_weeks_ago;
 
 // Get product colors from WooCommerce attributes
 $product_colors = array();
@@ -127,21 +130,9 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
             <?php echo woocommerce_get_product_thumbnail('full'); ?>
         </a>
         <div class="badge-stack">
-            <?php if ($is_on_sale) :
-                $regular_price = $product->get_regular_price();
-                $sale_price = $product->get_sale_price();
-                if ($regular_price && $sale_price && $regular_price > $sale_price) {
-                    $percentage = round((($regular_price - $sale_price) / $regular_price) * 100);
-                    if ($percentage > 0) {
-                        echo '<span class="badge badge--sale">' . $percentage . '% Off</span>';
-                    }
-                }
-            endif; ?>
             <?php
             // Add "New" badge for products created within the last 3 weeks
-            $date_created_timestamp = strtotime($date_created);
-            $three_weeks_ago = strtotime('-3 weeks');
-            if ($date_created_timestamp > $three_weeks_ago) {
+            if ($is_new) {
                 echo '<span class="badge">New</span>';
             }
             ?>
@@ -173,7 +164,7 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
         <?php if ($force_size_overlay) : ?>
         <div class="size-overlay size-overlay--status" aria-hidden="true">
             <span class="size-chip is-out">
-                <?php esc_html_e('Out of stock', 'eshop-theme'); ?>
+                <?php esc_html_e('Sold out', 'eshop-theme'); ?>
             </span>
         </div>
         <?php elseif ($has_size_variations && !empty($stock_info)) : ?>
