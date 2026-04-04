@@ -18,6 +18,10 @@ $date_created = get_the_date('c', $product_id);
 $date_created_timestamp = strtotime($date_created);
 $three_weeks_ago = strtotime('-3 weeks');
 $is_new = $date_created_timestamp > $three_weeks_ago;
+$regular_price = $product->get_regular_price();
+$sale_price = $product->get_sale_price();
+$regular_price_num = is_numeric($regular_price) ? (float) $regular_price : 0;
+$sale_price_num = is_numeric($sale_price) ? (float) $sale_price : 0;
 
 // Get product colors from WooCommerce attributes
 $product_colors = array();
@@ -213,7 +217,14 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
         <?php endif; ?>
         <div class="price-row">
             <?php
-            echo $product->get_price_html();
+            if ($is_on_sale && $sale_price_num > 0 && $regular_price_num > $sale_price_num) {
+                echo '<span class="price price--sale">';
+                echo '<del aria-hidden="true">' . wc_price($regular_price_num) . '</del>';
+                echo '<ins><span class="sale-price-highlight">' . wc_price($sale_price_num) . '</span></ins>';
+                echo '</span>';
+            } else {
+                echo wp_kses_post($product->get_price_html());
+            }
             ?>
         </div>
     </div>

@@ -410,6 +410,30 @@
   border-radius: 2px;
 }
 
+.product-card .price-row .price--sale,
+.related-products-grid .product-card .price-row .price--sale {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.product-card .price-row .price--sale ins,
+.related-products-grid .product-card .price-row .price--sale ins {
+  background: transparent !important;
+  padding: 0;
+}
+
+.product-card .price-row .sale-price-highlight,
+.related-products-grid .product-card .price-row .sale-price-highlight {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--pink);
+  color: #fff;
+  border-radius: 2px;
+  line-height: 1.1;
+}
+
 .price-row .price del {
   color: rgba(31, 31, 35, 0.38);
 }
