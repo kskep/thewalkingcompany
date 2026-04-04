@@ -606,8 +606,9 @@ body.modal-open {
   padding-left: 20px;
 }
 
-/* Hidden utility */
-.hidden {
+/* Restrict hidden handling to auth modal elements so Tailwind utilities keep working site-wide */
+.auth-modal.hidden,
+.modal-backdrop.hidden {
   display: none;
 }
 

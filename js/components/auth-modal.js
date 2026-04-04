@@ -2,7 +2,7 @@
  * Authentication Modal JavaScript Component
  * Handles login/register modals, form validation, and AJAX submission
  */
-
+(function ($) {
 class AuthModal {
     constructor() {
         this.init();
@@ -43,12 +43,12 @@ class AuthModal {
 
     bindEvents() {
         // Modal trigger events
-        $(document).on('click', '[data-action="open-login-modal"]', (e) => {
+        $(document).on('click', '[data-action="open-login-modal"], [data-action="login"]', (e) => {
             e.preventDefault();
             this.openLogin();
         });
 
-        $(document).on('click', '[data-action="open-register-modal"]', (e) => {
+        $(document).on('click', '[data-action="open-register-modal"], [data-action="register"]', (e) => {
             e.preventDefault();
             this.openRegister();
         });
@@ -416,8 +416,9 @@ class AuthModal {
 }
 
 // Initialize authentication modal when DOM is ready
-$(document).ready(function() {
+$(function () {
     if (typeof eshop_auth_ajax !== 'undefined') {
         window.authModal = new AuthModal();
     }
 });
+})(jQuery);

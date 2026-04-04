@@ -304,12 +304,17 @@ function eshop_enqueue_auth_assets() {
         return;
     }
 
+    $auth_css_path = get_template_directory() . '/css/components/auth-modal.css';
+    $auth_js_path = get_template_directory() . '/js/components/auth-modal.js';
+    $auth_css_ver = file_exists($auth_css_path) ? filemtime($auth_css_path) : '1.0.0';
+    $auth_js_ver = file_exists($auth_js_path) ? filemtime($auth_js_path) : '1.0.0';
+
     // Enqueue CSS
     wp_enqueue_style(
         'eshop-auth-modal',
         get_template_directory_uri() . '/css/components/auth-modal.css',
         array(),
-        '1.0.0'
+        $auth_css_ver
     );
 
     // Enqueue JavaScript
@@ -317,7 +322,7 @@ function eshop_enqueue_auth_assets() {
         'eshop-auth-modal',
         get_template_directory_uri() . '/js/components/auth-modal.js',
         array('jquery'),
-        '1.0.0',
+        $auth_js_ver,
         true
     );
 

@@ -20,6 +20,11 @@
         $('body').css('overflow', 'hidden');
         $input.val('');
         $results.html('<div class="search-modal__empty"><p class="search-modal__hint">Eisagete keimeno gia anazitisi proionton...</p></div>');
+        selectedIndex = -1;
+    }
+
+    function performSearch(keyword) {
+        if (!keyword) {
             selectedIndex = -1;
             return;
         }
@@ -106,6 +111,31 @@
         div.appendChild(document.createTextNode(str));
         return div.innerHTML;
     }
+
+    // --- Click Handlers ---
+
+    $(document).on('click', '.search-toggle', function (e) {
+        e.preventDefault();
+        openModal();
+        setTimeout(function () { $input.trigger('focus'); }, 100);
+    });
+
+    $overlay.on('click', function () {
+        $modal.addClass('hidden');
+        $('body').css('overflow', '');
+    });
+
+    $close.on('click', function () {
+        $modal.addClass('hidden');
+        $('body').css('overflow', '');
+    });
+
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && !$modal.hasClass('hidden')) {
+            $modal.addClass('hidden');
+            $('body').css('overflow', '');
+        }
+    });
 
     // --- Input Debounce ---
 

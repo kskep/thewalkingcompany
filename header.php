@@ -130,7 +130,7 @@
                                     </span>
                                 </a>
                             <?php else : ?>
-                                <a href="#" class="mobile-utility-item modal-trigger" data-action="login">
+                                <a href="#" class="mobile-utility-item modal-trigger" data-action="open-login-modal">
                                     <i class="fas fa-sign-in-alt"></i>
                                     <span class="flex-1">
                                         <?php _e('LOGIN / REGISTER', 'eshop-theme'); ?>
