@@ -19,7 +19,7 @@
         $modal.removeClass('hidden');
         $('body').css('overflow', 'hidden');
         $input.val('');
-        $results.html('<div class="search-modal__empty"><p class="search-modal__hint">Eisagete keimeno gia anazitisi proionton...</p></div>');
+        $results.html('<div class="search-modal__empty"><p class="search-modal__hint">Εισαγάγετε κείμενο για αναζήτηση προϊόντων...</p></div>');
         selectedIndex = -1;
     }
 
@@ -33,7 +33,7 @@
             ajaxRequest.abort();
         }
 
-        $results.html('<div class="search-modal__loading"><i class="fas fa-spinner fa-spin"></i> Anazitisi...</div>');
+        $results.html('<div class="search-modal__loading"><i class="fas fa-spinner fa-spin"></i> Αναζήτηση...</div>');
 
         ajaxRequest = $.ajax({
             url: eshop_ajax.ajax_url,
@@ -49,13 +49,13 @@
                 if (response.success && response.data) {
                     renderResults(response.data, keyword);
                 } else {
-                    $results.html('<div class="search-modal__no-results">Den vrethikan proionta.</div>');
+                    $results.html('<div class="search-modal__no-results">Δεν βρέθηκαν προϊόντα.</div>');
                 }
             },
             error: function (xhr) {
                 ajaxRequest = null;
                 if (xhr.statusText !== 'abort') {
-                    $results.html('<div class="search-modal__no-results">Kati pige strava. Parakaloume dokimaste ksana.</div>');
+                    $results.html('<div class="search-modal__no-results">Κάτι πήγε στραβά. Παρακαλούμε δοκιμάστε ξανά.</div>');
                 }
             }
         });
@@ -69,10 +69,10 @@
         if (products.length === 0) {
             $results.html(
                 '<div class="search-modal__no-results">' +
-                    '<p>Den vrethikan proionta gia "<strong>' + escapeHtml(keyword) + '</strong>"</p>' +
+                    '<p>Δεν βρέθηκαν προϊόντα για "<strong>' + escapeHtml(keyword) + '</strong>"</p>' +
                 '</div>' +
                 '<a href="' + escapeHtml(eshop_ajax.home_url || '/') + '?s=' + encodeURIComponent(keyword) + '" class="search-modal__view-all">' +
-                    'Deite oles tis eggrafes' +
+                    'Δείτε όλα τα αποτελέσματα' +
                 '</a>'
             );
             return;
@@ -81,7 +81,7 @@
         var html = '';
 
         if (totalCount > products.length) {
-            html += '<div class="search-modal__count">Emfanizontai ' + products.length + ' apo ' + totalCount + ' apotelesmata</div>';
+            html += '<div class="search-modal__count">Εμφανίζονται ' + products.length + ' από ' + totalCount + ' αποτελέσματα</div>';
         }
 
         for (var i = 0; i < products.length; i++) {
@@ -99,7 +99,7 @@
 
         html +=
             '<a href="' + escapeHtml(eshop_ajax.home_url || '/') + '?s=' + encodeURIComponent(keyword) + '" class="search-modal__view-all">' +
-                'Deite ola ta ' + totalCount + ' apotelesmata' +
+                'Δείτε και τα ' + totalCount + ' αποτελέσματα' +
             '</a>';
 
         $results.html(html);
