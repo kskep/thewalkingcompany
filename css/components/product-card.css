@@ -382,17 +382,32 @@
   color: var(--ink);
 }
 
-.price-row .price ins {
+.product-card .price-row .price ins,
+.related-products-grid .product-card .price-row .price ins {
   display: inline-block;
   padding: 2px 8px;
-  background: var(--pink);
-  color: #fff;
-  text-decoration: none;
+  background: var(--pink) !important;
+  color: #fff !important;
+  text-decoration: none !important;
   border-radius: 2px;
 }
 
-.price-row .price ins .amount {
-  color: inherit;
+.product-card .price-row .price ins .amount,
+.product-card .price-row .price ins bdi,
+.product-card .price-row .price ins .woocommerce-Price-currencySymbol,
+.related-products-grid .product-card .price-row .price ins .amount,
+.related-products-grid .product-card .price-row .price ins bdi,
+.related-products-grid .product-card .price-row .price ins .woocommerce-Price-currencySymbol {
+  color: inherit !important;
+}
+
+.product-card .price-row .price > .woocommerce-Price-amount.amount,
+.related-products-grid .product-card .price-row .price > .woocommerce-Price-amount.amount {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--pink);
+  color: #fff !important;
+  border-radius: 2px;
 }
 
 .price-row .price del {
