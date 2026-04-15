@@ -68,3 +68,33 @@ body.wp-admin .acf-field .acf-label .description { display: block; font-style: n
 
 /* Make ACF notice messages subtle */
 body.wp-admin .acf-notice.-message { border-left: 4px solid #2563eb; }
+
+/* WooCommerce settings media picker helpers */
+body.wp-admin .eshop-wc-media-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+body.wp-admin .eshop-wc-media-control {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+body.wp-admin .eshop-wc-media-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+body.wp-admin .eshop-wc-media-preview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f8fafc;
+}

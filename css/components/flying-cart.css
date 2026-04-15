@@ -358,8 +358,8 @@
 
 /* Shipping Information */
 .shipping-info {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: #fdf2f8;
+  border: 1px solid #f7c7dc;
   padding: 12px 16px;
   margin-bottom: 16px;
 }
@@ -386,8 +386,8 @@
 }
 
 .shipping-info.free-shipping-achieved {
-  background: #d1f2eb;
-  border-color: #7dcea0;
+  background: #f9e6ef;
+  border-color: var(--primary-pink);
 }
 
 .shipping-message {
@@ -400,24 +400,24 @@
 }
 
 .shipping-icon {
-  color: #f39c12;
+  color: var(--primary-pink);
   font-size: 14px;
 }
 
 .free-shipping-achieved .shipping-icon {
-  color: #27ae60;
+  color: var(--primary-pink-dark);
 }
 
 .shipping-text {
   font-size: 12px;
   font-weight: 600;
-  color: #8b4513;
+  color: #9c4a73;
   line-height: 1.3;
   text-align: center;
 }
 
 .free-shipping-achieved .shipping-text {
-  color: #1e7e34;
+  color: #7f2f58;
 }
 
 .shipping-progress {
@@ -427,14 +427,14 @@
 .shipping-progress-bar {
   width: 100%;
   height: 4px;
-  background: #e9ecef;
+  background: #f8dbe8;
   position: relative;
   overflow: hidden;
 }
 
 .shipping-progress-fill {
   height: 100%;
-  background: #ee81b3;
+  background: linear-gradient(90deg, var(--primary-pink) 0%, var(--primary-pink-dark) 100%);
   transition: width 0.3s ease;
   position: relative;
 }

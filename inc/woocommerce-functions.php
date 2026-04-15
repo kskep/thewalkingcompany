@@ -178,31 +178,61 @@ add_filter('woocommerce_add_to_cart_fragments', 'eshop_cart_fragment');
 /**
  * Gift wrap helpers and checkout fee.
  */
+function eshop_get_checkout_packaging_setting($option_name, $default = '') {
+    $value = get_option($option_name, $default);
+
+    if (is_string($value)) {
+        $value = trim($value);
+    }
+
+    return $value === '' ? $default : $value;
+}
+
 function eshop_get_gift_wrap_price() {
-    return (float) apply_filters('eshop_gift_wrap_price', 2.0);
+    $default = 2.0;
+    $price = eshop_get_checkout_packaging_setting('eshop_checkout_gift_wrap_price', $default);
+
+    return (float) apply_filters('eshop_gift_wrap_price', is_numeric($price) ? (float) $price : $default);
 }
 
 function eshop_get_gift_extra_bag_price() {
-    return (float) apply_filters('eshop_gift_extra_bag_price', 0.5);
+    $default = 1.0;
+    $price = eshop_get_checkout_packaging_setting('eshop_checkout_gift_extra_bag_price', $default);
+
+    return (float) apply_filters('eshop_gift_extra_bag_price', is_numeric($price) ? (float) $price : $default);
 }
 
 function eshop_get_gift_wrap_title() {
-    return apply_filters('eshop_gift_wrap_title', __('Επιλογή σε συσκευασία δώρου', 'eshop-theme'));
+    $default = __('Συσκευασία Δώρου', 'eshop-theme');
+
+    return apply_filters('eshop_gift_wrap_title', eshop_get_checkout_packaging_setting('eshop_checkout_gift_wrap_title', $default));
 }
 
 function eshop_get_gift_extra_bag_title() {
-    return apply_filters('eshop_gift_extra_bag_title', __('Προσθήκη πλαστικής σακούλας', 'eshop-theme'));
+    $default = __('Χάρτινη Σακούλα', 'eshop-theme');
+
+    return apply_filters('eshop_gift_extra_bag_title', eshop_get_checkout_packaging_setting('eshop_checkout_gift_extra_bag_title', $default));
 }
 
 function eshop_get_gift_wrap_description() {
+    $default = __('Επιλέξτε συσκευασία δώρου για την παραγγελία σας και προαιρετικά προσθέστε έξτρα σακούλα.', 'eshop-theme');
+
     return apply_filters(
         'eshop_gift_wrap_description',
-        __('Επιλέξτε συσκευασία δώρου για την παραγγελία σας και προαιρετικά προσθέστε έξτρα πλαστική σακούλα.', 'eshop-theme')
+        eshop_get_checkout_packaging_setting('eshop_checkout_packaging_description', $default)
     );
 }
 
 function eshop_get_gift_wrap_image_url() {
-    return apply_filters('eshop_gift_wrap_image_url', wc_placeholder_img_src('woocommerce_thumbnail'));
+    $default = wc_placeholder_img_src('woocommerce_thumbnail');
+
+    return apply_filters('eshop_gift_wrap_image_url', eshop_get_checkout_packaging_setting('eshop_checkout_gift_wrap_image_url', $default));
+}
+
+function eshop_get_gift_extra_bag_image_url() {
+    $default = wc_placeholder_img_src('woocommerce_thumbnail');
+
+    return apply_filters('eshop_gift_extra_bag_image_url', eshop_get_checkout_packaging_setting('eshop_checkout_gift_extra_bag_image_url', $default));
 }
 
 function eshop_get_gift_wrap_markup() {
@@ -215,6 +245,7 @@ function eshop_get_gift_wrap_markup() {
     $gift_wrap_price = eshop_get_gift_wrap_price();
     $gift_extra_bag_price = eshop_get_gift_extra_bag_price();
     $gift_wrap_image = eshop_get_gift_wrap_image_url();
+    $gift_extra_bag_image = eshop_get_gift_extra_bag_image_url();
     $gift_wrap_title = eshop_get_gift_wrap_title();
     $gift_extra_bag_title = eshop_get_gift_extra_bag_title();
     $gift_wrap_desc = eshop_get_gift_wrap_description();
@@ -248,7 +279,7 @@ function eshop_get_gift_wrap_markup() {
             </div>
             <div class="gift-wrap-item mt-3">
                 <div class="gift-wrap-thumb">
-                    <i class="fas fa-shopping-bag"></i>
+                    <img src="<?php echo esc_url($gift_extra_bag_image); ?>" alt="<?php echo esc_attr($gift_extra_bag_title); ?>">
                 </div>
                 <div class="gift-wrap-info">
                     <div class="gift-wrap-name"><?php echo esc_html($gift_extra_bag_title); ?></div>
@@ -298,7 +329,7 @@ function eshop_apply_gift_wrap_fee($cart) {
     if ($gift_wrap_qty > 0) {
         $gift_wrap_price = eshop_get_gift_wrap_price();
         if ($gift_wrap_price > 0) {
-            $gift_wrap_label = sprintf(__('Επιλογή σε συσκευασία δώρου (%d)', 'eshop-theme'), $gift_wrap_qty);
+            $gift_wrap_label = sprintf(__('Συσκευασία Δώρου (%d)', 'eshop-theme'), $gift_wrap_qty);
             $cart->add_fee($gift_wrap_label, $gift_wrap_price * $gift_wrap_qty, false);
         }
     }
@@ -307,7 +338,7 @@ function eshop_apply_gift_wrap_fee($cart) {
     if ($gift_extra_bag_qty > 0) {
         $gift_extra_bag_price = eshop_get_gift_extra_bag_price();
         if ($gift_extra_bag_price > 0) {
-            $gift_extra_bag_label = sprintf(__('Προσθήκη πλαστικής σακούλας (%d)', 'eshop-theme'), $gift_extra_bag_qty);
+            $gift_extra_bag_label = sprintf(__('Χάρτινη Σακούλα (%d)', 'eshop-theme'), $gift_extra_bag_qty);
             $cart->add_fee($gift_extra_bag_label, $gift_extra_bag_price * $gift_extra_bag_qty, false);
         }
     }
@@ -557,12 +588,106 @@ function eshop_flying_cart_settings($settings) {
         array(
             'type' => 'sectionend',
             'id'   => 'flying_cart_settings'
+        ),
+        array(
+            'name' => __('Checkout Packaging Settings', 'eshop-theme'),
+            'type' => 'title',
+            'desc' => __('Configure the checkout packaging copy, prices, and image URLs.', 'eshop-theme'),
+            'id'   => 'eshop_checkout_packaging_settings'
+        ),
+        array(
+            'name'    => __('Packaging Description', 'eshop-theme'),
+            'desc'    => __('Shown above the packaging options on checkout.', 'eshop-theme'),
+            'id'      => 'eshop_checkout_packaging_description',
+            'type'    => 'textarea',
+            'default' => __('Επιλέξτε συσκευασία δώρου για την παραγγελία σας και προαιρετικά προσθέστε έξτρα σακούλα.', 'eshop-theme')
+        ),
+        array(
+            'name'    => __('Gift Wrap Title', 'eshop-theme'),
+            'id'      => 'eshop_checkout_gift_wrap_title',
+            'type'    => 'text',
+            'default' => __('Συσκευασία Δώρου', 'eshop-theme')
+        ),
+        array(
+            'name'     => __('Gift Wrap Price', 'eshop-theme'),
+            'id'       => 'eshop_checkout_gift_wrap_price',
+            'type'     => 'number',
+            'default'  => '2',
+            'custom_attributes' => array(
+                'min'  => '0',
+                'step' => '0.01'
+            )
+        ),
+        array(
+            'name'    => __('Gift Wrap Image', 'eshop-theme'),
+            'desc'    => __('Select or upload the gift wrap thumbnail shown on checkout.', 'eshop-theme'),
+            'id'      => 'eshop_checkout_gift_wrap_image_url',
+            'type'    => 'text',
+            'class'   => 'eshop-wc-media-field',
+            'css'     => 'min-width: 360px;',
+            'default' => ''
+        ),
+        array(
+            'name'    => __('Bag Title', 'eshop-theme'),
+            'id'      => 'eshop_checkout_gift_extra_bag_title',
+            'type'    => 'text',
+            'default' => __('Χάρτινη Σακούλα', 'eshop-theme')
+        ),
+        array(
+            'name'     => __('Bag Price', 'eshop-theme'),
+            'id'       => 'eshop_checkout_gift_extra_bag_price',
+            'type'     => 'number',
+            'default'  => '1',
+            'custom_attributes' => array(
+                'min'  => '0',
+                'step' => '0.01'
+            )
+        ),
+        array(
+            'name'    => __('Bag Image', 'eshop-theme'),
+            'desc'    => __('Select or upload the bag thumbnail shown on checkout.', 'eshop-theme'),
+            'id'      => 'eshop_checkout_gift_extra_bag_image_url',
+            'type'    => 'text',
+            'class'   => 'eshop-wc-media-field',
+            'css'     => 'min-width: 360px;',
+            'default' => ''
+        ),
+        array(
+            'type' => 'sectionend',
+            'id'   => 'eshop_checkout_packaging_settings'
         )
     );
 
     return array_merge($settings, $flying_cart_settings);
 }
 add_filter('woocommerce_get_settings_general', 'eshop_flying_cart_settings');
+
+function eshop_enqueue_woocommerce_settings_media($hook_suffix) {
+    if ($hook_suffix !== 'woocommerce_page_wc-settings') {
+        return;
+    }
+
+    $current_tab = isset($_GET['tab']) ? sanitize_key(wp_unslash($_GET['tab'])) : 'general';
+    if ($current_tab !== 'general') {
+        return;
+    }
+
+    wp_enqueue_media();
+
+    $script_path = get_template_directory() . '/js/admin-woocommerce-settings.js';
+    $script_url = get_template_directory_uri() . '/js/admin-woocommerce-settings.js';
+    $script_ver = file_exists($script_path) ? filemtime($script_path) : '1.0.0';
+
+    wp_enqueue_script('eshop-admin-woocommerce-settings', $script_url, array('jquery'), $script_ver, true);
+    wp_localize_script('eshop-admin-woocommerce-settings', 'eshopWooSettingsMedia', array(
+        'selectImage' => __('Select image', 'eshop-theme'),
+        'useImage'    => __('Use image', 'eshop-theme'),
+        'removeImage' => __('Remove image', 'eshop-theme'),
+        'chooseImage' => __('Choose image', 'eshop-theme'),
+        'placeholder' => wc_placeholder_img_src('woocommerce_thumbnail'),
+    ));
+}
+add_action('admin_enqueue_scripts', 'eshop_enqueue_woocommerce_settings_media');
 
 // Update the helper function to use the setting
 function eshop_get_free_shipping_threshold() {

@@ -197,6 +197,10 @@ msgstr "Προσθέστε %s ακόμα για ΔΩΡΕΑΝ αποστολή!"
 msgid "Congratulations! You qualify for FREE shipping!"
 msgstr "Συγχαρητήρια! Πληροίτε τις προϋποθέσεις για ΔΩΡΕΑΝ αποστολή!"
 
+#: inc/woocommerce-functions.php
+msgid "Only %s left to unlock FREE shipping!"
+msgstr "Μόνο %s απομένουν για να ξεκλειδώσετε ΔΩΡΕΑΝ αποστολή!"
+
 #: template-parts/components/flying-cart.php
 msgid "Subtotal:"
 msgstr "Μερικό Σύνολο:"

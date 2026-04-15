@@ -50,9 +50,6 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
                     <div class="swiper-slide">
                         <div class="hero-slide relative overflow-hidden">
                             <img class="w-full h-auto block" src="<?php echo $slide['url']; ?>" alt="<?php echo $slide['alt']; ?>" />
-                            <div class="slide-overlay absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div class="slide-caption text-white text-center opacity-0 translate-y-4"></div>
-                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -72,9 +69,6 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
                     <div class="swiper-slide">
                         <div class="hero-slide relative overflow-hidden">
                             <img class="w-full h-auto block" src="<?php echo $slide['url']; ?>" alt="<?php echo $slide['alt']; ?>" />
-                            <div class="slide-overlay absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div class="slide-caption text-white text-center opacity-0 translate-y-4"></div>
-                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
