@@ -4,6 +4,7 @@
 .eshop-repeater-item{ display:flex; align-items:center; gap:12px; padding:8px; border:1px solid #e2e2e2; background:#fff; margin-bottom:8px; }
 .eshop-repeater-item .thumb{ width:120px; height:70px; background:#f6f7f7; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #ddd; }
 .eshop-repeater-item .thumb img{ max-width:100%; height:auto; }
+.eshop-repeater-item .thumb video{ width:100%; height:100%; object-fit:cover; display:block; background:#000; }
 .eshop-repeater-item .fields{ display:flex; gap:8px; align-items:center; flex:1; }
 .eshop-repeater-item .handle{ cursor:move; color:#888; }
 .eshop-tiles-table .image-cell{ display:flex; align-items:center; gap:10px; }

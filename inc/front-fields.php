@@ -18,7 +18,7 @@ function eshop_front_settings_option_name() { return 'eshop_front_page_settings'
 
 function eshop_front_settings_defaults() {
     return array(
-        'hero_desktop_slides' => array(), // [ [url, alt], ... ]
+        'hero_desktop_slides' => array(), // [ [url, media_type, alt], ... ]
         'hero_mobile_slides'  => array(),
         'banner_rows'         => array(), // [ [ banners: [ [image_url, media_type, alt, title, link], ... ], columns: 1-4 ], ... ]
         // Legacy support
@@ -78,9 +78,14 @@ function eshop_get_hero_slides($device = 'desktop') {
         foreach ($slides as $s) {
             $url = isset($s['url']) ? esc_url($s['url']) : '';
             if (!$url) { continue; }
+            $media_type = isset($s['media_type']) ? sanitize_key($s['media_type']) : '';
+            if (!in_array($media_type, array('image', 'video'), true)) {
+                $media_type = eshop_is_video_url($url) ? 'video' : 'image';
+            }
             $out[] = array(
-                'url' => $url,
-                'alt' => esc_attr(isset($s['alt']) ? $s['alt'] : ''),
+                'url'        => $url,
+                'media_type' => $media_type,
+                'alt'        => esc_attr(isset($s['alt']) ? $s['alt'] : ''),
             );
         }
     }

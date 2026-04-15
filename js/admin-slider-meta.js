@@ -1,9 +1,11 @@
 /* Front Page Meta UI (slides + banner rows) */
 (function($){
-	function openMediaFrame(onSelect){
+	function openMediaFrame(onSelect, config){
+		config = config || {};
 		const frame = wp.media({
-			title: 'Select Image',
-			button: { text: 'Use image' },
+			title: config.title || 'Select Image',
+			button: { text: config.buttonText || 'Use image' },
+			library: config.library || undefined,
 			multiple: false
 		});
 		frame.on('select', function(){
@@ -11,6 +13,18 @@
 			if (onSelect) onSelect(attachment);
 		});
 		frame.open();
+	}
+
+	function updateSlideThumb($row, url, mediaType){
+		const defaultImage = window.ajaxurl.replace('admin-ajax.php','images/media/default.png');
+		const isVideo = mediaType === 'video' && !!url;
+		$row.find('.thumb img, .thumb video').remove();
+		if (isVideo) {
+			$row.find('.thumb').append('<video src="' + url + '" muted playsinline preload="metadata"></video>');
+		} else {
+			$row.find('.thumb').append('<img src="' + (url || defaultImage) + '" alt="" />');
+		}
+		$row.find('input.media-type').val(isVideo ? 'video' : 'image');
 	}
 
 	function bindRepeater($box){
@@ -21,7 +35,11 @@
 			const $row = $(this).closest('.eshop-repeater-item, tr');
 			openMediaFrame(function(att){
 				$row.find('input.img-url').val(att.url).trigger('change');
-				$row.find('img').attr('src', att.url);
+				updateSlideThumb($row, att.url, att.type === 'video' ? 'video' : 'image');
+			}, {
+				title: 'Select Image or Video',
+				buttonText: 'Use media',
+				library: { type: ['image', 'video'] }
 			});
 		});
 
@@ -39,7 +57,8 @@
 					<div class="thumb"><img src="'+window.ajaxurl.replace('admin-ajax.php','images/media/default.png')+'" alt="" /></div>\
 					<div class="fields">\
 						<input type="hidden" class="img-url" name="'+target+'['+idx+'][url]" value="" />\
-						<button type="button" class="button select-image">Select Image</button>\
+						<input type="hidden" class="media-type" name="'+target+'['+idx+'][media_type]" value="image" />\
+						<button type="button" class="button select-image">Select Image or Video</button>\
 						<input type="text" class="regular-text alt" placeholder="Alt text (optional)" name="'+target+'['+idx+'][alt]" value="" />\
 						<button type="button" class="button link-remove">&times;</button>\
 					</div>\

@@ -1,7 +1,9 @@
 /* Component: Hero Slider */
 .hero-slider-wrapper { position: relative; }
 .hero-slider-desktop img,
-.hero-slider-mobile img { width:100%; height:auto; display:block; }
+.hero-slider-desktop video,
+.hero-slider-mobile img,
+.hero-slider-mobile video { width:100%; height:auto; display:block; }
 
 /* Ensure only one slider shows on each breakpoint */
 /* Desktop visible by default, mobile hidden */
@@ -14,7 +16,7 @@
   .js-hero-slider .hero-slider-mobile { display: block; }
 
   .js-hero-slider .hero-slider-mobile .swiper-wrapper {
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .js-hero-slider .hero-slider-mobile .swiper-slide {
@@ -22,13 +24,22 @@
   }
 
   .js-hero-slider .hero-slider-mobile .hero-slide {
-    overflow: visible;
+    aspect-ratio: 9 / 14;
+    overflow: hidden;
   }
 
   .js-hero-slider .hero-slider-mobile img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .js-hero-slider .hero-slider-mobile video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
   }
 }
 

@@ -58,15 +58,21 @@ function eshop_render_front_hero_metabox($post) {
             <ul class="eshop-repeater-list" data-type="slide">
                 <?php foreach ($desktop as $idx => $s) :
                     $url = isset($s['url']) ? esc_url($s['url']) : '';
+                    $media_type = isset($s['media_type']) ? sanitize_key($s['media_type']) : (eshop_is_video_url($url) ? 'video' : 'image');
                     $alt = isset($s['alt']) ? esc_attr($s['alt']) : '';
                 ?>
                 <li class="eshop-repeater-item">
                     <div class="thumb">
+                        <?php if ($url && $media_type === 'video') : ?>
+                        <video src="<?php echo esc_url($url); ?>" muted playsinline preload="metadata"></video>
+                        <?php else : ?>
                         <img src="<?php echo $url ? $url : esc_url(includes_url('images/media/default.png')); ?>" alt="" />
+                        <?php endif; ?>
                     </div>
                     <div class="fields">
                         <input type="hidden" class="img-url" name="eshop_hero_desktop_slides[<?php echo (int)$idx; ?>][url]" value="<?php echo $url; ?>" />
-                        <button type="button" class="button select-image"><?php esc_html_e('Select Image', 'eshop-theme'); ?></button>
+                        <input type="hidden" class="media-type" name="eshop_hero_desktop_slides[<?php echo (int)$idx; ?>][media_type]" value="<?php echo esc_attr($media_type); ?>" />
+                        <button type="button" class="button select-image"><?php esc_html_e('Select Image or Video', 'eshop-theme'); ?></button>
                         <input type="text" class="regular-text alt" placeholder="<?php esc_attr_e('Alt text (optional)', 'eshop-theme'); ?>" name="eshop_hero_desktop_slides[<?php echo (int)$idx; ?>][alt]" value="<?php echo $alt; ?>" />
                         <button type="button" class="button link-remove">&times;</button>
                     </div>
@@ -82,15 +88,21 @@ function eshop_render_front_hero_metabox($post) {
             <ul class="eshop-repeater-list" data-type="slide">
                 <?php foreach ($mobile as $idx => $s) :
                     $url = isset($s['url']) ? esc_url($s['url']) : '';
+                    $media_type = isset($s['media_type']) ? sanitize_key($s['media_type']) : (eshop_is_video_url($url) ? 'video' : 'image');
                     $alt = isset($s['alt']) ? esc_attr($s['alt']) : '';
                 ?>
                 <li class="eshop-repeater-item">
                     <div class="thumb">
+                        <?php if ($url && $media_type === 'video') : ?>
+                        <video src="<?php echo esc_url($url); ?>" muted playsinline preload="metadata"></video>
+                        <?php else : ?>
                         <img src="<?php echo $url ? $url : esc_url(includes_url('images/media/default.png')); ?>" alt="" />
+                        <?php endif; ?>
                     </div>
                     <div class="fields">
                         <input type="hidden" class="img-url" name="eshop_hero_mobile_slides[<?php echo (int)$idx; ?>][url]" value="<?php echo $url; ?>" />
-                        <button type="button" class="button select-image"><?php esc_html_e('Select Image', 'eshop-theme'); ?></button>
+                        <input type="hidden" class="media-type" name="eshop_hero_mobile_slides[<?php echo (int)$idx; ?>][media_type]" value="<?php echo esc_attr($media_type); ?>" />
+                        <button type="button" class="button select-image"><?php esc_html_e('Select Image or Video', 'eshop-theme'); ?></button>
                         <input type="text" class="regular-text alt" placeholder="<?php esc_attr_e('Alt text (optional)', 'eshop-theme'); ?>" name="eshop_hero_mobile_slides[<?php echo (int)$idx; ?>][alt]" value="<?php echo $alt; ?>" />
                         <button type="button" class="button link-remove">&times;</button>
                     </div>
@@ -307,7 +319,11 @@ add_action('save_post_page', function($post_id, $post, $update) {
             $url = isset($row['url']) ? esc_url_raw($row['url']) : '';
             if (!$url) continue;
             $alt = isset($row['alt']) ? sanitize_text_field($row['alt']) : '';
-            $slides[] = array('url' => $url, 'alt' => $alt);
+            $media_type = isset($row['media_type']) ? sanitize_key($row['media_type']) : '';
+            if (!in_array($media_type, array('image', 'video'), true)) {
+                $media_type = eshop_is_video_url($url) ? 'video' : 'image';
+            }
+            $slides[] = array('url' => $url, 'media_type' => $media_type, 'alt' => $alt);
         }
         update_post_meta($post_id, $key, $slides);
     };

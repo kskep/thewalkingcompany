@@ -49,7 +49,14 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
                 <?php foreach ($desktop_slides as $slide) : ?>
                     <div class="swiper-slide">
                         <div class="hero-slide relative overflow-hidden">
+                            <?php if (($slide['media_type'] ?? 'image') === 'video') : ?>
+                            <video class="w-full h-auto block hero-media" autoplay muted loop playsinline preload="metadata">
+                                <source src="<?php echo esc_url($slide['url']); ?>" type="<?php echo esc_attr(wp_check_filetype($slide['url'])['type'] ?: 'video/mp4'); ?>">
+                                <?php esc_html_e('Your browser does not support the video tag.', 'eshop-theme'); ?>
+                            </video>
+                            <?php else : ?>
                             <img class="w-full h-auto block" src="<?php echo $slide['url']; ?>" alt="<?php echo $slide['alt']; ?>" />
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -68,7 +75,14 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
                 <?php foreach ($mobile_slides as $slide) : ?>
                     <div class="swiper-slide">
                         <div class="hero-slide relative overflow-hidden">
+                            <?php if (($slide['media_type'] ?? 'image') === 'video') : ?>
+                            <video class="w-full h-auto block hero-media" autoplay muted loop playsinline preload="metadata">
+                                <source src="<?php echo esc_url($slide['url']); ?>" type="<?php echo esc_attr(wp_check_filetype($slide['url'])['type'] ?: 'video/mp4'); ?>">
+                                <?php esc_html_e('Your browser does not support the video tag.', 'eshop-theme'); ?>
+                            </video>
+                            <?php else : ?>
                             <img class="w-full h-auto block" src="<?php echo $slide['url']; ?>" alt="<?php echo $slide['alt']; ?>" />
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
