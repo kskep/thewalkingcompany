@@ -48,6 +48,7 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
             <div class="swiper-wrapper">
                 <?php foreach ($desktop_slides as $slide) : ?>
                     <div class="swiper-slide">
+                        <?php if (!empty($slide['link'])) : ?><a href="<?php echo esc_url($slide['link']); ?>" class="hero-slide-link block"><?php endif; ?>
                         <div class="hero-slide relative overflow-hidden">
                             <?php if (($slide['media_type'] ?? 'image') === 'video') : ?>
                             <video class="w-full h-auto block hero-media" autoplay muted loop playsinline preload="metadata">
@@ -58,6 +59,7 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
                             <img class="w-full h-auto block" src="<?php echo $slide['url']; ?>" alt="<?php echo $slide['alt']; ?>" />
                             <?php endif; ?>
                         </div>
+                        <?php if (!empty($slide['link'])) : ?></a><?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -74,6 +76,7 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
             <div class="swiper-wrapper">
                 <?php foreach ($mobile_slides as $slide) : ?>
                     <div class="swiper-slide">
+                        <?php if (!empty($slide['link'])) : ?><a href="<?php echo esc_url($slide['link']); ?>" class="hero-slide-link block"><?php endif; ?>
                         <div class="hero-slide relative overflow-hidden">
                             <?php if (($slide['media_type'] ?? 'image') === 'video') : ?>
                             <video class="w-full h-auto block hero-media" autoplay muted loop playsinline preload="metadata">
@@ -84,6 +87,7 @@ if (empty($desktop_slides) && empty($mobile_slides)) { return; }
                             <img class="w-full h-auto block" src="<?php echo $slide['url']; ?>" alt="<?php echo $slide['alt']; ?>" />
                             <?php endif; ?>
                         </div>
+                        <?php if (!empty($slide['link'])) : ?></a><?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>

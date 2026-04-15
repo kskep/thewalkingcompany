@@ -60,6 +60,7 @@ function eshop_render_front_hero_metabox($post) {
                     $url = isset($s['url']) ? esc_url($s['url']) : '';
                     $media_type = isset($s['media_type']) ? sanitize_key($s['media_type']) : (eshop_is_video_url($url) ? 'video' : 'image');
                     $alt = isset($s['alt']) ? esc_attr($s['alt']) : '';
+                    $link = isset($s['link']) ? esc_url($s['link']) : '';
                 ?>
                 <li class="eshop-repeater-item">
                     <div class="thumb">
@@ -74,6 +75,7 @@ function eshop_render_front_hero_metabox($post) {
                         <input type="hidden" class="media-type" name="eshop_hero_desktop_slides[<?php echo (int)$idx; ?>][media_type]" value="<?php echo esc_attr($media_type); ?>" />
                         <button type="button" class="button select-image"><?php esc_html_e('Select Image or Video', 'eshop-theme'); ?></button>
                         <input type="text" class="regular-text alt" placeholder="<?php esc_attr_e('Alt text (optional)', 'eshop-theme'); ?>" name="eshop_hero_desktop_slides[<?php echo (int)$idx; ?>][alt]" value="<?php echo $alt; ?>" />
+                        <input type="url" class="regular-text slide-link" placeholder="<?php esc_attr_e('Slide link (optional)', 'eshop-theme'); ?>" name="eshop_hero_desktop_slides[<?php echo (int)$idx; ?>][link]" value="<?php echo $link; ?>" />
                         <button type="button" class="button link-remove">&times;</button>
                     </div>
                     <span class="dashicons dashicons-move handle"></span>
@@ -90,6 +92,7 @@ function eshop_render_front_hero_metabox($post) {
                     $url = isset($s['url']) ? esc_url($s['url']) : '';
                     $media_type = isset($s['media_type']) ? sanitize_key($s['media_type']) : (eshop_is_video_url($url) ? 'video' : 'image');
                     $alt = isset($s['alt']) ? esc_attr($s['alt']) : '';
+                    $link = isset($s['link']) ? esc_url($s['link']) : '';
                 ?>
                 <li class="eshop-repeater-item">
                     <div class="thumb">
@@ -104,6 +107,7 @@ function eshop_render_front_hero_metabox($post) {
                         <input type="hidden" class="media-type" name="eshop_hero_mobile_slides[<?php echo (int)$idx; ?>][media_type]" value="<?php echo esc_attr($media_type); ?>" />
                         <button type="button" class="button select-image"><?php esc_html_e('Select Image or Video', 'eshop-theme'); ?></button>
                         <input type="text" class="regular-text alt" placeholder="<?php esc_attr_e('Alt text (optional)', 'eshop-theme'); ?>" name="eshop_hero_mobile_slides[<?php echo (int)$idx; ?>][alt]" value="<?php echo $alt; ?>" />
+                        <input type="url" class="regular-text slide-link" placeholder="<?php esc_attr_e('Slide link (optional)', 'eshop-theme'); ?>" name="eshop_hero_mobile_slides[<?php echo (int)$idx; ?>][link]" value="<?php echo $link; ?>" />
                         <button type="button" class="button link-remove">&times;</button>
                     </div>
                     <span class="dashicons dashicons-move handle"></span>
@@ -319,11 +323,12 @@ add_action('save_post_page', function($post_id, $post, $update) {
             $url = isset($row['url']) ? esc_url_raw($row['url']) : '';
             if (!$url) continue;
             $alt = isset($row['alt']) ? sanitize_text_field($row['alt']) : '';
+            $link = isset($row['link']) ? esc_url_raw($row['link']) : '';
             $media_type = isset($row['media_type']) ? sanitize_key($row['media_type']) : '';
             if (!in_array($media_type, array('image', 'video'), true)) {
                 $media_type = eshop_is_video_url($url) ? 'video' : 'image';
             }
-            $slides[] = array('url' => $url, 'media_type' => $media_type, 'alt' => $alt);
+            $slides[] = array('url' => $url, 'media_type' => $media_type, 'alt' => $alt, 'link' => $link);
         }
         update_post_meta($post_id, $key, $slides);
     };

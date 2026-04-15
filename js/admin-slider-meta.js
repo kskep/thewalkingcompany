@@ -60,6 +60,7 @@
 						<input type="hidden" class="media-type" name="'+target+'['+idx+'][media_type]" value="image" />\
 						<button type="button" class="button select-image">Select Image or Video</button>\
 						<input type="text" class="regular-text alt" placeholder="Alt text (optional)" name="'+target+'['+idx+'][alt]" value="" />\
+						<input type="url" class="regular-text slide-link" placeholder="Slide link (optional)" name="'+target+'['+idx+'][link]" value="" />\
 						<button type="button" class="button link-remove">&times;</button>\
 					</div>\
 					<span class="dashicons dashicons-move handle"></span>\
