@@ -174,8 +174,13 @@ function eshop_theme_scripts() {
 
     // Flying Cart Component
     if (class_exists('WooCommerce')) {
-        wp_enqueue_style('eshop-flying-cart', get_template_directory_uri() . '/css/components/flying-cart.css', array(), '1.0.0');
-        wp_enqueue_script('eshop-flying-cart', get_template_directory_uri() . '/js/components/flying-cart.js', array('jquery', 'eshop-theme-script'), '1.0.0', true);
+        $flying_cart_css_path = get_template_directory() . '/css/components/flying-cart.css';
+        $flying_cart_css_ver = file_exists($flying_cart_css_path) ? filemtime($flying_cart_css_path) : '1.0.0';
+        $flying_cart_js_path = get_template_directory() . '/js/components/flying-cart.js';
+        $flying_cart_js_ver = file_exists($flying_cart_js_path) ? filemtime($flying_cart_js_path) : '1.0.0';
+
+        wp_enqueue_style('eshop-flying-cart', get_template_directory_uri() . '/css/components/flying-cart.css', array(), $flying_cart_css_ver);
+        wp_enqueue_script('eshop-flying-cart', get_template_directory_uri() . '/js/components/flying-cart.js', array('jquery', 'eshop-theme-script'), $flying_cart_js_ver, true);
 
         // Wishlist Component
         wp_enqueue_style('eshop-wishlist', get_template_directory_uri() . '/css/components/wishlist.css', array('eshop-theme-style'), '1.0.0');
