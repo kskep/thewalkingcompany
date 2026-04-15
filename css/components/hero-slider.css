@@ -12,6 +12,24 @@
 @media (max-width: 767px) {
   .js-hero-slider .hero-slider-desktop { display: none; }
   .js-hero-slider .hero-slider-mobile { display: block; }
+
+  .js-hero-slider .hero-slider-mobile .swiper-wrapper {
+    align-items: flex-start;
+  }
+
+  .js-hero-slider .hero-slider-mobile .swiper-slide {
+    height: auto;
+  }
+
+  .js-hero-slider .hero-slider-mobile .hero-slide {
+    overflow: visible;
+  }
+
+  .js-hero-slider .hero-slider-mobile img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
 }
 
 /* Swiper controls */

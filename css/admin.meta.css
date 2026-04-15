@@ -128,6 +128,14 @@
     display: block;
 }
 
+.eshop-banner-item .banner-preview video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: #000;
+}
+
 .eshop-banner-item .banner-preview .remove-banner {
     position: absolute;
     top: 6px;

@@ -783,6 +783,9 @@
                 var mobileSwiper = new Swiper(mobileEl, {
                     loop: true,
                     speed: 600,
+                    autoHeight: true,
+                    observer: true,
+                    observeParents: true,
                     autoplay: {
                         delay: 4000,
                         disableOnInteraction: false
@@ -791,6 +794,17 @@
                         el: mobileEl.querySelector('.swiper-pagination'),
                         clickable: true
                     }
+                });
+
+                mobileEl.querySelectorAll('img').forEach(function (img) {
+                    if (img.complete) {
+                        mobileSwiper.updateAutoHeight(0);
+                        return;
+                    }
+
+                    img.addEventListener('load', function () {
+                        mobileSwiper.updateAutoHeight(0);
+                    }, { once: true });
                 });
 
                 if (window.gsap) {

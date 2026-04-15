@@ -104,12 +104,25 @@
 				'</div>' +
 				'<div class="banner-fields">' +
 					'<input type="hidden" class="banner-image-url" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][image_url]" value="" />' +
-					'<button type="button" class="button select-banner-image">Select Image</button>' +
+					'<input type="hidden" class="banner-media-type" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][media_type]" value="image" />' +
+					'<button type="button" class="button select-banner-image">Select Image or Video</button>' +
 					'<input type="text" class="regular-text banner-alt" placeholder="Alt text" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][alt]" value="" />' +
 					'<input type="text" class="regular-text banner-title" placeholder="Title (hover text)" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][title]" value="" />' +
 					'<input type="url" class="regular-text banner-link" placeholder="Link URL" name="eshop_banner_rows[' + rowIndex + '][banners][' + bannerIndex + '][link]" value="" />' +
 				'</div>' +
 			'</div>';
+		}
+
+		function updateBannerPreview($banner, url, mediaType) {
+			const safeUrl = url || defaultImage;
+			const isVideo = mediaType === 'video' && !!url;
+			const previewMarkup = isVideo
+				? '<video src="' + safeUrl + '" muted playsinline preload="metadata"></video>'
+				: '<img src="' + safeUrl + '" alt="" />';
+
+			$banner.find('.banner-preview img, .banner-preview video').remove();
+			$banner.find('.banner-preview').prepend(previewMarkup);
+			$banner.find('.banner-media-type').val(isVideo ? 'video' : 'image');
 		}
 
 		// Make rows sortable
@@ -215,10 +228,20 @@
 		// Select banner image
 		$container.on('click', '.select-banner-image', function(){
 			const $banner = $(this).closest('.eshop-banner-item');
-			openMediaFrame(function(att){
-				$banner.find('.banner-image-url').val(att.url);
-				$banner.find('.banner-preview img').attr('src', att.url);
+			const frame = wp.media({
+				title: 'Select Image or Video',
+				button: { text: 'Use media' },
+				multiple: false,
+				library: { type: ['image', 'video'] }
 			});
+
+			frame.on('select', function(){
+				const att = frame.state().get('selection').first().toJSON();
+				$banner.find('.banner-image-url').val(att.url);
+				updateBannerPreview($banner, att.url, (att.type === 'video' ? 'video' : 'image'));
+			});
+
+			frame.open();
 		});
 
 		function renumberAllRows(){

@@ -44,6 +44,7 @@ if (empty($banner_rows)) {
     <div class="banner-row <?php echo esc_attr($column_class); ?>" data-row="<?php echo esc_attr($row_index + 1); ?>">
         <?php foreach ($banners as $banner_index => $banner) :
             $image_url = $banner['image_url'] ?? '';
+            $media_type = $banner['media_type'] ?? (function_exists('eshop_is_video_url') && eshop_is_video_url($image_url) ? 'video' : 'image');
             $alt = $banner['alt'] ?? '';
             $title = $banner['title'] ?? '';
             $link = $banner['link'] ?? '';
@@ -53,12 +54,26 @@ if (empty($banner_rows)) {
         <div class="banner-item">
             <a href="<?php echo esc_url($link ?: '#'); ?>" class="banner-link" <?php echo empty($link) ? '' : ''; ?>>
                 <div class="banner-image-wrapper">
+                    <?php if ($media_type === 'video') : ?>
+                    <video
+                        class="banner-image banner-video"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                    >
+                        <source src="<?php echo esc_url($image_url); ?>" type="<?php echo esc_attr(wp_check_filetype($image_url)['type'] ?: 'video/mp4'); ?>">
+                        <?php esc_html_e('Your browser does not support the video tag.', 'eshop-theme'); ?>
+                    </video>
+                    <?php else : ?>
                     <img
                         src="<?php echo esc_url($image_url); ?>"
                         alt="<?php echo esc_attr($alt ?: $title); ?>"
                         class="banner-image"
                         loading="<?php echo $row_index === 0 ? 'eager' : 'lazy'; ?>"
                     />
+                    <?php endif; ?>
                     
                     <?php if (!empty($title)) : ?>
                     <!-- Hidden title for SEO -->

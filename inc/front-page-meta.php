@@ -125,6 +125,7 @@ function eshop_render_front_banners_metabox($post) {
                 if (!empty($tile['image_url'])) {
                     $migrated_banners[] = array(
                         'image_url' => $tile['image_url'] ?? '',
+                        'media_type'=> 'image',
                         'alt'       => $tile['alt'] ?? '',
                         'title'     => $tile['title'] ?? '',
                         'link'      => $tile['link'] ?? '',
@@ -171,13 +172,18 @@ function eshop_render_front_banners_metabox($post) {
                             <div class="eshop-banners-grid columns-<?php echo count($banners); ?>">
                                 <?php foreach ($banners as $banner_idx => $banner) :
                                     $img = isset($banner['image_url']) ? esc_url($banner['image_url']) : '';
+                                    $media_type = isset($banner['media_type']) ? sanitize_key($banner['media_type']) : (eshop_is_video_url($img) ? 'video' : 'image');
                                     $alt = isset($banner['alt']) ? esc_attr($banner['alt']) : '';
                                     $title = isset($banner['title']) ? esc_attr($banner['title']) : '';
                                     $link = isset($banner['link']) ? esc_url($banner['link']) : '';
                                 ?>
                                 <div class="eshop-banner-item" data-banner-index="<?php echo (int)$banner_idx; ?>">
                                     <div class="banner-preview">
+                                        <?php if ($img && $media_type === 'video') : ?>
+                                        <video src="<?php echo esc_url($img); ?>" muted playsinline preload="metadata"></video>
+                                        <?php else : ?>
                                         <img src="<?php echo $img ? $img : esc_url(includes_url('images/media/default.png')); ?>" alt="" />
+                                        <?php endif; ?>
                                         <button type="button" class="button-link remove-banner" title="<?php esc_attr_e('Remove Banner', 'eshop-theme'); ?>">
                                             <span class="dashicons dashicons-no-alt"></span>
                                         </button>
@@ -186,7 +192,10 @@ function eshop_render_front_banners_metabox($post) {
                                         <input type="hidden" class="banner-image-url" 
                                                name="eshop_banner_rows[<?php echo (int)$row_idx; ?>][banners][<?php echo (int)$banner_idx; ?>][image_url]" 
                                                value="<?php echo $img; ?>" />
-                                        <button type="button" class="button select-banner-image"><?php esc_html_e('Select Image', 'eshop-theme'); ?></button>
+                                        <input type="hidden" class="banner-media-type" 
+                                               name="eshop_banner_rows[<?php echo (int)$row_idx; ?>][banners][<?php echo (int)$banner_idx; ?>][media_type]" 
+                                               value="<?php echo esc_attr($media_type); ?>" />
+                                        <button type="button" class="button select-banner-image"><?php esc_html_e('Select Image or Video', 'eshop-theme'); ?></button>
                                         <input type="text" class="regular-text banner-alt" 
                                                placeholder="<?php esc_attr_e('Alt text', 'eshop-theme'); ?>" 
                                                name="eshop_banner_rows[<?php echo (int)$row_idx; ?>][banners][<?php echo (int)$banner_idx; ?>][alt]" 
@@ -259,7 +268,10 @@ function eshop_render_front_banners_metabox($post) {
                     <input type="hidden" class="banner-image-url" 
                            name="eshop_banner_rows[{{data.rowIndex}}][banners][{{data.bannerIndex}}][image_url]" 
                            value="" />
-                    <button type="button" class="button select-banner-image"><?php esc_html_e('Select Image', 'eshop-theme'); ?></button>
+                    <input type="hidden" class="banner-media-type" 
+                           name="eshop_banner_rows[{{data.rowIndex}}][banners][{{data.bannerIndex}}][media_type]" 
+                           value="image" />
+                    <button type="button" class="button select-banner-image"><?php esc_html_e('Select Image or Video', 'eshop-theme'); ?></button>
                     <input type="text" class="regular-text banner-alt" 
                            placeholder="<?php esc_attr_e('Alt text', 'eshop-theme'); ?>" 
                            name="eshop_banner_rows[{{data.rowIndex}}][banners][{{data.bannerIndex}}][alt]" 
@@ -312,9 +324,15 @@ add_action('save_post_page', function($post_id, $post, $update) {
             foreach ($row_data['banners'] as $banner) {
                 $img = isset($banner['image_url']) ? esc_url_raw($banner['image_url']) : '';
                 if (!$img) continue; // Skip empty banners
+
+                $media_type = isset($banner['media_type']) ? sanitize_key($banner['media_type']) : '';
+                if (!in_array($media_type, array('image', 'video'), true)) {
+                    $media_type = eshop_is_video_url($img) ? 'video' : 'image';
+                }
                 
                 $banners[] = array(
                     'image_url' => $img,
+                    'media_type'=> $media_type,
                     'alt'       => isset($banner['alt']) ? sanitize_text_field($banner['alt']) : '',
                     'title'     => isset($banner['title']) ? sanitize_text_field($banner['title']) : '',
                     'link'      => isset($banner['link']) ? esc_url_raw($banner['link']) : '',

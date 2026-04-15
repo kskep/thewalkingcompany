@@ -81,6 +81,10 @@
     transition: transform 0.4s ease;
 }
 
+.banner-video {
+    background: #000;
+}
+
 /* Hover effect */
 .banner-item:hover .banner-image {
     transform: scale(1.03);

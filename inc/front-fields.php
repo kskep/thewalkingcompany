@@ -20,10 +20,24 @@ function eshop_front_settings_defaults() {
     return array(
         'hero_desktop_slides' => array(), // [ [url, alt], ... ]
         'hero_mobile_slides'  => array(),
-        'banner_rows'         => array(), // [ [ banners: [ [image_url, alt, title, link], ... ], columns: 1-4 ], ... ]
+        'banner_rows'         => array(), // [ [ banners: [ [image_url, media_type, alt, title, link], ... ], columns: 1-4 ], ... ]
         // Legacy support
         'category_tiles'      => array(),
     );
+}
+
+function eshop_is_video_url($url) {
+    if (empty($url) || !is_string($url)) {
+        return false;
+    }
+
+    $path = wp_parse_url($url, PHP_URL_PATH);
+    if (!$path) {
+        return false;
+    }
+
+    $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    return in_array($extension, array('mp4', 'webm', 'ogg', 'mov', 'm4v'), true);
 }
 
 /**
@@ -90,9 +104,15 @@ function eshop_get_banner_rows() {
             foreach ($row['banners'] as $banner) {
                 $img = isset($banner['image_url']) ? esc_url($banner['image_url']) : '';
                 if (!$img) continue;
+
+                $media_type = isset($banner['media_type']) ? sanitize_key($banner['media_type']) : '';
+                if (!in_array($media_type, array('image', 'video'), true)) {
+                    $media_type = eshop_is_video_url($img) ? 'video' : 'image';
+                }
                 
                 $banners[] = array(
                     'image_url' => $img,
+                    'media_type'=> $media_type,
                     'alt'       => isset($banner['alt']) ? sanitize_text_field($banner['alt']) : '',
                     'title'     => isset($banner['title']) ? sanitize_text_field($banner['title']) : '',
                     'link'      => isset($banner['link']) ? esc_url($banner['link']) : '',
@@ -119,6 +139,7 @@ function eshop_get_banner_rows() {
             
             $banners[] = array(
                 'image_url' => $img,
+                'media_type'=> 'image',
                 'alt'       => isset($tile['alt']) ? sanitize_text_field($tile['alt']) : '',
                 'title'     => isset($tile['title']) && $tile['title'] !== '' ? sanitize_text_field($tile['title']) : ($fallback_titles[$i] ?? 'Category'),
                 'link'      => $link,
