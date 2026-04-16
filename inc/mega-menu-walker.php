@@ -44,7 +44,7 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
 
         } elseif ($depth === 1) {
             // Mega menu items (subcategories)
-            $category_image = $this->get_category_image($item);
+            $category_image = $this->get_category_image_markup($item, $item_title);
             $has_real_image = $this->has_category_image($item);
 
             $output .= '<div class="mega-menu-item">';
@@ -52,7 +52,7 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
             $output .= '<div class="mega-menu-image-wrapper">';
 
             if ($has_real_image) {
-                $output .= '<img src="' . esc_url($category_image) . '" alt="' . esc_attr($item->title) . '">';
+                $output .= $category_image;
             } else {
                 $output .= '<div class="placeholder">';
                 $output .= '<i class="fas fa-image"></i>';
@@ -90,36 +90,27 @@ class Eshop_Mega_Menu_Walker extends Walker_Nav_Menu {
     /**
      * Get category image for menu item
      */
-    private function get_category_image($item) {
+    private function get_category_image_markup($item, $title) {
         // Check if this is a product category
         if ($item->object === 'product_cat') {
             $term_id = $item->object_id;
             $thumbnail_id = get_term_meta($term_id, 'thumbnail_id', true);
 
             if ($thumbnail_id) {
-                $image = wp_get_attachment_image_src($thumbnail_id, 'category-thumb');
+                $image = wp_get_attachment_image($thumbnail_id, 'mega-menu-thumb', false, array(
+                    'class' => 'mega-menu-image',
+                    'alt' => $title,
+                    'loading' => 'lazy',
+                    'decoding' => 'async',
+                ));
+
                 if ($image) {
-                    return $image[0];
+                    return $image;
                 }
             }
         }
 
-        return $this->get_placeholder_image();
+        return '';
     }
-
-    /**
-     * Get placeholder image URL
-     */
-    private function get_placeholder_image() {
-        // Return a data URI for a simple placeholder
-        return 'data:image/svg+xml;base64,' . base64_encode('
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" fill="#F3F4F6"/>
-                <path d="M32 20C28.6863 20 26 22.6863 26 26C26 29.3137 28.6863 32 32 32C35.3137 32 38 29.3137 38 26C38 22.6863 35.3137 20 32 20Z" fill="#9CA3AF"/>
-                <path d="M20 44L24.5 36L32 42L39.5 32L44 44H20Z" fill="#9CA3AF"/>
-            </svg>
-        ');
-    }
-
 
 }

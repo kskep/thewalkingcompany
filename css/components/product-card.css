@@ -428,10 +428,15 @@
 .related-products-grid .product-card .price-row .sale-price-highlight {
   display: inline-block;
   padding: 2px 8px;
-  background: var(--pink);
-  color: #fff;
+  background: var(--pink) !important;
+  color: #fff !important;
   border-radius: 2px;
   line-height: 1.1;
+}
+
+.product-card .price-row .sale-price-highlight *,
+.related-products-grid .product-card .price-row .sale-price-highlight * {
+  color: inherit !important;
 }
 
 .price-row .price del {
