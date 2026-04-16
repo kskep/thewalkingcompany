@@ -382,60 +382,36 @@
   color: var(--ink);
 }
 
-.product-card .price-row .price ins,
-.related-products-grid .product-card .price-row .price ins {
-  display: inline-block;
-  padding: 2px 8px;
-  background: var(--pink) !important;
-  color: #fff !important;
-  text-decoration: none !important;
-  border-radius: 2px;
+.product-card .price-row .price .woocommerce-Price-amount,
+.product-card .price-row .price bdi,
+.product-card .price-row .price .woocommerce-Price-currencySymbol,
+.related-products-grid .product-card .price-row .price .woocommerce-Price-amount,
+.related-products-grid .product-card .price-row .price bdi,
+.related-products-grid .product-card .price-row .price .woocommerce-Price-currencySymbol {
+  color: inherit;
 }
 
-.product-card .price-row .price ins .amount,
-.product-card .price-row .price ins bdi,
-.product-card .price-row .price ins .woocommerce-Price-currencySymbol,
-.related-products-grid .product-card .price-row .price ins .amount,
-.related-products-grid .product-card .price-row .price ins bdi,
-.related-products-grid .product-card .price-row .price ins .woocommerce-Price-currencySymbol {
-  color: inherit !important;
-}
-
-.product-card .price-row .price > .woocommerce-Price-amount.amount,
-.related-products-grid .product-card .price-row .price > .woocommerce-Price-amount.amount {
-  display: inline-block;
-  padding: 2px 8px;
-  background: var(--pink);
-  color: #fff !important;
-  border-radius: 2px;
-}
-
-.product-card .price-row .price--sale,
-.related-products-grid .product-card .price-row .price--sale {
+.product-card .price-row--sale .price--sale,
+.related-products-grid .product-card .price-row--sale .price--sale {
   display: inline-flex;
   align-items: baseline;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.product-card .price-row .price--sale ins,
-.related-products-grid .product-card .price-row .price--sale ins {
-  background: transparent !important;
-  padding: 0;
-}
-
-.product-card .price-row .sale-price-highlight,
-.related-products-grid .product-card .price-row .sale-price-highlight {
+.product-card .price-row--sale ins.sale-price-highlight,
+.related-products-grid .product-card .price-row--sale ins.sale-price-highlight {
   display: inline-block;
   padding: 2px 8px;
   background: var(--pink) !important;
   color: #fff !important;
+  text-decoration: none !important;
   border-radius: 2px;
   line-height: 1.1;
 }
 
-.product-card .price-row .sale-price-highlight *,
-.related-products-grid .product-card .price-row .sale-price-highlight * {
+.product-card .price-row--sale ins.sale-price-highlight *,
+.related-products-grid .product-card .price-row--sale ins.sale-price-highlight * {
   color: inherit !important;
 }
 

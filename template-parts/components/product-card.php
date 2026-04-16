@@ -215,12 +215,12 @@ $product_card_classes = 'product-card' . ($force_size_overlay ? ' show-sizes' : 
             </div>
         </div>
         <?php endif; ?>
-        <div class="price-row">
+        <div class="price-row<?php echo ($is_on_sale && $sale_price_num > 0 && $regular_price_num > $sale_price_num) ? ' price-row--sale' : ''; ?>">
             <?php
             if ($is_on_sale && $sale_price_num > 0 && $regular_price_num > $sale_price_num) {
                 echo '<span class="price price--sale">';
                 echo '<del aria-hidden="true">' . wc_price($regular_price_num) . '</del>';
-                echo '<ins><span class="sale-price-highlight">' . wc_price($sale_price_num) . '</span></ins>';
+                echo '<ins class="sale-price-highlight">' . wc_price($sale_price_num) . '</ins>';
                 echo '</span>';
             } else {
                 echo wp_kses_post($product->get_price_html());
