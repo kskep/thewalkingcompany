@@ -399,6 +399,26 @@
   flex-wrap: wrap;
 }
 
+.product-card .price-row--sale ins,
+.related-products-grid .product-card .price-row--sale ins {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--pink) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  border-radius: 2px;
+  line-height: 1.1;
+}
+
+.product-card .price-row--sale ins .woocommerce-Price-amount,
+.product-card .price-row--sale ins bdi,
+.product-card .price-row--sale ins .woocommerce-Price-currencySymbol,
+.related-products-grid .product-card .price-row--sale ins .woocommerce-Price-amount,
+.related-products-grid .product-card .price-row--sale ins bdi,
+.related-products-grid .product-card .price-row--sale ins .woocommerce-Price-currencySymbol {
+  color: inherit !important;
+}
+
 .product-card .price-row--sale ins.sale-price-highlight,
 .related-products-grid .product-card .price-row--sale ins.sale-price-highlight {
   display: inline-block;
