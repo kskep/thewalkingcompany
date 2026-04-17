@@ -28,9 +28,9 @@ if (!defined('ABSPATH')) {
                         Your daily dose of fashion inspiration, bringing you curated collections and the latest trends.
                     </p>
                     <div class="social-links flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-facebook-f text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="https://www.instagram.com/thewalkingcompany.gr/" class="text-gray-400 hover:text-gray-900 transition-colors" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/thewalkingcompany.gr/" class="text-gray-400 hover:text-gray-900 transition-colors" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="https://www.tiktok.com/@thewalkingcompany.gr" class="text-gray-400 hover:text-gray-900 transition-colors" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok text-xl"></i></a>
                     </div>
                 </div>
 

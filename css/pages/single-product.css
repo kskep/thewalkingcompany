@@ -314,8 +314,16 @@ button:focus-visible {
 }
 
 .price-row ins {
-  color: var(--pink);
+  background-color: var(--pink);
+  color: white;
+  padding: 2px 12px;
   text-decoration: none;
+}
+
+.price-row ins .woocommerce-Price-amount,
+.price-row ins bdi,
+.price-row ins .woocommerce-Price-currencySymbol {
+  color: inherit;
 }
 
 .price-row del {
