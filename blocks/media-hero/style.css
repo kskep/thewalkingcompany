@@ -8,12 +8,11 @@
 }
 
 .twc-media-hero__container {
-    max-width: 1630px;
+    max-width: 50vw;
     margin: 0 auto;
-    padding: 0 48px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 64px;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
     align-items: center;
 }
 
@@ -33,25 +32,25 @@
 .twc-media-hero__content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 }
 
 .twc-media-hero__title {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-size: clamp(2.2rem, 3.2vw, 3.2rem);
     color: var(--ink, #2F2A26);
-    line-height: 1.15;
+    line-height: 1.1;
     margin: 0;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 .twc-media-hero__subtitle {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     color: var(--ink-soft, #6B7280);
-    line-height: 1.7;
+    line-height: 1.8;
     margin: 0;
 }
 
@@ -59,8 +58,8 @@
     display: inline-block;
     background: var(--primary-pink, #EE81B3);
     color: #fff;
-    padding: 0.875rem 2rem;
-    font-size: 0.875rem;
+    padding: 1rem 2.5rem;
+    font-size: 0.9rem;
     font-family: 'Roboto', sans-serif;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -80,6 +79,29 @@
     display: none;
 }
 
+@media (max-width: 1200px) {
+    .twc-media-hero__container {
+        gap: 36px;
+    }
+}
+
+@media (max-width: 960px) {
+    .twc-media-hero__container {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        max-width: 100%;
+    }
+
+    .twc-media-hero__title {
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+    }
+
+    .twc-media-hero__content {
+        text-align: center;
+        align-items: center;
+    }
+}
+
 @media (max-width: 768px) {
     .twc-media-hero__desktop {
         display: none;
@@ -91,12 +113,12 @@
 
     .twc-media-hero__container {
         grid-template-columns: 1fr;
-        gap: 32px;
-        padding: 0 24px;
+        gap: 28px;
+        max-width: 100%;
     }
 
     .twc-media-hero__title {
-        font-size: clamp(1.6rem, 5vw, 2.2rem);
+        font-size: clamp(1.5rem, 5vw, 2rem);
     }
 
     .twc-media-hero__content {

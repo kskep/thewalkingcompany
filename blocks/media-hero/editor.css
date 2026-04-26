@@ -18,14 +18,14 @@
 
 .wp-block-twc-media-hero .twc-media-hero__container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 48px;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
     align-items: start;
 }
 
 .wp-block-twc-media-hero .twc-media-hero__preview--mobile .twc-media-hero__container {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 28px;
 }
 
 .wp-block-twc-media-hero .twc-media-hero__media {
@@ -67,7 +67,7 @@
     justify-content: center;
     gap: 8px;
     width: 100%;
-    min-height: 220px;
+    min-height: 260px;
     background: #f0f0f0;
     border: 2px dashed #ccc;
     border-radius: 4px;
@@ -91,15 +91,15 @@
 .wp-block-twc-media-hero .twc-media-hero__content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .wp-block-twc-media-hero .twc-media-hero__title {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    font-size: 28px;
+    font-size: 36px;
     color: #2F2A26;
-    line-height: 1.2;
+    line-height: 1.1;
     margin: 0;
     padding: 4px 6px;
     border: 1px solid transparent;
@@ -115,9 +115,9 @@
 .wp-block-twc-media-hero .twc-media-hero__subtitle {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
-    font-size: 16px;
+    font-size: 18px;
     color: #6B7280;
-    line-height: 1.6;
+    line-height: 1.7;
     margin: 0;
     padding: 4px 6px;
     border: 1px solid transparent;
@@ -134,8 +134,8 @@
     display: inline-block;
     background: #EE81B3;
     color: #fff;
-    padding: 12px 28px;
-    font-size: 14px;
+    padding: 14px 32px;
+    font-size: 15px;
     font-family: 'Roboto', sans-serif;
     letter-spacing: 0.05em;
     text-transform: uppercase;
