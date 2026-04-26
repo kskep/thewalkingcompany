@@ -1,0 +1,160 @@
+.wp-block-twc-media-hero {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    .twc-media-hero__preview {
+        width: 100%;
+
+        &--mobile {
+            max-width: 420px;
+            margin: 0 auto;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            background: #fafafa;
+        }
+    }
+
+    .twc-media-hero__container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+        gap: 48px;
+        align-items: start;
+    }
+
+    .twc-media-hero__preview--mobile .twc-media-hero__container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .twc-media-hero__media {
+        width: 100%;
+    }
+
+    .twc-media-hero__media-wrap {
+        position: relative;
+        line-height: 0;
+
+        img,
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+    }
+
+    .twc-media-hero__media-actions {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 2;
+
+        .twc-media-hero__media-wrap:hover & {
+            opacity: 1;
+        }
+    }
+
+    .twc-media-hero__media-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 220px;
+        background: #f0f0f0;
+        border: 2px dashed #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #666;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+        &:hover {
+            border-color: #999;
+            background: #e8e8e8;
+        }
+
+        .dashicons {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .twc-media-hero__content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .twc-media-hero__title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 28px;
+        color: #2F2A26;
+        line-height: 1.2;
+        margin: 0;
+        padding: 4px 6px;
+        border: 1px solid transparent;
+        border-radius: 2px;
+        outline: none;
+
+        &:focus,
+        &:hover {
+            border-color: #ddd;
+        }
+    }
+
+    .twc-media-hero__subtitle {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 300;
+        font-size: 16px;
+        color: #6B7280;
+        line-height: 1.6;
+        margin: 0;
+        padding: 4px 6px;
+        border: 1px solid transparent;
+        border-radius: 2px;
+        outline: none;
+
+        &:focus,
+        &:hover {
+            border-color: #ddd;
+        }
+    }
+
+    .twc-media-hero__button {
+        display: inline-block;
+        background: #EE81B3;
+        color: #fff;
+        padding: 12px 28px;
+        font-size: 14px;
+        font-family: 'Roboto', sans-serif;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        border-radius: 0;
+        cursor: text;
+        outline: none;
+
+        &:focus {
+            box-shadow: 0 0 0 2px #EE81B3;
+        }
+    }
+
+    .twc-media-hero__view-label {
+        text-align: center;
+        font-size: 11px;
+        color: #999;
+        margin-top: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+}

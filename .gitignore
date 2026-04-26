@@ -6,3 +6,5 @@ fullcode.txt
 .aicodeprep-gui
 .kilocode
 claude_code_zai_env.sh
+node_modules/
+build/

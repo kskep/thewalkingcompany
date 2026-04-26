@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "twc/media-hero",
+    "version": "1.0.0",
+    "title": "Media Hero",
+    "category": "design",
+    "icon": "cover-image",
+    "description": "Responsive two-column layout with media on the left and content on the right. Supports separate mobile content.",
+    "keywords": ["hero", "media", "two column", "split", "responsive"],
+    "attributes": {
+        "desktopMedia": {
+            "type": "object",
+            "default": {}
+        },
+        "mobileMedia": {
+            "type": "object",
+            "default": {}
+        },
+        "desktopTitle": {
+            "type": "string",
+            "default": ""
+        },
+        "desktopSubtitle": {
+            "type": "string",
+            "default": ""
+        },
+        "desktopButtonText": {
+            "type": "string",
+            "default": ""
+        },
+        "desktopButtonUrl": {
+            "type": "string",
+            "default": ""
+        },
+        "mobileTitle": {
+            "type": "string",
+            "default": ""
+        },
+        "mobileSubtitle": {
+            "type": "string",
+            "default": ""
+        },
+        "mobileButtonText": {
+            "type": "string",
+            "default": ""
+        },
+        "mobileButtonUrl": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "supports": {
+        "html": false,
+        "align": false
+    },
+    "textdomain": "twc",
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./index.css",
+    "style": "file:./style-index.css",
+    "render": "file:./render.php"
+}

@@ -29,6 +29,7 @@ require_once get_template_directory() . '/inc/search-functions.php';
 require_once get_template_directory() . '/inc/front-fields.php';
 require_once get_template_directory() . '/inc/front-page-meta.php';
 require_once get_template_directory() . '/inc/contact-form.php';
+require_once get_template_directory() . '/inc/blocks.php';
 
 // Clear PHP opcache on theme activation - TEMPORARY DEBUG
 if (function_exists('opcache_reset')) {
