@@ -1,0 +1,106 @@
+.twc-media-hero {
+    width: 100%;
+    overflow: hidden;
+}
+
+.twc-media-hero__version {
+    width: 100%;
+}
+
+.twc-media-hero__container {
+    max-width: 1630px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 64px;
+    align-items: center;
+}
+
+.twc-media-hero__media {
+    width: 100%;
+    line-height: 0;
+}
+
+.twc-media-hero__media img,
+.twc-media-hero__media video {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.twc-media-hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.twc-media-hero__title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    color: var(--ink, #2F2A26);
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.twc-media-hero__subtitle {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 1.05rem;
+    color: var(--ink-soft, #6B7280);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.twc-media-hero__button {
+    display: inline-block;
+    background: var(--primary-pink, #EE81B3);
+    color: #fff;
+    padding: 0.875rem 2rem;
+    font-size: 0.875rem;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    align-self: flex-start;
+}
+
+.twc-media-hero__button:hover {
+    background: var(--primary-pink-dark, #E55A9F);
+    color: #fff;
+}
+
+.twc-media-hero__mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .twc-media-hero__desktop {
+        display: none;
+    }
+
+    .twc-media-hero__mobile {
+        display: block;
+    }
+
+    .twc-media-hero__container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 0 24px;
+    }
+
+    .twc-media-hero__title {
+        font-size: clamp(1.6rem, 5vw, 2.2rem);
+    }
+
+    .twc-media-hero__content {
+        text-align: center;
+        align-items: center;
+    }
+}
