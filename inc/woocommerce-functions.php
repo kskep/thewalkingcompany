@@ -1208,3 +1208,77 @@ function eshop_remove_rating_catalog_ordering($options) {
 }
 add_filter('woocommerce_default_catalog_orderby_options', 'eshop_remove_rating_catalog_ordering');
 add_filter('woocommerce_catalog_orderby', 'eshop_remove_rating_catalog_ordering');
+
+/**
+ * BEST SELLERS Shortcode
+ * Displays 4 products - 1 most recent product from each of 4 categories
+ *
+ * Usage: [best_sellers cats="12,34,56,78"]
+ */
+function eshop_best_sellers_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'cats' => '',
+    ), $atts, 'best_sellers');
+
+    $category_ids = array_filter(array_map('intval', explode(',', $atts['cats'])));
+
+    if (count($category_ids) !== 4) {
+        return '<p>' . esc_html__('Please provide exactly 4 category IDs.', 'eshop-theme') . '</p>';
+    }
+
+    $products = array();
+
+    foreach ($category_ids as $cat_id) {
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => 1,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'post_status' => 'publish',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field' => 'term_id',
+                    'terms' => $cat_id,
+                ),
+            ),
+        );
+
+        $query = new WP_Query($args);
+
+        if ($query->have_posts()) {
+            $query->the_post();
+            $product = wc_get_product(get_the_ID());
+            if ($product && $product->is_visible()) {
+                $products[] = $product;
+            }
+            wp_reset_postdata();
+        }
+    }
+
+    if (empty($products)) {
+        return '';
+    }
+
+    ob_start();
+    ?>
+    <section class="best-sellers-section">
+        <div class="magazine-container">
+            <h2 class="best-sellers-heading"><?php _e('BEST SELLERS', 'eshop-theme'); ?></h2>
+            <ul class="products-grid best-sellers-grid" id="best-sellers-grid">
+                <?php foreach ($products as $product) : 
+                    $GLOBALS['product'] = $product;
+                    setup_postdata($product->get_id());
+                ?>
+                    <li class="product-grid-item">
+                        <?php get_template_part('template-parts/components/product-card'); ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </section>
+    <?php
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('best_sellers', 'eshop_best_sellers_shortcode');
