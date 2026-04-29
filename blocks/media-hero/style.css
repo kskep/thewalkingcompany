@@ -79,6 +79,24 @@
     display: none;
 }
 
+.container.mx-auto.px-4.py-8:has(.twc-media-hero__container) {
+    padding:2px;
+}
+.twc-media-hero__container {
+padding:0 3px;}
+
+
+.twc-media-hero__content {
+    justify-content:center;
+    align-items:center;
+}
+
+span.twc-media-hero__button {
+    text-align:center;
+    align-self:center;
+    font-weight:900;
+    
+
 @media (max-width: 1200px) {
     .twc-media-hero__container {
         gap: 36px;
