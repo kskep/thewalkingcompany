@@ -341,7 +341,7 @@
 
 .best-sellers-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr)!important;
     gap: 24px;
     list-style: none;
     margin: 0;
