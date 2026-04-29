@@ -35,6 +35,17 @@ function eshop_theme_scripts() {
     // Page-specific CSS
     if (is_front_page()) {
         wp_enqueue_style('eshop-page-front', get_template_directory_uri() . '/css/pages.front.css', array('eshop-theme-style'), '1.0.0');
+        
+        // Product cards used by shortcodes on front page
+        $product_card_css_path = get_template_directory() . '/css/components/product-card.css';
+        if (file_exists($product_card_css_path)) {
+            wp_enqueue_style('eshop-product-card', get_template_directory_uri() . '/css/components/product-card.css', array('eshop-theme-style'), filemtime($product_card_css_path));
+        }
+        
+        $cards_grid_css_path = get_template_directory() . '/css/components/cards-grid.css';
+        if (file_exists($cards_grid_css_path)) {
+            wp_enqueue_style('eshop-cards-grid', get_template_directory_uri() . '/css/components/cards-grid.css', array('eshop-theme-style'), filemtime($cards_grid_css_path));
+        }
     }
 
     if (is_page() && !is_front_page()) {
