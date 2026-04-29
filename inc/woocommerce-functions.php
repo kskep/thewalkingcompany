@@ -1262,10 +1262,10 @@ function eshop_best_sellers_shortcode($atts) {
 
     ob_start();
     ?>
-    <section class="best-sellers-section">
+    <section class="related-products-section magazine-related best-sellers-section">
         <div class="magazine-container">
-            <h2 class="best-sellers-heading"><?php _e('BEST SELLERS', 'eshop-theme'); ?></h2>
-            <ul class="products-grid best-sellers-grid" id="best-sellers-grid">
+            <h2 class="related-products-heading"><?php _e('BEST SELLERS', 'eshop-theme'); ?></h2>
+            <ul class="products-grid related-products-grid" id="best-sellers-grid">
                 <?php foreach ($products as $product) : 
                     $GLOBALS['product'] = $product;
                     setup_postdata($product->get_id());
