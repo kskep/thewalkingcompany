@@ -330,9 +330,13 @@
     padding: 0 64px;
 }
 
+body.home span.badge {
+    display:none;
+}
+
 .best-sellers-heading {
     font-family: "Inter", sans-serif;
-    font-size: clamp(1.6rem, 2.6vw, 2rem);
+    font-size:  clamp(2.2rem, 3.2vw, 3.2rem);
     font-weight: 500;
     color: #1f1f23;
     margin: 0 0 32px 0;
