@@ -306,3 +306,126 @@
         border-top: none;
     }
 }
+
+/* ========================================
+   Front Page Container - Full Width
+   ======================================== */
+.home .container {
+    width: 100% !important;
+    margin: 0 !important;
+    max-width: 100%;
+}
+
+/* ========================================
+   Best Sellers Section
+   ======================================== */
+.best-sellers-section {
+    padding: 64px 0;
+    background: #fff;
+}
+
+.best-sellers-section .magazine-container {
+    max-width: 1630px;
+    margin: 0 auto;
+    padding: 0 64px;
+}
+
+.best-sellers-heading {
+    font-family: "Inter", sans-serif;
+    font-size: clamp(1.6rem, 2.6vw, 2rem);
+    font-weight: 500;
+    color: #1f1f23;
+    margin: 0 0 32px 0;
+    text-align: center;
+}
+
+.best-sellers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.best-sellers-grid .product-grid-item {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+.best-sellers-more {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.best-sellers-more__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: transparent;
+    color: #1f1f23;
+    border: 1px solid #1f1f23;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.best-sellers-more__button:hover {
+    background: #1f1f23;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .best-sellers-section {
+        padding: 48px 0;
+    }
+    
+    .best-sellers-section .magazine-container {
+        padding: 0 40px;
+    }
+    
+    .best-sellers-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .best-sellers-section {
+        padding: 40px 0;
+    }
+    
+    .best-sellers-section .magazine-container {
+        padding: 0 24px;
+    }
+    
+    .best-sellers-heading {
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+    }
+    
+    .best-sellers-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .best-sellers-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .best-sellers-section .magazine-container {
+        padding: 0 16px;
+    }
+}

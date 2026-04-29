@@ -1261,11 +1261,12 @@ function eshop_best_sellers_shortcode($atts) {
     }
 
     ob_start();
+    $shop_url = function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop/');
     ?>
-    <section class="related-products-section magazine-related best-sellers-section">
+    <section class="best-sellers-section">
         <div class="magazine-container">
-            <h2 class="related-products-heading"><?php _e('BEST SELLERS', 'eshop-theme'); ?></h2>
-            <ul class="products-grid related-products-grid" id="best-sellers-grid">
+            <h2 class="best-sellers-heading"><?php _e('BEST SELLERS', 'eshop-theme'); ?></h2>
+            <ul class="products-grid best-sellers-grid" id="best-sellers-grid">
                 <?php foreach ($products as $product) : 
                     $GLOBALS['product'] = $product;
                     setup_postdata($product->get_id());
@@ -1275,6 +1276,11 @@ function eshop_best_sellers_shortcode($atts) {
                     </li>
                 <?php endforeach; ?>
             </ul>
+            <div class="best-sellers-more">
+                <a href="<?php echo esc_url($shop_url); ?>" class="best-sellers-more__button">
+                    <?php _e('ΠΕΡΙΣΣΟΤΕΡΑ', 'eshop-theme'); ?>
+                </a>
+            </div>
         </div>
     </section>
     <?php
